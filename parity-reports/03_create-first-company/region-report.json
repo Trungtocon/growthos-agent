@@ -1,0 +1,131 @@
+{
+  "id": 3,
+  "screenName": "Create First Company",
+  "route": "/onboarding/company",
+  "expectedPng": "03_Create_First_Company.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "regions": [
+    {
+      "name": "06 content right",
+      "rect": {
+        "x": 888,
+        "y": 298,
+        "width": 635,
+        "height": 575
+      },
+      "mismatchedPixels": 37538,
+      "totalPixels": 365125,
+      "diffPercent": 10.280862718247176,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\06-content-right\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\06-content-right\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\06-content-right\\diff.png"
+      }
+    },
+    {
+      "name": "04 title/subtitle",
+      "rect": {
+        "x": 190,
+        "y": 188,
+        "width": 1206,
+        "height": 110
+      },
+      "mismatchedPixels": 12120,
+      "totalPixels": 132660,
+      "diffPercent": 9.13613749434645,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\04-title-subtitle\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\04-title-subtitle\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\04-title-subtitle\\diff.png"
+      }
+    },
+    {
+      "name": "05 content left",
+      "rect": {
+        "x": 63,
+        "y": 298,
+        "width": 825,
+        "height": 575
+      },
+      "mismatchedPixels": 31725,
+      "totalPixels": 474375,
+      "diffPercent": 6.687747035573123,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\05-content-left\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\05-content-left\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\05-content-left\\diff.png"
+      }
+    },
+    {
+      "name": "01 shell/background",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 992
+      },
+      "mismatchedPixels": 100186,
+      "totalPixels": 1573312,
+      "diffPercent": 6.367840580889232,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\01-shell-background\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\01-shell-background\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\01-shell-background\\diff.png"
+      }
+    },
+    {
+      "name": "07 footer/actions",
+      "rect": {
+        "x": 317,
+        "y": 873,
+        "width": 952,
+        "height": 119
+      },
+      "mismatchedPixels": 4923,
+      "totalPixels": 113288,
+      "diffPercent": 4.34556175411341,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\07-footer-actions\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\07-footer-actions\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\07-footer-actions\\diff.png"
+      }
+    },
+    {
+      "name": "02 brand/header",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 109
+      },
+      "mismatchedPixels": 6688,
+      "totalPixels": 172874,
+      "diffPercent": 3.868713629579925,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\02-brand-header\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\02-brand-header\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\02-brand-header\\diff.png"
+      }
+    },
+    {
+      "name": "03 stepper",
+      "rect": {
+        "x": 127,
+        "y": 89,
+        "width": 1332,
+        "height": 119
+      },
+      "mismatchedPixels": 5234,
+      "totalPixels": 158508,
+      "diffPercent": 3.302041537335655,
+      "artifacts": {
+        "expected": "parity-reports\\03_create-first-company\\regions\\03-stepper\\expected.png",
+        "actual": "parity-reports\\03_create-first-company\\regions\\03-stepper\\actual.png",
+        "diff": "parity-reports\\03_create-first-company\\regions\\03-stepper\\diff.png"
+      }
+    }
+  ]
+}

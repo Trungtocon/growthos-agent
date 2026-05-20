@@ -1,0 +1,20 @@
+{
+  "id": 7,
+  "screenName": "Onboarding Complete / First Task",
+  "route": "/onboarding/complete",
+  "url": "http://127.0.0.1:5173/onboarding/complete",
+  "expectedPng": "07_Onboarding_Complete_First_Task.png",
+  "viewport": {
+    "width": 1536,
+    "height": 1024
+  },
+  "mismatchedPixels": 0,
+  "totalPixels": 1572864,
+  "diffPercent": 0,
+  "thresholdPercent": 1,
+  "status": "passed",
+  "artifacts": {
+    "actual": "parity-reports\\07_onboarding-complete-first-task\\actual.png",
+    "diff": "parity-reports\\07_onboarding-complete-first-task\\diff.png"
+  }
+}

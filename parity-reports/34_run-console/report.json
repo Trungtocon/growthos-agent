@@ -1,0 +1,20 @@
+{
+  "id": 34,
+  "screenName": "Run Console",
+  "route": "/runs/demo-run",
+  "url": "http://127.0.0.1:5173/runs/demo-run",
+  "expectedPng": "34_Run_Console.png",
+  "viewport": {
+    "width": 1536,
+    "height": 1024
+  },
+  "mismatchedPixels": 196791,
+  "totalPixels": 1572864,
+  "diffPercent": 12.5116,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\34_run-console\\actual.png",
+    "diff": "parity-reports\\34_run-console\\diff.png"
+  }
+}

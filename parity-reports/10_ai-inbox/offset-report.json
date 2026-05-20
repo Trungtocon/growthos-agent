@@ -1,0 +1,92 @@
+{
+  "id": 10,
+  "screenName": "AI Inbox",
+  "route": "/inbox",
+  "range": 24,
+  "regions": [
+    {
+      "name": "kpis/tabs",
+      "rect": {
+        "x": 242,
+        "y": 183,
+        "width": 1430,
+        "height": 132
+      },
+      "baseline": 5.31256622165713,
+      "dx": -12,
+      "dy": 8,
+      "diffPercent": 4.726107226107226,
+      "improvement": 0.5864589955499042
+    },
+    {
+      "name": "topbar",
+      "rect": {
+        "x": 242,
+        "y": 0,
+        "width": 1430,
+        "height": 80
+      },
+      "baseline": 8.397727272727273,
+      "dx": -7,
+      "dy": 0,
+      "diffPercent": 7.833041958041958,
+      "improvement": 0.564685314685315
+    },
+    {
+      "name": "main left",
+      "rect": {
+        "x": 242,
+        "y": 315,
+        "width": 719,
+        "height": 626
+      },
+      "baseline": 9.133203286424614,
+      "dx": -4,
+      "dy": -8,
+      "diffPercent": 8.827933720511716,
+      "improvement": 0.3052695659128979
+    },
+    {
+      "name": "page heading",
+      "rect": {
+        "x": 242,
+        "y": 80,
+        "width": 1430,
+        "height": 103
+      },
+      "baseline": 3.4931088329146585,
+      "dx": -1,
+      "dy": 1,
+      "diffPercent": 3.4252155611378914,
+      "improvement": 0.06789327177676707
+    },
+    {
+      "name": "main right",
+      "rect": {
+        "x": 961,
+        "y": 315,
+        "width": 711,
+        "height": 626
+      },
+      "baseline": 7.376102595902815,
+      "dx": -2,
+      "dy": -6,
+      "diffPercent": 7.334986946342954,
+      "improvement": 0.04111564955986058
+    },
+    {
+      "name": "sidebar",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 242,
+        "height": 941
+      },
+      "baseline": 8.232406179464434,
+      "dx": 0,
+      "dy": 0,
+      "diffPercent": 8.232406179464434,
+      "improvement": 0
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": 23,
+  "screenName": "Agent Detail",
+  "route": "/agents/demo-agent",
+  "url": "http://127.0.0.1:5173/agents/demo-agent",
+  "expectedPng": "23_Agent_Detail.png",
+  "viewport": {
+    "width": 1536,
+    "height": 1024
+  },
+  "mismatchedPixels": 127207,
+  "totalPixels": 1572864,
+  "diffPercent": 8.0876,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\23_agent-detail\\actual.png",
+    "diff": "parity-reports\\23_agent-detail\\diff.png"
+  }
+}

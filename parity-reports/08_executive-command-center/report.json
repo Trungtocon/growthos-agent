@@ -1,0 +1,20 @@
+{
+  "id": 8,
+  "screenName": "Executive Command Center",
+  "route": "/command-center",
+  "url": "http://127.0.0.1:5173/command-center",
+  "expectedPng": "08_Executive_Command_Center.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 168914,
+  "totalPixels": 1573352,
+  "diffPercent": 10.7359,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\08_executive-command-center\\actual.png",
+    "diff": "parity-reports\\08_executive-command-center\\diff.png"
+  }
+}

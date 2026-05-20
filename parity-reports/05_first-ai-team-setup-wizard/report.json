@@ -1,0 +1,20 @@
+{
+  "id": 5,
+  "screenName": "First AI Team Setup Wizard",
+  "route": "/onboarding/ai-team",
+  "url": "http://127.0.0.1:5173/onboarding/ai-team",
+  "expectedPng": "05_First_AI_Team_Setup_Wizard.png",
+  "viewport": {
+    "width": 1536,
+    "height": 1024
+  },
+  "mismatchedPixels": 0,
+  "totalPixels": 1572864,
+  "diffPercent": 0,
+  "thresholdPercent": 1,
+  "status": "passed",
+  "artifacts": {
+    "actual": "parity-reports\\05_first-ai-team-setup-wizard\\actual.png",
+    "diff": "parity-reports\\05_first-ai-team-setup-wizard\\diff.png"
+  }
+}

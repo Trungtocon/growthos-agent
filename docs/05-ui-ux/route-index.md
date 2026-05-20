@@ -1,0 +1,57 @@
+# Route Index
+
+- `/login` → 01. Login
+- `/register` → 02. Register / Create Account
+- `/onboarding/company` → 03. Create First Company
+- `/onboarding/use-case` → 04. Use Case Selection
+- `/onboarding/ai-team` → 05. First AI Team Setup Wizard
+- `/onboarding/hermes` → 06. Connect Hermes Runtime
+- `/onboarding/complete` → 07. Onboarding Complete / First Task
+- `/command-center` → 08. Executive Command Center
+- `/today` → 09. Today View
+- `/inbox` → 10. AI Inbox
+- `/notifications` → 11. Notification Center
+- `/company/overview` → 12. Company Overview
+- `/company/settings` → 13. Company Settings
+- `/goals` → 14. Goals Dashboard
+- `/goals/demo-goal` → 15. Goal Detail
+- `/goals/new` → 16. Create Goal Wizard
+- `/projects` → 17. Projects List
+- `/projects/demo-project` → 18. Project Detail
+- `/projects/new` → 19. Create Project Wizard
+- `/workforce` → 20. AI Workforce Overview
+- `/org-chart` → 21. Org Chart View
+- `/agents` → 22. Agents List
+- `/agents/demo-agent` → 23. Agent Detail
+- `/agents/new` → 24. Create Agent Wizard
+- `/agents/templates` → 25. Agent Template Gallery
+- `/agents/performance` → 26. Agent Performance
+- `/agents/memory` → 27. Agent Memory View
+- `/skills` → 28. Agent Skills View
+- `/tools/permissions` → 29. Toolsets & Permissions
+- `/tickets` → 30. Tickets Board
+- `/tickets/list` → 31. Tickets List
+- `/tickets/demo-ticket` → 32. Ticket Detail
+- `/tickets/new` → 33. Create Ticket Wizard
+- `/runs/demo-run` → 34. Run Console
+- `/artifacts` → 35. Artifacts Library
+- `/artifacts/demo-artifact` → 36. Artifact Detail / Review
+- `/approvals` → 37. Approval Center
+- `/approvals/demo-approval` → 38. Approval Detail
+- `/governance/policies` → 39. Governance Policy
+- `/audit-log` → 40. Audit Log
+- `/risk-center` → 41. Risk Center
+- `/cost` → 42. Cost Dashboard
+- `/budget/settings` → 43. Budget Settings
+- `/reports` → 44. Reports Dashboard
+- `/reports/new` → 45. Report Builder
+- `/integrations` → 46. Integrations Hub
+- `/integrations/demo-integration` → 47. Integration Detail
+- `/mcp` → 48. MCP Server Manager
+- `/workspaces` → 49. Workspaces Manager
+- `/secrets` → 50. Secrets Manager
+- `/team` → 51. Team Members
+- `/roles-permissions` → 52. Role & Permission
+- `/settings` → 53. System Settings
+- `/billing` → 54. Billing / Plan
+- `/help` → 55. Help / Template Center

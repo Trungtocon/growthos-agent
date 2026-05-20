@@ -1,0 +1,20 @@
+{
+  "id": 2,
+  "screenName": "Register / Create Account",
+  "route": "/register",
+  "url": "http://127.0.0.1:5173/register",
+  "expectedPng": "02_Register_Create_Account.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "mismatchedPixels": 0,
+  "totalPixels": 1573312,
+  "diffPercent": 0,
+  "thresholdPercent": 1,
+  "status": "passed",
+  "artifacts": {
+    "actual": "parity-reports\\02_register-create-account\\actual.png",
+    "diff": "parity-reports\\02_register-create-account\\diff.png"
+  }
+}

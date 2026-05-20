@@ -1,0 +1,56 @@
+id,wave,screen_name,route,expected_png,layout_type,implementation_status
+1,Authentication & Onboarding,Login,/login,01_Login.png,Onboarding/Auth,scaffold
+2,Authentication & Onboarding,Register / Create Account,/register,02_Register_Create_Account.png,Onboarding/Auth,scaffold
+3,Authentication & Onboarding,Create First Company,/onboarding/company,03_Create_First_Company.png,Onboarding/Auth,scaffold
+4,Authentication & Onboarding,Use Case Selection,/onboarding/use-case,04_Use_Case_Selection.png,Onboarding/Auth,scaffold
+5,Authentication & Onboarding,First AI Team Setup Wizard,/onboarding/ai-team,05_First_AI_Team_Setup_Wizard.png,Onboarding/Auth,scaffold
+6,Authentication & Onboarding,Connect Hermes Runtime,/onboarding/hermes,06_Connect_Hermes_Runtime.png,Onboarding/Auth,scaffold
+7,Authentication & Onboarding,Onboarding Complete / First Task,/onboarding/complete,07_Onboarding_Complete_First_Task.png,Onboarding/Auth,scaffold
+8,Command Center,Executive Command Center,/command-center,08_Executive_Command_Center.png,AppShell,scaffold
+9,Command Center,Today View,/today,09_Today_View.png,AppShell,scaffold
+10,Command Center,AI Inbox,/inbox,10_AI_Inbox.png,AppShell,scaffold
+11,Command Center,Notification Center,/notifications,11_Notification_Center.png,AppShell,scaffold
+12,"Company, Goals & Projects",Company Overview,/company/overview,12_Company_Overview.png,AppShell,scaffold
+13,"Company, Goals & Projects",Company Settings,/company/settings,13_Company_Settings.png,AppShell,scaffold
+14,"Company, Goals & Projects",Goals Dashboard,/goals,14_Goals_Dashboard.png,AppShell,scaffold
+15,"Company, Goals & Projects",Goal Detail,/goals/demo-goal,15_Goal_Detail.png,AppShell,scaffold
+16,"Company, Goals & Projects",Create Goal Wizard,/goals/new,16_Create_Goal_Wizard.png,AppShell,scaffold
+17,"Company, Goals & Projects",Projects List,/projects,17_Projects_List.png,AppShell,scaffold
+18,"Company, Goals & Projects",Project Detail,/projects/demo-project,18_Project_Detail.png,AppShell,scaffold
+19,"Company, Goals & Projects",Create Project Wizard,/projects/new,19_Create_Project_Wizard.png,AppShell,scaffold
+20,AI Workforce,AI Workforce Overview,/workforce,20_AI_Workforce_Overview.png,AppShell,scaffold
+21,AI Workforce,Org Chart View,/org-chart,21_Org_Chart_View.png,AppShell,scaffold
+22,AI Workforce,Agents List,/agents,22_Agents_List.png,AppShell,scaffold
+23,AI Workforce,Agent Detail,/agents/demo-agent,23_Agent_Detail.png,AppShell,scaffold
+24,AI Workforce,Create Agent Wizard,/agents/new,24_Create_Agent_Wizard.png,AppShell,scaffold
+25,AI Workforce,Agent Template Gallery,/agents/templates,25_Agent_Template_Gallery.png,AppShell,scaffold
+26,AI Workforce,Agent Performance,/agents/performance,26_Agent_Performance.png,AppShell,scaffold
+27,AI Workforce,Agent Memory View,/agents/memory,27_Agent_Memory_View.png,AppShell,scaffold
+28,AI Workforce,Agent Skills View,/skills,28_Agent_Skills_View.png,AppShell,scaffold
+29,AI Workforce,Toolsets & Permissions,/tools/permissions,29_Toolsets_Permissions.png,AppShell,scaffold
+30,Work Execution,Tickets Board,/tickets,30_Tickets_Board.png,AppShell,scaffold
+31,Work Execution,Tickets List,/tickets/list,31_Tickets_List.png,AppShell,scaffold
+32,Work Execution,Ticket Detail,/tickets/demo-ticket,32_Ticket_Detail.png,AppShell,scaffold
+33,Work Execution,Create Ticket Wizard,/tickets/new,33_Create_Ticket_Wizard.png,AppShell,scaffold
+34,Work Execution,Run Console,/runs/demo-run,34_Run_Console.png,AppShell,scaffold
+35,Work Execution,Artifacts Library,/artifacts,35_Artifacts_Library.png,AppShell,scaffold
+36,Work Execution,Artifact Detail / Review,/artifacts/demo-artifact,36_Artifact_Detail_Review.png,AppShell,scaffold
+37,Governance & Audit,Approval Center,/approvals,37_Approval_Center.png,AppShell,scaffold
+38,Governance & Audit,Approval Detail,/approvals/demo-approval,38_Approval_Detail.png,AppShell,scaffold
+39,Governance & Audit,Governance Policy,/governance/policies,39_Governance_Policy.png,AppShell,scaffold
+40,Governance & Audit,Audit Log,/audit-log,40_Audit_Log.png,AppShell,scaffold
+41,Governance & Audit,Risk Center,/risk-center,41_Risk_Center.png,AppShell,scaffold
+42,Budget & Reports,Cost Dashboard,/cost,42_Cost_Dashboard.png,AppShell,scaffold
+43,Budget & Reports,Budget Settings,/budget/settings,43_Budget_Settings.png,AppShell,scaffold
+44,Budget & Reports,Reports Dashboard,/reports,44_Reports_Dashboard.png,AppShell,scaffold
+45,Budget & Reports,Report Builder,/reports/new,45_Report_Builder.png,AppShell,scaffold
+46,"Integrations, Workspace, Admin",Integrations Hub,/integrations,46_Integrations.png,AppShell,scaffold
+47,"Integrations, Workspace, Admin",Integration Detail,/integrations/demo-integration,47_Integration_Detail.png,AppShell,scaffold
+48,"Integrations, Workspace, Admin",MCP Server Manager,/mcp,48_MCP_Server_Manager.png,AppShell,scaffold
+49,"Integrations, Workspace, Admin",Workspaces Manager,/workspaces,49_Workspaces_Manager.png,AppShell,scaffold
+50,"Integrations, Workspace, Admin",Secrets Manager,/secrets,50_Secrets_Manager.png,AppShell,scaffold
+51,"Integrations, Workspace, Admin",Team Members,/team,51_Team_Members.png,AppShell,scaffold
+52,"Integrations, Workspace, Admin",Role & Permission,/roles-permissions,52_Role_Permission.png,AppShell,scaffold
+53,"Integrations, Workspace, Admin",System Settings,/settings,53_System_Settings.png,AppShell,scaffold
+54,"Integrations, Workspace, Admin",Billing / Plan,/billing,54_Billing_Plan.png,AppShell,scaffold
+55,"Integrations, Workspace, Admin",Help / Template Center,/help,55_Help_Template_Center.png,AppShell,scaffold

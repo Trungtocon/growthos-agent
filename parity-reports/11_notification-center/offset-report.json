@@ -1,0 +1,92 @@
+{
+  "id": 11,
+  "screenName": "Notification Center",
+  "route": "/notifications",
+  "range": 24,
+  "regions": [
+    {
+      "name": "topbar",
+      "rect": {
+        "x": 242,
+        "y": 0,
+        "width": 1430,
+        "height": 80
+      },
+      "baseline": 9.052447552447553,
+      "dx": -24,
+      "dy": 1,
+      "diffPercent": 7.418706293706294,
+      "improvement": 1.6337412587412592
+    },
+    {
+      "name": "page heading",
+      "rect": {
+        "x": 242,
+        "y": 80,
+        "width": 1430,
+        "height": 103
+      },
+      "baseline": 7.336546948197434,
+      "dx": -5,
+      "dy": 9,
+      "diffPercent": 6.948876366352094,
+      "improvement": 0.38767058184533987
+    },
+    {
+      "name": "main left",
+      "rect": {
+        "x": 242,
+        "y": 315,
+        "width": 719,
+        "height": 626
+      },
+      "baseline": 8.413798006638613,
+      "dx": 0,
+      "dy": -7,
+      "diffPercent": 8.3007105182473,
+      "improvement": 0.11308748839131333
+    },
+    {
+      "name": "kpis/tabs",
+      "rect": {
+        "x": 242,
+        "y": 183,
+        "width": 1430,
+        "height": 132
+      },
+      "baseline": 5.1785335876244964,
+      "dx": -23,
+      "dy": 10,
+      "diffPercent": 5.07787666878576,
+      "improvement": 0.10065691883873651
+    },
+    {
+      "name": "main right",
+      "rect": {
+        "x": 961,
+        "y": 315,
+        "width": 711,
+        "height": 626
+      },
+      "baseline": 5.460293066957846,
+      "dx": 0,
+      "dy": -7,
+      "diffPercent": 5.400754011584278,
+      "improvement": 0.05953905537356885
+    },
+    {
+      "name": "sidebar",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 242,
+        "height": 941
+      },
+      "baseline": 7.719500092217705,
+      "dx": 0,
+      "dy": 0,
+      "diffPercent": 7.719500092217705,
+      "improvement": 0
+    }
+  ]
+}

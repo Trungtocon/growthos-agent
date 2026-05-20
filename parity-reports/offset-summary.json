@@ -1,0 +1,95 @@
+[
+  {
+    "id": 3,
+    "screenName": "Create First Company",
+    "route": "/onboarding/company",
+    "range": 18,
+    "step": 3,
+    "regions": [
+      {
+        "name": "title/subtitle",
+        "rect": {
+          "x": 190,
+          "y": 188,
+          "width": 1206,
+          "height": 110
+        },
+        "baseline": 8.116990803557968,
+        "dx": -12,
+        "dy": 0,
+        "diffPercent": 7.878034072063923,
+        "improvement": 0.23895673149404484
+      },
+      {
+        "name": "content left",
+        "rect": {
+          "x": 63,
+          "y": 298,
+          "width": 825,
+          "height": 575
+        },
+        "baseline": 5.568801054018445,
+        "dx": 3,
+        "dy": 18,
+        "diffPercent": 5.393201581027668,
+        "improvement": 0.17559947299077727
+      },
+      {
+        "name": "content right",
+        "rect": {
+          "x": 888,
+          "y": 298,
+          "width": 635,
+          "height": 575
+        },
+        "baseline": 9.292707976720301,
+        "dx": 3,
+        "dy": 0,
+        "diffPercent": 9.289147552208147,
+        "improvement": 0.0035604245121536593
+      },
+      {
+        "name": "brand/header",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1586,
+          "height": 109
+        },
+        "baseline": 3.807975751125097,
+        "dx": 0,
+        "dy": 0,
+        "diffPercent": 3.807975751125097,
+        "improvement": 0
+      },
+      {
+        "name": "stepper",
+        "rect": {
+          "x": 127,
+          "y": 89,
+          "width": 1332,
+          "height": 119
+        },
+        "baseline": 3.5234814646579355,
+        "dx": 0,
+        "dy": 0,
+        "diffPercent": 3.5234814646579355,
+        "improvement": 0
+      },
+      {
+        "name": "footer/actions",
+        "rect": {
+          "x": 317,
+          "y": 873,
+          "width": 952,
+          "height": 119
+        },
+        "baseline": 3.9695289880658144,
+        "dx": 0,
+        "dy": 0,
+        "diffPercent": 3.9695289880658144,
+        "improvement": 0
+      }
+    ]
+  }
+]

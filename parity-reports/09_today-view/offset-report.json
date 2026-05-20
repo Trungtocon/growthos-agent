@@ -1,0 +1,92 @@
+{
+  "id": 9,
+  "screenName": "Today View",
+  "route": "/today",
+  "range": 24,
+  "regions": [
+    {
+      "name": "main left",
+      "rect": {
+        "x": 242,
+        "y": 315,
+        "width": 719,
+        "height": 626
+      },
+      "baseline": 9.855719027580905,
+      "dx": -6,
+      "dy": -8,
+      "diffPercent": 9.475131861344519,
+      "improvement": 0.38058716623638666
+    },
+    {
+      "name": "main right",
+      "rect": {
+        "x": 961,
+        "y": 315,
+        "width": 711,
+        "height": 626
+      },
+      "baseline": 7.972391852361118,
+      "dx": -18,
+      "dy": -11,
+      "diffPercent": 7.642792628840269,
+      "improvement": 0.3295992235208489
+    },
+    {
+      "name": "kpis/tabs",
+      "rect": {
+        "x": 242,
+        "y": 183,
+        "width": 1430,
+        "height": 132
+      },
+      "baseline": 4.762661580843399,
+      "dx": -3,
+      "dy": 10,
+      "diffPercent": 4.450625132443315,
+      "improvement": 0.31203644840008415
+    },
+    {
+      "name": "page heading",
+      "rect": {
+        "x": 242,
+        "y": 80,
+        "width": 1430,
+        "height": 103
+      },
+      "baseline": 3.5046506891167084,
+      "dx": -7,
+      "dy": 4,
+      "diffPercent": 3.310475931835155,
+      "improvement": 0.1941747572815533
+    },
+    {
+      "name": "topbar",
+      "rect": {
+        "x": 242,
+        "y": 0,
+        "width": 1430,
+        "height": 80
+      },
+      "baseline": 7.0524475524475525,
+      "dx": -2,
+      "dy": 0,
+      "diffPercent": 7.015734265734267,
+      "improvement": 0.036713286713285775
+    },
+    {
+      "name": "sidebar",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 242,
+        "height": 941
+      },
+      "baseline": 7.415181668876963,
+      "dx": 0,
+      "dy": 0,
+      "diffPercent": 7.415181668876963,
+      "improvement": 0
+    }
+  ]
+}

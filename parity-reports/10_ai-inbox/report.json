@@ -1,0 +1,20 @@
+{
+  "id": 10,
+  "screenName": "AI Inbox",
+  "route": "/inbox",
+  "url": "http://127.0.0.1:5173/inbox",
+  "expectedPng": "10_AI_Inbox.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 117505,
+  "totalPixels": 1573352,
+  "diffPercent": 7.4684,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\10_ai-inbox\\actual.png",
+    "diff": "parity-reports\\10_ai-inbox\\diff.png"
+  }
+}

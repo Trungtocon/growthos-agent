@@ -1,0 +1,20 @@
+{
+  "id": 4,
+  "screenName": "Use Case Selection",
+  "route": "/onboarding/use-case",
+  "url": "http://127.0.0.1:5173/onboarding/use-case",
+  "expectedPng": "04_Use_Case_Selection.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "mismatchedPixels": 0,
+  "totalPixels": 1573312,
+  "diffPercent": 0,
+  "thresholdPercent": 1,
+  "status": "passed",
+  "artifacts": {
+    "actual": "parity-reports\\04_use-case-selection\\actual.png",
+    "diff": "parity-reports\\04_use-case-selection\\diff.png"
+  }
+}

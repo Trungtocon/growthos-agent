@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/layout/appshell.tsx","./src/components/ui/demoprimitives.tsx","./src/components/ui/mockcards.tsx","./src/data/demoscreens.ts","./src/data/screens.ts","./src/pages/demoscreens.tsx","./src/pages/screenpage.tsx","./src/pages/sprint2screens.tsx"],"version":"6.0.3"}

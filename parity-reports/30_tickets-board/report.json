@@ -1,0 +1,20 @@
+{
+  "id": 30,
+  "screenName": "Tickets Board",
+  "route": "/tickets",
+  "url": "http://127.0.0.1:5173/tickets",
+  "expectedPng": "30_Tickets_Board.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 168291,
+  "totalPixels": 1573352,
+  "diffPercent": 10.6963,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\30_tickets-board\\actual.png",
+    "diff": "parity-reports\\30_tickets-board\\diff.png"
+  }
+}

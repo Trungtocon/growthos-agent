@@ -1,0 +1,20 @@
+{
+  "id": 20,
+  "screenName": "AI Workforce Overview",
+  "route": "/workforce",
+  "url": "http://127.0.0.1:5173/workforce",
+  "expectedPng": "20_AI_Workforce_Overview.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 152180,
+  "totalPixels": 1573352,
+  "diffPercent": 9.6723,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\20_ai-workforce-overview\\actual.png",
+    "diff": "parity-reports\\20_ai-workforce-overview\\diff.png"
+  }
+}

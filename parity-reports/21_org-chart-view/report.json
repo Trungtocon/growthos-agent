@@ -1,0 +1,20 @@
+{
+  "id": 21,
+  "screenName": "Org Chart View",
+  "route": "/org-chart",
+  "url": "http://127.0.0.1:5173/org-chart",
+  "expectedPng": "21_Org_Chart_View.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 178647,
+  "totalPixels": 1573352,
+  "diffPercent": 11.3545,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\21_org-chart-view\\actual.png",
+    "diff": "parity-reports\\21_org-chart-view\\diff.png"
+  }
+}

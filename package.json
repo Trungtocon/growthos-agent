@@ -1,0 +1,49 @@
+{
+  "name": "uikigai-ai-workforce-os-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "lint": "eslint .",
+    "test:demo": "node scripts/check-demo-routes.mjs",
+    "check:stitch": "node scripts/validate-stitch-ui.mjs",
+    "normalize:stitch": "node scripts/normalize-stitch-names.mjs",
+    "parity:check": "node scripts/visual-parity-check.mjs",
+    "parity:regions": "node scripts/analyze-parity-regions.mjs",
+    "parity:offsets": "node scripts/analyze-parity-offsets.mjs",
+    "parity:core": "node scripts/visual-parity-check.mjs --ids=8,20,21,23,30,32,34,37",
+    "codegraph:init": "codegraph init -i",
+    "codegraph:index": "codegraph index",
+    "codegraph:sync": "codegraph sync",
+    "codegraph:status": "codegraph status --json"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "clsx": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@colbymchenry/codegraph": "^0.7.12",
+    "@eslint/js": "latest",
+    "@playwright/test": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "autoprefixer": "^10.5.0",
+    "better-sqlite3": "^12.10.0",
+    "eslint": "latest",
+    "pixelmatch": "latest",
+    "playwright": "latest",
+    "pngjs": "latest",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.17",
+    "typescript-eslint": "latest"
+  }
+}

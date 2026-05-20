@@ -1,0 +1,20 @@
+{
+  "id": 9,
+  "screenName": "Today View",
+  "route": "/today",
+  "url": "http://127.0.0.1:5173/today",
+  "expectedPng": "09_Today_View.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 118952,
+  "totalPixels": 1573352,
+  "diffPercent": 7.5604,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\09_today-view\\actual.png",
+    "diff": "parity-reports\\09_today-view\\diff.png"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "id": 2,
+  "screenName": "Register / Create Account",
+  "route": "/register",
+  "expectedPng": "02_Register_Create_Account.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "regions": [
+    {
+      "name": "06 content right",
+      "rect": {
+        "x": 888,
+        "y": 298,
+        "width": 635,
+        "height": 575
+      },
+      "mismatchedPixels": 58871,
+      "totalPixels": 365125,
+      "diffPercent": 16.12351934269086,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\06-content-right\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\06-content-right\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\06-content-right\\diff.png"
+      }
+    },
+    {
+      "name": "04 title/subtitle",
+      "rect": {
+        "x": 190,
+        "y": 188,
+        "width": 1206,
+        "height": 110
+      },
+      "mismatchedPixels": 17775,
+      "totalPixels": 132660,
+      "diffPercent": 13.398914518317504,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\04-title-subtitle\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\04-title-subtitle\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\04-title-subtitle\\diff.png"
+      }
+    },
+    {
+      "name": "05 content left",
+      "rect": {
+        "x": 63,
+        "y": 298,
+        "width": 825,
+        "height": 575
+      },
+      "mismatchedPixels": 56533,
+      "totalPixels": 474375,
+      "diffPercent": 11.917364953886693,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\05-content-left\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\05-content-left\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\05-content-left\\diff.png"
+      }
+    },
+    {
+      "name": "01 shell/background",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 992
+      },
+      "mismatchedPixels": 168550,
+      "totalPixels": 1573312,
+      "diffPercent": 10.713068990765978,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\01-shell-background\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\01-shell-background\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\01-shell-background\\diff.png"
+      }
+    },
+    {
+      "name": "03 stepper",
+      "rect": {
+        "x": 127,
+        "y": 89,
+        "width": 1332,
+        "height": 119
+      },
+      "mismatchedPixels": 12589,
+      "totalPixels": 158508,
+      "diffPercent": 7.942185883362354,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\03-stepper\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\03-stepper\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\03-stepper\\diff.png"
+      }
+    },
+    {
+      "name": "02 brand/header",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 109
+      },
+      "mismatchedPixels": 10637,
+      "totalPixels": 172874,
+      "diffPercent": 6.153036315466756,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\02-brand-header\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\02-brand-header\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\02-brand-header\\diff.png"
+      }
+    },
+    {
+      "name": "07 footer/actions",
+      "rect": {
+        "x": 317,
+        "y": 873,
+        "width": 952,
+        "height": 119
+      },
+      "mismatchedPixels": 6232,
+      "totalPixels": 113288,
+      "diffPercent": 5.501023938987359,
+      "artifacts": {
+        "expected": "parity-reports\\02_register-create-account\\regions\\07-footer-actions\\expected.png",
+        "actual": "parity-reports\\02_register-create-account\\regions\\07-footer-actions\\actual.png",
+        "diff": "parity-reports\\02_register-create-account\\regions\\07-footer-actions\\diff.png"
+      }
+    }
+  ]
+}

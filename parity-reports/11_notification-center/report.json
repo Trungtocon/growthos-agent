@@ -1,0 +1,20 @@
+{
+  "id": 11,
+  "screenName": "Notification Center",
+  "route": "/notifications",
+  "url": "http://127.0.0.1:5173/notifications",
+  "expectedPng": "11_Notification_Center.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "mismatchedPixels": 110687,
+  "totalPixels": 1573352,
+  "diffPercent": 7.0351,
+  "thresholdPercent": 1,
+  "status": "failed",
+  "artifacts": {
+    "actual": "parity-reports\\11_notification-center\\actual.png",
+    "diff": "parity-reports\\11_notification-center\\diff.png"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": 3,
+  "screenName": "Create First Company",
+  "route": "/onboarding/company",
+  "url": "http://127.0.0.1:5173/onboarding/company",
+  "expectedPng": "03_Create_First_Company.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "mismatchedPixels": 5542,
+  "totalPixels": 1573312,
+  "diffPercent": 0.3523,
+  "thresholdPercent": 1,
+  "status": "passed",
+  "artifacts": {
+    "actual": "parity-reports\\03_create-first-company\\actual.png",
+    "diff": "parity-reports\\03_create-first-company\\diff.png"
+  }
+}

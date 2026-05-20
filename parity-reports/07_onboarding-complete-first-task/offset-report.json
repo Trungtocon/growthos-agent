@@ -1,0 +1,92 @@
+{
+  "id": 7,
+  "screenName": "Onboarding Complete / First Task",
+  "route": "/onboarding/complete",
+  "range": 24,
+  "regions": [
+    {
+      "name": "stepper",
+      "rect": {
+        "x": 123,
+        "y": 92,
+        "width": 1290,
+        "height": 123
+      },
+      "baseline": 6.32318648767883,
+      "dx": 4,
+      "dy": -22,
+      "diffPercent": 6.185164177223167,
+      "improvement": 0.13802231045566327
+    },
+    {
+      "name": "footer/actions",
+      "rect": {
+        "x": 307,
+        "y": 901,
+        "width": 922,
+        "height": 123
+      },
+      "baseline": 5.038534116360687,
+      "dx": -2,
+      "dy": 0,
+      "diffPercent": 4.92213815847486,
+      "improvement": 0.11639595788582646
+    },
+    {
+      "name": "content right",
+      "rect": {
+        "x": 860,
+        "y": 307,
+        "width": 615,
+        "height": 594
+      },
+      "baseline": 4.767731515698995,
+      "dx": 4,
+      "dy": 7,
+      "diffPercent": 4.665900194355479,
+      "improvement": 0.10183132134351602
+    },
+    {
+      "name": "title/subtitle",
+      "rect": {
+        "x": 184,
+        "y": 195,
+        "width": 1168,
+        "height": 112
+      },
+      "baseline": 15.981225538160471,
+      "dx": 1,
+      "dy": -1,
+      "diffPercent": 15.891786937377692,
+      "improvement": 0.08943860078277943
+    },
+    {
+      "name": "content left",
+      "rect": {
+        "x": 61,
+        "y": 307,
+        "width": 799,
+        "height": 594
+      },
+      "baseline": 9.516946688411018,
+      "dx": 1,
+      "dy": -1,
+      "diffPercent": 9.458161085194877,
+      "improvement": 0.05878560321614046
+    },
+    {
+      "name": "brand/header",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1536,
+        "height": 113
+      },
+      "baseline": 4.907010508849558,
+      "dx": 0,
+      "dy": 0,
+      "diffPercent": 4.907010508849558,
+      "improvement": 0
+    }
+  ]
+}

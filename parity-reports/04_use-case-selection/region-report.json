@@ -1,0 +1,131 @@
+{
+  "id": 4,
+  "screenName": "Use Case Selection",
+  "route": "/onboarding/use-case",
+  "expectedPng": "04_Use_Case_Selection.png",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "regions": [
+    {
+      "name": "04 title/subtitle",
+      "rect": {
+        "x": 190,
+        "y": 188,
+        "width": 1206,
+        "height": 110
+      },
+      "mismatchedPixels": 15455,
+      "totalPixels": 132660,
+      "diffPercent": 11.650082918739635,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\04-title-subtitle\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\04-title-subtitle\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\04-title-subtitle\\diff.png"
+      }
+    },
+    {
+      "name": "05 content left",
+      "rect": {
+        "x": 63,
+        "y": 298,
+        "width": 825,
+        "height": 575
+      },
+      "mismatchedPixels": 51705,
+      "totalPixels": 474375,
+      "diffPercent": 10.899604743083003,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\05-content-left\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\05-content-left\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\05-content-left\\diff.png"
+      }
+    },
+    {
+      "name": "06 content right",
+      "rect": {
+        "x": 888,
+        "y": 298,
+        "width": 635,
+        "height": 575
+      },
+      "mismatchedPixels": 26403,
+      "totalPixels": 365125,
+      "diffPercent": 7.2312221841834985,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\06-content-right\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\06-content-right\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\06-content-right\\diff.png"
+      }
+    },
+    {
+      "name": "01 shell/background",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 992
+      },
+      "mismatchedPixels": 111707,
+      "totalPixels": 1573312,
+      "diffPercent": 7.100117459219786,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\01-shell-background\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\01-shell-background\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\01-shell-background\\diff.png"
+      }
+    },
+    {
+      "name": "07 footer/actions",
+      "rect": {
+        "x": 317,
+        "y": 873,
+        "width": 952,
+        "height": 119
+      },
+      "mismatchedPixels": 6459,
+      "totalPixels": 113288,
+      "diffPercent": 5.70139820634136,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\07-footer-actions\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\07-footer-actions\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\07-footer-actions\\diff.png"
+      }
+    },
+    {
+      "name": "03 stepper",
+      "rect": {
+        "x": 127,
+        "y": 89,
+        "width": 1332,
+        "height": 119
+      },
+      "mismatchedPixels": 6618,
+      "totalPixels": 158508,
+      "diffPercent": 4.175183586948293,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\03-stepper\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\03-stepper\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\03-stepper\\diff.png"
+      }
+    },
+    {
+      "name": "02 brand/header",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1586,
+        "height": 109
+      },
+      "mismatchedPixels": 4803,
+      "totalPixels": 172874,
+      "diffPercent": 2.7783240973194347,
+      "artifacts": {
+        "expected": "parity-reports\\04_use-case-selection\\regions\\02-brand-header\\expected.png",
+        "actual": "parity-reports\\04_use-case-selection\\regions\\02-brand-header\\actual.png",
+        "diff": "parity-reports\\04_use-case-selection\\regions\\02-brand-header\\diff.png"
+      }
+    }
+  ]
+}
