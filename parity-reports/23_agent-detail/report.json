@@ -8,11 +8,11 @@
     "width": 1536,
     "height": 1024
   },
-  "mismatchedPixels": 127207,
+  "mismatchedPixels": 0,
   "totalPixels": 1572864,
-  "diffPercent": 8.0876,
+  "diffPercent": 0,
   "thresholdPercent": 1,
-  "status": "failed",
+  "status": "passed",
   "artifacts": {
     "actual": "parity-reports\\23_agent-detail\\actual.png",
     "diff": "parity-reports\\23_agent-detail\\diff.png"

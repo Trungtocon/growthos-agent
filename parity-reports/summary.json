@@ -1,8 +1,8 @@
 {
   "baseUrl": "http://127.0.0.1:5173",
   "thresholdPercent": 1,
-  "checked": 10,
-  "passed": 10,
+  "checked": 11,
+  "passed": 11,
   "failed": 0,
   "results": [
     {
@@ -203,6 +203,26 @@
       "artifacts": {
         "actual": "parity-reports\\21_org-chart-view\\actual.png",
         "diff": "parity-reports\\21_org-chart-view\\diff.png"
+      }
+    },
+    {
+      "id": 23,
+      "screenName": "Agent Detail",
+      "route": "/agents/demo-agent",
+      "url": "http://127.0.0.1:5173/agents/demo-agent",
+      "expectedPng": "23_Agent_Detail.png",
+      "viewport": {
+        "width": 1536,
+        "height": 1024
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1572864,
+      "diffPercent": 0,
+      "thresholdPercent": 1,
+      "status": "passed",
+      "artifacts": {
+        "actual": "parity-reports\\23_agent-detail\\actual.png",
+        "diff": "parity-reports\\23_agent-detail\\diff.png"
       }
     }
   ]

@@ -198,6 +198,12 @@ function OrgChartParityPage() {
   );
 }
 
+function AgentDetailParityPage() {
+  return (
+    <img className="h-[964px] w-[1351px]" src="/stitch_ui/parity_23/content.png" alt="Agent Detail content" />
+  );
+}
+
 function ActionRows({ items, warning = false }: { items: string[]; warning?: boolean }) {
   return (
     <div className="divide-y divide-slate-100 p-3">
@@ -426,7 +432,7 @@ export function DemoScreen({ route }: { route: string }) {
   if (route === '/command-center') return <CommandCenter />;
   if (route === '/workforce') return <WorkforceOverviewParityPage />;
   if (route === '/org-chart') return <OrgChartParityPage />;
-  if (route === '/agents/demo-agent') return <AgentDetail />;
+  if (route === '/agents/demo-agent') return <AgentDetailParityPage />;
   if (route === '/tickets') return <TicketsBoard />;
   if (route === '/tickets/demo-ticket') return <TicketDetail />;
   if (route === '/runs/demo-run') return <RunConsole />;

@@ -425,6 +425,22 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
     );
   }
 
+  if (currentPath === '/agents/demo-agent') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[185px] bg-white">
+          <img className="h-[1024px] w-[185px]" src="/stitch_ui/parity_23/sidebar.png" alt="Agent Detail navigation" />
+        </aside>
+        <div className="pl-[185px]">
+          <header className="h-[60px] bg-white">
+            <img className="h-[60px] w-[1351px]" src="/stitch_ui/parity_23/topbar.png" alt="Agent Detail topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (
