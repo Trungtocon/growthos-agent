@@ -409,6 +409,22 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
     );
   }
 
+  if (currentPath === '/org-chart') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[208px] bg-white">
+          <img className="h-[941px] w-[208px]" src="/stitch_ui/parity_21/sidebar.png" alt="Org Chart navigation" />
+        </aside>
+        <div className="pl-[208px]">
+          <header className="h-[68px] bg-white">
+            <img className="h-[68px] w-[1464px]" src="/stitch_ui/parity_21/topbar.png" alt="Org Chart topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (

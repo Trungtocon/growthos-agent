@@ -1,8 +1,8 @@
 {
   "baseUrl": "http://127.0.0.1:5173",
   "thresholdPercent": 1,
-  "checked": 9,
-  "passed": 9,
+  "checked": 10,
+  "passed": 10,
   "failed": 0,
   "results": [
     {
@@ -183,6 +183,26 @@
       "artifacts": {
         "actual": "parity-reports\\20_ai-workforce-overview\\actual.png",
         "diff": "parity-reports\\20_ai-workforce-overview\\diff.png"
+      }
+    },
+    {
+      "id": 21,
+      "screenName": "Org Chart View",
+      "route": "/org-chart",
+      "url": "http://127.0.0.1:5173/org-chart",
+      "expectedPng": "21_Org_Chart_View.png",
+      "viewport": {
+        "width": 1672,
+        "height": 941
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1573352,
+      "diffPercent": 0,
+      "thresholdPercent": 1,
+      "status": "passed",
+      "artifacts": {
+        "actual": "parity-reports\\21_org-chart-view\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\diff.png"
       }
     }
   ]

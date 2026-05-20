@@ -12,6 +12,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 06 | `/onboarding/hermes` | `HermesOnboardingParityPage` | 0.0148% | Frozen | `public/stitch_ui/parity_06/*` |
 | 07 | `/onboarding/complete` | `CompleteOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_07/*` |
 | 08 | `/command-center` | `CommandCenter` / `AppShell` branch | 0% | Frozen | `public/stitch_ui/parity_08/*` |
+| 20 | `/workforce` | `WorkforceOverviewParityPage` | 0% | Frozen | `public/stitch_ui/parity_20/*` |
 
 ## Rules
 
@@ -25,3 +26,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Do not modify Screen 08 unless there is a direct request to do so.
 - Future AppShell screens must regression test Screen 08 before merge.
 - If Screen 08 regression fails, stop the sprint and restore the AppShell baseline before continuing.
+- Screen 20 is the first frozen AI Workforce baseline.
+- Do not modify Screen 20 unless there is a direct request to do so.
+- Future AI Workforce screens must regression test Screen 20 before merge.
+- If Screen 20 regression fails, stop the sprint and restore the AI Workforce baseline before continuing.

@@ -1,0 +1,131 @@
+{
+  "id": 21,
+  "screenName": "Org Chart View",
+  "route": "/org-chart",
+  "expectedPng": "21_Org_Chart_View.png",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "regions": [
+    {
+      "name": "01 full page",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1672,
+        "height": 941
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1573352,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\01-full-page\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\01-full-page\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\01-full-page\\diff.png"
+      }
+    },
+    {
+      "name": "02 sidebar",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 242,
+        "height": 941
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 227722,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\02-sidebar\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\02-sidebar\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\02-sidebar\\diff.png"
+      }
+    },
+    {
+      "name": "03 topbar",
+      "rect": {
+        "x": 242,
+        "y": 0,
+        "width": 1430,
+        "height": 80
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 114400,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\03-topbar\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\03-topbar\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\03-topbar\\diff.png"
+      }
+    },
+    {
+      "name": "04 page heading",
+      "rect": {
+        "x": 242,
+        "y": 80,
+        "width": 1430,
+        "height": 103
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 147290,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\04-page-heading\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\04-page-heading\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\04-page-heading\\diff.png"
+      }
+    },
+    {
+      "name": "05 kpis/tabs",
+      "rect": {
+        "x": 242,
+        "y": 183,
+        "width": 1430,
+        "height": 132
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 188760,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\05-kpis-tabs\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\05-kpis-tabs\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\05-kpis-tabs\\diff.png"
+      }
+    },
+    {
+      "name": "06 main left",
+      "rect": {
+        "x": 242,
+        "y": 315,
+        "width": 719,
+        "height": 626
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 450094,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\06-main-left\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\06-main-left\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\06-main-left\\diff.png"
+      }
+    },
+    {
+      "name": "07 main right",
+      "rect": {
+        "x": 961,
+        "y": 315,
+        "width": 711,
+        "height": 626
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 445086,
+      "diffPercent": 0,
+      "artifacts": {
+        "expected": "parity-reports\\21_org-chart-view\\regions\\07-main-right\\expected.png",
+        "actual": "parity-reports\\21_org-chart-view\\regions\\07-main-right\\actual.png",
+        "diff": "parity-reports\\21_org-chart-view\\regions\\07-main-right\\diff.png"
+      }
+    }
+  ]
+}
