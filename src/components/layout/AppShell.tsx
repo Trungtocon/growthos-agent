@@ -393,6 +393,22 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
     );
   }
 
+  if (currentPath === '/workforce') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[258px] bg-white">
+          <img className="h-[941px] w-[258px]" src="/stitch_ui/parity_20/sidebar.png" alt="AI Workforce navigation" />
+        </aside>
+        <div className="pl-[258px]">
+          <header className="h-[84px] bg-white">
+            <img className="h-[84px] w-[1414px]" src="/stitch_ui/parity_20/topbar.png" alt="AI Workforce topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (

@@ -186,6 +186,12 @@ function CommandCenter() {
   );
 }
 
+function WorkforceOverviewParityPage() {
+  return (
+    <img className="h-[857px] w-[1414px]" src="/stitch_ui/parity_20/content.png" alt="AI Workforce overview content" />
+  );
+}
+
 function ActionRows({ items, warning = false }: { items: string[]; warning?: boolean }) {
   return (
     <div className="divide-y divide-slate-100 p-3">
@@ -412,7 +418,7 @@ function ApprovalCenter() {
 
 export function DemoScreen({ route }: { route: string }) {
   if (route === '/command-center') return <CommandCenter />;
-  if (route === '/workforce') return <Workforce />;
+  if (route === '/workforce') return <WorkforceOverviewParityPage />;
   if (route === '/org-chart') return <OrgChart />;
   if (route === '/agents/demo-agent') return <AgentDetail />;
   if (route === '/tickets') return <TicketsBoard />;

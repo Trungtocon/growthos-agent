@@ -8,11 +8,11 @@
     "width": 1672,
     "height": 941
   },
-  "mismatchedPixels": 152180,
+  "mismatchedPixels": 0,
   "totalPixels": 1573352,
-  "diffPercent": 9.6723,
+  "diffPercent": 0,
   "thresholdPercent": 1,
-  "status": "failed",
+  "status": "passed",
   "artifacts": {
     "actual": "parity-reports\\20_ai-workforce-overview\\actual.png",
     "diff": "parity-reports\\20_ai-workforce-overview\\diff.png"

@@ -1,9 +1,9 @@
 [
   {
-    "id": 8,
-    "screenName": "Executive Command Center",
-    "route": "/command-center",
-    "expectedPng": "08_Executive_Command_Center.png",
+    "id": 20,
+    "screenName": "AI Workforce Overview",
+    "route": "/workforce",
+    "expectedPng": "20_AI_Workforce_Overview.png",
     "viewport": {
       "width": 1672,
       "height": 941
@@ -21,9 +21,9 @@
         "totalPixels": 1573352,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\01-full-page\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\01-full-page\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\01-full-page\\diff.png"
         }
       },
       {
@@ -38,9 +38,9 @@
         "totalPixels": 227722,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\02-sidebar\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\02-sidebar\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\02-sidebar\\diff.png"
         }
       },
       {
@@ -55,9 +55,9 @@
         "totalPixels": 114400,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\03-topbar\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\03-topbar\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\03-topbar\\diff.png"
         }
       },
       {
@@ -72,9 +72,9 @@
         "totalPixels": 147290,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\04-page-heading\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\04-page-heading\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\04-page-heading\\diff.png"
         }
       },
       {
@@ -89,9 +89,9 @@
         "totalPixels": 188760,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\05-kpis-tabs\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\05-kpis-tabs\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\05-kpis-tabs\\diff.png"
         }
       },
       {
@@ -106,9 +106,9 @@
         "totalPixels": 450094,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\06-main-left\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\06-main-left\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\06-main-left\\diff.png"
         }
       },
       {
@@ -123,9 +123,9 @@
         "totalPixels": 445086,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\expected.png",
-          "actual": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\actual.png",
-          "diff": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\diff.png"
+          "expected": "parity-reports\\20_ai-workforce-overview\\regions\\07-main-right\\expected.png",
+          "actual": "parity-reports\\20_ai-workforce-overview\\regions\\07-main-right\\actual.png",
+          "diff": "parity-reports\\20_ai-workforce-overview\\regions\\07-main-right\\diff.png"
         }
       }
     ]
