@@ -1,8 +1,8 @@
 {
   "baseUrl": "http://127.0.0.1:5173",
   "thresholdPercent": 1,
-  "checked": 11,
-  "passed": 11,
+  "checked": 12,
+  "passed": 12,
   "failed": 0,
   "results": [
     {
@@ -223,6 +223,26 @@
       "artifacts": {
         "actual": "parity-reports\\23_agent-detail\\actual.png",
         "diff": "parity-reports\\23_agent-detail\\diff.png"
+      }
+    },
+    {
+      "id": 30,
+      "screenName": "Tickets Board",
+      "route": "/tickets",
+      "url": "http://127.0.0.1:5173/tickets",
+      "expectedPng": "30_Tickets_Board.png",
+      "viewport": {
+        "width": 1672,
+        "height": 941
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1573352,
+      "diffPercent": 0,
+      "thresholdPercent": 1,
+      "status": "passed",
+      "artifacts": {
+        "actual": "parity-reports\\30_tickets-board\\actual.png",
+        "diff": "parity-reports\\30_tickets-board\\diff.png"
       }
     }
   ]

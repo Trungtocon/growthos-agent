@@ -14,6 +14,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 08 | `/command-center` | `CommandCenter` / `AppShell` branch | 0% | Frozen | `public/stitch_ui/parity_08/*` |
 | 20 | `/workforce` | `WorkforceOverviewParityPage` | 0% | Frozen | `public/stitch_ui/parity_20/*` |
 | 21 | `/org-chart` | `OrgChartParityPage` | 0% | Frozen | `public/stitch_ui/parity_21/*` |
+| 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
 
 ## Rules
 
@@ -33,3 +34,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Do not modify Screen 21 unless there is a direct request to do so.
 - Future AI Workforce screens must regression test Screen 20 and Screen 21 before merge.
 - If Screen 20 or Screen 21 regression fails, stop the sprint and restore the AI Workforce baseline before continuing.
+- Screen 23 is the frozen Agent Detail baseline.
+- Do not modify Screen 23 unless there is a direct request to do so.
+- Future Work Execution screens must regression test Screen 08, Screen 20, Screen 21, and Screen 23 before merge.
+- If any frozen baseline fails, stop the sprint and restore it before continuing.

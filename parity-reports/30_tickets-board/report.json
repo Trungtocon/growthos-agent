@@ -8,11 +8,11 @@
     "width": 1672,
     "height": 941
   },
-  "mismatchedPixels": 168291,
+  "mismatchedPixels": 0,
   "totalPixels": 1573352,
-  "diffPercent": 10.6963,
+  "diffPercent": 0,
   "thresholdPercent": 1,
-  "status": "failed",
+  "status": "passed",
   "artifacts": {
     "actual": "parity-reports\\30_tickets-board\\actual.png",
     "diff": "parity-reports\\30_tickets-board\\diff.png"
