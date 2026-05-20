@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import { ArrowRight, ChevronRight, MoreVertical } from 'lucide-react';
+import { ArrowRight, Bot, ChevronRight, MoreVertical } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { Tone } from '../../data/demoScreens';
 
@@ -60,7 +60,7 @@ export function Panel({ title, children, action, className = '' }: { title?: Rea
   return (
     <section className={`rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${className}`}>
       {title ? (
-        <div className="flex min-h-12 items-center justify-between border-b border-slate-100 px-4 py-3">
+        <div className="flex min-h-12 items-center justify-between px-4 py-3">
           <h2 className="text-base font-bold text-slate-950">{title}</h2>
           {action}
         </div>
@@ -73,14 +73,14 @@ export function Panel({ title, children, action, className = '' }: { title?: Rea
 export function KpiTile({ label, value, delta, tone, icon: Icon, compact = false }: { label: string; value: string; delta?: string; tone: Tone; icon: LucideIcon; compact?: boolean }) {
   const toneClass = toneClasses[tone];
   return (
-    <div className={`flex items-center rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${compact ? 'h-[62px] gap-3 px-4' : 'h-[112px] gap-4 px-4'}`}>
-      <div className={`grid shrink-0 place-items-center rounded-2xl ${compact ? 'h-9 w-9' : 'h-14 w-14'} ${toneClass.soft} ${toneClass.icon}`}>
-        <Icon className={compact ? 'h-5 w-5' : 'h-7 w-7'} />
+    <div className={`flex items-center rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${compact ? 'h-[62px] gap-3 px-4' : 'h-[112px] gap-5 px-4'}`}>
+      <div className={`grid shrink-0 place-items-center rounded-2xl ${compact ? 'h-9 w-9' : 'h-[60px] w-[60px]'} ${toneClass.soft} ${toneClass.icon}`}>
+        <Icon className={compact ? 'h-5 w-5' : 'h-8 w-8'} />
       </div>
       <div className="min-w-0">
-        <div className={`truncate font-medium text-slate-500 ${compact ? 'text-[11px]' : 'text-sm'}`}>{label}</div>
+        <div className={`truncate font-medium text-slate-500 ${compact ? 'text-[11px]' : 'text-[12px]'}`}>{label}</div>
         <div className={`${compact ? 'mt-0.5 text-[20px]' : 'mt-1 text-[25px]'} font-bold leading-none tracking-tight text-slate-950`}>{value}</div>
-        {delta ? <div className={`mt-2 text-xs font-semibold ${delta.startsWith('+') ? 'text-emerald-600' : 'text-red-500'}`}>{delta} so với tháng trước</div> : null}
+        {delta ? <div className={`mt-2 text-[11px] font-semibold leading-4 ${delta.startsWith('+') ? 'text-emerald-600' : 'text-red-500'}`}>{delta} so với tháng trước</div> : null}
       </div>
     </div>
   );
@@ -93,14 +93,14 @@ export function Badge({ children, tone = 'blue' }: { children: ReactNode; tone?:
 
 export function ProgressBar({ value, tone = 'blue' }: { value: number; tone?: Tone }) {
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+    <div className="h-[6px] overflow-hidden rounded-full bg-slate-100">
       <div className={`h-full rounded-full ${toneClasses[tone].fill}`} style={{ width: `${Math.max(4, Math.min(100, value))}%` }} />
     </div>
   );
 }
 
 export function DonutScore({ value, label = 'Tốt', size = 'lg' }: { value: number; label?: string; size?: 'md' | 'lg' }) {
-  const dim = size === 'lg' ? 'h-48 w-48' : 'h-36 w-36';
+  const dim = size === 'lg' ? 'h-44 w-44' : 'h-36 w-36';
   return (
     <div className={`grid ${dim} place-items-center rounded-full`} style={{ background: `conic-gradient(#0052cc 0 ${value * 0.58}%, #00bcd4 ${value * 0.58}% ${value}%, #e5edf7 ${value}% 100%)` }}>
       <div className="grid h-[72%] w-[72%] place-items-center rounded-full bg-white text-center shadow-inner">
@@ -142,7 +142,7 @@ export function AvatarBot({ tone = 'blue', label = 'AI' }: { tone?: Tone; label?
   const toneClass = toneClasses[tone];
   return (
     <div className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-white ${toneClass.soft} ${toneClass.text} shadow-sm`}>
-      <span className="text-xs font-black">{label}</span>
+      {label === 'AI' ? <Bot className="h-6 w-6" strokeWidth={2.4} /> : <span className="text-xs font-black">{label}</span>}
     </div>
   );
 }

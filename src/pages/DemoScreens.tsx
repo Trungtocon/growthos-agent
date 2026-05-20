@@ -187,7 +187,7 @@ function CommandCenter() {
       {kpiGrid(dashboardKpis)}
       <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
         <Panel title="AI Workforce Health" className="h-[324px] overflow-hidden">
-          <div className="grid grid-cols-[210px_1fr] gap-3 px-5 py-4">
+          <div className="grid grid-cols-[202px_1fr] gap-4 px-5 py-[22px]">
             <DonutScore value={92} />
             <MetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
           </div>
