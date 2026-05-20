@@ -14,7 +14,40 @@ Convert `/command-center` from static sliced assets to real React components.
 
 | Screen | Route | Mode | Diff | Status |
 |---|---|---|---:|---|
-| 08 | `/command-center` | Real UI Components | 10.5867% | Needs tuning |
+| 08 | `/command-center` | Real UI Components | 10.4747% | Needs tuning |
+
+## Sprint 4A.2 Region Tuning
+
+| Pass | Before diff | After diff | Regions tuned | Status |
+|---|---:|---:|---|---|
+| 1 | 10.5867% | 10.6187% | Main-left health metric row geometry | Reverted direction; increased diff |
+| 2 | 10.5867% | 10.4747% | Main-left health donut SVG geometry | Kept; small improvement |
+| 3 | 10.4747% | 10.9151% | Typography webfont import | Reverted direction; increased diff |
+
+Current Screen 08 real UI diff: 10.4747%.
+
+Static asset guard remains clean:
+
+- `parity_08/sidebar.png`: not rendered.
+- `parity_08/topbar.png`: not rendered.
+- `parity_08/content.png`: not rendered.
+- `backgroundImage`: not used to fake UI.
+
+Gate status:
+
+- `<=3%`: fail.
+- `<=1%`: not run because the 3% gate is not met.
+
+Top remaining diff regions:
+
+| Region | Diff |
+|---|---:|
+| Main left | 15.9438% |
+| Main right | 10.2973% |
+| Topbar | 8.2360% |
+| KPI band | 7.8894% |
+| Sidebar | 7.5215% |
+| Page heading | 3.9073% |
 
 ## Static Asset Audit
 
@@ -31,12 +64,13 @@ Convert `/command-center` from static sliced assets to real React components.
 - `Panel`
 - `ProgressBar`
 - `DonutScore`
+- `CommandHealthDonut`
 - `AvatarBot`
 
 ## Regression
 
 - Onboarding 01-07: pass.
-- Screen 08 under 3% gate: fail, current diff 10.5867%.
+- Screen 08 under 3% gate: fail, current diff 10.4747%.
 - Screen 08 under 1% gate: not run because 3% gate is not met.
 
 ## Known Tradeoffs

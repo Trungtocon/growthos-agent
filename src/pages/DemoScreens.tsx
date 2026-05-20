@@ -157,6 +157,44 @@ function MetricRows({ rows }: { rows: [string, number][] }) {
   );
 }
 
+function CommandMetricRows({ rows }: { rows: [string, number][] }) {
+  return (
+    <div className="space-y-[16px] pt-1">
+      {rows.map(([label, value]) => (
+        <div key={label} className="grid grid-cols-[118px_1fr_50px] items-center gap-3">
+          <div className="text-[13px] font-medium text-slate-600">{label}</div>
+          <ProgressBar value={value} />
+          <div className="text-right text-[13px] font-semibold text-slate-700">{value}/100</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CommandHealthDonut() {
+  const size = 184;
+  const radius = 76;
+  const stroke = 16;
+  const circumference = 2 * Math.PI * radius;
+  const blueArc = circumference * 0.33;
+  const cyanArc = circumference * 0.47;
+
+  return (
+    <div className="relative grid h-[184px] w-[184px] place-items-center">
+      <svg className="absolute inset-0 -rotate-[132deg]" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e7eef7" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#126bff" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${blueArc} ${circumference}`} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#18c4d6" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={`${cyanArc} ${circumference}`} strokeDashoffset={-(blueArc + 20)} />
+      </svg>
+      <div className="relative text-center">
+        <div className="text-[42px] font-bold leading-none text-slate-950">92<span className="text-[24px] font-semibold text-slate-500">/100</span></div>
+        <div className="mt-2 text-[15px] font-bold text-emerald-600">Tốt</div>
+        <div className="mt-2 text-[10px] font-semibold text-slate-500">+6 điểm so với tuần trước</div>
+      </div>
+    </div>
+  );
+}
+
 function ActivityList() {
   const items = [
     ['Hermes QA Agent', 'Hoàn tất audit Module 3', '2 phút trước', 'Thành công'],
@@ -187,9 +225,9 @@ function CommandCenter() {
       {kpiGrid(dashboardKpis)}
       <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
         <Panel title="AI Workforce Health" className="h-[324px] overflow-hidden">
-          <div className="grid grid-cols-[202px_1fr] gap-4 px-5 py-[22px]">
-            <DonutScore value={92} />
-            <MetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
+          <div className="grid grid-cols-[194px_1fr] gap-5 px-5 py-[22px]">
+            <CommandHealthDonut />
+            <CommandMetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
           </div>
           <div className="mx-5 mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-xs font-medium text-brand-700">Hệ thống đang vận hành tốt. Duy trì tối ưu để đạt hiệu suất xuất sắc.</div>
         </Panel>
