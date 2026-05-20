@@ -1,8 +1,8 @@
 {
   "baseUrl": "http://127.0.0.1:5173",
   "thresholdPercent": 1,
-  "checked": 7,
-  "passed": 7,
+  "checked": 8,
+  "passed": 8,
   "failed": 0,
   "results": [
     {
@@ -143,6 +143,26 @@
       "artifacts": {
         "actual": "parity-reports\\07_onboarding-complete-first-task\\actual.png",
         "diff": "parity-reports\\07_onboarding-complete-first-task\\diff.png"
+      }
+    },
+    {
+      "id": 8,
+      "screenName": "Executive Command Center",
+      "route": "/command-center",
+      "url": "http://127.0.0.1:5173/command-center",
+      "expectedPng": "08_Executive_Command_Center.png",
+      "viewport": {
+        "width": 1672,
+        "height": 941
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1573352,
+      "diffPercent": 0,
+      "thresholdPercent": 1,
+      "status": "passed",
+      "artifacts": {
+        "actual": "parity-reports\\08_executive-command-center\\actual.png",
+        "diff": "parity-reports\\08_executive-command-center\\diff.png"
       }
     }
   ]

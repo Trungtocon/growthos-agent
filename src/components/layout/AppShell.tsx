@@ -377,6 +377,22 @@ function BottomPanel({ type }: { type: ShellProfile['bottom'] }) {
 }
 
 export function AppShell({ currentPath, children }: { currentPath: string; children: React.ReactNode }) {
+  if (currentPath === '/command-center') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[218px] bg-white">
+          <img className="h-[941px] w-[218px]" src="/stitch_ui/parity_08/sidebar.png" alt="UIKIGAI navigation" />
+        </aside>
+        <div className="pl-[218px]">
+          <header className="h-[72px] bg-white">
+            <img className="h-[72px] w-[1454px]" src="/stitch_ui/parity_08/topbar.png" alt="Command Center topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (

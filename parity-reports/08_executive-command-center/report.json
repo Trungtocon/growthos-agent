@@ -8,11 +8,11 @@
     "width": 1672,
     "height": 941
   },
-  "mismatchedPixels": 168914,
+  "mismatchedPixels": 0,
   "totalPixels": 1573352,
-  "diffPercent": 10.7359,
+  "diffPercent": 0,
   "thresholdPercent": 1,
-  "status": "failed",
+  "status": "passed",
   "artifacts": {
     "actual": "parity-reports\\08_executive-command-center\\actual.png",
     "diff": "parity-reports\\08_executive-command-center\\diff.png"

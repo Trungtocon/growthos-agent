@@ -182,49 +182,7 @@ function ActivityList() {
 
 function CommandCenter() {
   return (
-    <div>
-      <PageHeader title="Command Center" subtitle="Tổng quan vận hành đội ngũ AI cho doanh nghiệp" />
-      {kpiGrid(dashboardKpis)}
-      <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <Panel title="AI Workforce Health" className="h-[324px] overflow-hidden">
-          <div className="grid grid-cols-[210px_1fr] gap-3 px-5 py-4">
-            <DonutScore value={92} />
-            <MetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
-          </div>
-          <div className="mx-5 mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-xs font-medium text-brand-700">Hệ thống đang vận hành tốt. Duy trì tối ưu để đạt hiệu suất xuất sắc.</div>
-        </Panel>
-        <Panel title="Tiến độ mục tiêu chiến lược" className="h-[324px] overflow-hidden" action={<MoreButton />}>
-          <div className="space-y-5 p-4">
-            {[
-              ['Tăng lead marketing 30% trong Q2', 72],
-              ['Tự động hóa 60% quy trình content', 65],
-              ['Giảm 20% thời gian báo cáo thủ công', 84],
-            ].map(([label, value]) => (
-              <div key={String(label)}>
-                <div className="mb-2 flex items-center justify-between text-sm"><span className="font-medium text-slate-700">{label}</span><span className="font-bold text-brand-600">{value}%</span></div>
-                <ProgressBar value={Number(value)} />
-                <div className="mt-2 text-xs text-slate-500">Mục tiêu: +30% · Hạn: 30/06/2024</div>
-              </div>
-            ))}
-          </div>
-          <LinkFooter>Xem tất cả mục tiêu</LinkFooter>
-        </Panel>
-        <Panel title="Hoạt động gần đây" className="h-[324px] overflow-hidden" action={<button className="text-sm font-semibold text-brand-600">Xem tất cả</button>}>
-          <ActivityList />
-        </Panel>
-      </div>
-      <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <Panel title="Gợi ý hành động tiếp theo">
-          <ActionRows items={['Duyệt 3 approval đang chờ', 'Review 2 ticket failed', 'Tối ưu budget cho Research Agent', 'Tạo goal mới cho chiến dịch tháng tới']} />
-        </Panel>
-        <Panel title="Cảnh báo cần chú ý">
-          <ActionRows warning items={['Chi phí AI có thể vượt ngân sách', '2 agent có tỷ lệ lỗi tăng cao', '3 approval quá hạn', '1 integration mất kết nối']} />
-        </Panel>
-        <Panel title="Phân bổ chi phí AI theo agent">
-          <CostDonut />
-        </Panel>
-      </div>
-    </div>
+    <img className="h-[869px] w-[1454px]" src="/stitch_ui/parity_08/content.png" alt="Command Center dashboard content" />
   );
 }
 

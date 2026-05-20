@@ -1,131 +1,131 @@
 [
   {
-    "id": 7,
-    "screenName": "Onboarding Complete / First Task",
-    "route": "/onboarding/complete",
-    "expectedPng": "07_Onboarding_Complete_First_Task.png",
+    "id": 8,
+    "screenName": "Executive Command Center",
+    "route": "/command-center",
+    "expectedPng": "08_Executive_Command_Center.png",
     "viewport": {
-      "width": 1536,
-      "height": 1024
+      "width": 1672,
+      "height": 941
     },
     "regions": [
       {
-        "name": "04 title/subtitle",
-        "rect": {
-          "x": 184,
-          "y": 195,
-          "width": 1168,
-          "height": 112
-        },
-        "mismatchedPixels": 20906,
-        "totalPixels": 130816,
-        "diffPercent": 15.981225538160471,
-        "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\04-title-subtitle\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\04-title-subtitle\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\04-title-subtitle\\diff.png"
-        }
-      },
-      {
-        "name": "05 content left",
-        "rect": {
-          "x": 61,
-          "y": 307,
-          "width": 799,
-          "height": 594
-        },
-        "mismatchedPixels": 45168,
-        "totalPixels": 474606,
-        "diffPercent": 9.516946688411018,
-        "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\05-content-left\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\05-content-left\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\05-content-left\\diff.png"
-        }
-      },
-      {
-        "name": "01 shell/background",
+        "name": "01 full page",
         "rect": {
           "x": 0,
           "y": 0,
-          "width": 1536,
-          "height": 1024
+          "width": 1672,
+          "height": 941
         },
-        "mismatchedPixels": 110416,
-        "totalPixels": 1572864,
-        "diffPercent": 7.020060221354167,
+        "mismatchedPixels": 0,
+        "totalPixels": 1573352,
+        "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\01-shell-background\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\01-shell-background\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\01-shell-background\\diff.png"
+          "expected": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\01-full-page\\diff.png"
         }
       },
       {
-        "name": "03 stepper",
-        "rect": {
-          "x": 123,
-          "y": 92,
-          "width": 1290,
-          "height": 123
-        },
-        "mismatchedPixels": 10033,
-        "totalPixels": 158670,
-        "diffPercent": 6.32318648767883,
-        "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\03-stepper\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\03-stepper\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\03-stepper\\diff.png"
-        }
-      },
-      {
-        "name": "07 footer/actions",
-        "rect": {
-          "x": 307,
-          "y": 901,
-          "width": 922,
-          "height": 123
-        },
-        "mismatchedPixels": 5714,
-        "totalPixels": 113406,
-        "diffPercent": 5.038534116360687,
-        "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\07-footer-actions\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\07-footer-actions\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\07-footer-actions\\diff.png"
-        }
-      },
-      {
-        "name": "02 brand/header",
+        "name": "02 sidebar",
         "rect": {
           "x": 0,
           "y": 0,
-          "width": 1536,
-          "height": 113
+          "width": 242,
+          "height": 941
         },
-        "mismatchedPixels": 8517,
-        "totalPixels": 173568,
-        "diffPercent": 4.907010508849558,
+        "mismatchedPixels": 0,
+        "totalPixels": 227722,
+        "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\02-brand-header\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\02-brand-header\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\02-brand-header\\diff.png"
+          "expected": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\02-sidebar\\diff.png"
         }
       },
       {
-        "name": "06 content right",
+        "name": "03 topbar",
         "rect": {
-          "x": 860,
-          "y": 307,
-          "width": 615,
-          "height": 594
+          "x": 242,
+          "y": 0,
+          "width": 1430,
+          "height": 80
         },
-        "mismatchedPixels": 17417,
-        "totalPixels": 365310,
-        "diffPercent": 4.767731515698995,
+        "mismatchedPixels": 0,
+        "totalPixels": 114400,
+        "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\07_onboarding-complete-first-task\\regions\\06-content-right\\expected.png",
-          "actual": "parity-reports\\07_onboarding-complete-first-task\\regions\\06-content-right\\actual.png",
-          "diff": "parity-reports\\07_onboarding-complete-first-task\\regions\\06-content-right\\diff.png"
+          "expected": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\03-topbar\\diff.png"
+        }
+      },
+      {
+        "name": "04 page heading",
+        "rect": {
+          "x": 242,
+          "y": 80,
+          "width": 1430,
+          "height": 103
+        },
+        "mismatchedPixels": 0,
+        "totalPixels": 147290,
+        "diffPercent": 0,
+        "artifacts": {
+          "expected": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\04-page-heading\\diff.png"
+        }
+      },
+      {
+        "name": "05 kpis/tabs",
+        "rect": {
+          "x": 242,
+          "y": 183,
+          "width": 1430,
+          "height": 132
+        },
+        "mismatchedPixels": 0,
+        "totalPixels": 188760,
+        "diffPercent": 0,
+        "artifacts": {
+          "expected": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\05-kpis-tabs\\diff.png"
+        }
+      },
+      {
+        "name": "06 main left",
+        "rect": {
+          "x": 242,
+          "y": 315,
+          "width": 719,
+          "height": 626
+        },
+        "mismatchedPixels": 0,
+        "totalPixels": 450094,
+        "diffPercent": 0,
+        "artifacts": {
+          "expected": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\06-main-left\\diff.png"
+        }
+      },
+      {
+        "name": "07 main right",
+        "rect": {
+          "x": 961,
+          "y": 315,
+          "width": 711,
+          "height": 626
+        },
+        "mismatchedPixels": 0,
+        "totalPixels": 445086,
+        "diffPercent": 0,
+        "artifacts": {
+          "expected": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\expected.png",
+          "actual": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\actual.png",
+          "diff": "parity-reports\\08_executive-command-center\\regions\\07-main-right\\diff.png"
         }
       }
     ]
