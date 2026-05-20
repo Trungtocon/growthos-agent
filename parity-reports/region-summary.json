@@ -1,9 +1,9 @@
 [
   {
-    "id": 32,
-    "screenName": "Ticket Detail",
-    "route": "/tickets/demo-ticket",
-    "expectedPng": "32_Ticket_Detail.png",
+    "id": 34,
+    "screenName": "Run Console",
+    "route": "/runs/demo-run",
+    "expectedPng": "34_Run_Console.png",
     "viewport": {
       "width": 1536,
       "height": 1024
@@ -21,9 +21,9 @@
         "totalPixels": 1572864,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\01-full-page\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\01-full-page\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\01-full-page\\diff.png"
         }
       },
       {
@@ -38,9 +38,9 @@
         "totalPixels": 228352,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\02-sidebar\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\02-sidebar\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\02-sidebar\\diff.png"
         }
       },
       {
@@ -55,9 +55,9 @@
         "totalPixels": 114231,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\03-topbar\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\03-topbar\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\03-topbar\\diff.png"
         }
       },
       {
@@ -72,9 +72,9 @@
         "totalPixels": 148369,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\04-page-heading\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\04-page-heading\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\04-page-heading\\diff.png"
         }
       },
       {
@@ -89,9 +89,9 @@
         "totalPixels": 187759,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\05-kpis-tabs\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\05-kpis-tabs\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\05-kpis-tabs\\diff.png"
         }
       },
       {
@@ -106,9 +106,9 @@
         "totalPixels": 449460,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\06-main-left\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\06-main-left\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\06-main-left\\diff.png"
         }
       },
       {
@@ -123,9 +123,9 @@
         "totalPixels": 444693,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\expected.png",
-          "actual": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\actual.png",
-          "diff": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\diff.png"
+          "expected": "parity-reports\\34_run-console\\regions\\07-main-right\\expected.png",
+          "actual": "parity-reports\\34_run-console\\regions\\07-main-right\\actual.png",
+          "diff": "parity-reports\\34_run-console\\regions\\07-main-right\\diff.png"
         }
       }
     ]

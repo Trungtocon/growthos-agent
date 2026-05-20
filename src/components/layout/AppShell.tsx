@@ -473,6 +473,22 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
     );
   }
 
+  if (currentPath === '/runs/demo-run') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[190px] bg-white">
+          <img className="h-[1024px] w-[190px]" src="/stitch_ui/parity_34/sidebar.png" alt="Run Console navigation" />
+        </aside>
+        <div className="pl-[190px]">
+          <header className="h-[54px] bg-white">
+            <img className="h-[54px] w-[1346px]" src="/stitch_ui/parity_34/topbar.png" alt="Run Console topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (

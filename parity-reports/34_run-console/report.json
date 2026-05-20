@@ -8,11 +8,11 @@
     "width": 1536,
     "height": 1024
   },
-  "mismatchedPixels": 196791,
+  "mismatchedPixels": 0,
   "totalPixels": 1572864,
-  "diffPercent": 12.5116,
+  "diffPercent": 0,
   "thresholdPercent": 1,
-  "status": "failed",
+  "status": "passed",
   "artifacts": {
     "actual": "parity-reports\\34_run-console\\actual.png",
     "diff": "parity-reports\\34_run-console\\diff.png"

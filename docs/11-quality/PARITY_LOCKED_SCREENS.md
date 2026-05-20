@@ -16,6 +16,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 21 | `/org-chart` | `OrgChartParityPage` | 0% | Frozen | `public/stitch_ui/parity_21/*` |
 | 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
 | 30 | `/tickets` | `TicketsBoardParityPage` | 0% | Frozen | `public/stitch_ui/parity_30/*` |
+| 32 | `/tickets/demo-ticket` | `TicketDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_32/*` |
 
 ## Rules
 
@@ -43,3 +44,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Do not modify Screen 30 unless there is a direct request to do so.
 - Future Work Execution screens must regression test Screen 30 before merge.
 - If Screen 30 regression fails, stop the sprint and restore the Work Execution baseline before continuing.
+- Screen 32 is the frozen Ticket Detail baseline.
+- Do not modify Screen 32 unless there is a direct request to do so.
+- Future Run/Execution screens must regression test Screen 30 and Screen 32 before merge.
+- If Screen 30 or Screen 32 regression fails, stop the sprint and restore the Work Execution baseline before continuing.
