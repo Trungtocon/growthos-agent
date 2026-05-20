@@ -56,12 +56,42 @@ export function Button({ children, variant = 'primary' }: { children: ReactNode;
   return <button className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-200 ${classes}`}>{children}</button>;
 }
 
+export function IconTile({ icon: Icon, tone = 'blue', size = 'md' }: { icon: LucideIcon; tone?: Tone; size?: 'sm' | 'md' | 'lg' }) {
+  const toneClass = toneClasses[tone];
+  const sizeClass = size === 'lg' ? 'h-[60px] w-[60px] rounded-2xl' : size === 'sm' ? 'h-8 w-8 rounded-lg' : 'h-10 w-10 rounded-xl';
+  const iconClass = size === 'lg' ? 'h-8 w-8' : size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
+
+  return (
+    <div className={`grid shrink-0 place-items-center ${sizeClass} ${toneClass.soft} ${toneClass.icon}`}>
+      <Icon className={iconClass} />
+    </div>
+  );
+}
+
 export function Panel({ title, children, action, className = '' }: { title?: ReactNode; children: ReactNode; action?: ReactNode; className?: string }) {
   return (
     <section className={`rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${className}`}>
       {title ? (
         <div className="flex min-h-12 items-center justify-between px-4 py-3">
           <h2 className="text-base font-bold text-slate-950">{title}</h2>
+          {action}
+        </div>
+      ) : null}
+      {children}
+    </section>
+  );
+}
+
+export function DashboardCard({ title, icon, children, action, className = '' }: { title?: ReactNode; icon?: LucideIcon; children: ReactNode; action?: ReactNode; className?: string }) {
+  const Icon = icon;
+  return (
+    <section className={`rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${className}`}>
+      {title ? (
+        <div className="flex min-h-12 items-center justify-between px-4 py-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {Icon ? <Icon className="h-5 w-5 shrink-0 text-brand-600" /> : null}
+            <h2 className="truncate text-base font-bold text-slate-950">{title}</h2>
+          </div>
           {action}
         </div>
       ) : null}
@@ -86,15 +116,51 @@ export function KpiTile({ label, value, delta, tone, icon: Icon, compact = false
   );
 }
 
+export function MetricCard({ label, value, trend, tone, icon, compact = false }: { label: string; value: string; trend?: string; tone: Tone; icon: LucideIcon; compact?: boolean }) {
+  const trendPositive = trend?.startsWith('+');
+  return (
+    <div className={`flex items-center rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] ${compact ? 'h-[62px] gap-3 px-4' : 'h-[112px] gap-5 px-4'}`}>
+      <IconTile icon={icon} tone={tone} size={compact ? 'sm' : 'lg'} />
+      <div className="min-w-0">
+        <div className={`truncate font-medium text-slate-500 ${compact ? 'text-[11px]' : 'text-[12px]'}`}>{label}</div>
+        <div className={`${compact ? 'mt-0.5 text-[20px]' : 'mt-1 text-[25px]'} font-bold leading-none tracking-tight text-slate-950`}>{value}</div>
+        {trend ? <div className={`mt-2 text-[11px] font-semibold leading-4 ${trendPositive ? 'text-emerald-600' : 'text-red-500'}`}>{trend} so với tháng trước</div> : null}
+      </div>
+    </div>
+  );
+}
+
 export function Badge({ children, tone = 'blue' }: { children: ReactNode; tone?: Tone }) {
   const toneClass = toneClasses[tone];
   return <span className={`inline-flex items-center rounded-md border px-2 py-1 text-xs font-semibold ${toneClass.soft} ${toneClass.text} ${toneClass.border}`}>{children}</span>;
 }
 
-export function ProgressBar({ value, tone = 'blue' }: { value: number; tone?: Tone }) {
+export function ProgressBar({ value, tone = 'blue', height = 6, label }: { value: number; tone?: Tone; height?: number; label?: string }) {
   return (
-    <div className="h-[6px] overflow-hidden rounded-full bg-slate-100">
+    <div aria-label={label} className="overflow-hidden rounded-full bg-slate-100" style={{ height }}>
       <div className={`h-full rounded-full ${toneClasses[tone].fill}`} style={{ width: `${Math.max(4, Math.min(100, value))}%` }} />
+    </div>
+  );
+}
+
+export function DonutChart({ value, size = 176, strokeWidth = 16, label, sublabel, tone = 'blue' }: { value: number; size?: number; strokeWidth?: number; label?: ReactNode; sublabel?: ReactNode; tone?: Tone }) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const primary = circumference * Math.max(0, Math.min(100, value)) / 100;
+  const secondary = circumference * 0.18;
+  const color = tone === 'cyan' ? '#00bcd4' : tone === 'green' ? '#10b981' : '#126bff';
+
+  return (
+    <div className="relative grid place-items-center" style={{ width: size, height: size }}>
+      <svg className="absolute inset-0 -rotate-90" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e7eef7" strokeWidth={strokeWidth} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeDasharray={`${primary} ${circumference}`} />
+        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#18c4d6" strokeWidth={strokeWidth} strokeLinecap="round" strokeDasharray={`${secondary} ${circumference}`} strokeDashoffset={-(primary + 18)} />
+      </svg>
+      <div className="relative text-center">
+        {label}
+        {sublabel}
+      </div>
     </div>
   );
 }
@@ -124,6 +190,76 @@ export function MiniSparkline({ tone = 'blue' }: { tone?: Tone }) {
 
 export function RowAction() {
   return <ChevronRight className="h-4 w-4 text-slate-400" />;
+}
+
+export function ActivityRow({ avatar, title, subtitle, status, statusTone = 'green', time }: { avatar: ReactNode; title: ReactNode; subtitle?: ReactNode; status?: ReactNode; statusTone?: Tone; time?: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3">
+      {avatar}
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm text-slate-700">{title}</div>
+        {time ? <div className="mt-1 text-xs text-slate-500">{time}</div> : subtitle ? <div className="mt-1 truncate text-xs text-slate-500">{subtitle}</div> : null}
+      </div>
+      {status ? <Badge tone={statusTone}>{status}</Badge> : null}
+    </div>
+  );
+}
+
+export function AlertRow({ severity = 'amber', title, description, badge, chevron = true }: { severity?: Tone; title: ReactNode; description?: ReactNode; badge?: ReactNode; chevron?: boolean }) {
+  return (
+    <div className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
+      <IconTile icon={severity === 'red' ? Bot : ChevronRight} tone={severity} size="sm" />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-semibold text-slate-950">{title}</div>
+        {description ? <div className="truncate text-xs text-slate-500">{description}</div> : null}
+      </div>
+      {badge ? <Badge tone={severity}>{badge}</Badge> : null}
+      {chevron ? <RowAction /> : null}
+    </div>
+  );
+}
+
+export function RecommendationRow({ icon, tone = 'blue', title, description, badge, chevron = true }: { icon: LucideIcon; tone?: Tone; title: ReactNode; description?: ReactNode; badge?: ReactNode; chevron?: boolean }) {
+  return (
+    <div className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
+      <IconTile icon={icon} tone={tone} size="sm" />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-semibold text-slate-950">{title}</div>
+        {description ? <div className="truncate text-xs text-slate-500">{description}</div> : null}
+      </div>
+      {badge ? <Badge tone={tone}>{badge}</Badge> : null}
+      {chevron ? <RowAction /> : null}
+    </div>
+  );
+}
+
+export function CostDistributionChart({ total, rows }: { total: string; rows: Array<{ label: string; value: string; percent?: string; color: string }> }) {
+  const stops = rows.reduce<Array<{ color: string; start: number; end: number }>>((acc, row) => {
+    const current = acc.length ? acc[acc.length - 1].end : 0;
+    const next = current + Number.parseFloat(row.percent ?? '0');
+    acc.push({ color: row.color, start: current, end: Number.isFinite(next) ? next : current });
+    return acc;
+  }, []);
+  const gradient = stops.length ? `conic-gradient(${stops.map((stop) => `${stop.color} ${stop.start}% ${stop.end}%`).join(', ')})` : 'conic-gradient(#0052cc 0 100%)';
+
+  return (
+    <div className="grid grid-cols-[180px_1fr] gap-4 p-5">
+      <div className="grid h-40 w-40 place-items-center rounded-full" style={{ background: gradient }}>
+        <div className="grid h-24 w-24 place-items-center rounded-full bg-white text-center">
+          <div><div className="text-xl font-bold">{total}</div><div className="text-xs text-slate-500">Tổng chi phí</div></div>
+        </div>
+      </div>
+      <div className="space-y-3">
+        {rows.map((row) => (
+          <div key={row.label} className="grid grid-cols-[12px_1fr_auto] items-center gap-3 text-sm">
+            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: row.color }} />
+            <span className="text-slate-600">{row.label}</span>
+            <span className="font-semibold text-slate-950">{row.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function MoreButton() {

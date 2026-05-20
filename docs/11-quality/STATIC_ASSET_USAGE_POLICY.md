@@ -21,4 +21,5 @@
 
 - `/command-center` must render real React components.
 - `/command-center` must not render `parity_08` sliced layout assets.
+- Real UI routes must not render `parity_xx/sidebar.png`, `parity_xx/topbar.png`, or `parity_xx/content.png`.
 - Parity assets may remain in the repository as visual references and evidence, but they must not be mapped into active production routes.

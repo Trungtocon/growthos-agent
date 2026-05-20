@@ -47,6 +47,18 @@ type ShellProfile = {
   sidebarPaddingY?: number;
 };
 
+export const APP_SHELL_TOKENS = {
+  sidebarWidth: 218,
+  topbarHeight: 72,
+  contentPaddingX: 22,
+  contentPaddingY: 18,
+  navItemHeight: 44,
+  navItemGap: 7,
+  cardRadius: 12,
+  borderColor: '#e2e8f0',
+  shadow: '0 8px 24px rgba(15,23,42,0.04)',
+} as const;
+
 const executiveNav: NavItem[] = [
   { label: 'Command Center', href: '/command-center', icon: LayoutDashboard },
   { label: 'Today', href: '/today', icon: Calendar },
@@ -253,8 +265,8 @@ function shellProfile(currentPath: string): ShellProfile {
   }
 
   return {
-    sidebarWidth: 218,
-    headerHeight: 72,
+    sidebarWidth: APP_SHELL_TOKENS.sidebarWidth,
+    headerHeight: APP_SHELL_TOKENS.topbarHeight,
     logoSubtitle: 'Growth on Autopilot.',
     logoVariant: 'leaf',
     company: 'Demo Company',
@@ -385,12 +397,12 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
         <div className="mb-[28px] px-5">
           <Logo profile={profile} />
         </div>
-        <nav className="space-y-[7px]" aria-label="Main navigation">
+        <nav className="flex flex-col" style={{ gap: APP_SHELL_TOKENS.navItemGap }} aria-label="Main navigation">
           {profile.navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(currentPath, item.href);
             return (
-              <a key={`${item.href}-${item.label}`} href={item.href} className={`flex h-[44px] items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
+              <a key={`${item.href}-${item.label}`} href={item.href} style={{ height: APP_SHELL_TOKENS.navItemHeight }} className={`flex items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
                 <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.7 : 2.1} aria-hidden="true" />
                 <span className="flex-1">{item.label}</span>
                 {item.count ? <span className="rounded-full bg-[#e6f7ff] px-2.5 py-0.5 text-xs font-bold text-[#087dcc]">{item.count}</span> : null}

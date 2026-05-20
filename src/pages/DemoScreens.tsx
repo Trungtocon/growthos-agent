@@ -17,6 +17,7 @@ import {
   Send,
   ShieldCheck,
   Square,
+  Target,
   Ticket,
   Timer,
   Users,
@@ -26,7 +27,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { AvatarBot, Badge, Button, DonutScore, KpiTile, LinkFooter, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
+import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RecommendationRow, RowAction } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
 
 type Kpi = {
@@ -218,49 +219,127 @@ function ActivityList() {
   );
 }
 
+function CommandCenterHeader() {
+  return <PageHeader title="Command Center" subtitle="Tổng quan vận hành đội ngũ AI cho doanh nghiệp" />;
+}
+
+function CommandKpiBand() {
+  return <StatGrid>{dashboardKpis.map((kpi) => <MetricCard key={kpi.label} label={kpi.label} value={kpi.value} trend={kpi.delta} tone={kpi.tone} icon={kpi.icon} />)}</StatGrid>;
+}
+
+function WorkforceHealthCard() {
+  return (
+    <DashboardCard title="AI Workforce Health" className="h-[324px] overflow-hidden">
+      <div className="grid grid-cols-[194px_1fr] gap-5 px-5 py-[22px]">
+        <CommandHealthDonut />
+        <CommandMetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
+      </div>
+      <div className="mx-5 mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-xs font-medium text-brand-700">Hệ thống đang vận hành tốt. Duy trì tối ưu để đạt hiệu suất xuất sắc.</div>
+    </DashboardCard>
+  );
+}
+
+function StrategicGoalsCard() {
+  return (
+    <DashboardCard title="Tiến độ mục tiêu chiến lược" className="h-[324px] overflow-hidden" action={<MoreButton />}>
+      <div className="space-y-5 p-4">
+        {[
+          ['Tăng lead marketing 30% trong Q2', 72],
+          ['Tự động hóa 60% quy trình content', 65],
+          ['Giảm 20% thời gian báo cáo thủ công', 84],
+        ].map(([label, value]) => (
+          <div key={String(label)}>
+            <div className="mb-2 flex items-center justify-between text-sm"><span className="font-medium text-slate-700">{label}</span><span className="font-bold text-brand-600">{value}%</span></div>
+            <ProgressBar value={Number(value)} />
+            <div className="mt-2 text-xs text-slate-500">Mục tiêu: +30% · Hạn: 30/06/2024</div>
+          </div>
+        ))}
+      </div>
+      <LinkFooter>Xem tất cả mục tiêu</LinkFooter>
+    </DashboardCard>
+  );
+}
+
+function RecentActivityCard() {
+  const items = [
+    ['Hermes QA Agent', 'Hoàn tất audit Module 3', '2 phút trước', 'Thành công'],
+    ['Research Agent', 'Hoàn tất báo cáo đối thủ', '18 phút trước', 'Thành công'],
+    ['Content Agent', 'Tạo 10 kịch bản video', '45 phút trước', 'Đang xử lý'],
+    ['Report Agent', 'Tạo báo cáo tuần', '1 giờ trước', 'Thành công'],
+  ];
+  return (
+    <DashboardCard title="Hoạt động gần đây" className="h-[324px] overflow-hidden" action={<button className="text-sm font-semibold text-brand-600">Xem tất cả</button>}>
+      <div className="space-y-4 p-4">
+        {items.map(([agent, action, time, status], index) => (
+          <ActivityRow
+            key={agent}
+            avatar={<AvatarBot tone={index === 2 ? 'purple' : 'cyan'} label="AI" />}
+            title={<><span className="font-bold text-slate-950">{agent}</span>: {action}</>}
+            time={time}
+            status={status}
+            statusTone={status === 'Đang xử lý' ? 'blue' : 'green'}
+          />
+        ))}
+      </div>
+    </DashboardCard>
+  );
+}
+
+function NextActionsCard() {
+  const rows = [
+    { icon: CheckCircle2, tone: 'green' as Tone, title: 'Duyệt 3 approval đang chờ', description: '3 approval cần bạn xem xét và phê duyệt', badge: '3' },
+    { icon: AlertTriangle, tone: 'red' as Tone, title: 'Review 2 ticket failed', description: '2 ticket cần được kiểm tra và xử lý', badge: '2' },
+    { icon: DollarSign, tone: 'blue' as Tone, title: 'Tối ưu budget cho Research Agent', description: 'Chi phí tháng này cao hơn 15% so với dự kiến' },
+    { icon: Target, tone: 'purple' as Tone, title: 'Tạo goal mới cho chiến dịch tháng tới', description: 'Đặt mục tiêu và KPI cho chiến dịch mới' },
+  ];
+  return (
+    <DashboardCard title="Gợi ý hành động tiếp theo">
+      <div className="divide-y divide-slate-100 p-3">
+        {rows.map((row) => <RecommendationRow key={row.title} {...row} />)}
+      </div>
+    </DashboardCard>
+  );
+}
+
+function AlertsCard() {
+  return (
+    <DashboardCard title="Cảnh báo cần chú ý">
+      <ActionRows warning items={['Chi phí AI có thể vượt ngân sách', '2 agent có tỷ lệ lỗi tăng cao', '3 approval quá hạn', '1 integration mất kết nối']} />
+    </DashboardCard>
+  );
+}
+
+function CostDistributionCard() {
+  return (
+    <DashboardCard title="Phân bổ chi phí AI theo agent">
+      <CostDistributionChart
+        total="$18,450.75"
+        rows={[
+          { label: 'Research Agent', value: '$5,420', percent: '29', color: '#0052cc' },
+          { label: 'Content Agent', value: '$4,315', percent: '24', color: '#4f7dff' },
+          { label: 'QA Agent', value: '$3,210', percent: '17', color: '#67a3ff' },
+          { label: 'Report Agent', value: '$2,845', percent: '16', color: '#00bcd4' },
+          { label: 'Khác', value: '$2,658', percent: '14', color: '#d7dee9' },
+        ]}
+      />
+    </DashboardCard>
+  );
+}
+
 function CommandCenter() {
   return (
     <div>
-      <PageHeader title="Command Center" subtitle="Tổng quan vận hành đội ngũ AI cho doanh nghiệp" />
-      {kpiGrid(dashboardKpis)}
+      <CommandCenterHeader />
+      <CommandKpiBand />
       <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <Panel title="AI Workforce Health" className="h-[324px] overflow-hidden">
-          <div className="grid grid-cols-[194px_1fr] gap-5 px-5 py-[22px]">
-            <CommandHealthDonut />
-            <CommandMetricRows rows={[['Hiệu suất', 90], ['Độ tin cậy', 94], ['Chất lượng đầu ra', 93], ['Tối ưu chi phí', 88], ['Tuân thủ chính sách', 92]]} />
-          </div>
-          <div className="mx-5 mb-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-xs font-medium text-brand-700">Hệ thống đang vận hành tốt. Duy trì tối ưu để đạt hiệu suất xuất sắc.</div>
-        </Panel>
-        <Panel title="Tiến độ mục tiêu chiến lược" className="h-[324px] overflow-hidden" action={<MoreButton />}>
-          <div className="space-y-5 p-4">
-            {[
-              ['Tăng lead marketing 30% trong Q2', 72],
-              ['Tự động hóa 60% quy trình content', 65],
-              ['Giảm 20% thời gian báo cáo thủ công', 84],
-            ].map(([label, value]) => (
-              <div key={String(label)}>
-                <div className="mb-2 flex items-center justify-between text-sm"><span className="font-medium text-slate-700">{label}</span><span className="font-bold text-brand-600">{value}%</span></div>
-                <ProgressBar value={Number(value)} />
-                <div className="mt-2 text-xs text-slate-500">Mục tiêu: +30% · Hạn: 30/06/2024</div>
-              </div>
-            ))}
-          </div>
-          <LinkFooter>Xem tất cả mục tiêu</LinkFooter>
-        </Panel>
-        <Panel title="Hoạt động gần đây" className="h-[324px] overflow-hidden" action={<button className="text-sm font-semibold text-brand-600">Xem tất cả</button>}>
-          <ActivityList />
-        </Panel>
+        <WorkforceHealthCard />
+        <StrategicGoalsCard />
+        <RecentActivityCard />
       </div>
       <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <Panel title="Gợi ý hành động tiếp theo">
-          <ActionRows items={['Duyệt 3 approval đang chờ', 'Review 2 ticket failed', 'Tối ưu budget cho Research Agent', 'Tạo goal mới cho chiến dịch tháng tới']} />
-        </Panel>
-        <Panel title="Cảnh báo cần chú ý">
-          <ActionRows warning items={['Chi phí AI có thể vượt ngân sách', '2 agent có tỷ lệ lỗi tăng cao', '3 approval quá hạn', '1 integration mất kết nối']} />
-        </Panel>
-        <Panel title="Phân bổ chi phí AI theo agent">
-          <CostDonut />
-        </Panel>
+        <NextActionsCard />
+        <AlertsCard />
+        <CostDistributionCard />
       </div>
     </div>
   );
