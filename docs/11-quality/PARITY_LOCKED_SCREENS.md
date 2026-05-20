@@ -15,6 +15,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 20 | `/workforce` | `WorkforceOverviewParityPage` | 0% | Frozen | `public/stitch_ui/parity_20/*` |
 | 21 | `/org-chart` | `OrgChartParityPage` | 0% | Frozen | `public/stitch_ui/parity_21/*` |
 | 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
+| 30 | `/tickets` | `TicketsBoardParityPage` | 0% | Frozen | `public/stitch_ui/parity_30/*` |
 
 ## Rules
 
@@ -38,3 +39,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Do not modify Screen 23 unless there is a direct request to do so.
 - Future Work Execution screens must regression test Screen 08, Screen 20, Screen 21, and Screen 23 before merge.
 - If any frozen baseline fails, stop the sprint and restore it before continuing.
+- Screen 30 is the frozen Work Execution board baseline.
+- Do not modify Screen 30 unless there is a direct request to do so.
+- Future Work Execution screens must regression test Screen 30 before merge.
+- If Screen 30 regression fails, stop the sprint and restore the Work Execution baseline before continuing.

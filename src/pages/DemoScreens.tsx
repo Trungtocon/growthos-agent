@@ -210,6 +210,12 @@ function TicketsBoardParityPage() {
   );
 }
 
+function TicketDetailParityPage() {
+  return (
+    <img className="h-[974px] w-[1334px]" src="/stitch_ui/parity_32/content.png" alt="Ticket Detail content" />
+  );
+}
+
 function ActionRows({ items, warning = false }: { items: string[]; warning?: boolean }) {
   return (
     <div className="divide-y divide-slate-100 p-3">
@@ -440,7 +446,7 @@ export function DemoScreen({ route }: { route: string }) {
   if (route === '/org-chart') return <OrgChartParityPage />;
   if (route === '/agents/demo-agent') return <AgentDetailParityPage />;
   if (route === '/tickets') return <TicketsBoardParityPage />;
-  if (route === '/tickets/demo-ticket') return <TicketDetail />;
+  if (route === '/tickets/demo-ticket') return <TicketDetailParityPage />;
   if (route === '/runs/demo-run') return <RunConsole />;
   if (route === '/approvals') return <ApprovalCenter />;
   return null;

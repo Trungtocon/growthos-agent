@@ -457,6 +457,22 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
     );
   }
 
+  if (currentPath === '/tickets/demo-ticket') {
+    return (
+      <div className="min-h-screen bg-[#f8fafc]">
+        <aside className="fixed left-0 top-0 h-screen w-[202px] bg-white">
+          <img className="h-[1024px] w-[202px]" src="/stitch_ui/parity_32/sidebar.png" alt="Ticket Detail navigation" />
+        </aside>
+        <div className="pl-[202px]">
+          <header className="h-[50px] bg-white">
+            <img className="h-[50px] w-[1334px]" src="/stitch_ui/parity_32/topbar.png" alt="Ticket Detail topbar" />
+          </header>
+          <main>{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   const profile = shellProfile(currentPath);
 
   return (

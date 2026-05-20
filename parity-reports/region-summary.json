@@ -1,12 +1,12 @@
 [
   {
-    "id": 30,
-    "screenName": "Tickets Board",
-    "route": "/tickets",
-    "expectedPng": "30_Tickets_Board.png",
+    "id": 32,
+    "screenName": "Ticket Detail",
+    "route": "/tickets/demo-ticket",
+    "expectedPng": "32_Ticket_Detail.png",
     "viewport": {
-      "width": 1672,
-      "height": 941
+      "width": 1536,
+      "height": 1024
     },
     "regions": [
       {
@@ -14,16 +14,16 @@
         "rect": {
           "x": 0,
           "y": 0,
-          "width": 1672,
-          "height": 941
+          "width": 1536,
+          "height": 1024
         },
         "mismatchedPixels": 0,
-        "totalPixels": 1573352,
+        "totalPixels": 1572864,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\01-full-page\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\01-full-page\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\01-full-page\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\01-full-page\\diff.png"
         }
       },
       {
@@ -31,101 +31,101 @@
         "rect": {
           "x": 0,
           "y": 0,
-          "width": 242,
-          "height": 941
+          "width": 223,
+          "height": 1024
         },
         "mismatchedPixels": 0,
-        "totalPixels": 227722,
+        "totalPixels": 228352,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\02-sidebar\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\02-sidebar\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\02-sidebar\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\02-sidebar\\diff.png"
         }
       },
       {
         "name": "03 topbar",
         "rect": {
-          "x": 242,
+          "x": 223,
           "y": 0,
-          "width": 1430,
-          "height": 80
+          "width": 1313,
+          "height": 87
         },
         "mismatchedPixels": 0,
-        "totalPixels": 114400,
+        "totalPixels": 114231,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\03-topbar\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\03-topbar\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\03-topbar\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\03-topbar\\diff.png"
         }
       },
       {
         "name": "04 page heading",
         "rect": {
-          "x": 242,
-          "y": 80,
-          "width": 1430,
-          "height": 103
+          "x": 223,
+          "y": 87,
+          "width": 1313,
+          "height": 113
         },
         "mismatchedPixels": 0,
-        "totalPixels": 147290,
+        "totalPixels": 148369,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\04-page-heading\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\04-page-heading\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\04-page-heading\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\04-page-heading\\diff.png"
         }
       },
       {
         "name": "05 kpis/tabs",
         "rect": {
-          "x": 242,
-          "y": 183,
-          "width": 1430,
-          "height": 132
+          "x": 223,
+          "y": 200,
+          "width": 1313,
+          "height": 143
         },
         "mismatchedPixels": 0,
-        "totalPixels": 188760,
+        "totalPixels": 187759,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\05-kpis-tabs\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\05-kpis-tabs\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\05-kpis-tabs\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\05-kpis-tabs\\diff.png"
         }
       },
       {
         "name": "06 main left",
         "rect": {
-          "x": 242,
-          "y": 315,
-          "width": 719,
-          "height": 626
+          "x": 223,
+          "y": 343,
+          "width": 660,
+          "height": 681
         },
         "mismatchedPixels": 0,
-        "totalPixels": 450094,
+        "totalPixels": 449460,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\06-main-left\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\06-main-left\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\06-main-left\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\06-main-left\\diff.png"
         }
       },
       {
         "name": "07 main right",
         "rect": {
-          "x": 961,
-          "y": 315,
-          "width": 711,
-          "height": 626
+          "x": 883,
+          "y": 343,
+          "width": 653,
+          "height": 681
         },
         "mismatchedPixels": 0,
-        "totalPixels": 445086,
+        "totalPixels": 444693,
         "diffPercent": 0,
         "artifacts": {
-          "expected": "parity-reports\\30_tickets-board\\regions\\07-main-right\\expected.png",
-          "actual": "parity-reports\\30_tickets-board\\regions\\07-main-right\\actual.png",
-          "diff": "parity-reports\\30_tickets-board\\regions\\07-main-right\\diff.png"
+          "expected": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\expected.png",
+          "actual": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\actual.png",
+          "diff": "parity-reports\\32_ticket-detail\\regions\\07-main-right\\diff.png"
         }
       }
     ]

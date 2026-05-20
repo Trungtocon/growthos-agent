@@ -1,8 +1,8 @@
 {
   "baseUrl": "http://127.0.0.1:5173",
   "thresholdPercent": 1,
-  "checked": 12,
-  "passed": 12,
+  "checked": 13,
+  "passed": 13,
   "failed": 0,
   "results": [
     {
@@ -243,6 +243,26 @@
       "artifacts": {
         "actual": "parity-reports\\30_tickets-board\\actual.png",
         "diff": "parity-reports\\30_tickets-board\\diff.png"
+      }
+    },
+    {
+      "id": 32,
+      "screenName": "Ticket Detail",
+      "route": "/tickets/demo-ticket",
+      "url": "http://127.0.0.1:5173/tickets/demo-ticket",
+      "expectedPng": "32_Ticket_Detail.png",
+      "viewport": {
+        "width": 1536,
+        "height": 1024
+      },
+      "mismatchedPixels": 0,
+      "totalPixels": 1572864,
+      "diffPercent": 0,
+      "thresholdPercent": 1,
+      "status": "passed",
+      "artifacts": {
+        "actual": "parity-reports\\32_ticket-detail\\actual.png",
+        "diff": "parity-reports\\32_ticket-detail\\diff.png"
       }
     }
   ]
