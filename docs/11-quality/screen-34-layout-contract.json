@@ -1,0 +1,28 @@
+{
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "public/stitch_ui/34_Run_Console.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 190, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 190, "y": 0, "width": 1482, "height": 54, "tolerance": 8 },
+    "app-shell.main": { "x": 216, "y": 70, "width": 1430, "height": 1359.5, "tolerance": 16 },
+    "run.header": { "x": 216, "y": 70, "width": 1430, "height": 53.5, "tolerance": 16 },
+    "run.status-band": { "x": 216, "y": 135.5, "width": 1430, "height": 230, "tolerance": 20 },
+    "run.main-grid": { "x": 216, "y": 385.5, "width": 1430, "height": 1044, "tolerance": 20 },
+    "run.timeline-panel": { "x": 216, "y": 385.5, "width": 531.7, "height": 1044, "tolerance": 20 },
+    "run.logs-panel": { "x": 763.7, "y": 385.5, "width": 506.3, "height": 1044, "tolerance": 20 },
+    "run.inspector-panel": { "x": 1286, "y": 385.5, "width": 360, "height": 1044, "tolerance": 20 },
+    "run.timeline-card": { "x": 216, "y": 385.5, "width": 531.7, "height": 624, "tolerance": 20 },
+    "run.tool-calls-card": { "x": 763.7, "y": 385.5, "width": 506.3, "height": 574, "tolerance": 20 },
+    "run.logs-card": { "x": 763.7, "y": 975.5, "width": 506.3, "height": 370, "tolerance": 20 },
+    "run.cost-card": { "x": 1286, "y": 663.5, "width": 360, "height": 166, "tolerance": 20 },
+    "run.risk-card": { "x": 1286, "y": 845.5, "width": 360, "height": 166, "tolerance": 20 },
+    "run.artifacts-card": { "x": 1286, "y": 1027.5, "width": 360, "height": 216, "tolerance": 20 },
+    "run.controls-card": { "x": 1286, "y": 1259.5, "width": 360, "height": 170, "tolerance": 20 }
+  }
+}

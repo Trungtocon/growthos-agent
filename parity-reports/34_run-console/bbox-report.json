@@ -1,0 +1,402 @@
+{
+  "route": "/runs/demo-run",
+  "url": "http://127.0.0.1:5173/runs/demo-run",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-34-layout-contract.json",
+  "generatedAt": "2026-05-22T13:05:55.888Z",
+  "summary": {
+    "checked": 16,
+    "passed": 16,
+    "failed": 0,
+    "extraActualIds": []
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 190,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 190,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 190,
+        "y": 0,
+        "width": 1482,
+        "height": 54,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 190,
+        "y": 0,
+        "width": 1482,
+        "height": 54
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 216,
+        "y": 70,
+        "width": 1430,
+        "height": 1359.5,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 216,
+        "y": 70,
+        "width": 1430,
+        "height": 1359.5
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "run.header",
+      "expected": {
+        "x": 216,
+        "y": 70,
+        "width": 1430,
+        "height": 53.5,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 216,
+        "y": 70,
+        "width": 1430,
+        "height": 53.5
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "run.status-band",
+      "expected": {
+        "x": 216,
+        "y": 135.5,
+        "width": 1430,
+        "height": 230,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 216,
+        "y": 135.5,
+        "width": 1430,
+        "height": 230
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.main-grid",
+      "expected": {
+        "x": 216,
+        "y": 385.5,
+        "width": 1430,
+        "height": 1044,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 216,
+        "y": 385.5,
+        "width": 1430,
+        "height": 1044
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.timeline-panel",
+      "expected": {
+        "x": 216,
+        "y": 385.5,
+        "width": 531.7,
+        "height": 1044,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 216,
+        "y": 385.5,
+        "width": 531.7,
+        "height": 1044
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.logs-panel",
+      "expected": {
+        "x": 763.7,
+        "y": 385.5,
+        "width": 506.3,
+        "height": 1044,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 763.7,
+        "y": 385.5,
+        "width": 506.3,
+        "height": 1044
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.inspector-panel",
+      "expected": {
+        "x": 1286,
+        "y": 385.5,
+        "width": 360,
+        "height": 1044,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 1286,
+        "y": 385.5,
+        "width": 360,
+        "height": 1044
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.timeline-card",
+      "expected": {
+        "x": 216,
+        "y": 385.5,
+        "width": 531.7,
+        "height": 624,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 216,
+        "y": 385.5,
+        "width": 531.7,
+        "height": 624
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.tool-calls-card",
+      "expected": {
+        "x": 763.7,
+        "y": 385.5,
+        "width": 506.3,
+        "height": 574,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 763.7,
+        "y": 385.5,
+        "width": 506.3,
+        "height": 574
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.logs-card",
+      "expected": {
+        "x": 763.7,
+        "y": 975.5,
+        "width": 506.3,
+        "height": 370,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 763.7,
+        "y": 975.5,
+        "width": 506.3,
+        "height": 370
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.cost-card",
+      "expected": {
+        "x": 1286,
+        "y": 663.5,
+        "width": 360,
+        "height": 166,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 1286,
+        "y": 663.5,
+        "width": 360,
+        "height": 166
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.risk-card",
+      "expected": {
+        "x": 1286,
+        "y": 845.5,
+        "width": 360,
+        "height": 166,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 1286,
+        "y": 845.5,
+        "width": 360,
+        "height": 166
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.artifacts-card",
+      "expected": {
+        "x": 1286,
+        "y": 1027.5,
+        "width": 360,
+        "height": 216,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 1286,
+        "y": 1027.5,
+        "width": 360,
+        "height": 216
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "run.controls-card",
+      "expected": {
+        "x": 1286,
+        "y": 1259.5,
+        "width": 360,
+        "height": 170,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 1286,
+        "y": 1259.5,
+        "width": 360,
+        "height": 170
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    }
+  ]
+}

@@ -57,5 +57,6 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screen 32 is locked as Real UI Structural PASS using the shared structural bbox gate.
 - Do not revert Screen 32 to static slices to chase pixel diff.
 - Screen 32 pixel diff is a polish metric, not the primary real UI gate.
+- Screen 32 active real component is `TicketDetailRealPage + AppShell`; static guardrail Pass; structural gate Pass 15/15; pixel diff 7.7372%.
 - Future Run/Execution screens must regression test Screen 30 and Screen 32 before merge.
 - If Screen 30 or Screen 32 regression fails, stop the sprint and restore the Work Execution baseline before continuing.
