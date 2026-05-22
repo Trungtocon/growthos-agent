@@ -16,6 +16,7 @@
     "parity:offsets": "node scripts/analyze-parity-offsets.mjs",
     "audit:bbox:08": "node scripts/audit-screen-08-bboxes.mjs",
     "audit:bbox:20": "node scripts/audit-screen-bboxes.mjs --screen=20 --route=/workforce --contract=docs/11-quality/screen-20-layout-contract.json --out=parity-reports/20_ai-workforce-overview/bbox-report.json",
+    "audit:bbox:30": "node scripts/audit-screen-bboxes.mjs --screen=30 --route=/tickets --contract=docs/11-quality/screen-30-layout-contract.json --out=parity-reports/30_tickets-board/bbox-report.json",
     "parity:core": "node scripts/visual-parity-check.mjs --ids=8,20,21,23,30,32,34,37",
     "codegraph:init": "codegraph init -i",
     "codegraph:index": "codegraph index",

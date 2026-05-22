@@ -456,7 +456,15 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
         <main className={profile.mainClass}>
           <div
             data-parity-id="app-shell.main"
-            style={currentPath === '/command-center' ? { minHeight: 'calc(100vh - 90px)' } : currentPath === '/workforce' ? { minHeight: 'calc(100vh - 98px)' } : undefined}
+            style={
+              currentPath === '/command-center'
+                ? { minHeight: 'calc(100vh - 90px)' }
+                : currentPath === '/workforce'
+                  ? { minHeight: 'calc(100vh - 98px)' }
+                  : currentPath === '/tickets'
+                    ? { minHeight: 'calc(100vh - 92px)' }
+                    : undefined
+            }
           >
             {children}
           </div>

@@ -1,0 +1,312 @@
+{
+  "route": "/tickets",
+  "url": "http://127.0.0.1:5173/tickets",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-30-layout-contract.json",
+  "generatedAt": "2026-05-22T12:29:30.696Z",
+  "summary": {
+    "checked": 12,
+    "passed": 12,
+    "failed": 0,
+    "extraActualIds": [
+      "tickets.card.1",
+      "tickets.column.assigned",
+      "tickets.column.blocked",
+      "tickets.column.failed",
+      "tickets.column.ready"
+    ]
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 210,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 210,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 210,
+        "y": 0,
+        "width": 1462,
+        "height": 72,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 210,
+        "y": 0,
+        "width": 1462,
+        "height": 72
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 234,
+        "y": 92,
+        "width": 1414,
+        "height": 849,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 234,
+        "y": 92,
+        "width": 1414,
+        "height": 849
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.header",
+      "expected": {
+        "x": 234,
+        "y": 92,
+        "width": 1414,
+        "height": 64,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 234,
+        "y": 92,
+        "width": 1414,
+        "height": 64
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.kpi-band",
+      "expected": {
+        "x": 234,
+        "y": 172,
+        "width": 1414,
+        "height": 112,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 234,
+        "y": 172,
+        "width": 1414,
+        "height": 112
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.filters",
+      "expected": {
+        "x": 234,
+        "y": 304,
+        "width": 1414,
+        "height": 46,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 234,
+        "y": 304,
+        "width": 1414,
+        "height": 46
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.board",
+      "expected": {
+        "x": 234,
+        "y": 370,
+        "width": 1414,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 234,
+        "y": 370,
+        "width": 1414,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.column.todo",
+      "expected": {
+        "x": 234,
+        "y": 370,
+        "width": 133,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 234,
+        "y": 370,
+        "width": 133,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.column.in-progress",
+      "expected": {
+        "x": 669,
+        "y": 370,
+        "width": 133,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 669,
+        "y": 370,
+        "width": 133,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.column.review",
+      "expected": {
+        "x": 814,
+        "y": 370,
+        "width": 133,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 814,
+        "y": 370,
+        "width": 133,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.column.done",
+      "expected": {
+        "x": 959,
+        "y": 370,
+        "width": 133,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 959,
+        "y": 370,
+        "width": 133,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "tickets.insights",
+      "expected": {
+        "x": 1398,
+        "y": 370,
+        "width": 250,
+        "height": 560,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1398,
+        "y": 370,
+        "width": 250,
+        "height": 560
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    }
+  ]
+}

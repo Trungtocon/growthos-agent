@@ -512,20 +512,36 @@ function LineChart() {
   return <div className="p-5"><svg viewBox="0 0 760 150" className="h-40 w-full"><path d="M20 110 C120 70 180 80 260 62 S400 85 480 58 620 86 740 54" fill="none" stroke="#0052cc" strokeWidth="4" /><path d="M20 120 C130 92 210 125 300 98 S450 122 540 94 650 120 740 88" fill="none" stroke="#00bcd4" strokeWidth="4" /><path d="M20 136 C150 128 220 132 300 118 S460 130 540 116 650 132 740 112" fill="none" stroke="#7c3aed" strokeWidth="4" /></svg></div>;
 }
 
-function TicketsBoard() {
+function ticketColumnParityId(column: string) {
+  const ids: Record<string, string> = {
+    Backlog: 'tickets.column.todo',
+    Ready: 'tickets.column.ready',
+    Assigned: 'tickets.column.assigned',
+    Running: 'tickets.column.in-progress',
+    'Needs Review': 'tickets.column.review',
+    Done: 'tickets.column.done',
+    Blocked: 'tickets.column.blocked',
+    Failed: 'tickets.column.failed',
+  };
+  return ids[column];
+}
+
+function TicketsBoardRealPage() {
   return (
     <div>
-      <PageHeader title="Tickets Board" subtitle="Theo dõi toàn bộ công việc đang được giao, thực thi, review và hoàn thành bởi đội AI" actions={<><Button variant="secondary">Import Tickets</Button><Button variant="secondary">Export Board</Button><Button><Plus className="h-4 w-4" />Tạo ticket mới</Button></>} />
-      {kpiGrid(ticketKpis)}
-      <div className="mt-5 flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2">{['Project', 'Goal', 'Agent', 'Status', 'Priority', 'Risk', 'Due date'].map((filter) => <button key={filter} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">{filter}</button>)}</div><div className="flex rounded-lg border border-slate-200 bg-white p-1"><button className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Board</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">List</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">Calendar</button></div></div>
-      <div className="mt-5 grid grid-cols-[1fr_250px] gap-4"><div className="grid grid-cols-8 gap-3 overflow-hidden">{ticketColumns.map((column) => <KanbanColumn key={column} column={column} />)}</div><Panel title="Gợi ý từ AI"><ActionRows items={['6 ticket đang bị blocked vì chờ approval', '3 ticket failed do workspace permission', 'Hermes QA Agent đang xử lý quá nhiều ticket', 'Nên review 4 ticket trước 17:00']} /></Panel></div>
+      <div data-parity-id="tickets.header">
+        <PageHeader title="Tickets Board" subtitle="Theo dõi toàn bộ công việc đang được giao, thực thi, review và hoàn thành bởi đội AI" actions={<><Button variant="secondary">Import Tickets</Button><Button variant="secondary">Export Board</Button><Button><Plus className="h-4 w-4" />Tạo ticket mới</Button></>} />
+      </div>
+      <div data-parity-id="tickets.kpi-band">{kpiGrid(ticketKpis)}</div>
+      <div data-parity-id="tickets.filters" className="mt-5 flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2">{['Project', 'Goal', 'Agent', 'Status', 'Priority', 'Risk', 'Due date'].map((filter) => <button key={filter} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">{filter}</button>)}</div><div className="flex rounded-lg border border-slate-200 bg-white p-1"><button className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Board</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">List</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">Calendar</button></div></div>
+      <div data-parity-id="tickets.board" className="mt-5 grid grid-cols-[1fr_250px] gap-4"><div className="grid grid-cols-8 gap-3 overflow-hidden">{ticketColumns.map((column) => <KanbanColumn key={column} column={column} />)}</div><div data-parity-id="tickets.insights"><Panel title="Gợi ý từ AI"><ActionRows items={['6 ticket đang bị blocked vì chờ approval', '3 ticket failed do workspace permission', 'Hermes QA Agent đang xử lý quá nhiều ticket', 'Nên review 4 ticket trước 17:00']} /></Panel></div></div>
     </div>
   );
 }
 
 function KanbanColumn({ column }: { column: string }) {
   const items = tickets.filter((ticket) => ticket.column === column);
-  return <div className="min-h-[560px] rounded-xl border border-slate-200 bg-white p-2 shadow-[0_8px_20px_rgba(15,23,42,0.03)]"><div className="mb-3 flex items-center justify-between px-1"><div className="text-sm font-bold text-slate-950">{column} <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{items.length || 3}</span></div><MoreButton /></div><div className="space-y-3">{items.map((ticket) => <div key={ticket.title} className={`rounded-lg border p-3 text-xs ${column === 'Running' ? 'border-emerald-300 bg-emerald-50/40' : column === 'Blocked' ? 'border-red-200 bg-red-50/50' : column === 'Needs Review' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}><h3 className="text-sm font-bold leading-5 text-slate-950">{ticket.title}</h3><div className="mt-2 space-y-1 text-slate-500"><div>Project: {ticket.project}</div><div>Agent: {ticket.agent}</div></div><div className="mt-3 flex flex-wrap gap-2"><Badge tone={statusTone(ticket.priority)}>{ticket.priority}</Badge><Badge tone={statusTone(ticket.risk)}>{ticket.risk}</Badge></div><div className="mt-3 flex items-center justify-between text-slate-500"><span>Due: Hôm nay</span><span>{ticket.cost}</span></div></div>)}</div><button className="mt-4 w-full rounded-lg py-2 text-sm font-semibold text-slate-500 hover:bg-slate-50">+ Thêm ticket</button></div>;
+  return <div data-parity-id={ticketColumnParityId(column)} className="min-h-[560px] rounded-xl border border-slate-200 bg-white p-2 shadow-[0_8px_20px_rgba(15,23,42,0.03)]"><div className="mb-3 flex items-center justify-between px-1"><div className="text-sm font-bold text-slate-950">{column} <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{items.length || 3}</span></div><MoreButton /></div><div className="space-y-3">{items.map((ticket, index) => <div key={ticket.title} data-parity-id={index < 3 ? `tickets.card.${index + 1}` : undefined} className={`rounded-lg border p-3 text-xs ${column === 'Running' ? 'border-emerald-300 bg-emerald-50/40' : column === 'Blocked' ? 'border-red-200 bg-red-50/50' : column === 'Needs Review' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}><h3 className="text-sm font-bold leading-5 text-slate-950">{ticket.title}</h3><div className="mt-2 space-y-1 text-slate-500"><div>Project: {ticket.project}</div><div>Agent: {ticket.agent}</div></div><div className="mt-3 flex flex-wrap gap-2"><Badge tone={statusTone(ticket.priority)}>{ticket.priority}</Badge><Badge tone={statusTone(ticket.risk)}>{ticket.risk}</Badge></div><div className="mt-3 flex items-center justify-between text-slate-500"><span>Due: Hôm nay</span><span>{ticket.cost}</span></div></div>)}</div><button className="mt-4 w-full rounded-lg py-2 text-sm font-semibold text-slate-500 hover:bg-slate-50">+ Thêm ticket</button></div>;
 }
 
 function TicketDetail() {
@@ -597,7 +613,7 @@ export function DemoScreen({ route }: { route: string }) {
   if (route === '/workforce') return <WorkforceOverviewRealPage />;
   if (route === '/org-chart') return <OrgChart />;
   if (route === '/agents/demo-agent') return <AgentDetail />;
-  if (route === '/tickets') return <TicketsBoard />;
+  if (route === '/tickets') return <TicketsBoardRealPage />;
   if (route === '/tickets/demo-ticket') return <TicketDetail />;
   if (route === '/runs/demo-run') return <RunConsole />;
   if (route === '/approvals') return <ApprovalCenter />;

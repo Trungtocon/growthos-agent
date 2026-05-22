@@ -15,7 +15,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 20 | `/workforce` | `WorkforceOverviewRealPage` | 9.4318% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_20` layout assets rendered |
 | 21 | `/org-chart` | `OrgChartParityPage` | 0% | Frozen | `public/stitch_ui/parity_21/*` |
 | 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
-| 30 | `/tickets` | `TicketsBoardParityPage` | 0% | Frozen | `public/stitch_ui/parity_30/*` |
+| 30 | `/tickets` | `TicketsBoardRealPage` | 10.6961% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
 | 32 | `/tickets/demo-ticket` | `TicketDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_32/*` |
 
 ## Rules
@@ -47,6 +47,9 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - If any frozen baseline fails, stop the sprint and restore it before continuing.
 - Screen 30 is the frozen Work Execution board baseline.
 - Do not modify Screen 30 unless there is a direct request to do so.
+- Screen 30 is locked as Real UI Structural PASS using the shared structural bbox gate.
+- Do not revert Screen 30 to static slices to chase pixel diff.
+- Screen 30 pixel diff is a polish metric, not the primary real UI gate.
 - Future Work Execution screens must regression test Screen 30 before merge.
 - If Screen 30 regression fails, stop the sprint and restore the Work Execution baseline before continuing.
 - Screen 32 is the frozen Ticket Detail baseline.
