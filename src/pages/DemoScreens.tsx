@@ -30,7 +30,10 @@ import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RecommendationRow, RowAction } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
 import { selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
+import { approveApproval, assignTicket, escalateTicket, pauseRun, rejectApproval, resolveTicket, resumeRun, retryRun } from '../state/command-actions';
+import type { WorkflowEvent } from '../state/event-log';
 import { selectAgent, selectApproval, selectTicket, setActiveTab, setRouteFilter, setSearchQuery } from '../state/ui-actions';
+import { useWorkflowStateSnapshot } from '../state/workflow-engine';
 import {
   useAgentDetailData,
   useApprovalCenterData,
@@ -117,6 +120,67 @@ function statusTone(value: string): Tone {
   if (['Failed', 'High', 'Cao', 'Blocked'].includes(value)) return 'red';
   if (value === 'Busy') return 'purple';
   return 'blue';
+}
+
+function workflowStatusLabel(value: string) {
+  const labels: Record<string, string> = {
+    pending: 'Pending',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    changes_requested: 'Changes requested',
+    todo: 'Ready',
+    in_progress: 'Running',
+    review: 'Needs Review',
+    done: 'Done',
+    blocked: 'Blocked',
+    failed: 'Failed',
+    running: 'Running',
+    paused: 'Paused',
+    success: 'Success',
+    warning: 'Warning',
+  };
+  return labels[value] ?? value;
+}
+
+function workflowTone(value: string): Tone {
+  if (['approved', 'done', 'success'].includes(value)) return 'green';
+  if (['rejected', 'failed', 'blocked'].includes(value)) return 'red';
+  if (['pending', 'warning', 'paused', 'changes_requested'].includes(value)) return 'amber';
+  return 'blue';
+}
+
+function WorkflowEntityStatus({ entityId, status }: { entityId: string; status: string }) {
+  const workflow = useWorkflowStateSnapshot();
+  const mutation = workflow.mutations[entityId];
+  return (
+    <div data-workflow-status={entityId} className="flex flex-wrap items-center gap-2">
+      <Badge tone={workflowTone(status)}>{workflowStatusLabel(status)}</Badge>
+      {mutation?.status === 'pending' ? <Badge tone="blue">Pending mutation</Badge> : null}
+      {mutation?.status === 'failed' ? <Badge tone="red">Rolled back</Badge> : null}
+    </div>
+  );
+}
+
+function WorkflowInlineError({ entityId }: { entityId: string }) {
+  const workflow = useWorkflowStateSnapshot();
+  const error = workflow.errors[entityId];
+  return error ? <div data-workflow-error={entityId} className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{error}</div> : null;
+}
+
+function WorkflowTimeline({ events }: { events: WorkflowEvent[] }) {
+  return (
+    <div data-workflow-timeline className="space-y-2 rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs">
+      {events.length ? events.slice(0, 3).map((event) => (
+        <div key={event.id} className="flex items-start justify-between gap-3">
+          <div>
+            <div className="font-semibold text-slate-800">{event.title}</div>
+            <div className="text-slate-500">{event.entityType} {event.command}</div>
+          </div>
+          <Badge tone={workflowTone(event.status)}>{workflowStatusLabel(event.status)}</Badge>
+        </div>
+      )) : <div className="text-slate-500">No workflow events yet.</div>}
+    </div>
+  );
 }
 
 function kpiGrid(items: Kpi[], compact = false) {
@@ -249,23 +313,19 @@ function StrategicGoalsCard() {
 }
 
 function RecentActivityCard() {
-  const items = [
-    ['Hermes QA Agent', 'Hoàn tất audit Module 3', '2 phút trước', 'Thành công'],
-    ['Research Agent', 'Hoàn tất báo cáo đối thủ', '18 phút trước', 'Thành công'],
-    ['Content Agent', 'Tạo 10 kịch bản video', '45 phút trước', 'Đang xử lý'],
-    ['Report Agent', 'Tạo báo cáo tuần', '1 giờ trước', 'Thành công'],
-  ];
+  const { data } = useCommandCenterData();
+  const items = data.activities.slice(0, 4);
   return (
     <DashboardCard title="Hoạt động gần đây" className="h-[324px] overflow-hidden" action={<button className="text-sm font-semibold text-brand-600">Xem tất cả</button>}>
       <div className="space-y-4 p-4">
-        {items.map(([agent, action, time, status], index) => (
+        {items.map((activity, index) => (
           <ActivityRow
-            key={agent}
+            key={activity.id}
             avatar={<AvatarBot tone={index === 2 ? 'purple' : 'cyan'} label="AI" />}
-            title={<><span className="font-bold text-slate-950">{agent}</span>: {action}</>}
-            time={time}
-            status={status}
-            statusTone={status === 'Đang xử lý' ? 'blue' : 'green'}
+            title={<><span className="font-bold text-slate-950">{activity.title}</span>: {activity.description}</>}
+            time={new Date(activity.createdAt).toISOString().slice(11, 16)}
+            status={workflowStatusLabel(activity.status)}
+            statusTone={workflowTone(activity.status)}
           />
         ))}
       </div>
@@ -627,7 +687,8 @@ function TicketInfo() {
 }
 
 function TranscriptPanel() {
-  return <div data-parity-id="ticket.transcript-card"><Panel title="Run Transcript" action={<Button variant="secondary"><Filter className="h-4 w-4" />Filter</Button>}><div className="space-y-5 p-5"><div className="grid grid-cols-[80px_1fr] gap-4 text-sm"><span className="text-slate-500">09:14:22</span><div><b>Manager instruction</b><p className="mt-2 text-slate-600">Hãy audit Module 3 theo checklist growthos-module-uat.</p></div></div><div className="grid grid-cols-[80px_1fr] gap-4 text-sm"><span className="text-slate-500">09:14:28</span><div><b>Hermes QA Agent</b><p className="mt-2 text-slate-600">Tôi sẽ kiểm tra tài liệu kiến trúc, route, data flow và evidence.</p></div></div><ToolCallList /><div className="rounded-xl border border-slate-200 p-4 text-sm text-slate-500">Nhập phản hồi hoặc yêu cầu agent làm tiếp...</div><div className="flex justify-end gap-3"><Button variant="secondary">Yêu cầu tiếp tục</Button><Button variant="secondary">Tạo ticket follow-up</Button><Button><Send className="h-4 w-4" />Gửi</Button></div></div></Panel></div>;
+  const { data } = useTicketDetailData();
+  return <div data-parity-id="ticket.transcript-card"><Panel title="Run Transcript" action={<Button variant="secondary"><Filter className="h-4 w-4" />Filter</Button>}><div className="space-y-5 p-5"><div className="grid grid-cols-[80px_1fr] gap-4 text-sm"><span className="text-slate-500">09:14:22</span><div><b>Manager instruction</b><p className="mt-2 text-slate-600">Hãy audit Module 3 theo checklist growthos-module-uat.</p></div></div><div className="grid grid-cols-[80px_1fr] gap-4 text-sm"><span className="text-slate-500">09:14:28</span><div><b>Hermes QA Agent</b><p className="mt-2 text-slate-600">Tôi sẽ kiểm tra tài liệu kiến trúc, route, data flow và evidence.</p></div></div><ToolCallList /><WorkflowTimeline events={data.timeline} /><div className="flex justify-end gap-3"><Button variant="secondary">Yêu cầu tiếp tục</Button><Button variant="secondary">Tạo ticket follow-up</Button><Button><Send className="h-4 w-4" />Gửi</Button></div></div></Panel></div>;
 }
 
 function ToolCallList() {
@@ -635,10 +696,12 @@ function ToolCallList() {
 }
 
 function TicketSide() {
-  return <div className="space-y-4"><div data-parity-id="ticket.status-card"><Panel title="Trạng thái thực thi"><SideRows rows={[['Status', 'Running'], ['Elapsed time', '8m 24s'], ['Progress', '68%'], ['Current step', 'Generating QA report'], ['Last update', '1 phút trước']]} /><div className="px-4 pb-4"><ProgressBar value={68} /></div></Panel></div><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', '$0.029'], ['Budget status', 'Trong giới hạn']]} /></Panel><Panel title="Rủi ro"><SideRows rows={[['Risk level', 'Trung bình'], ['Policy checks', 'Passed'], ['Pending approvals', '0']]} /></Panel><div data-parity-id="ticket.actions-card"><Panel title="Phê duyệt"><div className="grid grid-cols-2 gap-3 p-4"><Button variant="success">Approve</Button><Button variant="danger">Reject</Button><Button variant="warning">Request changes</Button><Button variant="secondary">Ask agent</Button></div></Panel></div><div data-parity-id="ticket.artifacts-card"><Panel title="Kết quả đầu ra"><div className="divide-y divide-slate-100 p-4 text-sm">{['QA_Report_Module3.pdf', 'Console_Log.txt', 'Screenshot_Evidence.zip'].map((file) => <div key={file} className="flex items-center justify-between py-2"><span>{file}</span><Download className="h-4 w-4 text-slate-400" /></div>)}</div></Panel></div></div>;
+  const { data } = useTicketDetailData();
+  const progress = data.ticket.status === 'done' ? 100 : 68;
+  return <div className="space-y-4"><div data-parity-id="ticket.status-card"><Panel title="Trạng thái thực thi"><SideRows rows={[['Status', <WorkflowEntityStatus key="ticket-status" entityId={data.ticket.id} status={data.ticket.status} />], ['Elapsed time', '8m 24s'], ['Progress', `${progress}%`], ['Current step', data.run?.currentStep ?? 'Waiting'], ['Last update', '1 phút trước']]} /><div className="px-4 pb-4"><ProgressBar value={progress} /></div></Panel></div><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', `$${(data.run?.cost ?? 0.029).toFixed(3)}`], ['Budget status', 'Trong giới hạn']]} /></Panel><Panel title="Rủi ro"><SideRows rows={[['Risk level', workflowStatusLabel(data.ticket.riskLevel)], ['Policy checks', 'Passed'], ['Pending approvals', data.approval?.status === 'pending' ? '1' : '0']]} /></Panel><div data-parity-id="ticket.actions-card"><Panel title="Workflow"><div className="grid grid-cols-2 gap-3 p-4"><Button data-workflow="ticket-assign" onClick={() => void assignTicket(data.ticket.id)}>Assign Research</Button><Button data-workflow="ticket-escalate" variant="warning" onClick={() => void escalateTicket(data.ticket.id)}>Escalate</Button><Button data-workflow="ticket-resolve" variant="success" onClick={() => void resolveTicket(data.ticket.id)}>Resolve</Button><Button variant="secondary">Ask agent</Button></div></Panel></div><div data-parity-id="ticket.artifacts-card"><Panel title="Kết quả đầu ra"><div className="divide-y divide-slate-100 p-4 text-sm">{['QA_Report_Module3.pdf', 'Console_Log.txt', 'Screenshot_Evidence.zip'].map((file) => <div key={file} className="flex items-center justify-between py-2"><span>{file}</span><Download className="h-4 w-4 text-slate-400" /></div>)}</div></Panel></div></div>;
 }
 
-function SideRows({ rows }: { rows: string[][] }) {
+function SideRows({ rows }: { rows: Array<[string, React.ReactNode]> }) {
   return <div className="space-y-3 p-4 text-sm">{rows.map(([a, b]) => <div key={a} className="flex justify-between"><span>{a}</span><b>{b}</b></div>)}</div>;
 }
 
@@ -650,25 +713,27 @@ function RunConsoleRealPage() {
         <PageHeader dense title="Run Console" subtitle="Theo dõi thời gian thực quá trình AI Agent thực thi ticket, gọi tool, tạo log và sinh artifact" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>
       <div data-parity-id="run.status-band">
-        <Panel className="mb-5"><div className="grid grid-cols-[130px_1.4fr_1.2fr_1fr_1fr_1fr_1.5fr] divide-x divide-slate-100 p-4 text-sm"><InfoCell label="Run ID" value="run_2381" /><InfoCell label="Ticket" value="Audit Module 3 - Landing & Lead Capture" /><InfoCell label="Agent" value="Hermes QA Agent" /><InfoCell label="Project" value="GrowthOS V2" /><InfoCell label="Status" value="Running" /><InfoCell label="Elapsed" value="8m 24s" /><InfoCell label="Current step" value="Generating QA report" /></div></Panel>
+        <Panel className="mb-5"><div className="grid grid-cols-[130px_1.4fr_1.2fr_1fr_1fr_1fr_1.5fr] divide-x divide-slate-100 p-4 text-sm"><InfoCell label="Run ID" value="run_2381" /><InfoCell label="Ticket" value="Audit Module 3 - Landing & Lead Capture" /><InfoCell label="Agent" value="Hermes QA Agent" /><InfoCell label="Project" value="GrowthOS V2" /><InfoCell label="Status" value={<WorkflowEntityStatus entityId={data.run.id} status={data.run.status} />} /><InfoCell label="Elapsed" value="8m 24s" /><InfoCell label="Current step" value={data.run.currentStep} /></div></Panel>
         {kpiGrid([{ label: 'Progress', value: '68%', tone: 'blue', icon: Play }, { label: 'Elapsed Time', value: '8m 24s', tone: 'blue', icon: Clock3 }, { label: 'Estimated Remaining', value: '4m', tone: 'cyan', icon: Timer }, { label: 'Actual Cost', value: '$0.029', tone: 'green', icon: DollarSign }, { label: 'Tool Calls', value: '12', tone: 'blue', icon: Wrench }, { label: 'Risk Level', value: 'Medium', tone: 'amber', icon: ShieldCheck }])}
       </div>
-      <div data-parity-id="run.main-grid" className="mt-5 grid grid-cols-[1.05fr_1fr_360px] gap-4"><div data-parity-id="run.timeline-panel"><div data-parity-id="run.timeline-card"><Panel title="Live Timeline"><div className="space-y-3 p-4">{runSteps.map(([name, status, time, duration, cost], index) => <div key={String(name)} className="grid grid-cols-[24px_1fr_80px_70px_70px_20px] items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"><span className="grid h-6 w-6 place-items-center rounded-full bg-blue-50 text-xs font-bold text-brand-600">{index + 1}</span><b>{name}</b><Badge tone={statusTone(String(status))}>{status}</Badge><span>{time}</span><span>{duration}</span><span>{cost}</span></div>)}</div></Panel></div></div><div data-parity-id="run.logs-panel" className="space-y-4"><div data-parity-id="run.tool-calls-card"><Panel title="Tool Calls"><div className="p-4"><ToolCallList /></div></Panel></div><div data-parity-id="run.logs-card"><Panel title="Logs"><pre className="m-4 h-72 overflow-hidden rounded-xl bg-slate-950 p-5 font-mono text-xs leading-6 text-slate-200">0001 [09:42:13] INFO Run started by Hermes QA Agent{'\n'}0002 [09:42:18] TOOL read_file - PROJECT_BIBLE.md{'\n'}0003 [09:42:25] TOOL run_build - npm run build{'\n'}0004 [09:44:07] WARN analyze_route - missing redirect{'\n'}0005 [09:44:29] INFO Generating QA report...</pre></Panel></div></div><RunInspector /></div>
+      <div data-parity-id="run.main-grid" className="mt-5 grid grid-cols-[1.05fr_1fr_360px] gap-4"><div data-parity-id="run.timeline-panel"><div data-parity-id="run.timeline-card"><Panel title="Live Timeline"><div className="space-y-3 p-4">{data.timelineRows.map((step, index) => <div key={step.name} className="grid grid-cols-[24px_1fr_80px_70px_70px_20px] items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"><span className="grid h-6 w-6 place-items-center rounded-full bg-blue-50 text-xs font-bold text-brand-600">{index + 1}</span><b>{step.name}</b><Badge tone={statusTone(step.status)}>{step.status}</Badge><span>{step.time}</span><span>{step.duration}</span><span>{step.cost}</span></div>)}</div></Panel></div></div><div data-parity-id="run.logs-panel" className="space-y-4"><div data-parity-id="run.tool-calls-card"><Panel title="Tool Calls"><div className="p-4"><ToolCallList /></div></Panel></div><div data-parity-id="run.logs-card"><Panel title="Logs"><div className="relative"><pre className="m-4 h-72 overflow-hidden rounded-xl bg-slate-950 p-5 font-mono text-xs leading-6 text-slate-200">0001 [09:42:13] INFO Run started by Hermes QA Agent{'\n'}0002 [09:42:18] TOOL read_file - PROJECT_BIBLE.md{'\n'}0003 [09:42:25] TOOL run_build - npm run build{'\n'}0004 [09:44:07] WARN analyze_route - missing redirect{'\n'}0005 [09:44:29] INFO Generating QA report...</pre><div className="absolute bottom-8 right-8 w-[260px]"><WorkflowTimeline events={data.workflowTimeline} /></div></div></Panel></div></div><RunInspector runId={data.run.id} /></div>
     </div>
   );
 }
 
-function InfoCell({ label, value }: { label: string; value: string }) {
+function InfoCell({ label, value }: { label: string; value: React.ReactNode }) {
   return <div className="px-4 first:pl-0"><div className="text-xs font-semibold text-slate-500">{label}</div><div className="mt-2 font-bold text-slate-950">{value}</div></div>;
 }
 
-function RunInspector() {
-  return <div data-parity-id="run.inspector-panel" className="space-y-4"><Panel title="Run Inspector"><SideRows rows={[['Agent', 'Hermes QA Agent'], ['Runtime', 'hermes_local'], ['Model', 'Claude Sonnet via OpenRouter'], ['Workspace', '/workspaces/growthos'], ['Enabled tools', 'File, Terminal, Browser, Web'], ['Checkpoints', 'Enabled']]} /></Panel><div data-parity-id="run.cost-card"><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', '$0.029'], ['Budget status', 'Trong giới hạn']]} /></Panel></div><div data-parity-id="run.risk-card"><Panel title="Rủi ro"><SideRows rows={[['Risk level', 'Medium'], ['Policy checks', 'Passed'], ['Pending approvals', '0']]} /></Panel></div><div data-parity-id="run.artifacts-card"><Panel title="Artifacts (3)"><div className="divide-y divide-slate-100 p-4 text-sm">{['QA_Report_Module3.md', 'Console_Log.txt', 'Screenshot_Evidence.zip'].map((file) => <div key={file} className="flex justify-between py-3"><span>{file}</span><Download className="h-4 w-4 text-slate-400" /></div>)}</div></Panel></div><div data-parity-id="run.controls-card"><Panel title="Controls"><div className="grid grid-cols-2 gap-2 p-4"><Button variant="warning">Pause run</Button><Button variant="danger">Stop run</Button><Button variant="secondary">Retry run</Button><Button variant="secondary">Continue checkpoint</Button></div></Panel></div></div>;
+function RunInspector({ runId }: { runId: string }) {
+  return <div data-parity-id="run.inspector-panel" className="space-y-4"><Panel title="Run Inspector"><SideRows rows={[['Agent', 'Hermes QA Agent'], ['Runtime', 'hermes_local'], ['Model', 'Claude Sonnet via OpenRouter'], ['Workspace', '/workspaces/growthos'], ['Enabled tools', 'File, Terminal, Browser, Web'], ['Checkpoints', 'Enabled']]} /></Panel><div data-parity-id="run.cost-card"><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', '$0.029'], ['Budget status', 'Trong giới hạn']]} /></Panel></div><div data-parity-id="run.risk-card"><Panel title="Rủi ro"><SideRows rows={[['Risk level', 'Medium'], ['Policy checks', 'Passed'], ['Pending approvals', '0']]} /></Panel></div><div data-parity-id="run.artifacts-card"><Panel title="Artifacts (3)"><div className="divide-y divide-slate-100 p-4 text-sm">{['QA_Report_Module3.md', 'Console_Log.txt', 'Screenshot_Evidence.zip'].map((file) => <div key={file} className="flex justify-between py-3"><span>{file}</span><Download className="h-4 w-4 text-slate-400" /></div>)}</div></Panel></div><div data-parity-id="run.controls-card"><Panel title="Controls"><div className="grid grid-cols-2 gap-2 p-4"><Button data-workflow="run-pause" variant="warning" onClick={() => void pauseRun(runId)}>Pause run</Button><Button data-workflow="run-resume" variant="secondary" onClick={() => void resumeRun(runId)}>Resume run</Button><Button data-workflow="run-retry" variant="secondary" onClick={() => void retryRun(runId)}>Retry run</Button><Button variant="secondary">Continue checkpoint</Button></div></Panel></div></div>;
 }
 
 function ApprovalCenterRealPage() {
   const { data } = useApprovalCenterData();
+  const workflow = useWorkflowStateSnapshot();
   const selected = data.selectedApproval;
+  const selectedEvents = workflow.events.filter((event) => event.entityId === selected.id);
   return (
     <div data-demo-source={`approvals:${data.rawApprovals.length}`}>
       <div data-parity-id="approval.header">
@@ -678,7 +743,7 @@ function ApprovalCenterRealPage() {
       <div className="mt-5 flex flex-wrap gap-2">{['All 14', 'High Risk 5', 'Terminal 4', 'File Changes 3', 'Database 1', 'Email 2', 'Budget 1', 'MCP 1', 'Overdue 3'].map((filter, index) => <button key={filter} data-interaction={`approval-filter-${filter}`} onClick={() => { setRouteFilter('/approvals', 'risk', filter === 'High Risk 5' ? 'High' : 'All'); setSearchQuery(filter === 'Terminal 4' ? 'Hermes' : ''); }} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${index === 0 ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{filter}</button>)}</div>
       <div data-parity-id="approval.main-grid" className="mt-4 grid h-[1424px] grid-cols-[0.82fr_1.08fr] gap-4 overflow-hidden">
         <div data-parity-id="approval.queue-panel" className="h-full overflow-hidden"><div data-parity-id="approval.queue-card" className="h-full overflow-hidden"><Panel title="Danh sách chờ phê duyệt (14)" action={<><button className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold">Mới nhất</button><Button variant="secondary"><ListFilter className="h-4 w-4" /></Button></>}><div className="space-y-3 p-3">{data.approvals.map((approval, index) => <div key={approval.title} data-interaction="select-approval" onClick={() => selectApproval(approval.id)} className={`rounded-xl border p-4 ${approval.id === selected.id ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'}`}><div className="grid grid-cols-[44px_1fr_180px_82px_26px] gap-3"><div className="grid h-11 w-11 place-items-center rounded-lg bg-slate-800 text-white">{approval.id === selected.id ? '>' : index + 1}</div><div><h3 className="font-bold">{approval.title}</h3><div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600"><span>Agent · {approval.agent}</span><span>Ticket · {approval.ticket}</span><span>Project · {approval.project}</span><span>Requested · {approval.requested}</span></div></div><div className="space-y-2 text-sm"><div className="flex justify-between"><span>Risk</span><Badge tone={statusTone(approval.risk)}>{approval.risk}</Badge></div><div className="flex justify-between"><span>Impact</span><b>{approval.impact}</b></div></div><Button variant="secondary">Review</Button><MoreButton /></div></div>)}</div></Panel></div></div>
-        <div data-parity-id="approval.detail-panel" className="h-full space-y-4 overflow-hidden"><div data-parity-id="approval.detail-card"><Panel><div className="p-5"><div className="mb-5 flex items-start justify-between"><div className="flex items-center gap-4"><div className="grid h-12 w-12 place-items-center rounded-lg bg-slate-800 text-white text-2xl">&gt;</div><div><h2 className="text-xl font-bold">{selected.title}</h2><div className="mt-2 flex gap-4 text-sm"><Badge tone="red">Pending Review</Badge><span>ID: APPR-2381</span></div></div></div></div><div className="grid grid-cols-[170px_1fr] gap-4 rounded-xl border border-slate-200 p-4 text-sm">{[['Agent', selected.agent], ['Runtime', 'hermes_local'], ['Liên quan ticket', selected.ticket], ['Yêu cầu hành động', 'Run terminal command'], ['Command', 'npm test'], ['Lý do', 'Cần chạy test để xác minh module trước khi tạo QA report.'], ['Risk level', selected.risk], ['Impact area', selected.impact], ['Estimated cost', '$0.012']].flatMap(([a, b]) => [<span key={`${a}-label`} className="text-slate-500">{a}</span>, <b key={`${a}-value`} className="text-slate-800">{b}</b>])}</div><div data-parity-id="approval.policy-panel" className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 className="font-bold text-brand-700">Gợi ý từ AI</h3><p className="mt-2 text-sm leading-6 text-slate-700">Yêu cầu này có rủi ro trung bình vì chỉ chạy test trong local workspace. Có thể approve once, nhưng không nên tạo policy tự động cho mọi terminal command.</p><div className="mt-3 flex items-center gap-3"><ProgressBar value={92} /><b>92%</b></div></div><div data-parity-id="approval.actions-card" className="mt-5 grid grid-cols-5 gap-3"><Button variant="success">Approve once</Button><Button>Approve and remember policy</Button><Button variant="danger">Reject</Button><Button variant="warning">Request changes</Button><Button variant="secondary">Ask agent</Button></div></div></Panel></div><div data-parity-id="approval.audit-card"><Panel title="Lịch sử phê duyệt"><div className="p-4 text-sm">Hermes QA Agent tạo yêu cầu phê duyệt · 8 phút trước</div></Panel></div></div>
+        <div data-parity-id="approval.detail-panel" className="h-full space-y-4 overflow-hidden"><div data-parity-id="approval.detail-card"><Panel><div className="p-5"><div className="mb-5 flex items-start justify-between"><div className="flex items-center gap-4"><div className="grid h-12 w-12 place-items-center rounded-lg bg-slate-800 text-white text-2xl">&gt;</div><div><h2 className="text-xl font-bold">{selected.title}</h2><div className="mt-2 flex gap-4 text-sm"><WorkflowEntityStatus entityId={selected.id} status={selected.status} /><span>ID: APPR-2381</span></div></div></div></div><div className="grid grid-cols-[170px_1fr] gap-4 rounded-xl border border-slate-200 p-4 text-sm">{[['Agent', selected.agent], ['Runtime', 'hermes_local'], ['Liên quan ticket', selected.ticket], ['Yêu cầu hành động', 'Run terminal command'], ['Command', 'npm test'], ['Lý do', 'Cần chạy test để xác minh module trước khi tạo QA report.'], ['Risk level', selected.risk], ['Impact area', selected.impact], ['Estimated cost', '$0.012']].flatMap(([a, b]) => [<span key={`${a}-label`} className="text-slate-500">{a}</span>, <b key={`${a}-value`} className="text-slate-800">{b}</b>])}</div><div data-parity-id="approval.policy-panel" className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 className="font-bold text-brand-700">Gợi ý từ AI</h3><p className="mt-2 text-sm leading-6 text-slate-700">Yêu cầu này có rủi ro trung bình vì chỉ chạy test trong local workspace. Có thể approve once, nhưng không nên tạo policy tự động cho mọi terminal command.</p><div className="mt-3 flex items-center gap-3"><ProgressBar value={92} /><b>92%</b></div></div><div data-parity-id="approval.actions-card" className="mt-5 grid grid-cols-5 gap-3"><Button data-workflow="approval-approve" variant="success" onClick={() => void approveApproval(selected.id)}>Approve once</Button><Button onClick={() => void approveApproval(selected.id)}>Approve and remember policy</Button><Button data-workflow="approval-reject" variant="danger" onClick={() => void rejectApproval(selected.id)}>Reject</Button><Button variant="warning">Request changes</Button><Button variant="secondary">Ask agent</Button><div className="col-span-5"><WorkflowInlineError entityId={selected.id} /></div></div></div></Panel></div><div data-parity-id="approval.audit-card" className="h-[102px] overflow-hidden"><Panel title="Lịch sử phê duyệt" className="h-full overflow-hidden"><div className="space-y-3 p-4 text-sm"><div>Hermes QA Agent tạo yêu cầu phê duyệt · 8 phút trước</div><WorkflowTimeline events={selectedEvents} /></div></Panel></div></div>
       </div>
     </div>
   );

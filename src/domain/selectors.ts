@@ -3,16 +3,9 @@ import {
   DEMO_APPROVAL_ID,
   DEMO_RUN_ID,
   DEMO_TICKET_ID,
-  demoActivities,
-  demoAgents,
-  demoApprovals,
-  demoCostBreakdown,
-  demoCurrentUser,
-  demoGoals,
-  demoRuns,
-  demoTickets,
-  demoWorkspace,
 } from '../data/demo-fixtures';
+import { mergeActivityTimeline } from '../services/activity-service';
+import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 
 export interface KpiViewModel {
@@ -47,6 +40,7 @@ export interface TicketCardViewModel {
 export interface ApprovalQueueViewModel {
   id: string;
   title: string;
+  status: Approval['status'];
   agent: string;
   project: string;
   ticket: string;
@@ -140,20 +134,24 @@ function agentTone(agent: Agent): Metric['tone'] {
   return 'blue';
 }
 
+function currentData() {
+  return getWorkflowData();
+}
+
 function findAgent(id: string): Agent {
-  const agent = demoAgents.find((item) => item.id === id);
+  const agent = currentData().agents.find((item) => item.id === id);
   if (!agent) throw new Error(`Missing demo agent: ${id}`);
   return agent;
 }
 
 function findTicket(id: string): Ticket {
-  const ticket = demoTickets.find((item) => item.id === id);
+  const ticket = currentData().tickets.find((item) => item.id === id);
   if (!ticket) throw new Error(`Missing demo ticket: ${id}`);
   return ticket;
 }
 
 function findRun(id: string): Run {
-  const run = demoRuns.find((item) => item.id === id);
+  const run = currentData().runs.find((item) => item.id === id);
   if (!run) throw new Error(`Missing demo run: ${id}`);
   return run;
 }
@@ -168,7 +166,7 @@ function ticketToCard(ticket: Ticket): TicketCardViewModel {
     column: ticketColumn(ticket.status),
     priority: priorityLabel(ticket.priority),
     risk: riskLabel(ticket.riskLevel),
-    cost: currency(demoRuns.find((run) => run.ticketId === ticket.id)?.cost ?? 0.12),
+    cost: currency(currentData().runs.find((run) => run.ticketId === ticket.id)?.cost ?? 0.12),
   };
 }
 
@@ -191,6 +189,7 @@ function approvalToQueueRow(approval: Approval): ApprovalQueueViewModel {
   return {
     id: approval.id,
     title: approval.title,
+    status: approval.status,
     agent: agent.name,
     project: ticket.relatedGoalId ? 'GrowthOS V2' : 'Operations',
     ticket: ticket.title,
@@ -202,66 +201,70 @@ function approvalToQueueRow(approval: Approval): ApprovalQueueViewModel {
 }
 
 export function selectCommandCenterViewModel() {
-  const openTickets = demoTickets.filter((ticket) => ticket.status !== 'done').length;
-  const pendingApprovals = demoApprovals.filter((approval) => approval.status === 'pending').length;
-  const successRate = demoAgents.reduce((sum, agent) => sum + agent.successRate, 0) / demoAgents.length;
-  const riskWarnings = demoTickets.filter((ticket) => ticket.riskLevel === 'high' || ticket.status === 'failed' || ticket.status === 'blocked').length + demoApprovals.filter((approval) => approval.severity === 'high').length;
+  const data = currentData();
+  const openTickets = data.tickets.filter((ticket) => ticket.status !== 'done').length;
+  const pendingApprovals = data.approvals.filter((approval) => approval.status === 'pending').length;
+  const successRate = data.agents.reduce((sum, agent) => sum + agent.successRate, 0) / data.agents.length;
+  const riskWarnings = data.tickets.filter((ticket) => ticket.riskLevel === 'high' || ticket.status === 'failed' || ticket.status === 'blocked').length + data.approvals.filter((approval) => approval.severity === 'high').length;
 
   return {
-    workspace: demoWorkspace,
-    user: demoCurrentUser,
+    workspace: data.workspace,
+    user: data.currentUser,
     kpis: [
-      { label: 'AI Agents hoat dong', value: String(demoAgents.length), delta: '+12%', tone: 'cyan' },
+      { label: 'AI Agents hoat dong', value: String(data.agents.length), delta: '+12%', tone: 'cyan' },
       { label: 'Ticket dang mo', value: String(openTickets), delta: '-8%', tone: 'blue' },
       { label: 'Phe duyet cho xu ly', value: String(pendingApprovals), delta: '-12%', tone: 'purple' },
-      { label: 'Chi phi AI thang nay', value: currency(demoCostBreakdown.total), delta: '+8.5%', tone: 'blue' },
+      { label: 'Chi phi AI thang nay', value: currency(data.costBreakdown.total), delta: '+8.5%', tone: 'blue' },
       { label: 'Ty le thanh cong', value: `${successRate.toFixed(1)}%`, delta: '+4.1%', tone: 'green' },
       { label: 'Canh bao rui ro', value: String(riskWarnings), delta: '+40%', tone: 'red' },
     ] satisfies KpiViewModel[],
-    goals: demoGoals,
-    activities: demoActivities,
-    costBreakdown: demoCostBreakdown,
-    agents: demoAgents,
-    tickets: demoTickets,
-    approvals: demoApprovals,
+    goals: data.goals,
+    activities: getRecentActivities(),
+    costBreakdown: data.costBreakdown,
+    agents: data.agents,
+    tickets: data.tickets,
+    approvals: data.approvals,
   };
 }
 
 export function selectWorkforceViewModel() {
-  const active = demoAgents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length;
-  const waiting = demoAgents.filter((agent) => ['waiting', 'idle'].includes(agent.status)).length;
-  const failed = demoAgents.filter((agent) => agent.status === 'failed').length;
-  const successRate = demoAgents.reduce((sum, agent) => sum + agent.successRate, 0) / demoAgents.length;
+  const data = currentData();
+  const active = data.agents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length;
+  const waiting = data.agents.filter((agent) => ['waiting', 'idle'].includes(agent.status)).length;
+  const failed = data.agents.filter((agent) => agent.status === 'failed').length;
+  const successRate = data.agents.reduce((sum, agent) => sum + agent.successRate, 0) / data.agents.length;
 
   return {
-    agents: demoAgents,
-    agentCards: demoAgents.map(agentToCard),
-    tickets: demoTickets,
-    runs: demoRuns,
+    agents: data.agents,
+    agentCards: data.agents.map(agentToCard),
+    tickets: data.tickets,
+    runs: data.runs,
     kpis: [
-      { label: 'Tong Agent', value: String(demoAgents.length), delta: '+14%', tone: 'purple' },
+      { label: 'Tong Agent', value: String(data.agents.length), delta: '+14%', tone: 'purple' },
       { label: 'Dang hoat dong', value: String(active), delta: '+8%', tone: 'green' },
       { label: 'Dang ranh', value: String(waiting), delta: '-5%', tone: 'blue' },
       { label: 'Dang loi', value: String(failed), delta: '+2%', tone: 'red' },
-      { label: 'Chi phi thang nay', value: currency(demoAgents.reduce((sum, agent) => sum + agent.costMonthToDate, 0)), delta: '+15.2%', tone: 'purple' },
+      { label: 'Chi phi thang nay', value: currency(data.agents.reduce((sum, agent) => sum + agent.costMonthToDate, 0)), delta: '+15.2%', tone: 'purple' },
       { label: 'Ty le thanh cong', value: `${successRate.toFixed(1)}%`, delta: '+3.4%', tone: 'cyan' },
     ] satisfies KpiViewModel[],
   };
 }
 
 export function selectOrgChartViewModel() {
+  const data = currentData();
   return {
-    agents: demoAgents,
-    agentCards: demoAgents.map(agentToCard),
-    rootAgent: demoAgents[0],
-    detailAgent: demoAgents[0],
+    agents: data.agents,
+    agentCards: data.agents.map(agentToCard),
+    rootAgent: data.agents[0],
+    detailAgent: data.agents[0],
   };
 }
 
 export function selectAgentDetailViewModel(agentId = DEMO_AGENT_ID) {
+  const data = currentData();
   const agent = findAgent(agentId);
-  const tickets = demoTickets.filter((ticket) => ticket.ownerAgentId === agent.id);
-  const runs = demoRuns.filter((run) => run.agentId === agent.id);
+  const tickets = data.tickets.filter((ticket) => ticket.ownerAgentId === agent.id);
+  const runs = data.runs.filter((run) => run.agentId === agent.id);
   return {
     agent,
     tickets,
@@ -278,18 +281,19 @@ export function selectAgentDetailViewModel(agentId = DEMO_AGENT_ID) {
 }
 
 export function selectTicketsBoardViewModel() {
-  const cards = demoTickets.map(ticketToCard);
+  const data = currentData();
+  const cards = data.tickets.map(ticketToCard);
   const columns = ['Backlog', 'Ready', 'Assigned', 'Running', 'Needs Review', 'Done', 'Blocked', 'Failed'];
   return {
     tickets: cards,
     columns,
-    rawTickets: demoTickets,
+    rawTickets: data.tickets,
     kpis: [
-      { label: 'Tong ticket', value: String(demoTickets.length), tone: 'blue' },
-      { label: 'Dang chay', value: String(demoTickets.filter((ticket) => ticket.status === 'in_progress').length), tone: 'green' },
-      { label: 'Can review', value: String(demoTickets.filter((ticket) => ticket.status === 'review').length), tone: 'amber' },
-      { label: 'Bi chan', value: String(demoTickets.filter((ticket) => ticket.status === 'blocked').length), tone: 'red' },
-      { label: 'Failed', value: String(demoTickets.filter((ticket) => ticket.status === 'failed').length), tone: 'purple' },
+      { label: 'Tong ticket', value: String(data.tickets.length), tone: 'blue' },
+      { label: 'Dang chay', value: String(data.tickets.filter((ticket) => ticket.status === 'in_progress').length), tone: 'green' },
+      { label: 'Can review', value: String(data.tickets.filter((ticket) => ticket.status === 'review').length), tone: 'amber' },
+      { label: 'Bi chan', value: String(data.tickets.filter((ticket) => ticket.status === 'blocked').length), tone: 'red' },
+      { label: 'Failed', value: String(data.tickets.filter((ticket) => ticket.status === 'failed').length), tone: 'purple' },
       { label: 'Thoi gian TB', value: '2h 18m', tone: 'cyan' },
     ] satisfies KpiViewModel[],
   };
@@ -299,14 +303,16 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const ticket = findTicket(ticketId);
   const agent = findAgent(ticket.ownerAgentId);
   const run = ticket.runId ? findRun(ticket.runId) : undefined;
-  const approval = ticket.approvalId ? demoApprovals.find((item) => item.id === ticket.approvalId) : undefined;
-  return { ticket, agent, run, approval, criteria: ticket.acceptanceCriteria };
+  const approval = ticket.approvalId ? currentData().approvals.find((item) => item.id === ticket.approvalId) : undefined;
+  const events = getWorkflowState().events.filter((event) => event.entityId === ticket.id || event.entityId === ticket.runId || event.entityId === ticket.approvalId);
+  return { ticket, agent, run, approval, criteria: ticket.acceptanceCriteria, timeline: events };
 }
 
 export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const run = findRun(runId);
   const ticket = findTicket(run.ticketId);
   const agent = findAgent(run.agentId);
+  const events = getWorkflowState().events.filter((event) => event.entityId === run.id || event.entityId === ticket.id);
   return {
     run,
     ticket,
@@ -326,16 +332,18 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
       duration: tool.durationMs ? formatDuration(Math.round(tool.durationMs / 1000)) : '-',
       cost: tool.cost === 0 ? '-' : `$${tool.cost.toFixed(3)}`,
     })),
+    workflowTimeline: events,
   };
 }
 
 export function selectApprovalCenterViewModel() {
-  const queueRows = demoApprovals.map(approvalToQueueRow);
-  const highRisk = demoApprovals.filter((approval) => approval.severity === 'high').length;
-  const pending = demoApprovals.filter((approval) => approval.status === 'pending').length;
+  const data = currentData();
+  const queueRows = data.approvals.map(approvalToQueueRow);
+  const highRisk = data.approvals.filter((approval) => approval.severity === 'high').length;
+  const pending = data.approvals.filter((approval) => approval.status === 'pending').length;
   return {
     approvals: queueRows,
-    rawApprovals: demoApprovals,
+    rawApprovals: data.approvals,
     selectedApproval: queueRows[0],
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
@@ -349,13 +357,13 @@ export function selectApprovalCenterViewModel() {
 }
 
 export function getRecentActivities(): Activity[] {
-  return demoActivities;
+  return mergeActivityTimeline(currentData().activities, getWorkflowState().events);
 }
 
 export function getCostBreakdown(): CostBreakdown {
-  return demoCostBreakdown;
+  return currentData().costBreakdown;
 }
 
 export function getGoals(): Goal[] {
-  return demoGoals;
+  return currentData().goals;
 }

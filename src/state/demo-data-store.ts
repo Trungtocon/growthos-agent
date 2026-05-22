@@ -10,6 +10,7 @@ import {
   selectWorkforceUiViewModel,
 } from './ui-selectors';
 import { useUiStateSnapshot } from './ui-state';
+import { useWorkflowStateSnapshot } from './workflow-engine';
 
 export interface DemoDataState<T> {
   data: T;
@@ -23,40 +24,48 @@ function ready<T>(data: T): DemoDataState<T> {
 
 export function useCommandCenterData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectCommandCenterUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectCommandCenterUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useWorkforceData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectWorkforceUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectWorkforceUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useOrgChartData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectOrgChartUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectOrgChartUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useAgentDetailData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectAgentDetailUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectAgentDetailUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useTicketsBoardData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectTicketsBoardUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectTicketsBoardUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useTicketDetailData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectTicketDetailUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectTicketDetailUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useRunConsoleData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectRunConsoleUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectRunConsoleUiViewModel(uiState), [uiState, workflowState]));
 }
 
 export function useApprovalCenterData() {
   const uiState = useUiStateSnapshot();
-  return ready(useMemo(() => selectApprovalCenterUiViewModel(uiState), [uiState]));
+  const workflowState = useWorkflowStateSnapshot();
+  return ready(useMemo(() => selectApprovalCenterUiViewModel(uiState), [uiState, workflowState]));
 }

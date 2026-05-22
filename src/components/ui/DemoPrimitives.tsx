@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import { ArrowRight, Bot, ChevronRight, MoreVertical } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import type { Tone } from '../../data/demoScreens';
 
 const toneClasses: Record<Tone, { icon: string; soft: string; text: string; border: string; fill: string }> = {
@@ -47,7 +47,16 @@ export function PageHeader({
   );
 }
 
-export function Button({ children, variant = 'primary' }: { children: ReactNode; variant?: 'primary' | 'secondary' | 'danger' | 'warning' | 'success' }) {
+export function Button({
+  children,
+  variant = 'primary',
+  className = '',
+  type = 'button',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: ReactNode;
+  variant?: 'primary' | 'secondary' | 'danger' | 'warning' | 'success';
+}) {
   const classes = {
     primary: 'bg-[#176bff] text-white border-[#176bff] shadow-[0_8px_20px_rgba(23,107,255,0.20)] hover:bg-brand-700',
     secondary: 'bg-white text-slate-700 border-slate-200 hover:border-brand-200 hover:text-brand-700',
@@ -55,7 +64,7 @@ export function Button({ children, variant = 'primary' }: { children: ReactNode;
     warning: 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50',
     success: 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50',
   }[variant];
-  return <button className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-200 ${classes}`}>{children}</button>;
+  return <button type={type} className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-200 disabled:cursor-wait disabled:opacity-60 ${classes} ${className}`} {...props}>{children}</button>;
 }
 
 export function IconTile({ icon: Icon, tone = 'blue', size = 'md' }: { icon: LucideIcon; tone?: Tone; size?: 'sm' | 'md' | 'lg' }) {
