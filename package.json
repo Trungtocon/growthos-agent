@@ -20,6 +20,7 @@
     "audit:bbox:32": "node scripts/audit-screen-bboxes.mjs --screen=32 --route=/tickets/demo-ticket --contract=docs/11-quality/screen-32-layout-contract.json --out=parity-reports/32_ticket-detail/bbox-report.json",
     "audit:bbox:34": "node scripts/audit-screen-bboxes.mjs --screen=34 --route=/runs/demo-run --contract=docs/11-quality/screen-34-layout-contract.json --out=parity-reports/34_run-console/bbox-report.json",
     "audit:bbox:37": "node scripts/audit-screen-bboxes.mjs --screen=37 --route=/approvals --contract=docs/11-quality/screen-37-layout-contract.json --out=parity-reports/37_approval-center/bbox-report.json",
+    "smoke:real-ui-flow": "node scripts/smoke-real-ui-demo-flow.mjs",
     "parity:core": "node scripts/visual-parity-check.mjs --ids=8,20,21,23,30,32,34,37",
     "codegraph:init": "codegraph init -i",
     "codegraph:index": "codegraph index",

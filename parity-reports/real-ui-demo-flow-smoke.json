@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-05-22T13:53:12.129Z",
+  "baseUrl": "http://127.0.0.1:5173",
+  "summary": {
+    "checked": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "rows": [
+    {
+      "screen": 8,
+      "route": "/command-center",
+      "url": "http://127.0.0.1:5173/command-center",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"command.header\"]",
+      "mainSelectorFound": true,
+      "heading": "Command Center",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 20,
+      "route": "/workforce",
+      "url": "http://127.0.0.1:5173/workforce",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"workforce.header\"]",
+      "mainSelectorFound": true,
+      "heading": "AI Workforce",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 30,
+      "route": "/tickets",
+      "url": "http://127.0.0.1:5173/tickets",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"tickets.header\"]",
+      "mainSelectorFound": true,
+      "heading": "Tickets Board",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 32,
+      "route": "/tickets/demo-ticket",
+      "url": "http://127.0.0.1:5173/tickets/demo-ticket",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"ticket.header\"]",
+      "mainSelectorFound": true,
+      "heading": "Ticket Detail",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 34,
+      "route": "/runs/demo-run",
+      "url": "http://127.0.0.1:5173/runs/demo-run",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"run.header\"]",
+      "mainSelectorFound": true,
+      "heading": "Run Console",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 37,
+      "route": "/approvals",
+      "url": "http://127.0.0.1:5173/approvals",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"approval.header\"]",
+      "mainSelectorFound": true,
+      "heading": "Approval Center",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    }
+  ]
+}

@@ -18,6 +18,18 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 30 | `/tickets` | `TicketsBoardRealPage` | 10.6961% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
 | 32 | `/tickets/demo-ticket` | `TicketDetailRealPage` | 7.7372% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_32` layout assets rendered |
 | 34 | `/runs/demo-run` | `RunConsoleRealPage` | 12.5042% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_34` layout assets rendered |
+| 37 | `/approvals` | `ApprovalCenterRealPage` | 8.6397% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_37` layout assets rendered |
+
+## Real UI Structural Lock
+
+| Screen | Route | Mode | Component | Static Guardrail | Structural Gate | Pixel Diff | Status |
+|---|---|---|---|---|---|---:|---|
+| 08 | `/command-center` | Real UI | `CommandCenter + AppShell` | Pass | Pass 14/14 | 10.5256% | Real UI Structural PASS / Visual Polish Deferred |
+| 20 | `/workforce` | Real UI | `WorkforceOverviewRealPage + AppShell` | Pass | Pass 14/14 | 9.4318% | Real UI Structural PASS / Visual Polish Deferred |
+| 30 | `/tickets` | Real UI | `TicketsBoardRealPage + AppShell` | Pass | Pass 12/12 | 10.6961% | Real UI Structural PASS / Visual Polish Deferred |
+| 32 | `/tickets/demo-ticket` | Real UI | `TicketDetailRealPage + AppShell` | Pass | Pass 15/15 | 7.7372% | Real UI Structural PASS / Visual Polish Deferred |
+| 34 | `/runs/demo-run` | Real UI | `RunConsoleRealPage + AppShell` | Pass | Pass 16/16 | 12.5042% | Real UI Structural PASS / Visual Polish Deferred |
+| 37 | `/approvals` | Real UI | `ApprovalCenterRealPage + AppShell` | Pass | Pass 13/13 | 8.6397% | Real UI Structural PASS / Visual Polish Deferred |
 
 ## Rules
 
@@ -67,3 +79,11 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Do not revert Screen 34 to static slices to chase pixel diff.
 - Screen 34 pixel diff is a polish metric, not the primary real UI gate.
 - Screen 34 active real component is `RunConsoleRealPage + AppShell`; static guardrail Pass; structural gate Pass 16/16; pixel diff 12.5042%.
+- Screen 37 is the frozen Approval Center baseline.
+- Do not modify Screen 37 unless there is a direct request to do so.
+- Screen 37 is locked as Real UI Structural PASS using the shared structural bbox gate.
+- Do not revert Screen 37 to static slices to chase pixel diff.
+- Screen 37 pixel diff is a polish metric, not the primary real UI gate.
+- Screen 37 active real component is `ApprovalCenterRealPage + AppShell`; static guardrail Pass; structural gate Pass 13/13; pixel diff 8.6397%.
+- Do not return any real UI locked route to static slices.
+- Structural bbox gate is the primary acceptance gate for real UI conversion; pixel diff is a visual polish metric.
