@@ -29,6 +29,16 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RecommendationRow, RowAction } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
+import {
+  useAgentDetailData,
+  useApprovalCenterData,
+  useCommandCenterData,
+  useOrgChartData,
+  useRunConsoleData,
+  useTicketDetailData,
+  useTicketsBoardData,
+  useWorkforceData,
+} from '../state/demo-data-store';
 
 type Kpi = {
   label: string;
@@ -144,6 +154,13 @@ function kpiGrid(items: Kpi[], compact = false) {
   return <StatGrid>{items.map((kpi) => <KpiTile key={kpi.label} {...kpi} compact={compact} />)}</StatGrid>;
 }
 
+function mergeKpiData(base: Kpi[], data: Array<{ label: string; value: string; delta?: string }>): Kpi[] {
+  return base.map((item, index) => {
+    const next = data[index];
+    return next ? { ...item, label: next.label, value: next.value, delta: next.delta } : item;
+  });
+}
+
 function MetricRows({ rows }: { rows: [string, number][] }) {
   return (
     <div className="space-y-3">
@@ -224,7 +241,9 @@ function CommandCenterHeader() {
 }
 
 function CommandKpiBand() {
-  return <StatGrid>{dashboardKpis.map((kpi) => <MetricCard key={kpi.label} label={kpi.label} value={kpi.value} trend={kpi.delta} tone={kpi.tone} icon={kpi.icon} />)}</StatGrid>;
+  const { data } = useCommandCenterData();
+  const items = mergeKpiData(dashboardKpis, data.kpis);
+  return <StatGrid>{items.map((kpi) => <MetricCard key={kpi.label} label={kpi.label} value={kpi.value} trend={kpi.delta} tone={kpi.tone} icon={kpi.icon} />)}</StatGrid>;
 }
 
 function WorkforceHealthCard() {
@@ -401,12 +420,13 @@ function CostDonut() {
 }
 
 function WorkforceOverviewRealPage() {
+  const { data } = useWorkforceData();
   return (
-    <div>
+    <div data-demo-source={`agents:${data.agents.length}`}>
       <div data-parity-id="workforce.header">
         <PageHeader title="AI Workforce" subtitle="Quản lý đội ngũ AI Agent như một phòng ban thực thụ" icon={Users} actions={<><Button variant="secondary"><Network className="h-4 w-4" />Xem Org Chart</Button><Button variant="secondary"><Layers3 className="h-4 w-4" />Agent Templates</Button><Button><Plus className="h-4 w-4" />Tạo Agent mới</Button></>} />
       </div>
-      <div data-parity-id="workforce.kpi-band">{kpiGrid(workforceKpis)}</div>
+      <div data-parity-id="workforce.kpi-band">{kpiGrid(mergeKpiData(workforceKpis, data.kpis))}</div>
       <div data-parity-id="workforce.main-grid" className="mt-5 grid grid-cols-[2fr_1fr] gap-5">
         <div data-parity-id="workforce.left-panel" className="grid grid-cols-2 gap-5">
           <div data-parity-id="workforce.health-card"><Panel title="Sức khỏe đội AI" className="h-[304px] overflow-hidden"><div className="grid grid-cols-[180px_1fr] gap-5 p-5"><DonutScore value={89} size="md" /><MetricRows rows={[['Agent Availability', 92], ['Task Completion', 90], ['Output Quality', 87], ['Budget Efficiency', 84], ['Policy Compliance', 93], ['Workload Balance', 86]]} /></div><div className="px-5 pb-5 text-sm font-semibold text-emerald-600">Ổn định, cần tối ưu nhẹ</div></Panel></div>
@@ -465,8 +485,9 @@ function OrgCard({ agent, compact = false }: { agent: typeof agents[number]; com
 }
 
 function OrgChartRealPage() {
+  const { data } = useOrgChartData();
   return (
-    <div>
+    <div data-demo-source={`agents:${data.agents.length}`}>
       <div data-parity-id="org.header">
       <PageHeader title="Org Chart" subtitle="Sơ đồ tổ chức đội ngũ AI Agent theo vai trò, cấp bậc và trách nhiệm" actions={<><Button variant="secondary"><Layers3 className="h-4 w-4" />Dùng template</Button><Button variant="secondary"><Workflow className="h-4 w-4" />Tùy chỉnh cấu trúc</Button><Button><Plus className="h-4 w-4" />Thêm Agent</Button></>} />
       </div>
@@ -497,6 +518,7 @@ function OrgChartRealPage() {
 }
 
 function AgentDetailRealPage() {
+  const { data } = useAgentDetailData();
   const agentKpis = [
     { label: 'Performance Score', value: '97.2%', tone: 'blue' as Tone, icon: ShieldCheck },
     { label: 'Tasks Completed', value: '86', tone: 'green' as Tone, icon: CheckCircle2 },
@@ -507,7 +529,7 @@ function AgentDetailRealPage() {
   ];
 
   return (
-    <div>
+    <div data-demo-source={data.agent.id}>
       <div data-parity-id="agent.header">
         <PageHeader dense title="Agent Detail" subtitle="Ho so nang luc, cong viec, ky nang, cong cu va hieu suat cua AI Agent" />
         <Panel className="mb-3">
@@ -594,12 +616,13 @@ function ticketColumnParityId(column: string) {
 }
 
 function TicketsBoardRealPage() {
+  const { data } = useTicketsBoardData();
   return (
-    <div>
+    <div data-demo-source={`tickets:${data.rawTickets.length}`}>
       <div data-parity-id="tickets.header">
         <PageHeader title="Tickets Board" subtitle="Theo dõi toàn bộ công việc đang được giao, thực thi, review và hoàn thành bởi đội AI" actions={<><Button variant="secondary">Import Tickets</Button><Button variant="secondary">Export Board</Button><Button><Plus className="h-4 w-4" />Tạo ticket mới</Button></>} />
       </div>
-      <div data-parity-id="tickets.kpi-band">{kpiGrid(ticketKpis)}</div>
+      <div data-parity-id="tickets.kpi-band">{kpiGrid(mergeKpiData(ticketKpis, data.kpis))}</div>
       <div data-parity-id="tickets.filters" className="mt-5 flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2">{['Project', 'Goal', 'Agent', 'Status', 'Priority', 'Risk', 'Due date'].map((filter) => <button key={filter} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">{filter}</button>)}</div><div className="flex rounded-lg border border-slate-200 bg-white p-1"><button className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Board</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">List</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">Calendar</button></div></div>
       <div data-parity-id="tickets.board" className="mt-5 grid grid-cols-[1fr_250px] gap-4"><div className="grid grid-cols-8 gap-3 overflow-hidden">{ticketColumns.map((column) => <KanbanColumn key={column} column={column} />)}</div><div data-parity-id="tickets.insights"><Panel title="Gợi ý từ AI"><ActionRows items={['6 ticket đang bị blocked vì chờ approval', '3 ticket failed do workspace permission', 'Hermes QA Agent đang xử lý quá nhiều ticket', 'Nên review 4 ticket trước 17:00']} /></Panel></div></div>
     </div>
@@ -612,8 +635,9 @@ function KanbanColumn({ column }: { column: string }) {
 }
 
 function TicketDetailRealPage() {
+  const { data } = useTicketDetailData();
   return (
-    <div>
+    <div data-demo-source={data.ticket.id}>
       <div data-parity-id="ticket.header">
         <PageHeader dense title="Ticket Detail" subtitle="Theo dõi công việc, hội thoại và tiến trình thực thi của AI Agent" actions={<><Button variant="secondary">Chia sẻ</Button><Button variant="secondary">Sửa ticket</Button></>} />
         <div className="mb-5 flex items-center gap-5"><div className="grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-brand-600"><Ticket className="h-8 w-8" /></div><div><h2 className="text-2xl font-bold">Audit Module 3 - Landing & Lead Capture</h2><div className="mt-2 flex gap-4 text-sm text-slate-500"><span>Ticket ID: TKT-1024</span><span>Tạo lúc: 09:14</span><span>Bởi: Lê Tuấn Anh</span></div></div></div>
@@ -647,8 +671,9 @@ function SideRows({ rows }: { rows: string[][] }) {
 }
 
 function RunConsoleRealPage() {
+  const { data } = useRunConsoleData();
   return (
-    <div>
+    <div data-demo-source={data.run.id}>
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Theo dõi thời gian thực quá trình AI Agent thực thi ticket, gọi tool, tạo log và sinh artifact" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>
@@ -670,13 +695,14 @@ function RunInspector() {
 }
 
 function ApprovalCenterRealPage() {
+  const { data } = useApprovalCenterData();
   const selected = approvals[0];
   return (
-    <div>
+    <div data-demo-source={`approvals:${data.rawApprovals.length}`}>
       <div data-parity-id="approval.header">
         <PageHeader title="Approval Center" subtitle="Phê duyệt các hành động rủi ro trước khi AI Agent tiếp tục thực thi" actions={<><Button variant="secondary"><ShieldCheck className="h-4 w-4" />Approval Policy</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Approval Log</Button><Button><Layers3 className="h-4 w-4" />Bulk Review</Button></>} />
       </div>
-      <div data-parity-id="approval.kpi-band">{kpiGrid(approvalKpis)}</div>
+      <div data-parity-id="approval.kpi-band">{kpiGrid(mergeKpiData(approvalKpis, data.kpis))}</div>
       <div className="mt-5 flex flex-wrap gap-2">{['All 14', 'High Risk 5', 'Terminal 4', 'File Changes 3', 'Database 1', 'Email 2', 'Budget 1', 'MCP 1', 'Overdue 3'].map((filter, index) => <button key={filter} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${index === 0 ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{filter}</button>)}</div>
       <div data-parity-id="approval.main-grid" className="mt-4 grid grid-cols-[0.82fr_1.08fr] gap-4">
         <div data-parity-id="approval.queue-panel"><div data-parity-id="approval.queue-card"><Panel title="Danh sách chờ phê duyệt (14)" action={<><button className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold">Mới nhất</button><Button variant="secondary"><ListFilter className="h-4 w-4" /></Button></>}><div className="space-y-3 p-3">{approvals.map((approval, index) => <div key={approval.title} className={`rounded-xl border p-4 ${index === 0 ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'}`}><div className="grid grid-cols-[44px_1fr_180px_82px_26px] gap-3"><div className="grid h-11 w-11 place-items-center rounded-lg bg-slate-800 text-white">{index === 0 ? '>' : index + 1}</div><div><h3 className="font-bold">{approval.title}</h3><div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600"><span>Agent · {approval.agent}</span><span>Ticket · {approval.ticket}</span><span>Project · {approval.project}</span><span>Requested · {approval.requested}</span></div></div><div className="space-y-2 text-sm"><div className="flex justify-between"><span>Risk</span><Badge tone={statusTone(approval.risk)}>{approval.risk}</Badge></div><div className="flex justify-between"><span>Impact</span><b>{approval.impact}</b></div></div><Button variant="secondary">Review</Button><MoreButton /></div></div>)}</div></Panel></div></div>
