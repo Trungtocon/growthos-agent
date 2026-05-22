@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 import {
-  selectAgentDetailViewModel,
-  selectApprovalCenterViewModel,
-  selectCommandCenterViewModel,
-  selectOrgChartViewModel,
-  selectRunConsoleViewModel,
-  selectTicketDetailViewModel,
-  selectTicketsBoardViewModel,
-  selectWorkforceViewModel,
-} from '../domain/selectors';
+  selectAgentDetailUiViewModel,
+  selectApprovalCenterUiViewModel,
+  selectCommandCenterUiViewModel,
+  selectOrgChartUiViewModel,
+  selectRunConsoleUiViewModel,
+  selectTicketDetailUiViewModel,
+  selectTicketsBoardUiViewModel,
+  selectWorkforceUiViewModel,
+} from './ui-selectors';
+import { useUiStateSnapshot } from './ui-state';
 
 export interface DemoDataState<T> {
   data: T;
@@ -21,33 +22,41 @@ function ready<T>(data: T): DemoDataState<T> {
 }
 
 export function useCommandCenterData() {
-  return ready(useMemo(() => selectCommandCenterViewModel(), []));
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectCommandCenterUiViewModel(uiState), [uiState]));
 }
 
 export function useWorkforceData() {
-  return ready(useMemo(() => selectWorkforceViewModel(), []));
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectWorkforceUiViewModel(uiState), [uiState]));
 }
 
 export function useOrgChartData() {
-  return ready(useMemo(() => selectOrgChartViewModel(), []));
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectOrgChartUiViewModel(uiState), [uiState]));
 }
 
-export function useAgentDetailData(agentId?: string) {
-  return ready(useMemo(() => selectAgentDetailViewModel(agentId), [agentId]));
+export function useAgentDetailData() {
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectAgentDetailUiViewModel(uiState), [uiState]));
 }
 
 export function useTicketsBoardData() {
-  return ready(useMemo(() => selectTicketsBoardViewModel(), []));
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectTicketsBoardUiViewModel(uiState), [uiState]));
 }
 
-export function useTicketDetailData(ticketId?: string) {
-  return ready(useMemo(() => selectTicketDetailViewModel(ticketId), [ticketId]));
+export function useTicketDetailData() {
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectTicketDetailUiViewModel(uiState), [uiState]));
 }
 
-export function useRunConsoleData(runId?: string) {
-  return ready(useMemo(() => selectRunConsoleViewModel(runId), [runId]));
+export function useRunConsoleData() {
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectRunConsoleUiViewModel(uiState), [uiState]));
 }
 
 export function useApprovalCenterData() {
-  return ready(useMemo(() => selectApprovalCenterViewModel(), []));
+  const uiState = useUiStateSnapshot();
+  return ready(useMemo(() => selectApprovalCenterUiViewModel(uiState), [uiState]));
 }

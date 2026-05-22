@@ -29,6 +29,8 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RecommendationRow, RowAction } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
+import { selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
+import { selectAgent, selectApproval, selectTicket, setActiveTab, setRouteFilter, setSearchQuery } from '../state/ui-actions';
 import {
   useAgentDetailData,
   useApprovalCenterData,
@@ -84,56 +86,23 @@ const approvalKpis: Kpi[] = [
   { label: 'Thời gian duyệt TB', value: '12m', tone: 'blue', icon: Timer },
 ];
 
-const agents = [
-  { name: 'Hermes QA Agent', role: 'QA & UAT', status: 'Running', load: 76, score: 97.2, tone: 'purple' as Tone },
-  { name: 'Research Agent', role: 'Research & Insight', status: 'Running', load: 66, score: 95.6, tone: 'cyan' as Tone },
-  { name: 'Content Agent', role: 'Content Production', status: 'Busy', load: 89, score: 93.4, tone: 'purple' as Tone },
-  { name: 'Report Agent', role: 'Reporting', status: 'Running', load: 57, score: 92.8, tone: 'blue' as Tone },
-  { name: 'CRM Agent', role: 'CRM Automation', status: 'Waiting', load: 48, score: 91.1, tone: 'amber' as Tone },
-  { name: 'Automation Agent', role: 'Workflow automation', status: 'Running', load: 61, score: 90.9, tone: 'cyan' as Tone },
-  { name: 'Risk Monitor Agent', role: 'Budget alerts', status: 'Running', load: 41, score: 90.2, tone: 'green' as Tone },
-  { name: 'Documentation Agent', role: 'Waiting for review', status: 'Idle', load: 24, score: 88.4, tone: 'slate' as Tone },
-];
+const fixtureWorkforce = selectWorkforceViewModel();
+const fixtureTicketsBoard = selectTicketsBoardViewModel();
+const fixtureRunConsole = selectRunConsoleViewModel();
 
-const tickets = [
-  { title: 'SEO Topic Cluster Planning - Q2', project: 'GrowthOS V2', agent: 'Content Strategist', column: 'Backlog', priority: 'Trung bình', risk: 'Thấp', cost: '$0.15' },
-  { title: 'Weekly Performance Report Automation', project: 'GrowthOS V2', agent: 'Data Analyst Agent', column: 'Ready', priority: 'Trung bình', risk: 'Thấp', cost: '$0.18' },
-  { title: 'CRM Data Cleanup & Deduplication', project: 'CRM Automation Setup', agent: 'Automation Agent', column: 'Assigned', priority: 'Cao', risk: 'Trung bình', cost: '$0.22' },
-  { title: 'Audit Module 3 - Landing & Lead Capture', project: 'GrowthOS V2', agent: 'Hermes QA Agent', column: 'Running', priority: 'Cao', risk: 'Trung bình', cost: '$0.80' },
-  { title: 'Generate 10 TikTok Scripts', project: 'Marketing Content Factory', agent: 'Content Agent', column: 'Needs Review', priority: 'Trung bình', risk: 'Thấp', cost: '$0.12' },
-  { title: 'Design System Components Library', project: 'GrowthOS V2', agent: 'Design Agent', column: 'Done', priority: 'Thấp', risk: 'Thấp', cost: '$0.07' },
-  { title: 'Fix CRM Lead Source Mapping', project: 'CRM Automation Setup', agent: 'Automation Agent', column: 'Blocked', priority: 'Cao', risk: 'Cao', cost: '$0.20' },
-  { title: 'Bulk Email Campaign Execution', project: 'Marketing Content Factory', agent: 'Email Agent', column: 'Failed', priority: 'Trung bình', risk: 'Trung bình', cost: '$0.11' },
-];
+const agents = fixtureWorkforce.agentCards.map((agent) => ({ ...agent, tone: agent.tone as Tone }));
+const tickets = fixtureTicketsBoard.tickets;
 
 const ticketColumns = ['Backlog', 'Ready', 'Assigned', 'Running', 'Needs Review', 'Done', 'Blocked', 'Failed'];
 
-const runSteps = [
-  ['Run started', 'Success', '09:42:13', '1s', '$0.000'],
-  ['Loaded ticket context', 'Success', '09:42:14', '2s', '$0.000'],
-  ['Loaded skill growthos-module-uat', 'Success', '09:42:16', '1s', '$0.000'],
-  ['Read PROJECT_BIBLE.md', 'Success', '09:42:18', '3s', '$0.002'],
-  ['Read module architecture', 'Success', '09:42:21', '4s', '$0.003'],
-  ['Ran build', 'Success', '09:42:25', '1m 42s', '$0.018'],
-  ['Analyzed routes', 'Warning', '09:44:07', '22s', '$0.006'],
-  ['Generating QA report', 'Running', '09:44:29', '-', '-'],
-];
+const runSteps = fixtureRunConsole.timelineRows.map((step) => [step.name, step.status, step.time, step.duration, step.cost]);
+function toolIcon(name: string): LucideIcon {
+  if (name.includes('Build')) return GitBranch;
+  if (name.includes('Analyze')) return Wrench;
+  return FileText;
+}
 
-const approvals = [
-  { title: 'Hermes QA Agent xin chạy npm test', agent: 'Hermes QA Agent', project: 'GrowthOS V2', ticket: 'Audit Module 3 - Landing & Lead Capture', risk: 'Medium', impact: 'Local workspace', requested: '8 phút trước', tone: 'blue' as Tone },
-  { title: 'Automation Agent muốn sửa lead-source-mapping.ts', agent: 'Automation Agent', project: 'CRM Automation Setup', ticket: 'Mapping nguồn lead', risk: 'High', impact: 'Source code', requested: '18 phút trước', tone: 'purple' as Tone },
-  { title: 'CRM Agent muốn gửi email nurturing cho 120 leads', agent: 'CRM Agent', project: 'CRM Nurturing', ticket: 'Email campaign', risk: 'High', impact: 'Customer communication', requested: '32 phút trước', tone: 'amber' as Tone },
-  { title: 'Research Agent đề xuất tăng budget thêm $30', agent: 'Research Agent', project: 'Market Research', ticket: 'Budget optimization', risk: 'Medium', impact: 'AI spend', requested: '1 giờ trước', tone: 'green' as Tone },
-  { title: 'Data Agent muốn ghi dữ liệu vào production DB', agent: 'Data Agent', project: 'Analytics Pipeline', ticket: 'Database write', risk: 'High', impact: 'Production database', requested: '2 giờ trước', tone: 'cyan' as Tone },
-];
-
-const toolCalls: [string, string, string, string, string, LucideIcon][] = [
-  ['Read File', 'PROJECT_BIBLE.md', 'Success', '3s', '$0.002', FileText],
-  ['Read File', 'module-3-architecture.md', 'Success', '4s', '$0.003', FileText],
-  ['Run Build', 'npm run build', 'Success', '1m 42s', '$0.018', GitBranch],
-  ['Analyze Route', '/module-3/leads', 'Warning', '22s', '$0.006', Wrench],
-  ['Generate Artifact', 'QA_Report_Module3.md', 'Running', '-', '-', FileText],
-];
+const toolCalls: [string, string, string, string, string, LucideIcon][] = fixtureRunConsole.toolCallRows.map((tool) => [tool.name, tool.target, tool.status, tool.duration, tool.cost, toolIcon(tool.name)]);
 
 function StatGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-2 gap-4 xl:grid-cols-6">{children}</div>;
@@ -457,7 +426,8 @@ function StatusDistribution() {
 }
 
 function TopAgents() {
-  return <div className="space-y-4 p-5">{agents.slice(0, 5).map((agent, index) => <div key={agent.name} className="grid grid-cols-[24px_40px_1fr_72px] items-center gap-3 text-sm"><span className="text-slate-500">{index + 1}</span><AvatarBot tone={agent.tone} label="AI" /><span className="font-semibold text-slate-800">{agent.name}</span><span className="font-bold">{agent.score}%</span></div>)}</div>;
+  const { data } = useWorkforceData();
+  return <div className="space-y-4 p-5">{data.agentCards.slice(0, 5).map((agent, index) => <button key={agent.name} type="button" data-interaction="select-agent" onClick={() => { selectAgent(agent.id); window.location.href = '/agents/demo-agent'; }} className="grid w-full grid-cols-[24px_40px_1fr_72px] items-center gap-3 text-left text-sm"><span className="text-slate-500">{index + 1}</span><AvatarBot tone={agent.tone as Tone} label="AI" /><span className="font-semibold text-slate-800">{agent.name}</span><span className="font-bold">{agent.score}%</span></button>)}</div>;
 }
 
 function WorkloadRows() {
@@ -470,7 +440,7 @@ function AgentCostRows() {
 
 function OrgCard({ agent, compact = false }: { agent: typeof agents[number]; compact?: boolean }) {
   return (
-    <div className={`rounded-xl border bg-white p-3 shadow-[0_8px_18px_rgba(15,23,42,0.05)] ${agent.name === 'Hermes QA Agent' ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'} ${compact ? 'w-[238px]' : 'w-[260px]'}`}>
+    <button type="button" data-interaction="select-org-agent" onClick={() => 'id' in agent ? selectAgent(String(agent.id)) : undefined} className={`block text-left rounded-xl border bg-white p-3 shadow-[0_8px_18px_rgba(15,23,42,0.05)] ${agent.name === 'Hermes QA Agent' ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'} ${compact ? 'w-[238px]' : 'w-[260px]'}`}>
       <div className="flex items-start gap-3">
         <AvatarBot tone={agent.tone} label="AI" />
         <div className="min-w-0 flex-1">
@@ -480,12 +450,14 @@ function OrgCard({ agent, compact = false }: { agent: typeof agents[number]; com
         </div>
       </div>
       <div className="mt-3 grid grid-cols-[38px_1fr_52px] items-center gap-2 text-sm"><span>{agent.load}%</span><ProgressBar value={agent.load} /><span className="font-semibold text-emerald-600">{agent.score}%</span></div>
-    </div>
+    </button>
   );
 }
 
 function OrgChartRealPage() {
   const { data } = useOrgChartData();
+  const orgAgents = data.agentCards.map((agent) => ({ ...agent, tone: agent.tone as Tone }));
+  const selectedOrgAgent = data.selectedAgent;
   return (
     <div data-demo-source={`agents:${data.agents.length}`}>
       <div data-parity-id="org.header">
@@ -496,19 +468,19 @@ function OrgChartRealPage() {
         <div data-parity-id="org.main-grid" className="grid grid-cols-[1fr_280px] gap-4">
           <div data-parity-id="org.canvas" className="relative min-h-[680px] overflow-hidden rounded-xl border border-slate-100 bg-[radial-gradient(circle_at_1px_1px,#dbe4ef_1px,transparent_0)] [background-size:18px_18px] p-8">
             <div className="mx-auto flex w-fit flex-col items-center gap-8">
-              <div data-parity-id="org.node.ceo"><OrgCard agent={{ ...agents[0], name: 'CEO Agent', role: 'Chief Strategy', load: 62, score: 95.4 }} /></div>
+              <div data-parity-id="org.node.ceo"><OrgCard agent={{ ...orgAgents[0], name: 'CEO Agent', role: 'Chief Strategy', load: 62, score: 95.4 }} /></div>
               <svg data-parity-id="org.connectors" viewBox="0 0 820 1" className="h-px w-[820px]" aria-hidden="true">
                 <path d="M0 0.5 H820" stroke="#cbd5e1" strokeWidth="1" />
               </svg>
-              <div className="grid grid-cols-4 gap-8">{['CTO Agent', 'CMO Agent', 'Sales Director Agent', 'COO Agent'].map((name, index) => <div key={name} data-parity-id={index === 0 ? 'org.node.research' : index === 1 ? 'org.node.content' : index === 2 ? 'org.node.report' : undefined}><OrgCard agent={{ ...agents[index], name, load: [74, 82, 68, 59][index], score: [93.8, 92.1, 90.7, 91.5][index] }} compact /></div>)}</div>
-              <div className="grid grid-cols-4 gap-8">{[0, 1, 2, 3].map((col) => <div key={col} className="space-y-4">{agents.slice(col * 2, col * 2 + 3).map((agent) => <OrgCard key={`${col}-${agent.name}`} agent={agent} compact />)}</div>)}</div>
+              <div className="grid grid-cols-4 gap-8">{['CTO Agent', 'CMO Agent', 'Sales Director Agent', 'COO Agent'].map((name, index) => <div key={name} data-parity-id={index === 0 ? 'org.node.research' : index === 1 ? 'org.node.content' : index === 2 ? 'org.node.report' : undefined}><OrgCard agent={{ ...orgAgents[index], name, load: [74, 82, 68, 59][index], score: [93.8, 92.1, 90.7, 91.5][index] }} compact /></div>)}</div>
+              <div className="grid grid-cols-4 gap-8">{[0, 1, 2, 3].map((col) => <div key={col} className="space-y-4">{orgAgents.slice(col * 2, col * 2 + 3).map((agent) => <OrgCard key={`${col}-${agent.name}`} agent={agent} compact />)}</div>)}</div>
             </div>
           </div>
           <div data-parity-id="org.detail-panel">
-            <Panel><div data-parity-id="org.agent-card" className="p-4"><div className="mb-4 flex items-center gap-3"><AvatarBot tone="purple" label="AI" /><div><div className="font-bold">Hermes QA Agent</div><div className="text-sm text-slate-500">QA & UAT</div></div></div><MetricRows rows={[['Tải công việc', 76], ['Hiệu suất', 97], ['Tin cậy', 94]]} /><div className="mt-4 grid gap-2"><Button>View Agent Detail</Button><Button variant="secondary">Assign Task</Button><Button variant="secondary">Pause Agent</Button></div></div></Panel>
+            <Panel><div data-parity-id="org.agent-card" className="p-4"><div className="mb-4 flex items-center gap-3"><AvatarBot tone="purple" label="AI" /><div><div className="font-bold">{selectedOrgAgent.name}</div><div className="text-sm text-slate-500">{selectedOrgAgent.role}</div></div></div><MetricRows rows={[['Tải công việc', selectedOrgAgent.currentTicketIds.length * 18 + 40], ['Hiệu suất', selectedOrgAgent.healthScore], ['Tin cậy', selectedOrgAgent.trustScore]]} /><div className="mt-4 grid gap-2"><Button>View Agent Detail</Button><Button variant="secondary">Assign Task</Button><Button variant="secondary">Pause Agent</Button></div></div></Panel>
             <div data-parity-id="org.insight-card" className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
               <div className="font-bold text-slate-900">Team Insight</div>
-              <p className="mt-2 leading-6">Hermes QA Agent đang là điểm nút chất lượng chính cho GrowthOS V2.</p>
+              <p className="mt-2 leading-6">{selectedOrgAgent.name} đang là điểm nút chất lượng chính cho GrowthOS V2.</p>
             </div>
           </div>
         </div>
@@ -537,8 +509,8 @@ function AgentDetailRealPage() {
             <div className="flex items-center gap-5">
               <div className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 text-2xl font-extrabold text-brand-700">AI</div>
               <div>
-                <div className="flex items-center gap-3"><h2 className="text-2xl font-bold">Hermes QA Agent</h2><Badge tone="green">Running</Badge></div>
-                <p className="mt-2 text-slate-500">QA & UAT Specialist</p>
+                <div className="flex items-center gap-3"><h2 className="text-2xl font-bold">{data.agent.name}</h2><Badge tone="green">Running</Badge></div>
+                <p className="mt-2 text-slate-500">{data.agent.role}</p>
                 <div className="mt-3 flex gap-2"><Badge tone="blue">hermes_local</Badge><Badge tone="green">QA module</Badge></div>
               </div>
             </div>
@@ -548,7 +520,7 @@ function AgentDetailRealPage() {
       </div>
       <div data-parity-id="agent.kpi-band">{kpiGrid(agentKpis, true)}</div>
       <div data-parity-id="agent.tabs" className="mt-4 flex gap-2 rounded-xl border border-slate-200 bg-white p-1">
-        {['Overview', 'Skills', 'Runs', 'Memory', 'Controls'].map((tab, index) => <button key={tab} className={`rounded-lg px-4 py-2 text-sm font-semibold ${index === 0 ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>{tab}</button>)}
+        {['Overview', 'Skills', 'Runs', 'Memory', 'Controls'].map((tab, index) => <button key={tab} data-interaction={`agent-tab-${tab}`} onClick={() => setActiveTab('/agents/demo-agent', tab)} className={`rounded-lg px-4 py-2 text-sm font-semibold ${data.activeTab === tab || (!data.activeTab && index === 0) ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>{tab}</button>)}
       </div>
       <div data-parity-id="agent.main-grid" className="mt-4 grid grid-cols-[330px_1fr_390px] gap-4">
         <div data-parity-id="agent.left-panel" className="space-y-4">
@@ -623,15 +595,15 @@ function TicketsBoardRealPage() {
         <PageHeader title="Tickets Board" subtitle="Theo dõi toàn bộ công việc đang được giao, thực thi, review và hoàn thành bởi đội AI" actions={<><Button variant="secondary">Import Tickets</Button><Button variant="secondary">Export Board</Button><Button><Plus className="h-4 w-4" />Tạo ticket mới</Button></>} />
       </div>
       <div data-parity-id="tickets.kpi-band">{kpiGrid(mergeKpiData(ticketKpis, data.kpis))}</div>
-      <div data-parity-id="tickets.filters" className="mt-5 flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2">{['Project', 'Goal', 'Agent', 'Status', 'Priority', 'Risk', 'Due date'].map((filter) => <button key={filter} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">{filter}</button>)}</div><div className="flex rounded-lg border border-slate-200 bg-white p-1"><button className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Board</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">List</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">Calendar</button></div></div>
-      <div data-parity-id="tickets.board" className="mt-5 grid grid-cols-[1fr_250px] gap-4"><div className="grid grid-cols-8 gap-3 overflow-hidden">{ticketColumns.map((column) => <KanbanColumn key={column} column={column} />)}</div><div data-parity-id="tickets.insights"><Panel title="Gợi ý từ AI"><ActionRows items={['6 ticket đang bị blocked vì chờ approval', '3 ticket failed do workspace permission', 'Hermes QA Agent đang xử lý quá nhiều ticket', 'Nên review 4 ticket trước 17:00']} /></Panel></div></div>
+      <div data-parity-id="tickets.filters" className="mt-5 flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2">{['Project', 'Goal', 'Agent', 'Status', 'Priority', 'Risk', 'Due date'].map((filter) => <button key={filter} data-interaction={`ticket-filter-${filter}`} onClick={() => { setRouteFilter('/tickets', 'status', filter === 'Status' ? 'Running' : 'All'); setSearchQuery(filter === 'Agent' ? 'Hermes' : ''); }} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600">{filter}</button>)}</div><div className="flex rounded-lg border border-slate-200 bg-white p-1"><button className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Board</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">List</button><button className="px-4 py-2 text-sm font-semibold text-slate-500">Calendar</button></div></div>
+      <div data-parity-id="tickets.board" className="mt-5 grid h-[560px] grid-cols-[1fr_250px] gap-4 overflow-hidden"><div className="grid grid-cols-8 gap-3 overflow-hidden">{ticketColumns.map((column) => <KanbanColumn key={column} column={column} ticketItems={data.tickets} />)}</div><div data-parity-id="tickets.insights" className="h-[560px] overflow-hidden"><Panel title="Gợi ý từ AI"><ActionRows items={['6 ticket đang bị blocked vì chờ approval', '3 ticket failed do workspace permission', 'Hermes QA Agent đang xử lý quá nhiều ticket', 'Nên review 4 ticket trước 17:00']} /></Panel></div></div>
     </div>
   );
 }
 
-function KanbanColumn({ column }: { column: string }) {
-  const items = tickets.filter((ticket) => ticket.column === column);
-  return <div data-parity-id={ticketColumnParityId(column)} className="min-h-[560px] rounded-xl border border-slate-200 bg-white p-2 shadow-[0_8px_20px_rgba(15,23,42,0.03)]"><div className="mb-3 flex items-center justify-between px-1"><div className="text-sm font-bold text-slate-950">{column} <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{items.length || 3}</span></div><MoreButton /></div><div className="space-y-3">{items.map((ticket, index) => <div key={ticket.title} data-parity-id={index < 3 ? `tickets.card.${index + 1}` : undefined} className={`rounded-lg border p-3 text-xs ${column === 'Running' ? 'border-emerald-300 bg-emerald-50/40' : column === 'Blocked' ? 'border-red-200 bg-red-50/50' : column === 'Needs Review' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}><h3 className="text-sm font-bold leading-5 text-slate-950">{ticket.title}</h3><div className="mt-2 space-y-1 text-slate-500"><div>Project: {ticket.project}</div><div>Agent: {ticket.agent}</div></div><div className="mt-3 flex flex-wrap gap-2"><Badge tone={statusTone(ticket.priority)}>{ticket.priority}</Badge><Badge tone={statusTone(ticket.risk)}>{ticket.risk}</Badge></div><div className="mt-3 flex items-center justify-between text-slate-500"><span>Due: Hôm nay</span><span>{ticket.cost}</span></div></div>)}</div><button className="mt-4 w-full rounded-lg py-2 text-sm font-semibold text-slate-500 hover:bg-slate-50">+ Thêm ticket</button></div>;
+function KanbanColumn({ column, ticketItems = tickets }: { column: string; ticketItems?: typeof tickets }) {
+  const items = ticketItems.filter((ticket) => ticket.column === column);
+  return <div data-parity-id={ticketColumnParityId(column)} className="h-[560px] overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-[0_8px_20px_rgba(15,23,42,0.03)]"><div className="mb-3 flex items-center justify-between px-1"><div className="text-sm font-bold text-slate-950">{column} <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">{items.length || 3}</span></div><MoreButton /></div><div className="space-y-3">{items.map((ticket, index) => <button type="button" key={ticket.title} data-interaction="select-ticket" onClick={() => { selectTicket(ticket.id); window.location.href = '/tickets/demo-ticket'; }} data-parity-id={index < 3 ? `tickets.card.${index + 1}` : undefined} className={`block w-full text-left rounded-lg border p-3 text-xs ${column === 'Running' ? 'border-emerald-300 bg-emerald-50/40' : column === 'Blocked' ? 'border-red-200 bg-red-50/50' : column === 'Needs Review' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}><h3 className="text-sm font-bold leading-5 text-slate-950">{ticket.title}</h3><div className="mt-2 space-y-1 text-slate-500"><div>Project: {ticket.project}</div><div>Agent: {ticket.agent}</div></div><div className="mt-3 flex flex-wrap gap-2"><Badge tone={statusTone(ticket.priority)}>{ticket.priority}</Badge><Badge tone={statusTone(ticket.risk)}>{ticket.risk}</Badge></div><div className="mt-3 flex items-center justify-between text-slate-500"><span>Due: Hôm nay</span><span>{ticket.cost}</span></div></button>)}</div><button className="mt-4 w-full rounded-lg py-2 text-sm font-semibold text-slate-500 hover:bg-slate-50">+ Thêm ticket</button></div>;
 }
 
 function TicketDetailRealPage() {
@@ -640,10 +612,10 @@ function TicketDetailRealPage() {
     <div data-demo-source={data.ticket.id}>
       <div data-parity-id="ticket.header">
         <PageHeader dense title="Ticket Detail" subtitle="Theo dõi công việc, hội thoại và tiến trình thực thi của AI Agent" actions={<><Button variant="secondary">Chia sẻ</Button><Button variant="secondary">Sửa ticket</Button></>} />
-        <div className="mb-5 flex items-center gap-5"><div className="grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-brand-600"><Ticket className="h-8 w-8" /></div><div><h2 className="text-2xl font-bold">Audit Module 3 - Landing & Lead Capture</h2><div className="mt-2 flex gap-4 text-sm text-slate-500"><span>Ticket ID: TKT-1024</span><span>Tạo lúc: 09:14</span><span>Bởi: Lê Tuấn Anh</span></div></div></div>
+        <div className="mb-5 flex items-center gap-5"><div className="grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-brand-600"><Ticket className="h-8 w-8" /></div><div><h2 className="text-2xl font-bold">{data.ticket.title}</h2><div className="mt-2 flex gap-4 text-sm text-slate-500"><span>Ticket ID: {data.ticket.code}</span><span>Tạo lúc: 09:14</span><span>Bởi: Lê Tuấn Anh</span></div></div></div>
       </div>
       <div data-parity-id="ticket.tabs" className="mb-4 flex gap-2">
-        {['Overview', 'Transcript', 'Artifacts', 'Approvals', 'Audit log'].map((tab, index) => <button key={tab} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${index === 0 ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{tab}</button>)}
+        {['Overview', 'Transcript', 'Artifacts', 'Approvals', 'Audit log'].map((tab, index) => <button key={tab} data-interaction={`ticket-tab-${tab}`} onClick={() => setActiveTab('/tickets/demo-ticket', tab)} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${data.activeTab === tab || (!data.activeTab && index === 0) ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{tab}</button>)}
       </div>
       <div data-parity-id="ticket.main-grid" className="grid grid-cols-[330px_1fr_410px] gap-4"><div data-parity-id="ticket.left-panel"><TicketInfo /></div><div data-parity-id="ticket.center-panel"><TranscriptPanel /></div><div data-parity-id="ticket.right-panel"><TicketSide /></div></div>
     </div>
@@ -696,17 +668,17 @@ function RunInspector() {
 
 function ApprovalCenterRealPage() {
   const { data } = useApprovalCenterData();
-  const selected = approvals[0];
+  const selected = data.selectedApproval;
   return (
     <div data-demo-source={`approvals:${data.rawApprovals.length}`}>
       <div data-parity-id="approval.header">
         <PageHeader title="Approval Center" subtitle="Phê duyệt các hành động rủi ro trước khi AI Agent tiếp tục thực thi" actions={<><Button variant="secondary"><ShieldCheck className="h-4 w-4" />Approval Policy</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Approval Log</Button><Button><Layers3 className="h-4 w-4" />Bulk Review</Button></>} />
       </div>
       <div data-parity-id="approval.kpi-band">{kpiGrid(mergeKpiData(approvalKpis, data.kpis))}</div>
-      <div className="mt-5 flex flex-wrap gap-2">{['All 14', 'High Risk 5', 'Terminal 4', 'File Changes 3', 'Database 1', 'Email 2', 'Budget 1', 'MCP 1', 'Overdue 3'].map((filter, index) => <button key={filter} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${index === 0 ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{filter}</button>)}</div>
-      <div data-parity-id="approval.main-grid" className="mt-4 grid grid-cols-[0.82fr_1.08fr] gap-4">
-        <div data-parity-id="approval.queue-panel"><div data-parity-id="approval.queue-card"><Panel title="Danh sách chờ phê duyệt (14)" action={<><button className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold">Mới nhất</button><Button variant="secondary"><ListFilter className="h-4 w-4" /></Button></>}><div className="space-y-3 p-3">{approvals.map((approval, index) => <div key={approval.title} className={`rounded-xl border p-4 ${index === 0 ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'}`}><div className="grid grid-cols-[44px_1fr_180px_82px_26px] gap-3"><div className="grid h-11 w-11 place-items-center rounded-lg bg-slate-800 text-white">{index === 0 ? '>' : index + 1}</div><div><h3 className="font-bold">{approval.title}</h3><div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600"><span>Agent · {approval.agent}</span><span>Ticket · {approval.ticket}</span><span>Project · {approval.project}</span><span>Requested · {approval.requested}</span></div></div><div className="space-y-2 text-sm"><div className="flex justify-between"><span>Risk</span><Badge tone={statusTone(approval.risk)}>{approval.risk}</Badge></div><div className="flex justify-between"><span>Impact</span><b>{approval.impact}</b></div></div><Button variant="secondary">Review</Button><MoreButton /></div></div>)}</div></Panel></div></div>
-        <div data-parity-id="approval.detail-panel" className="space-y-4"><div data-parity-id="approval.detail-card"><Panel><div className="p-5"><div className="mb-5 flex items-start justify-between"><div className="flex items-center gap-4"><div className="grid h-12 w-12 place-items-center rounded-lg bg-slate-800 text-white text-2xl">&gt;</div><div><h2 className="text-xl font-bold">{selected.title}</h2><div className="mt-2 flex gap-4 text-sm"><Badge tone="red">Pending Review</Badge><span>ID: APPR-2381</span></div></div></div></div><div className="grid grid-cols-[170px_1fr] gap-4 rounded-xl border border-slate-200 p-4 text-sm">{[['Agent', selected.agent], ['Runtime', 'hermes_local'], ['Liên quan ticket', selected.ticket], ['Yêu cầu hành động', 'Run terminal command'], ['Command', 'npm test'], ['Lý do', 'Cần chạy test để xác minh module trước khi tạo QA report.'], ['Risk level', selected.risk], ['Impact area', selected.impact], ['Estimated cost', '$0.012']].flatMap(([a, b]) => [<span key={`${a}-label`} className="text-slate-500">{a}</span>, <b key={`${a}-value`} className="text-slate-800">{b}</b>])}</div><div data-parity-id="approval.policy-panel" className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 className="font-bold text-brand-700">Gợi ý từ AI</h3><p className="mt-2 text-sm leading-6 text-slate-700">Yêu cầu này có rủi ro trung bình vì chỉ chạy test trong local workspace. Có thể approve once, nhưng không nên tạo policy tự động cho mọi terminal command.</p><div className="mt-3 flex items-center gap-3"><ProgressBar value={92} /><b>92%</b></div></div><div data-parity-id="approval.actions-card" className="mt-5 grid grid-cols-5 gap-3"><Button variant="success">Approve once</Button><Button>Approve and remember policy</Button><Button variant="danger">Reject</Button><Button variant="warning">Request changes</Button><Button variant="secondary">Ask agent</Button></div></div></Panel></div><div data-parity-id="approval.audit-card"><Panel title="Lịch sử phê duyệt"><div className="p-4 text-sm">Hermes QA Agent tạo yêu cầu phê duyệt · 8 phút trước</div></Panel></div></div>
+      <div className="mt-5 flex flex-wrap gap-2">{['All 14', 'High Risk 5', 'Terminal 4', 'File Changes 3', 'Database 1', 'Email 2', 'Budget 1', 'MCP 1', 'Overdue 3'].map((filter, index) => <button key={filter} data-interaction={`approval-filter-${filter}`} onClick={() => { setRouteFilter('/approvals', 'risk', filter === 'High Risk 5' ? 'High' : 'All'); setSearchQuery(filter === 'Terminal 4' ? 'Hermes' : ''); }} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${index === 0 ? 'border-brand-500 bg-blue-50 text-brand-700' : 'border-slate-200 bg-white text-slate-600'}`}>{filter}</button>)}</div>
+      <div data-parity-id="approval.main-grid" className="mt-4 grid h-[1424px] grid-cols-[0.82fr_1.08fr] gap-4 overflow-hidden">
+        <div data-parity-id="approval.queue-panel" className="h-full overflow-hidden"><div data-parity-id="approval.queue-card" className="h-full overflow-hidden"><Panel title="Danh sách chờ phê duyệt (14)" action={<><button className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold">Mới nhất</button><Button variant="secondary"><ListFilter className="h-4 w-4" /></Button></>}><div className="space-y-3 p-3">{data.approvals.map((approval, index) => <div key={approval.title} data-interaction="select-approval" onClick={() => selectApproval(approval.id)} className={`rounded-xl border p-4 ${approval.id === selected.id ? 'border-brand-500 ring-2 ring-blue-100' : 'border-slate-200'}`}><div className="grid grid-cols-[44px_1fr_180px_82px_26px] gap-3"><div className="grid h-11 w-11 place-items-center rounded-lg bg-slate-800 text-white">{approval.id === selected.id ? '>' : index + 1}</div><div><h3 className="font-bold">{approval.title}</h3><div className="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600"><span>Agent · {approval.agent}</span><span>Ticket · {approval.ticket}</span><span>Project · {approval.project}</span><span>Requested · {approval.requested}</span></div></div><div className="space-y-2 text-sm"><div className="flex justify-between"><span>Risk</span><Badge tone={statusTone(approval.risk)}>{approval.risk}</Badge></div><div className="flex justify-between"><span>Impact</span><b>{approval.impact}</b></div></div><Button variant="secondary">Review</Button><MoreButton /></div></div>)}</div></Panel></div></div>
+        <div data-parity-id="approval.detail-panel" className="h-full space-y-4 overflow-hidden"><div data-parity-id="approval.detail-card"><Panel><div className="p-5"><div className="mb-5 flex items-start justify-between"><div className="flex items-center gap-4"><div className="grid h-12 w-12 place-items-center rounded-lg bg-slate-800 text-white text-2xl">&gt;</div><div><h2 className="text-xl font-bold">{selected.title}</h2><div className="mt-2 flex gap-4 text-sm"><Badge tone="red">Pending Review</Badge><span>ID: APPR-2381</span></div></div></div></div><div className="grid grid-cols-[170px_1fr] gap-4 rounded-xl border border-slate-200 p-4 text-sm">{[['Agent', selected.agent], ['Runtime', 'hermes_local'], ['Liên quan ticket', selected.ticket], ['Yêu cầu hành động', 'Run terminal command'], ['Command', 'npm test'], ['Lý do', 'Cần chạy test để xác minh module trước khi tạo QA report.'], ['Risk level', selected.risk], ['Impact area', selected.impact], ['Estimated cost', '$0.012']].flatMap(([a, b]) => [<span key={`${a}-label`} className="text-slate-500">{a}</span>, <b key={`${a}-value`} className="text-slate-800">{b}</b>])}</div><div data-parity-id="approval.policy-panel" className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 className="font-bold text-brand-700">Gợi ý từ AI</h3><p className="mt-2 text-sm leading-6 text-slate-700">Yêu cầu này có rủi ro trung bình vì chỉ chạy test trong local workspace. Có thể approve once, nhưng không nên tạo policy tự động cho mọi terminal command.</p><div className="mt-3 flex items-center gap-3"><ProgressBar value={92} /><b>92%</b></div></div><div data-parity-id="approval.actions-card" className="mt-5 grid grid-cols-5 gap-3"><Button variant="success">Approve once</Button><Button>Approve and remember policy</Button><Button variant="danger">Reject</Button><Button variant="warning">Request changes</Button><Button variant="secondary">Ask agent</Button></div></div></Panel></div><div data-parity-id="approval.audit-card"><Panel title="Lịch sử phê duyệt"><div className="p-4 text-sm">Hermes QA Agent tạo yêu cầu phê duyệt · 8 phút trước</div></Panel></div></div>
       </div>
     </div>
   );
