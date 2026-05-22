@@ -20,7 +20,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 34 | `/runs/demo-run` | `RunConsoleRealPage` | 12.5042% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_34` layout assets rendered |
 | 37 | `/approvals` | `ApprovalCenterRealPage` | 8.6397% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_37` layout assets rendered |
 
-## Real UI Structural Lock
+## Real UI Demo v1 Lock
 
 | Screen | Route | Mode | Component | Static Guardrail | Structural Gate | Pixel Diff | Status |
 |---|---|---|---|---|---|---:|---|
@@ -97,3 +97,5 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screen 37 active real component is `ApprovalCenterRealPage + AppShell`; static guardrail Pass; structural gate Pass 13/13; pixel diff 8.6397%.
 - Do not return any real UI locked route to static slices.
 - Structural bbox gate is the primary acceptance gate for real UI conversion; pixel diff is a visual polish metric.
+- Real UI Demo v1 routes are locked at structural parity: 08, 20, 21, 23, 30, 32, 34, and 37.
+- Pixel diff remains a visual polish metric and must not be used as the primary gate for Real UI Demo v1 acceptance.
