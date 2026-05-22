@@ -12,6 +12,7 @@ const routes = [
   { screen: 8, route: '/command-center', mainSelector: '[data-parity-id="command.header"]', heading: 'Command Center' },
   { screen: 20, route: '/workforce', mainSelector: '[data-parity-id="workforce.header"]', heading: 'AI Workforce' },
   { screen: 21, route: '/org-chart', mainSelector: '[data-parity-id="org.main-grid"]', heading: 'Org Chart' },
+  { screen: 23, route: '/agents/demo-agent', mainSelector: '[data-parity-id="agent.main-grid"]', heading: 'Agent Detail' },
   { screen: 30, route: '/tickets', mainSelector: '[data-parity-id="tickets.header"]', heading: 'Tickets Board' },
   { screen: 32, route: '/tickets/demo-ticket', mainSelector: '[data-parity-id="ticket.header"]', heading: 'Ticket Detail' },
   { screen: 34, route: '/runs/demo-run', mainSelector: '[data-parity-id="run.header"]', heading: 'Run Console' },

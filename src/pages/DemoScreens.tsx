@@ -496,15 +496,72 @@ function OrgChartRealPage() {
   );
 }
 
-function AgentDetail() {
+function AgentDetailRealPage() {
+  const agentKpis = [
+    { label: 'Performance Score', value: '97.2%', tone: 'blue' as Tone, icon: ShieldCheck },
+    { label: 'Tasks Completed', value: '86', tone: 'green' as Tone, icon: CheckCircle2 },
+    { label: 'Success Rate', value: '94.8%', tone: 'green' as Tone, icon: Flag },
+    { label: 'Monthly Cost', value: '$420', tone: 'purple' as Tone, icon: DollarSign },
+    { label: 'Avg Run Time', value: '6m 42s', tone: 'blue' as Tone, icon: Clock3 },
+    { label: 'Risk Events', value: '2', tone: 'amber' as Tone, icon: AlertTriangle },
+  ];
+
   return (
     <div>
+      <div data-parity-id="agent.header">
+        <PageHeader dense title="Agent Detail" subtitle="Ho so nang luc, cong viec, ky nang, cong cu va hieu suat cua AI Agent" />
+        <Panel className="mb-3">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-5">
+              <div className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 text-2xl font-extrabold text-brand-700">AI</div>
+              <div>
+                <div className="flex items-center gap-3"><h2 className="text-2xl font-bold">Hermes QA Agent</h2><Badge tone="green">Running</Badge></div>
+                <p className="mt-2 text-slate-500">QA & UAT Specialist</p>
+                <div className="mt-3 flex gap-2"><Badge tone="blue">hermes_local</Badge><Badge tone="green">QA module</Badge></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3"><Button><Bot className="h-4 w-4" />Assign Task</Button><Button variant="secondary">Edit Agent</Button><Button variant="warning">Pause Agent</Button><Button variant="secondary">View Runs</Button></div>
+          </div>
+        </Panel>
+      </div>
+      <div data-parity-id="agent.kpi-band">{kpiGrid(agentKpis, true)}</div>
+      <div data-parity-id="agent.tabs" className="mt-4 flex gap-2 rounded-xl border border-slate-200 bg-white p-1">
+        {['Overview', 'Skills', 'Runs', 'Memory', 'Controls'].map((tab, index) => <button key={tab} className={`rounded-lg px-4 py-2 text-sm font-semibold ${index === 0 ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>{tab}</button>)}
+      </div>
+      <div data-parity-id="agent.main-grid" className="mt-4 grid grid-cols-[330px_1fr_390px] gap-4">
+        <div data-parity-id="agent.left-panel" className="space-y-4">
+          <div data-parity-id="agent.profile-card"><Panel><div className="p-5"><Badge tone="blue">Profile</Badge><h3 className="mt-3 font-bold">Nhiem vu chinh</h3><p className="mt-2 text-sm leading-6 text-slate-600">Kiem thu, audit, UAT va danh gia chat luong module truoc khi chuyen sang trang thai hoan thanh.</p><div className="mt-4 space-y-3 text-sm">{[['Runtime', 'hermes_local'], ['Model', 'Claude Sonnet'], ['Owner', 'QA Team']].map(([a, b]) => <div key={a} className="flex justify-between"><span className="text-slate-500">{a}</span><b>{b}</b></div>)}</div></div></Panel></div>
+          <div data-parity-id="agent.skills-card"><Panel><div className="p-5"><Badge tone="blue">Skills</Badge><h3 className="mt-3 font-bold">Ky nang da cai</h3><div className="mt-4 flex flex-wrap gap-2">{['growthos-module-uat', 'ui-parity-audit', 'worktree-clean-check', 'visual-regression'].map((skill) => <Badge key={skill} tone="blue">{skill}</Badge>)}</div><div className="mt-4 grid gap-2 text-sm">{['File', 'Browser', 'Terminal', 'Web'].map((tool, index) => <div key={tool} className="flex justify-between rounded-lg border border-slate-100 p-3"><span>{tool}</span><Badge tone={index > 1 ? 'amber' : 'green'}>{index > 1 ? 'Requires Approval' : 'Allowed'}</Badge></div>)}</div></div></Panel></div>
+        </div>
+        <div data-parity-id="agent.center-panel" className="space-y-4">
+          <div data-parity-id="agent.assignment-card"><Panel><div className="p-5"><Badge tone="green">Current Assignment</Badge><h3 className="mt-3 font-bold">Audit Module 3 - Landing & Lead Capture</h3><div className="mt-4 space-y-3 text-sm"><div className="flex justify-between"><span>Ticket</span><b className="text-brand-600">Audit Module 3</b></div><div className="flex justify-between"><span>Status</span><Badge tone="green">Running</Badge></div><div className="flex justify-between"><span>Progress</span><b>68%</b></div><ProgressBar value={68} /></div></div></Panel></div>
+          <div data-parity-id="agent.memory-card"><Panel><div className="p-5"><Badge tone="purple">Memory</Badge><h3 className="mt-3 font-bold">Context & Toolsets</h3><div className="mt-4 grid grid-cols-2 gap-3 text-sm">{['PROJECT_BIBLE.md', 'Module architecture', 'UAT checklist', 'Parity reports'].map((item) => <div key={item} className="rounded-lg border border-slate-100 p-3 font-semibold text-slate-700">{item}</div>)}</div></div></Panel></div>
+          <div data-parity-id="agent.performance-card"><Panel title="Hieu suat theo thoi gian"><LineChart /></Panel></div>
+        </div>
+        <div data-parity-id="agent.right-panel" className="space-y-4">
+          <div data-parity-id="agent.control-card"><Panel title="Kiem soat Agent"><div className="space-y-3 p-4 text-sm">{[['Status', 'Running'], ['Current workload', '76%'], ['Budget used', '$420 (70%)'], ['Last active', '2 phut truoc']].map(([a, b]) => <div key={a} className="flex justify-between"><span className="text-slate-500">{a}</span><b>{b}</b></div>)}<ProgressBar value={76} /></div></Panel></div>
+          <div data-parity-id="agent.cost-card"><Panel title="Chi phi"><div className="space-y-3 p-4 text-sm"><div className="flex justify-between"><span>Monthly budget</span><b>$600</b></div><div className="flex justify-between"><span>Spend used</span><b>$420</b></div><ProgressBar value={70} /></div></Panel></div>
+          <div data-parity-id="agent.risk-card"><Panel title="Rui ro"><div className="space-y-3 p-4 text-sm"><div className="flex justify-between"><span>Risk level</span><Badge tone="amber">Medium</Badge></div><div className="flex justify-between"><span>Policy violations</span><b>0</b></div><div className="flex justify-between"><span>Pending approvals</span><b>1</b></div></div></Panel></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentDetailLegacy() {
+  return (
+    <div>
+      <div data-parity-id="agent.header">
       <PageHeader dense title="Agent Detail" subtitle="Hồ sơ năng lực, công việc, kỹ năng, công cụ và hiệu suất của AI Agent" />
       <Panel className="mb-3"><div className="flex items-center justify-between p-4"><div className="flex items-center gap-5"><div className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 text-4xl">🤖</div><div><div className="flex items-center gap-3"><h2 className="text-2xl font-bold">Hermes QA Agent</h2><Badge tone="green">Running</Badge></div><p className="mt-2 text-slate-500">QA & UAT Specialist</p><div className="mt-3 flex gap-2"><Badge tone="blue">hermes_local</Badge><Badge tone="green">QA module</Badge></div></div></div><div className="grid grid-cols-2 gap-3"><Button><Bot className="h-4 w-4" />Assign Task</Button><Button variant="secondary">Edit Agent</Button><Button variant="warning">Pause Agent</Button><Button variant="secondary">View Runs</Button></div></div></Panel>
-      {kpiGrid([{ label: 'Performance Score', value: '97.2%', tone: 'blue', icon: ShieldCheck }, { label: 'Tasks Completed', value: '86', tone: 'green', icon: CheckCircle2 }, { label: 'Success Rate', value: '94.8%', tone: 'green', icon: Flag }, { label: 'Monthly Cost', value: '$420', tone: 'purple', icon: DollarSign }, { label: 'Avg Run Time', value: '6m 42s', tone: 'blue', icon: Clock3 }, { label: 'Risk Events', value: '2', tone: 'amber', icon: AlertTriangle }], true)}
-      <div className="mt-4 grid grid-cols-[1fr_390px] gap-4">
-        <div className="space-y-4"><AgentMainPanels /><Panel title="Hiệu suất theo thời gian"><LineChart /></Panel></div>
-        <AgentSidePanels />
+      </div>
+      <div data-parity-id="agent.kpi-band">{kpiGrid([{ label: 'Performance Score', value: '97.2%', tone: 'blue', icon: ShieldCheck }, { label: 'Tasks Completed', value: '86', tone: 'green', icon: CheckCircle2 }, { label: 'Success Rate', value: '94.8%', tone: 'green', icon: Flag }, { label: 'Monthly Cost', value: '$420', tone: 'purple', icon: DollarSign }, { label: 'Avg Run Time', value: '6m 42s', tone: 'blue', icon: Clock3 }, { label: 'Risk Events', value: '2', tone: 'amber', icon: AlertTriangle }], true)}</div>
+      <div data-parity-id="agent.tabs" className="mt-4 flex gap-2 rounded-xl border border-slate-200 bg-white p-1">
+        {['Overview', 'Skills', 'Runs', 'Memory', 'Controls'].map((tab, index) => <button key={tab} className={`rounded-lg px-4 py-2 text-sm font-semibold ${index === 0 ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>{tab}</button>)}
+      </div>
+      <div data-parity-id="agent.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-4">
+        <div data-parity-id="agent.left-panel" className="space-y-4"><div data-parity-id="agent.center-panel"><AgentMainPanels /></div><div data-parity-id="agent.performance-card"><Panel title="Hiệu suất theo thời gian"><LineChart /></Panel></div></div>
+        <div data-parity-id="agent.right-panel"><AgentSidePanels /></div>
       </div>
     </div>
   );
@@ -633,7 +690,7 @@ export function DemoScreen({ route }: { route: string }) {
   if (route === '/command-center') return <CommandCenter />;
   if (route === '/workforce') return <WorkforceOverviewRealPage />;
   if (route === '/org-chart') return <OrgChartRealPage />;
-  if (route === '/agents/demo-agent') return <AgentDetail />;
+  if (route === '/agents/demo-agent') return <AgentDetailRealPage />;
   if (route === '/tickets') return <TicketsBoardRealPage />;
   if (route === '/tickets/demo-ticket') return <TicketDetailRealPage />;
   if (route === '/runs/demo-run') return <RunConsoleRealPage />;

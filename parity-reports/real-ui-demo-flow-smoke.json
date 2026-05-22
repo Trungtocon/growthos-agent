@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-22T15:44:25.475Z",
+  "generatedAt": "2026-05-22T16:01:43.353Z",
   "baseUrl": "http://127.0.0.1:5173",
   "summary": {
-    "checked": 7,
-    "passed": 7,
+    "checked": 8,
+    "passed": 8,
     "failed": 0
   },
   "rows": [
@@ -45,6 +45,20 @@
       "mainSelector": "[data-parity-id=\"org.main-grid\"]",
       "mainSelectorFound": true,
       "heading": "Org Chart",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 23,
+      "route": "/agents/demo-agent",
+      "url": "http://127.0.0.1:5173/agents/demo-agent",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"agent.main-grid\"]",
+      "mainSelectorFound": true,
+      "heading": "Agent Detail",
       "headingFound": true,
       "consoleErrors": [],
       "status": "passed"
