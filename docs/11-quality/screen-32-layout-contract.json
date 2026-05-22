@@ -1,0 +1,27 @@
+{
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "public/stitch_ui/32_Ticket_Detail.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 185, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 185, "y": 0, "width": 1487, "height": 60, "tolerance": 8 },
+    "app-shell.main": { "x": 215, "y": 72, "width": 1427, "height": 1217.5, "tolerance": 12 },
+    "ticket.header": { "x": 215, "y": 72, "width": 1427, "height": 129.5, "tolerance": 16 },
+    "ticket.tabs": { "x": 215, "y": 221.5, "width": 1427, "height": 38, "tolerance": 16 },
+    "ticket.main-grid": { "x": 215, "y": 275.5, "width": 1427, "height": 1014, "tolerance": 16 },
+    "ticket.left-panel": { "x": 215, "y": 275.5, "width": 330, "height": 1014, "tolerance": 16 },
+    "ticket.center-panel": { "x": 561, "y": 275.5, "width": 655, "height": 1014, "tolerance": 16 },
+    "ticket.right-panel": { "x": 1232, "y": 275.5, "width": 410, "height": 1014, "tolerance": 16 },
+    "ticket.info-card": { "x": 215, "y": 275.5, "width": 330, "height": 374, "tolerance": 16 },
+    "ticket.criteria-card": { "x": 215, "y": 835.5, "width": 330, "height": 198, "tolerance": 16 },
+    "ticket.transcript-card": { "x": 561, "y": 275.5, "width": 655, "height": 868, "tolerance": 16 },
+    "ticket.status-card": { "x": 1232, "y": 275.5, "width": 410, "height": 252, "tolerance": 16 },
+    "ticket.actions-card": { "x": 1232, "y": 907.5, "width": 410, "height": 174, "tolerance": 16 },
+    "ticket.artifacts-card": { "x": 1232, "y": 1097.5, "width": 410, "height": 192, "tolerance": 16 }
+  }
+}

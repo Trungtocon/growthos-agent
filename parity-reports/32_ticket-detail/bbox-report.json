@@ -1,0 +1,378 @@
+{
+  "route": "/tickets/demo-ticket",
+  "url": "http://127.0.0.1:5173/tickets/demo-ticket",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-32-layout-contract.json",
+  "generatedAt": "2026-05-22T12:53:47.974Z",
+  "summary": {
+    "checked": 15,
+    "passed": 15,
+    "failed": 0,
+    "extraActualIds": []
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 185,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 185,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 185,
+        "y": 0,
+        "width": 1487,
+        "height": 60,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 185,
+        "y": 0,
+        "width": 1487,
+        "height": 60
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 215,
+        "y": 72,
+        "width": 1427,
+        "height": 1217.5,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 215,
+        "y": 72,
+        "width": 1427,
+        "height": 1217.5
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.header",
+      "expected": {
+        "x": 215,
+        "y": 72,
+        "width": 1427,
+        "height": 129.5,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 72,
+        "width": 1427,
+        "height": 129.5
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.tabs",
+      "expected": {
+        "x": 215,
+        "y": 221.5,
+        "width": 1427,
+        "height": 38,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 221.5,
+        "width": 1427,
+        "height": 38
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.main-grid",
+      "expected": {
+        "x": 215,
+        "y": 275.5,
+        "width": 1427,
+        "height": 1014,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 275.5,
+        "width": 1427,
+        "height": 1014
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.left-panel",
+      "expected": {
+        "x": 215,
+        "y": 275.5,
+        "width": 330,
+        "height": 1014,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 275.5,
+        "width": 330,
+        "height": 1014
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.center-panel",
+      "expected": {
+        "x": 561,
+        "y": 275.5,
+        "width": 655,
+        "height": 1014,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 561,
+        "y": 275.5,
+        "width": 655,
+        "height": 1014
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.right-panel",
+      "expected": {
+        "x": 1232,
+        "y": 275.5,
+        "width": 410,
+        "height": 1014,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1232,
+        "y": 275.5,
+        "width": 410,
+        "height": 1014
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.info-card",
+      "expected": {
+        "x": 215,
+        "y": 275.5,
+        "width": 330,
+        "height": 374,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 275.5,
+        "width": 330,
+        "height": 374
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.criteria-card",
+      "expected": {
+        "x": 215,
+        "y": 835.5,
+        "width": 330,
+        "height": 198,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 215,
+        "y": 835.5,
+        "width": 330,
+        "height": 198
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.transcript-card",
+      "expected": {
+        "x": 561,
+        "y": 275.5,
+        "width": 655,
+        "height": 868,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 561,
+        "y": 275.5,
+        "width": 655,
+        "height": 868
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.status-card",
+      "expected": {
+        "x": 1232,
+        "y": 275.5,
+        "width": 410,
+        "height": 252,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1232,
+        "y": 275.5,
+        "width": 410,
+        "height": 252
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.actions-card",
+      "expected": {
+        "x": 1232,
+        "y": 907.5,
+        "width": 410,
+        "height": 174,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1232,
+        "y": 907.5,
+        "width": 410,
+        "height": 174
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "ticket.artifacts-card",
+      "expected": {
+        "x": 1232,
+        "y": 1097.5,
+        "width": 410,
+        "height": 192,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1232,
+        "y": 1097.5,
+        "width": 410,
+        "height": 192
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    }
+  ]
+}

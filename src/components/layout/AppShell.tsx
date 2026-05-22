@@ -463,6 +463,8 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
                   ? { minHeight: 'calc(100vh - 98px)' }
                   : currentPath === '/tickets'
                     ? { minHeight: 'calc(100vh - 92px)' }
+                    : currentPath === '/tickets/demo-ticket'
+                      ? { minHeight: 'calc(100vh - 72px)' }
                     : undefined
             }
           >
