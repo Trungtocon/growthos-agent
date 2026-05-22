@@ -400,19 +400,24 @@ function CostDonut() {
   );
 }
 
-function Workforce() {
+function WorkforceOverviewRealPage() {
   return (
     <div>
-      <PageHeader title="AI Workforce" subtitle="Quản lý đội ngũ AI Agent như một phòng ban thực thụ" icon={Users} actions={<><Button variant="secondary"><Network className="h-4 w-4" />Xem Org Chart</Button><Button variant="secondary"><Layers3 className="h-4 w-4" />Agent Templates</Button><Button><Plus className="h-4 w-4" />Tạo Agent mới</Button></>} />
-      {kpiGrid(workforceKpis)}
-      <div className="mt-5 grid grid-cols-12 gap-5">
-        <Panel title="Sức khỏe đội AI" className="col-span-4"><div className="grid grid-cols-[180px_1fr] gap-5 p-5"><DonutScore value={89} size="md" /><MetricRows rows={[['Agent Availability', 92], ['Task Completion', 90], ['Output Quality', 87], ['Budget Efficiency', 84], ['Policy Compliance', 93], ['Workload Balance', 86]]} /></div><div className="px-5 pb-5 text-sm font-semibold text-emerald-600">Ổn định, cần tối ưu nhẹ</div></Panel>
-        <Panel title="Phân bổ trạng thái agent" className="col-span-4"><StatusDistribution /></Panel>
-        <Panel title="Agent hiệu quả nhất" className="col-span-4"><TopAgents /></Panel>
-        <Panel title="Phân bổ khối lượng công việc" className="col-span-3"><WorkloadRows /></Panel>
-        <Panel title="Chi phí theo Agent" className="col-span-3"><AgentCostRows /></Panel>
-        <Panel title="Gợi ý tối ưu đội AI" className="col-span-3"><ActionRows items={['Nên thêm QA Agent cho GrowthOS V2', 'Content Agent đang xử lý quá nhiều task', 'Research Agent có chi phí tăng 28%', '3 agent idle trong 10 ngày']} /></Panel>
-        <Panel title="Hoạt động gần đây" className="col-span-3"><ActivityList /></Panel>
+      <div data-parity-id="workforce.header">
+        <PageHeader title="AI Workforce" subtitle="Quản lý đội ngũ AI Agent như một phòng ban thực thụ" icon={Users} actions={<><Button variant="secondary"><Network className="h-4 w-4" />Xem Org Chart</Button><Button variant="secondary"><Layers3 className="h-4 w-4" />Agent Templates</Button><Button><Plus className="h-4 w-4" />Tạo Agent mới</Button></>} />
+      </div>
+      <div data-parity-id="workforce.kpi-band">{kpiGrid(workforceKpis)}</div>
+      <div data-parity-id="workforce.main-grid" className="mt-5 grid grid-cols-[2fr_1fr] gap-5">
+        <div data-parity-id="workforce.left-panel" className="grid grid-cols-2 gap-5">
+          <div data-parity-id="workforce.health-card"><Panel title="Sức khỏe đội AI" className="h-[304px] overflow-hidden"><div className="grid grid-cols-[180px_1fr] gap-5 p-5"><DonutScore value={89} size="md" /><MetricRows rows={[['Agent Availability', 92], ['Task Completion', 90], ['Output Quality', 87], ['Budget Efficiency', 84], ['Policy Compliance', 93], ['Workload Balance', 86]]} /></div><div className="px-5 pb-5 text-sm font-semibold text-emerald-600">Ổn định, cần tối ưu nhẹ</div></Panel></div>
+          <div data-parity-id="workforce.agent-status-card"><Panel title="Phân bổ trạng thái agent" className="h-[304px] overflow-hidden"><StatusDistribution /></Panel></div>
+          <div data-parity-id="workforce.workload-card"><Panel title="Phân bổ khối lượng công việc" className="h-[258px] overflow-hidden"><WorkloadRows /></Panel></div>
+          <div data-parity-id="workforce.cost-card"><Panel title="Chi phí theo Agent" className="h-[258px] overflow-hidden"><AgentCostRows /></Panel></div>
+        </div>
+        <div data-parity-id="workforce.right-panel" className="grid gap-5">
+          <div data-parity-id="workforce.top-agents-card"><Panel title="Agent hiệu quả nhất" className="h-[304px] overflow-hidden"><TopAgents /></Panel></div>
+          <div data-parity-id="workforce.recommendations-card"><Panel title="Gợi ý tối ưu đội AI" className="h-[258px] overflow-hidden"><ActionRows items={['Nên thêm QA Agent cho GrowthOS V2', 'Content Agent đang xử lý quá nhiều task', 'Research Agent có chi phí tăng 28%', '3 agent idle trong 10 ngày']} /></Panel></div>
+        </div>
       </div>
     </div>
   );
@@ -589,7 +594,7 @@ function ApprovalCenter() {
 
 export function DemoScreen({ route }: { route: string }) {
   if (route === '/command-center') return <CommandCenter />;
-  if (route === '/workforce') return <Workforce />;
+  if (route === '/workforce') return <WorkforceOverviewRealPage />;
   if (route === '/org-chart') return <OrgChart />;
   if (route === '/agents/demo-agent') return <AgentDetail />;
   if (route === '/tickets') return <TicketsBoard />;

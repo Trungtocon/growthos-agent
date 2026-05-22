@@ -1,0 +1,354 @@
+{
+  "route": "/workforce",
+  "url": "http://127.0.0.1:5173/workforce",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-20-layout-contract.json",
+  "generatedAt": "2026-05-22T12:19:25.617Z",
+  "summary": {
+    "checked": 14,
+    "passed": 14,
+    "failed": 0,
+    "extraActualIds": []
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 258,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 258,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 258,
+        "y": 0,
+        "width": 1414,
+        "height": 72,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 258,
+        "y": 0,
+        "width": 1414,
+        "height": 72
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 280,
+        "y": 98,
+        "width": 1370,
+        "height": 843,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 280,
+        "y": 98,
+        "width": 1370,
+        "height": 843
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.header",
+      "expected": {
+        "x": 280,
+        "y": 98,
+        "width": 1370,
+        "height": 64,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 98,
+        "width": 1370,
+        "height": 64
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.kpi-band",
+      "expected": {
+        "x": 280,
+        "y": 178,
+        "width": 1370,
+        "height": 112,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 178,
+        "width": 1370,
+        "height": 112
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.main-grid",
+      "expected": {
+        "x": 280,
+        "y": 310,
+        "width": 1370,
+        "height": 582,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 310,
+        "width": 1370,
+        "height": 582
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.left-panel",
+      "expected": {
+        "x": 280,
+        "y": 310,
+        "width": 906,
+        "height": 582,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 310,
+        "width": 900,
+        "height": 582
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": -6,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.right-panel",
+      "expected": {
+        "x": 1206,
+        "y": 310,
+        "width": 444,
+        "height": 582,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1200,
+        "y": 310,
+        "width": 450,
+        "height": 582
+      },
+      "delta": {
+        "dx": -6,
+        "dy": 0,
+        "dw": 6,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.health-card",
+      "expected": {
+        "x": 280,
+        "y": 310,
+        "width": 443,
+        "height": 304,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 310,
+        "width": 440,
+        "height": 304
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": -3,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.agent-status-card",
+      "expected": {
+        "x": 743,
+        "y": 310,
+        "width": 443,
+        "height": 304,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 740,
+        "y": 310,
+        "width": 440,
+        "height": 304
+      },
+      "delta": {
+        "dx": -3,
+        "dy": 0,
+        "dw": -3,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.top-agents-card",
+      "expected": {
+        "x": 1206,
+        "y": 310,
+        "width": 444,
+        "height": 304,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1200,
+        "y": 310,
+        "width": 450,
+        "height": 304
+      },
+      "delta": {
+        "dx": -6,
+        "dy": 0,
+        "dw": 6,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.workload-card",
+      "expected": {
+        "x": 280,
+        "y": 634,
+        "width": 443,
+        "height": 258,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 280,
+        "y": 634,
+        "width": 440,
+        "height": 258
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": -3,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.cost-card",
+      "expected": {
+        "x": 743,
+        "y": 634,
+        "width": 443,
+        "height": 258,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 740,
+        "y": 634,
+        "width": 440,
+        "height": 258
+      },
+      "delta": {
+        "dx": -3,
+        "dy": 0,
+        "dw": -3,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "workforce.recommendations-card",
+      "expected": {
+        "x": 1206,
+        "y": 634,
+        "width": 444,
+        "height": 258,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1200,
+        "y": 634,
+        "width": 450,
+        "height": 258
+      },
+      "delta": {
+        "dx": -6,
+        "dy": 0,
+        "dw": 6,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    }
+  ]
+}

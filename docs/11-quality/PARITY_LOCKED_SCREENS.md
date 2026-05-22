@@ -11,8 +11,8 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 05 | `/onboarding/ai-team` | `AiTeamOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_05/*` |
 | 06 | `/onboarding/hermes` | `HermesOnboardingParityPage` | 0.0148% | Frozen | `public/stitch_ui/parity_06/*` |
 | 07 | `/onboarding/complete` | `CompleteOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_07/*` |
-| 08 | `/command-center` | `CommandCenter` / `AppShell` branch | 0% | Frozen | `public/stitch_ui/parity_08/*` |
-| 20 | `/workforce` | `WorkforceOverviewParityPage` | 0% | Frozen | `public/stitch_ui/parity_20/*` |
+| 08 | `/command-center` | `CommandCenter` / `AppShell` | 10.5256% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_08` layout assets rendered |
+| 20 | `/workforce` | `WorkforceOverviewRealPage` | 9.4318% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_20` layout assets rendered |
 | 21 | `/org-chart` | `OrgChartParityPage` | 0% | Frozen | `public/stitch_ui/parity_21/*` |
 | 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
 | 30 | `/tickets` | `TicketsBoardParityPage` | 0% | Frozen | `public/stitch_ui/parity_30/*` |
@@ -28,10 +28,15 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Interaction overlay and component refactor will be handled in a separate sprint after all 55 screens pass visual parity.
 - Screen 08 is the first frozen AppShell baseline.
 - Do not modify Screen 08 unless there is a direct request to do so.
+- Screen 08 is locked as Real UI Structural PASS, not static screenshot parity.
+- Do not revert Screen 08 to static slices to chase pixel diff.
+- Screen 08 pixel diff <=3% is not a blocker for following real UI conversion sprints.
 - Future AppShell screens must regression test Screen 08 before merge.
 - If Screen 08 regression fails, stop the sprint and restore the AppShell baseline before continuing.
 - Screen 20 is the first frozen AI Workforce baseline.
 - Do not modify Screen 20 unless there is a direct request to do so.
+- Screen 20 is locked as Real UI Structural PASS using the same structural gate approach.
+- Future AppShell screens should use structural bbox gates before pixel tuning.
 - Screen 21 is the frozen AI Workforce Org Chart baseline.
 - Do not modify Screen 21 unless there is a direct request to do so.
 - Future AI Workforce screens must regression test Screen 20 and Screen 21 before merge.

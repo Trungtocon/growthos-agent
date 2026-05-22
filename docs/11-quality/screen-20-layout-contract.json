@@ -1,0 +1,26 @@
+{
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "public/stitch_ui/20_AI_Workforce_Overview.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 258, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 258, "y": 0, "width": 1414, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 280, "y": 98, "width": 1370, "height": 843, "tolerance": 12 },
+    "workforce.header": { "x": 280, "y": 98, "width": 1370, "height": 64, "tolerance": 16 },
+    "workforce.kpi-band": { "x": 280, "y": 178, "width": 1370, "height": 112, "tolerance": 16 },
+    "workforce.main-grid": { "x": 280, "y": 310, "width": 1370, "height": 582, "tolerance": 16 },
+    "workforce.left-panel": { "x": 280, "y": 310, "width": 906, "height": 582, "tolerance": 16 },
+    "workforce.right-panel": { "x": 1206, "y": 310, "width": 444, "height": 582, "tolerance": 16 },
+    "workforce.health-card": { "x": 280, "y": 310, "width": 443, "height": 304, "tolerance": 16 },
+    "workforce.agent-status-card": { "x": 743, "y": 310, "width": 443, "height": 304, "tolerance": 16 },
+    "workforce.top-agents-card": { "x": 1206, "y": 310, "width": 444, "height": 304, "tolerance": 16 },
+    "workforce.workload-card": { "x": 280, "y": 634, "width": 443, "height": 258, "tolerance": 16 },
+    "workforce.cost-card": { "x": 743, "y": 634, "width": 443, "height": 258, "tolerance": 16 },
+    "workforce.recommendations-card": { "x": 1206, "y": 634, "width": 444, "height": 258, "tolerance": 16 }
+  }
+}
