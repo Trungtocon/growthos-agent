@@ -1,0 +1,354 @@
+{
+  "route": "/command-center",
+  "url": "http://127.0.0.1:5173/command-center",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-08-layout-contract.json",
+  "generatedAt": "2026-05-22T11:46:49.640Z",
+  "summary": {
+    "checked": 14,
+    "passed": 14,
+    "failed": 0,
+    "extraActualIds": []
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 218,
+        "y": 0,
+        "width": 1454,
+        "height": 72,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 218,
+        "y": 0,
+        "width": 1454,
+        "height": 72
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 851,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 851
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.header",
+      "expected": {
+        "x": 240,
+        "y": 90,
+        "width": 334,
+        "height": 64,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 90,
+        "width": 334.1,
+        "height": 64
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0.1,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.kpi-band",
+      "expected": {
+        "x": 240,
+        "y": 170,
+        "width": 1400,
+        "height": 112,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 170,
+        "width": 1410,
+        "height": 112
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 10,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.main-grid",
+      "expected": {
+        "x": 240,
+        "y": 299,
+        "width": 1400,
+        "height": 609,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 298,
+        "width": 1410,
+        "height": 609
+      },
+      "delta": {
+        "dx": 0,
+        "dy": -1,
+        "dw": 10,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.main-left",
+      "expected": {
+        "x": 240,
+        "y": 299,
+        "width": 488,
+        "height": 609,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 298,
+        "width": 491.3,
+        "height": 609
+      },
+      "delta": {
+        "dx": 0,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.main-right",
+      "expected": {
+        "x": 1152,
+        "y": 299,
+        "width": 488,
+        "height": 609,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 1158.7,
+        "y": 298,
+        "width": 491.3,
+        "height": 609
+      },
+      "delta": {
+        "dx": 6.7,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.health-card",
+      "expected": {
+        "x": 240,
+        "y": 299,
+        "width": 488,
+        "height": 324,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 298,
+        "width": 491.3,
+        "height": 324
+      },
+      "delta": {
+        "dx": 0,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.goals-card",
+      "expected": {
+        "x": 744,
+        "y": 299,
+        "width": 392,
+        "height": 324,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 747.3,
+        "y": 298,
+        "width": 395.5,
+        "height": 324
+      },
+      "delta": {
+        "dx": 3.3,
+        "dy": -1,
+        "dw": 3.5,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.activity-card",
+      "expected": {
+        "x": 1152,
+        "y": 299,
+        "width": 488,
+        "height": 324,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 1158.7,
+        "y": 298,
+        "width": 491.3,
+        "height": 324
+      },
+      "delta": {
+        "dx": 6.7,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.actions-card",
+      "expected": {
+        "x": 240,
+        "y": 639,
+        "width": 488,
+        "height": 269,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 240,
+        "y": 638,
+        "width": 491.3,
+        "height": 269
+      },
+      "delta": {
+        "dx": 0,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.alerts-card",
+      "expected": {
+        "x": 744,
+        "y": 639,
+        "width": 392,
+        "height": 269,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 747.3,
+        "y": 638,
+        "width": 395.5,
+        "height": 269
+      },
+      "delta": {
+        "dx": 3.3,
+        "dy": -1,
+        "dw": 3.5,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    },
+    {
+      "region": "command.cost-card",
+      "expected": {
+        "x": 1152,
+        "y": 639,
+        "width": 488,
+        "height": 269,
+        "tolerance": 12
+      },
+      "actual": {
+        "x": 1158.7,
+        "y": 638,
+        "width": 491.3,
+        "height": 269
+      },
+      "delta": {
+        "dx": 6.7,
+        "dy": -1,
+        "dw": 3.3,
+        "dh": 0
+      },
+      "tolerance": 12,
+      "status": "passed"
+    }
+  ]
+}

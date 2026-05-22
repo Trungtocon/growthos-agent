@@ -393,7 +393,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      <aside className="fixed left-0 top-0 h-screen border-r border-slate-200 bg-white px-3" style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
+      <aside data-parity-id="app-shell.sidebar" className="fixed left-0 top-0 h-screen border-r border-slate-200 bg-white px-3" style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
         <div className="mb-[28px] px-5">
           <Logo profile={profile} />
         </div>
@@ -414,7 +414,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
       </aside>
 
       <div style={{ paddingLeft: profile.sidebarWidth }}>
-        <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-6 backdrop-blur" style={{ height: profile.headerHeight }}>
+        <header data-parity-id="app-shell.topbar" className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 px-6 backdrop-blur" style={{ height: profile.headerHeight }}>
           <div className="flex items-center" style={{ gap: profile.searchGap }}>
             <select className="h-[42px] w-[182px] rounded-lg border border-slate-200 bg-white px-4 text-sm font-bold text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.03)]" aria-label="Company switcher">
               <option>{profile.company}</option>
@@ -453,7 +453,9 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
             </div>
           </div>
         </header>
-        <main className={profile.mainClass}>{children}</main>
+        <main className={profile.mainClass}>
+          <div data-parity-id="app-shell.main" style={currentPath === '/command-center' ? { minHeight: 'calc(100vh - 90px)' } : undefined}>{children}</div>
+        </main>
       </div>
     </div>
   );

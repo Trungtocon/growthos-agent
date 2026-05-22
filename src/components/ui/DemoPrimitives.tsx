@@ -19,12 +19,14 @@ export function PageHeader({
   icon,
   actions,
   dense = false,
+  contentParityId,
 }: {
   title: string;
   subtitle: string;
   icon?: LucideIcon;
   actions?: ReactNode;
   dense?: boolean;
+  contentParityId?: string;
 }) {
   const Icon = icon;
   return (
@@ -35,7 +37,7 @@ export function PageHeader({
             <Icon className="h-7 w-7" />
           </div>
         ) : null}
-        <div>
+        <div data-parity-id={contentParityId}>
           <h1 className={`${dense ? 'text-[24px]' : 'text-[30px]'} font-bold leading-tight tracking-tight text-slate-950`}>{title}</h1>
           <p className={`${dense ? 'mt-1 text-[13px]' : 'mt-1 text-[15px]'} text-slate-500`}>{subtitle}</p>
         </div>

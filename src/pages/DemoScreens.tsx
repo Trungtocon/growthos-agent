@@ -220,7 +220,7 @@ function ActivityList() {
 }
 
 function CommandCenterHeader() {
-  return <PageHeader title="Command Center" subtitle="Tổng quan vận hành đội ngũ AI cho doanh nghiệp" />;
+  return <PageHeader title="Command Center" subtitle="Tổng quan vận hành đội ngũ AI cho doanh nghiệp" contentParityId="command.header" />;
 }
 
 function CommandKpiBand() {
@@ -311,7 +311,7 @@ function AlertsCard() {
 
 function CostDistributionCard() {
   return (
-    <DashboardCard title="Phân bổ chi phí AI theo agent">
+    <DashboardCard title="Phân bổ chi phí AI theo agent" className="h-[269px] overflow-hidden">
       <CostDistributionChart
         total="$18,450.75"
         rows={[
@@ -330,16 +330,34 @@ function CommandCenter() {
   return (
     <div>
       <CommandCenterHeader />
-      <CommandKpiBand />
-      <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <WorkforceHealthCard />
-        <StrategicGoalsCard />
-        <RecentActivityCard />
+      <div data-parity-id="command.kpi-band">
+        <CommandKpiBand />
       </div>
-      <div className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
-        <NextActionsCard />
-        <AlertsCard />
-        <CostDistributionCard />
+      <div data-parity-id="command.main-grid" className="mt-4 grid grid-cols-[1.18fr_.95fr_1.18fr] gap-4">
+        <div data-parity-id="command.main-left" className="space-y-4">
+          <div data-parity-id="command.health-card">
+            <WorkforceHealthCard />
+          </div>
+          <div data-parity-id="command.actions-card">
+            <NextActionsCard />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div data-parity-id="command.goals-card">
+            <StrategicGoalsCard />
+          </div>
+          <div data-parity-id="command.alerts-card">
+            <AlertsCard />
+          </div>
+        </div>
+        <div data-parity-id="command.main-right" className="space-y-4">
+          <div data-parity-id="command.activity-card">
+            <RecentActivityCard />
+          </div>
+          <div data-parity-id="command.cost-card">
+            <CostDistributionCard />
+          </div>
+        </div>
       </div>
     </div>
   );
