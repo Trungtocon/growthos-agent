@@ -1,0 +1,264 @@
+{
+  "route": "/org-chart",
+  "url": "http://127.0.0.1:5173/org-chart",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-21-layout-contract.json",
+  "generatedAt": "2026-05-22T15:43:35.493Z",
+  "summary": {
+    "checked": 10,
+    "passed": 10,
+    "failed": 0,
+    "extraActualIds": [
+      "org.connectors",
+      "org.node.ceo",
+      "org.node.content",
+      "org.node.report",
+      "org.node.research"
+    ]
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 208,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 208,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 208,
+        "y": 0,
+        "width": 1464,
+        "height": 68,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 208,
+        "y": 0,
+        "width": 1464,
+        "height": 68
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 226,
+        "y": 88,
+        "width": 1428,
+        "height": 1020,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 226,
+        "y": 88,
+        "width": 1428,
+        "height": 1020
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.header",
+      "expected": {
+        "x": 226,
+        "y": 88,
+        "width": 1428,
+        "height": 64,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 226,
+        "y": 88,
+        "width": 1428,
+        "height": 64
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.toolbar",
+      "expected": {
+        "x": 239,
+        "y": 181,
+        "width": 1402,
+        "height": 47,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 239,
+        "y": 181,
+        "width": 1402,
+        "height": 47
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.main-grid",
+      "expected": {
+        "x": 239,
+        "y": 240,
+        "width": 1402,
+        "height": 855,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 239,
+        "y": 240,
+        "width": 1402,
+        "height": 855
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.canvas",
+      "expected": {
+        "x": 239,
+        "y": 240,
+        "width": 1106,
+        "height": 855,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 239,
+        "y": 240,
+        "width": 1106,
+        "height": 855
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.detail-panel",
+      "expected": {
+        "x": 1361,
+        "y": 240,
+        "width": 280,
+        "height": 855,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1361,
+        "y": 240,
+        "width": 280,
+        "height": 855
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.agent-card",
+      "expected": {
+        "x": 1362,
+        "y": 241,
+        "width": 278,
+        "height": 328,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1362,
+        "y": 241,
+        "width": 278,
+        "height": 328
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "org.insight-card",
+      "expected": {
+        "x": 1361,
+        "y": 586,
+        "width": 280,
+        "height": 110,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 1361,
+        "y": 586,
+        "width": 280,
+        "height": 110
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-22T13:53:12.129Z",
+  "generatedAt": "2026-05-22T15:44:25.475Z",
   "baseUrl": "http://127.0.0.1:5173",
   "summary": {
-    "checked": 6,
-    "passed": 6,
+    "checked": 7,
+    "passed": 7,
     "failed": 0
   },
   "rows": [
@@ -31,6 +31,20 @@
       "mainSelector": "[data-parity-id=\"workforce.header\"]",
       "mainSelectorFound": true,
       "heading": "AI Workforce",
+      "headingFound": true,
+      "consoleErrors": [],
+      "status": "passed"
+    },
+    {
+      "screen": 21,
+      "route": "/org-chart",
+      "url": "http://127.0.0.1:5173/org-chart",
+      "httpStatus": 200,
+      "loaded": true,
+      "appShellFound": true,
+      "mainSelector": "[data-parity-id=\"org.main-grid\"]",
+      "mainSelectorFound": true,
+      "heading": "Org Chart",
       "headingFound": true,
       "consoleErrors": [],
       "status": "passed"

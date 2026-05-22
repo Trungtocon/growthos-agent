@@ -464,22 +464,32 @@ function OrgCard({ agent, compact = false }: { agent: typeof agents[number]; com
   );
 }
 
-function OrgChart() {
+function OrgChartRealPage() {
   return (
     <div>
+      <div data-parity-id="org.header">
       <PageHeader title="Org Chart" subtitle="Sơ đồ tổ chức đội ngũ AI Agent theo vai trò, cấp bậc và trách nhiệm" actions={<><Button variant="secondary"><Layers3 className="h-4 w-4" />Dùng template</Button><Button variant="secondary"><Workflow className="h-4 w-4" />Tùy chỉnh cấu trúc</Button><Button><Plus className="h-4 w-4" />Thêm Agent</Button></>} />
+      </div>
       <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
-        <div className="mb-3 flex flex-wrap gap-2 border-b border-slate-100 pb-3">{['Phóng to', 'Thu nhỏ', 'Vừa màn hình', 'Mở rộng tất cả', 'Thu gọn tất cả', 'Hiển thị tải', 'Hiển thị chi phí'].map((item) => <button key={item} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600">{item}</button>)}</div>
-        <div className="grid grid-cols-[1fr_280px] gap-4">
-          <div className="relative min-h-[680px] overflow-hidden rounded-xl border border-slate-100 bg-[radial-gradient(circle_at_1px_1px,#dbe4ef_1px,transparent_0)] [background-size:18px_18px] p-8">
+        <div data-parity-id="org.toolbar" className="mb-3 flex flex-wrap gap-2 border-b border-slate-100 pb-3">{['Phóng to', 'Thu nhỏ', 'Vừa màn hình', 'Mở rộng tất cả', 'Thu gọn tất cả', 'Hiển thị tải', 'Hiển thị chi phí'].map((item) => <button key={item} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600">{item}</button>)}</div>
+        <div data-parity-id="org.main-grid" className="grid grid-cols-[1fr_280px] gap-4">
+          <div data-parity-id="org.canvas" className="relative min-h-[680px] overflow-hidden rounded-xl border border-slate-100 bg-[radial-gradient(circle_at_1px_1px,#dbe4ef_1px,transparent_0)] [background-size:18px_18px] p-8">
             <div className="mx-auto flex w-fit flex-col items-center gap-8">
-              <OrgCard agent={{ ...agents[0], name: 'CEO Agent', role: 'Chief Strategy', load: 62, score: 95.4 }} />
-              <div className="h-px w-[820px] bg-slate-300" />
-              <div className="grid grid-cols-4 gap-8">{['CTO Agent', 'CMO Agent', 'Sales Director Agent', 'COO Agent'].map((name, index) => <OrgCard key={name} agent={{ ...agents[index], name, load: [74, 82, 68, 59][index], score: [93.8, 92.1, 90.7, 91.5][index] }} compact />)}</div>
+              <div data-parity-id="org.node.ceo"><OrgCard agent={{ ...agents[0], name: 'CEO Agent', role: 'Chief Strategy', load: 62, score: 95.4 }} /></div>
+              <svg data-parity-id="org.connectors" viewBox="0 0 820 1" className="h-px w-[820px]" aria-hidden="true">
+                <path d="M0 0.5 H820" stroke="#cbd5e1" strokeWidth="1" />
+              </svg>
+              <div className="grid grid-cols-4 gap-8">{['CTO Agent', 'CMO Agent', 'Sales Director Agent', 'COO Agent'].map((name, index) => <div key={name} data-parity-id={index === 0 ? 'org.node.research' : index === 1 ? 'org.node.content' : index === 2 ? 'org.node.report' : undefined}><OrgCard agent={{ ...agents[index], name, load: [74, 82, 68, 59][index], score: [93.8, 92.1, 90.7, 91.5][index] }} compact /></div>)}</div>
               <div className="grid grid-cols-4 gap-8">{[0, 1, 2, 3].map((col) => <div key={col} className="space-y-4">{agents.slice(col * 2, col * 2 + 3).map((agent) => <OrgCard key={`${col}-${agent.name}`} agent={agent} compact />)}</div>)}</div>
             </div>
           </div>
-          <Panel><div className="p-4"><div className="mb-4 flex items-center gap-3"><AvatarBot tone="purple" label="AI" /><div><div className="font-bold">Hermes QA Agent</div><div className="text-sm text-slate-500">QA & UAT</div></div></div><MetricRows rows={[['Tải công việc', 76], ['Hiệu suất', 97], ['Tin cậy', 94]]} /><div className="mt-4 grid gap-2"><Button>View Agent Detail</Button><Button variant="secondary">Assign Task</Button><Button variant="secondary">Pause Agent</Button></div></div></Panel>
+          <div data-parity-id="org.detail-panel">
+            <Panel><div data-parity-id="org.agent-card" className="p-4"><div className="mb-4 flex items-center gap-3"><AvatarBot tone="purple" label="AI" /><div><div className="font-bold">Hermes QA Agent</div><div className="text-sm text-slate-500">QA & UAT</div></div></div><MetricRows rows={[['Tải công việc', 76], ['Hiệu suất', 97], ['Tin cậy', 94]]} /><div className="mt-4 grid gap-2"><Button>View Agent Detail</Button><Button variant="secondary">Assign Task</Button><Button variant="secondary">Pause Agent</Button></div></div></Panel>
+            <div data-parity-id="org.insight-card" className="mt-4 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+              <div className="font-bold text-slate-900">Team Insight</div>
+              <p className="mt-2 leading-6">Hermes QA Agent đang là điểm nút chất lượng chính cho GrowthOS V2.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -622,7 +632,7 @@ function ApprovalCenterRealPage() {
 export function DemoScreen({ route }: { route: string }) {
   if (route === '/command-center') return <CommandCenter />;
   if (route === '/workforce') return <WorkforceOverviewRealPage />;
-  if (route === '/org-chart') return <OrgChart />;
+  if (route === '/org-chart') return <OrgChartRealPage />;
   if (route === '/agents/demo-agent') return <AgentDetail />;
   if (route === '/tickets') return <TicketsBoardRealPage />;
   if (route === '/tickets/demo-ticket') return <TicketDetailRealPage />;
