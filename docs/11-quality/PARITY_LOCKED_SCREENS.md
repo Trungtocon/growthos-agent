@@ -17,6 +17,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 23 | `/agents/demo-agent` | `AgentDetailParityPage` | 0% | Frozen | `public/stitch_ui/parity_23/*` |
 | 30 | `/tickets` | `TicketsBoardRealPage` | 10.6961% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
 | 32 | `/tickets/demo-ticket` | `TicketDetailRealPage` | 7.7372% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_32` layout assets rendered |
+| 34 | `/runs/demo-run` | `RunConsoleRealPage` | 12.5042% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_34` layout assets rendered |
 
 ## Rules
 
@@ -60,3 +61,9 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screen 32 active real component is `TicketDetailRealPage + AppShell`; static guardrail Pass; structural gate Pass 15/15; pixel diff 7.7372%.
 - Future Run/Execution screens must regression test Screen 30 and Screen 32 before merge.
 - If Screen 30 or Screen 32 regression fails, stop the sprint and restore the Work Execution baseline before continuing.
+- Screen 34 is the frozen Run Console baseline.
+- Do not modify Screen 34 unless there is a direct request to do so.
+- Screen 34 is locked as Real UI Structural PASS using the shared structural bbox gate.
+- Do not revert Screen 34 to static slices to chase pixel diff.
+- Screen 34 pixel diff is a polish metric, not the primary real UI gate.
+- Screen 34 active real component is `RunConsoleRealPage + AppShell`; static guardrail Pass; structural gate Pass 16/16; pixel diff 12.5042%.

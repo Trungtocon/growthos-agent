@@ -1,0 +1,330 @@
+{
+  "route": "/approvals",
+  "url": "http://127.0.0.1:5173/approvals",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contract": "docs\\11-quality\\screen-37-layout-contract.json",
+  "generatedAt": "2026-05-22T13:18:31.866Z",
+  "summary": {
+    "checked": 13,
+    "passed": 13,
+    "failed": 0,
+    "extraActualIds": []
+  },
+  "rows": [
+    {
+      "region": "app-shell.sidebar",
+      "expected": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 941,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 941
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.topbar",
+      "expected": {
+        "x": 218,
+        "y": 0,
+        "width": 1454,
+        "height": 72,
+        "tolerance": 8
+      },
+      "actual": {
+        "x": 218,
+        "y": 0,
+        "width": 1454,
+        "height": 72
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 8,
+      "status": "passed"
+    },
+    {
+      "region": "app-shell.main",
+      "expected": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 1690,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 1690
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "approval.header",
+      "expected": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 64,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 240,
+        "y": 90,
+        "width": 1410,
+        "height": 64
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "approval.kpi-band",
+      "expected": {
+        "x": 240,
+        "y": 170,
+        "width": 1410,
+        "height": 112,
+        "tolerance": 16
+      },
+      "actual": {
+        "x": 240,
+        "y": 170,
+        "width": 1410,
+        "height": 112
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 16,
+      "status": "passed"
+    },
+    {
+      "region": "approval.main-grid",
+      "expected": {
+        "x": 240,
+        "y": 356,
+        "width": 1410,
+        "height": 1424,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 240,
+        "y": 356,
+        "width": 1410,
+        "height": 1424
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.queue-panel",
+      "expected": {
+        "x": 240,
+        "y": 356,
+        "width": 601.6,
+        "height": 1424,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 240,
+        "y": 356,
+        "width": 601.6,
+        "height": 1424
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.detail-panel",
+      "expected": {
+        "x": 857.6,
+        "y": 356,
+        "width": 792.4,
+        "height": 1424,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 857.6,
+        "y": 356,
+        "width": 792.4,
+        "height": 1424
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.policy-panel",
+      "expected": {
+        "x": 878.6,
+        "y": 821,
+        "width": 750.4,
+        "height": 150,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 878.6,
+        "y": 821,
+        "width": 750.4,
+        "height": 150
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.queue-card",
+      "expected": {
+        "x": 240,
+        "y": 356,
+        "width": 601.6,
+        "height": 1424,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 240,
+        "y": 356,
+        "width": 601.6,
+        "height": 1424
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.detail-card",
+      "expected": {
+        "x": 857.6,
+        "y": 356,
+        "width": 792.4,
+        "height": 696,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 857.6,
+        "y": 356,
+        "width": 792.4,
+        "height": 696
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.audit-card",
+      "expected": {
+        "x": 857.6,
+        "y": 1068,
+        "width": 792.4,
+        "height": 102,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 857.6,
+        "y": 1068,
+        "width": 792.4,
+        "height": 102
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    },
+    {
+      "region": "approval.actions-card",
+      "expected": {
+        "x": 878.6,
+        "y": 991,
+        "width": 750.4,
+        "height": 40,
+        "tolerance": 20
+      },
+      "actual": {
+        "x": 878.6,
+        "y": 991,
+        "width": 750.4,
+        "height": 40
+      },
+      "delta": {
+        "dx": 0,
+        "dy": 0,
+        "dw": 0,
+        "dh": 0
+      },
+      "tolerance": 20,
+      "status": "passed"
+    }
+  ]
+}
