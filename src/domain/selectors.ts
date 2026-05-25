@@ -6,7 +6,7 @@ import {
 } from '../data/demo-fixtures';
 import { mergeActivityTimeline } from '../services/activity-service';
 import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
-import type { Activity, Agent, Approval, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
+import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 
 export interface KpiViewModel {
   label: string;
@@ -64,6 +64,20 @@ export interface ToolCallViewModel {
   status: string;
   duration: string;
   cost: string;
+}
+
+export interface ArtifactRowViewModel {
+  id: string;
+  name: string;
+  type: Artifact['type'];
+  runId: string;
+  ticketCode: string;
+  ticketTitle: string;
+  agentName: string;
+  status: string;
+  risk: string;
+  createdAt: string;
+  size: string;
 }
 
 function currency(value: number): string {
@@ -154,6 +168,27 @@ function findRun(id: string): Run {
   const run = currentData().runs.find((item) => item.id === id);
   if (!run) throw new Error(`Missing demo run: ${id}`);
   return run;
+}
+
+function artifactRows(): ArtifactRowViewModel[] {
+  const data = currentData();
+  return data.runs.flatMap((run, runIndex) => {
+    const ticket = findTicket(run.ticketId);
+    const agent = findAgent(run.agentId);
+    return run.artifacts.map((artifact, artifactIndex) => ({
+      id: artifact.id,
+      name: artifact.name,
+      type: artifact.type,
+      runId: run.id,
+      ticketCode: ticket.code,
+      ticketTitle: ticket.title,
+      agentName: agent.name,
+      status: statusLabel(run.status),
+      risk: riskLabel(run.riskLevel),
+      createdAt: artifact.createdAt,
+      size: `${Math.max(12, (runIndex + 1) * 18 + artifactIndex * 11)} KB`,
+    }));
+  });
 }
 
 function ticketToCard(ticket: Ticket): TicketCardViewModel {
@@ -296,6 +331,62 @@ export function selectTicketsBoardViewModel() {
       { label: 'Failed', value: String(data.tickets.filter((ticket) => ticket.status === 'failed').length), tone: 'purple' },
       { label: 'Thoi gian TB', value: '2h 18m', tone: 'cyan' },
     ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectTicketsListViewModel() {
+  const data = currentData();
+  const rows = data.tickets.map((ticket) => {
+    const agent = findAgent(ticket.ownerAgentId);
+    const run = ticket.runId ? data.runs.find((item) => item.id === ticket.runId) : undefined;
+    const approval = ticket.approvalId ? data.approvals.find((item) => item.id === ticket.approvalId) : undefined;
+    return {
+      id: ticket.id,
+      code: ticket.code,
+      title: ticket.title,
+      status: statusLabel(ticket.status),
+      priority: priorityLabel(ticket.priority),
+      risk: riskLabel(ticket.riskLevel),
+      owner: agent.name,
+      tags: ticket.tags,
+      updatedAt: ticket.updatedAt.slice(0, 10),
+      dueAt: ticket.dueAt?.slice(0, 10) ?? 'No due date',
+      runStatus: run ? statusLabel(run.status) : 'No run',
+      approvalStatus: approval ? statusLabel(approval.status) : 'No approval',
+    };
+  });
+  return {
+    rows,
+    agents: data.agents,
+    kpis: [
+      { label: 'Tickets', value: String(data.tickets.length), tone: 'blue' },
+      { label: 'Running', value: String(data.tickets.filter((ticket) => ticket.status === 'in_progress').length), tone: 'cyan' },
+      { label: 'Review', value: String(data.tickets.filter((ticket) => ticket.status === 'review').length), tone: 'amber' },
+      { label: 'Done', value: String(data.tickets.filter((ticket) => ticket.status === 'done').length), tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectCreateTicketViewModel() {
+  const data = currentData();
+  const allTags = [...new Set(data.tickets.flatMap((ticket) => ticket.tags))];
+  return {
+    requester: data.currentUser,
+    agents: data.agents,
+    goals: data.goals,
+    tags: allTags,
+    templates: data.goals.map((goal) => ({
+      id: `ticket-template-${goal.id}`,
+      title: `${goal.title} execution ticket`,
+      description: goal.description,
+      owner: findAgent(goal.ownerId).name,
+      criteria: [
+        'Define scope and expected artifact',
+        'Assign an owner agent and tool policy',
+        'Create review checkpoint before completion',
+      ],
+    })),
+    recentTickets: data.tickets.slice(0, 5),
   };
 }
 
@@ -626,6 +717,41 @@ export function selectToolsPermissionsViewModel() {
       { label: 'Approval required', value: String(tools.filter((tool) => tool.access === 'Approval required').length), tone: 'amber' },
       { label: 'Allowed', value: String(tools.filter((tool) => tool.access === 'Allowed').length), tone: 'green' },
     ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectArtifactsLibraryViewModel() {
+  const artifacts = artifactRows();
+  const data = currentData();
+  return {
+    artifacts,
+    runs: data.runs,
+    kpis: [
+      { label: 'Artifacts', value: String(artifacts.length), tone: 'blue' },
+      { label: 'Reports', value: String(artifacts.filter((artifact) => artifact.type === 'report').length), tone: 'green' },
+      { label: 'Logs', value: String(artifacts.filter((artifact) => artifact.type === 'log').length), tone: 'cyan' },
+      { label: 'Linked runs', value: String(new Set(artifacts.map((artifact) => artifact.runId)).size), tone: 'purple' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectArtifactDetailViewModel(artifactId?: string) {
+  const artifacts = artifactRows();
+  const artifact = artifacts.find((item) => item.id === artifactId) ?? artifacts[0];
+  const run = findRun(artifact.runId);
+  const ticket = findTicket(run.ticketId);
+  const agent = findAgent(run.agentId);
+  return {
+    artifact,
+    run,
+    ticket,
+    agent,
+    relatedArtifacts: artifacts.filter((item) => item.runId === run.id && item.id !== artifact.id),
+    reviewChecklist: ticket.acceptanceCriteria.map((criterion, index) => ({
+      id: `artifact-check-${index + 1}`,
+      label: criterion,
+      status: index < 2 ? 'Verified' : 'Needs review',
+    })),
   };
 }
 

@@ -1,0 +1,18 @@
+{
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5i-current-real-ui-dom",
+  "reference": "public/stitch_ui/31_Tickets_List.png",
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 874, "tolerance": 12 },
+    "tickets-list.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 12 },
+    "tickets-list.kpi-band": { "x": 240, "y": 174, "width": 1410, "height": 62, "tolerance": 12 },
+    "tickets-list.main-grid": { "x": 240, "y": 252, "width": 1410, "height": 712, "tolerance": 12 },
+    "tickets-list.list-panel": { "x": 240, "y": 252, "width": 1000, "height": 712, "tolerance": 16 },
+    "tickets-list.detail-panel": { "x": 1260, "y": 252, "width": 390, "height": 712, "tolerance": 16 }
+  }
+}

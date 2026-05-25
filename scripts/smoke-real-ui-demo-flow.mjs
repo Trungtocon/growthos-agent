@@ -32,8 +32,12 @@ const routes = [
   { screen: 28, route: '/skills', mainSelector: '[data-parity-id="skills.header"]', heading: 'Skill Registry' },
   { screen: 29, route: '/tools/permissions', mainSelector: '[data-parity-id="tools.header"]', heading: 'Toolsets & Permissions' },
   { screen: 30, route: '/tickets', mainSelector: '[data-parity-id="tickets.header"]', heading: 'Tickets Board' },
+  { screen: 31, route: '/tickets/list', mainSelector: '[data-parity-id="tickets-list.header"]', heading: 'Tickets List' },
   { screen: 32, route: '/tickets/demo-ticket', mainSelector: '[data-parity-id="ticket.header"]', heading: 'Ticket Detail' },
+  { screen: 33, route: '/tickets/new', mainSelector: '[data-parity-id="ticket-create.header"]', heading: 'Create Ticket Wizard' },
   { screen: 34, route: '/runs/demo-run', mainSelector: '[data-parity-id="run.header"]', heading: 'Run Console' },
+  { screen: 35, route: '/artifacts', mainSelector: '[data-parity-id="artifacts.header"]', heading: 'Artifacts Library' },
+  { screen: 36, route: '/artifacts/demo-artifact', mainSelector: '[data-parity-id="artifact.header"]', heading: 'Artifact Detail' },
   { screen: 37, route: '/approvals', mainSelector: '[data-parity-id="approval.header"]', heading: 'Approval Center' },
 ];
 

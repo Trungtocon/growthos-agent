@@ -46,11 +46,15 @@ import {
   selectCreateAgentViewModel,
   selectCreateGoalViewModel,
   selectCreateProjectViewModel,
+  selectCreateTicketViewModel,
+  selectArtifactDetailViewModel,
+  selectArtifactsLibraryViewModel,
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
   selectSkillsRegistryViewModel,
+  selectTicketsListViewModel,
   selectToolsPermissionsViewModel,
 } from '../domain/selectors';
 import type { Tone } from '../data/demoScreens';
@@ -81,6 +85,10 @@ export const sprint2Routes = new Set([
   '/agents/memory',
   '/skills',
   '/tools/permissions',
+  '/tickets/list',
+  '/tickets/new',
+  '/artifacts',
+  '/artifacts/demo-artifact',
 ]);
 
 type OnboardingStep = {
@@ -2126,6 +2134,139 @@ function ToolsPermissionsScreen() {
   );
 }
 
+function TicketsListScreen() {
+  const vm = selectTicketsListViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="tickets-list.header" title="Tickets List" subtitle="Danh sach ticket van hanh, trang thai run, approval va owner agent." actions={<><Button variant="secondary"><Search className="h-4 w-4" />Filter</Button><Button><Ticket className="h-4 w-4" />New ticket</Button></>} />
+      <MetricBand parityId="tickets-list.kpi-band" items={vm.kpis} />
+      <div data-parity-id="tickets-list.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-5">
+        <div data-parity-id="tickets-list.list-panel">
+          <Panel title="Ticket register">
+            <div className="p-4">
+              <div className="grid grid-cols-[96px_1.2fr_120px_120px_130px_110px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400">
+                <span>Code</span><span>Ticket</span><span>Status</span><span>Owner</span><span>Run</span><span>Risk</span>
+              </div>
+              {vm.rows.map((ticket) => (
+                <div key={ticket.id} className="grid grid-cols-[96px_1.2fr_120px_120px_130px_110px] items-center gap-3 border-b border-slate-100 py-3 text-sm">
+                  <b className="text-[#0f6bff]">{ticket.code}</b>
+                  <div><b>{ticket.title}</b><div className="mt-1 flex flex-wrap gap-1">{ticket.tags.slice(0, 2).map((tag) => <Badge key={tag} tone="slate">{tag}</Badge>)}</div></div>
+                  <Badge tone={ticket.status === 'Done' ? 'green' : ticket.status === 'Needs Review' ? 'amber' : 'blue'}>{ticket.status}</Badge>
+                  <span className="font-semibold text-slate-600">{ticket.owner}</span>
+                  <span className="text-slate-500">{ticket.runStatus}</span>
+                  <Badge tone={ticket.risk === 'High' ? 'red' : ticket.risk === 'Medium' ? 'amber' : 'green'}>{ticket.risk}</Badge>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="tickets-list.detail-panel" className="space-y-5">
+          <Panel title="Queue filters">
+            <div className="space-y-3 p-5">{['All tickets', 'Running now', 'Needs review', 'Blocked or failed', 'Due this week'].map((filter, index) => <div key={filter} className={`rounded-xl border px-4 py-3 text-sm font-semibold ${index === 0 ? 'border-blue-200 bg-blue-50 text-[#0f6bff]' : 'border-slate-100 text-slate-600'}`}>{filter}</div>)}</div>
+          </Panel>
+          <Panel title="Owner workload">
+            <div className="space-y-4 p-5">{vm.agents.map((agent) => <div key={agent.id}><div className="mb-2 flex justify-between text-sm"><b>{agent.name}</b><span>{agent.currentTicketIds.length} tickets</span></div><ProgressBar value={Math.min(100, agent.currentTicketIds.length * 35 + 20)} label={`${agent.name} ticket workload`} /></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateTicketScreen() {
+  const vm = selectCreateTicketViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="ticket-create.header" title="Create Ticket Wizard" subtitle="Tao ticket moi, gan agent owner, lien ket goal va chuan hoa acceptance criteria." actions={<Button><Ticket className="h-4 w-4" />Create ticket</Button>} />
+      <div data-parity-id="ticket-create.steps" className="mt-4 grid grid-cols-4 gap-4">
+        {['Scope', 'Owner', 'Criteria', 'Approval'].map((step, index) => <div key={step} className={`rounded-xl border px-4 py-3 text-sm font-bold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{index + 1}. {step}</div>)}
+      </div>
+      <div data-parity-id="ticket-create.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="ticket-create.form-panel" className="space-y-5">
+          <Panel title="Ticket templates">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={Ticket} tone="blue" /><b className="mt-3 block">{template.title}</b><p className="mt-1 text-sm leading-6 text-slate-500">{template.description}</p><div className="mt-3 text-sm font-semibold text-slate-600">Owner: {template.owner}</div></div>)}</div>
+          </Panel>
+          <Panel title="Suggested tags">
+            <div className="flex flex-wrap gap-3 p-5">{vm.tags.map((tag) => <Badge key={tag} tone="purple">{tag}</Badge>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="ticket-create.preview-panel">
+          <Panel title="Ticket preview">
+            <div className="space-y-4 p-5">
+              <FieldRow label="Requester" value={vm.requester.name} />
+              <FieldRow label="Default agent" value={vm.agents[0]?.name ?? 'Unassigned'} />
+              <FieldRow label="Linked goal" value={vm.goals[0]?.title ?? 'No goal'} />
+              <div className="rounded-xl bg-blue-50 p-4 text-sm font-semibold text-[#0f6bff]">Approval policy will be inherited from workspace guardrails.</div>
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArtifactsLibraryScreen() {
+  const vm = selectArtifactsLibraryViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="artifacts.header" title="Artifacts Library" subtitle="Tap trung toan bo artifact duoc tao tu run: report, log, screenshot va archive evidence." actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Upload</Button><Button><Folder className="h-4 w-4" />New folder</Button></>} />
+      <MetricBand parityId="artifacts.kpi-band" items={vm.kpis} />
+      <div data-parity-id="artifacts.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-5">
+        <div data-parity-id="artifacts.library-panel">
+          <Panel title="Artifact register">
+            <div className="grid grid-cols-3 gap-4 p-5">{vm.artifacts.map((artifact) => <div key={artifact.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={FileText} tone={artifact.type === 'report' ? 'green' : artifact.type === 'log' ? 'cyan' : 'purple'} /><Badge tone={artifact.risk === 'High' ? 'red' : 'green'}>{artifact.type}</Badge></div><b className="mt-4 block">{artifact.name}</b><p className="mt-1 text-sm text-slate-500">{artifact.ticketCode} · {artifact.agentName}</p><div className="mt-3 flex justify-between text-sm font-semibold text-slate-500"><span>{artifact.size}</span><span>{artifact.createdAt.slice(0, 10)}</span></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="artifacts.inspector-panel" className="space-y-5">
+          <Panel title="Run links">
+            <div className="divide-y divide-slate-100 p-4">{vm.runs.map((run) => <div key={run.id} className="py-3"><b className="text-sm">{run.id}</b><p className="mt-1 text-sm text-slate-500">{run.currentStep} · {run.artifacts.length} artifacts</p></div>)}</div>
+          </Panel>
+          <Panel title="Retention policy">
+            <div className="space-y-3 p-5">{['Keep QA evidence for 180 days', 'Attach artifacts to ticket timeline', 'Restrict archive downloads', 'Log every review action'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArtifactDetailScreen() {
+  const vm = selectArtifactDetailViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="artifact.header" title="Artifact Detail" subtitle="Review artifact, metadata, lineage va acceptance evidence truoc khi chia se." actions={<><Button variant="secondary"><Eye className="h-4 w-4" />Preview</Button><Button><CheckCircle2 className="h-4 w-4" />Approve</Button></>} />
+      <div data-parity-id="artifact.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="artifact.preview-panel" className="space-y-5">
+          <Panel title={vm.artifact.name}>
+            <div className="p-5">
+              <div className="grid min-h-[260px] place-items-center rounded-2xl border border-dashed border-blue-200 bg-blue-50">
+                <div className="text-center"><FileText className="mx-auto h-14 w-14 text-[#0f6bff]" /><h2 className="mt-4 text-2xl font-extrabold text-slate-950">{vm.artifact.type.toUpperCase()} artifact</h2><p className="mt-2 text-sm text-slate-500">{vm.ticket.title}</p></div>
+              </div>
+              <div className="mt-5 grid grid-cols-3 gap-4">{[['Run', vm.run.id], ['Agent', vm.agent.name], ['Status', vm.artifact.status]].map(([label, value]) => <FieldRow key={label} label={label} value={value} />)}</div>
+            </div>
+          </Panel>
+          <Panel title="Review checklist">
+            <div className="divide-y divide-slate-100 p-4">{vm.reviewChecklist.map((item) => <div key={item.id} className="flex items-center justify-between py-3"><span className="font-semibold">{item.label}</span><Badge tone={item.status === 'Verified' ? 'green' : 'amber'}>{item.status}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="artifact.metadata-panel" className="space-y-5">
+          <Panel title="Metadata">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Ticket" value={`${vm.ticket.code} · ${vm.ticket.title}`} />
+              <FieldRow label="Created" value={vm.artifact.createdAt.slice(0, 10)} />
+              <FieldRow label="Size" value={vm.artifact.size} />
+              <FieldRow label="Risk" value={vm.artifact.risk} />
+            </div>
+          </Panel>
+          <Panel title="Related artifacts">
+            <div className="divide-y divide-slate-100 p-4">{vm.relatedArtifacts.map((artifact) => <div key={artifact.id} className="py-3"><b className="text-sm">{artifact.name}</b><p className="mt-1 text-sm text-slate-500">{artifact.type} · {artifact.size}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/login') return <LoginOnboardingParityPage />;
   if (route === '/register') return <RegisterOnboardingParityPage />;
@@ -2152,5 +2293,9 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/agents/memory') return <AgentMemoryScreen />;
   if (route === '/skills') return <SkillsRegistryScreen />;
   if (route === '/tools/permissions') return <ToolsPermissionsScreen />;
+  if (route === '/tickets/list') return <TicketsListScreen />;
+  if (route === '/tickets/new') return <CreateTicketScreen />;
+  if (route === '/artifacts') return <ArtifactsLibraryScreen />;
+  if (route === '/artifacts/demo-artifact') return <ArtifactDetailScreen />;
   return null;
 }

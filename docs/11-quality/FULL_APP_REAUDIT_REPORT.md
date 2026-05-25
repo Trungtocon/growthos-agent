@@ -6,11 +6,11 @@ Audit baseline on 2026-05-23:
 
 - Manifest screens: 55.
 - Manifest routes with an app route entry: 55.
-- Design-backed implementations beyond the scaffold fallback: 33.
+- Design-backed implementations beyond the scaffold fallback: 37.
 - Locked static parity onboarding/auth screens: 7.
-- Real UI routes with structural bbox gates: 26.
+- Real UI routes with structural bbox gates: 30.
 - Partial utility Real UI routes without route-specific parity or bbox gates: 0.
-- Scaffold placeholders still falling through `ScreenPage`: 22.
+- Scaffold placeholders still falling through `ScreenPage`: 18.
 - Real UI Demo v1 flow remains healthy at audit time: build pass, onboarding parity pass, bbox gates pass for 08/20/21/23/30/32/34/37, smoke flow pass, interaction smoke pass.
 
 The route map is broad but product coverage is not yet broad. `ScreenPage` keeps every manifest route navigable, but only `commercialRoutes` and `sprint2Routes` bypass the generic scaffold. The next work should stabilize workflow commands and then convert remaining business routes in coherent waves rather than treating scaffold presence as completion.
@@ -49,12 +49,12 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 28 | `/skills` | Skill Registry | `SkillsRegistryScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 29 | `/tools/permissions` | Tools & Permissions | `ToolsPermissionsScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 30 | `/tickets` | Tickets Board | `TicketsBoardRealPage` | `src/pages/DemoScreens.tsx` | REAL_UI | Yes | PASS |
-| 31 | `/tickets/list` | Tickets List | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
+| 31 | `/tickets/list` | Tickets List | `TicketsListScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 32 | `/tickets/demo-ticket` | Ticket Detail | `TicketDetailRealPage` | `src/pages/DemoScreens.tsx` | REAL_UI | Yes | PASS |
-| 33 | `/tickets/new` | Create Ticket | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
+| 33 | `/tickets/new` | Create Ticket | `CreateTicketScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 34 | `/runs/demo-run` | Run Console | `RunConsoleRealPage` | `src/pages/DemoScreens.tsx` | REAL_UI | Yes | PASS |
-| 35 | `/artifacts` | Artifacts Library | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
-| 36 | `/artifacts/demo-artifact` | Artifact Detail / Review | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
+| 35 | `/artifacts` | Artifacts Library | `ArtifactsLibraryScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
+| 36 | `/artifacts/demo-artifact` | Artifact Detail / Review | `ArtifactDetailScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 37 | `/approvals` | Approval Center | `ApprovalCenterRealPage` | `src/pages/DemoScreens.tsx` | REAL_UI | Yes | PASS |
 | 38 | `/approvals/demo-approval` | Approval Detail | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
 | 39 | `/governance/policies` | Governance Policy | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
@@ -90,10 +90,11 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 22,24-29 | Workforce support | Pixel polish deferred, 7.8775%-17.7707% reference diff | Pass 56/56 | Pass | Workforce support wave promoted in Sprint 5H; Screen 26 remains visual polish outlier |
 | 23 | `/agents/demo-agent` | Pixel polish deferred, 8.0451% reference diff | Pass 18/18 | Pass | Real UI structural baseline |
 | 30 | `/tickets` | Pixel polish deferred, 10.6961% reference diff | Pass 12/12 | Pass | Real UI structural baseline |
+| 31,33,35-36 | Work execution support | Pixel polish deferred, 6.5207%-8.5822% reference diff | Pass 31/31 | Pass | Work execution support wave promoted in Sprint 5I |
 | 32 | `/tickets/demo-ticket` | Pixel polish deferred, 7.7372% reference diff | Pass 15/15 | Pass | Real UI structural baseline |
 | 34 | `/runs/demo-run` | Pixel polish deferred, 12.5042% reference diff | Pass 16/16 | Pass | Real UI structural baseline |
 | 37 | `/approvals` | Pixel polish deferred, 8.6397% reference diff | Pass 13/13 | Pass | Real UI structural baseline |
-| 31,33,35-36,38-55 | Remaining manifest routes | Scaffold only | Missing | Missing | Convert in prioritized waves |
+| 38-55 | Remaining manifest routes | Scaffold only | Missing | Missing | Convert in prioritized waves |
 
 ## 4. Static Asset Audit
 
@@ -112,6 +113,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 | `/agents`, `/agents/new`, `/agents/templates`, `/agents/performance`, `/agents/memory`, `/skills`, `/tools/permissions` | No | Guardrail scan has no production `parity_22` or `parity_24`-`parity_29` source match | Low | Keep structural gate and guardrail |
 | `/agents/demo-agent` | No | Guardrail scan has no `parity_23` source match | Low | Keep structural gate and guardrail |
 | `/tickets` | No | Guardrail scan has no `parity_30` source match | Low | Keep structural gate and guardrail |
+| `/tickets/list`, `/tickets/new`, `/artifacts`, `/artifacts/demo-artifact` | No | Guardrail scan has no production `parity_31`, `parity_33`, `parity_35`, or `parity_36` source match | Low | Keep structural gate and guardrail |
 | `/tickets/demo-ticket` | No | Guardrail scan has no `parity_32` source match | Low | Keep structural gate and guardrail |
 | `/runs/demo-run` | No | Guardrail scan has no `parity_34` source match | Low | Keep structural gate and guardrail |
 | `/approvals` | No | Guardrail scan has no `parity_37` source match | Low | Keep structural gate and guardrail |
@@ -125,7 +127,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 | Route map | Manifest is complete; `commercialRoutes` and `sprint2Routes` choose the non-scaffold branch | Coverage is explicit but narrow |
 | Component primitives | Dashboard cards, badges, progress, rows, and shell UI exist | Reuse for new screen waves |
 | Domain types | Demo v1 entities are typed in `src/domain` | Good starting point; expand with new screen data |
-| Fixtures | Linked demo fixtures cover Real UI Demo v1, Sprint 5G planning routes, and Sprint 5H workforce support selectors | Incomplete for the remaining 22 scaffold routes |
+| Fixtures | Linked demo fixtures cover Real UI Demo v1, Sprint 5G planning routes, Sprint 5H workforce support, and Sprint 5I work execution support selectors | Incomplete for the remaining 18 scaffold routes |
 | Mock API | Local demo API boundary exists | Needs mutation and workflow command coverage |
 | Selectors | Demo view models and UI interaction selectors exist | Keep selector-driven rendering as screens expand |
 | State/store | Shared demo data hooks plus UI interaction state | Needs command/event and optimistic mutation boundary |
@@ -136,7 +138,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 | Dimension | Assessment | Evidence |
 |---|---|---|
-| UI coverage | Partial | 33 of 55 screens have design-backed UI beyond the scaffold fallback; 26 authenticated routes now have structural gates |
+| UI coverage | Partial | 37 of 55 screens have design-backed UI beyond the scaffold fallback; 30 authenticated routes now have structural gates |
 | Interaction readiness | Partial | Selection/navigation wiring exists for Demo v1 only |
 | Data readiness | Partial | Typed fixtures and selectors exist for Demo v1 entities |
 | API readiness | Foundation only | Mock read service exists; backend adapter and mutation flow remain |
@@ -150,7 +152,6 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 | Screen | Route | Missing UI | Missing interaction | Missing data/API | Missing test/gate | Priority |
 |---|---|---|---|---|---|---|
-| 31,33,35-36 | Work execution support | Tickets list/new and artifact screens | Create/review flows | Ticket/artifact selectors | Per-screen screen gates | P1 important product flow |
 | 38-41 | Governance support | Detail, policy, audit, risk screens | Approval detail and policy actions | Governance and audit events | Per-screen screen gates | P1 important product flow |
 | 42-45 | Budget/reports | Cost, budget, report builder surfaces | Budget/report controls | Report and cost models | Per-screen screen gates | P2 remaining core screen |
 | 46-55 | Integrations/admin | Integrations, workspace, settings, billing, help surfaces | Admin configuration flows | Admin/integration models | Per-screen screen gates | P2 remaining core screen |
@@ -160,7 +161,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 | Risk | Impact | Evidence | Mitigation |
 |---|---|---|---|
-| Scaffold routes look implemented because they route | Coverage can be overstated | 22 manifest routes still fall through `ScreenPage` scaffold | Track mode and gates per screen |
+| Scaffold routes look implemented because they route | Coverage can be overstated | 18 manifest routes still fall through `ScreenPage` scaffold | Track mode and gates per screen |
 | Pixel parity and Real UI constraints compete | Time loss on small visual deltas | Sprint 4 tuning history and acceptance policy | Keep structural gate for Real UI, use pixel diff as reference |
 | Workflow mutations bypass selectors/store | UI state diverges across screens | Current architecture is selection-first | Add command/event pipeline before more workflow UI |
 | New screen waves duplicate local mock data | Maintenance cost and inconsistent flows | Fixtures cover only Demo v1 | Extend typed fixtures/selectors per wave |
@@ -173,7 +174,6 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 2. Build the workflow command/event layer next so ticket, run, and approval actions share optimistic mutation, rollback, and activity behavior before more surfaces depend on them.
 3. Keep `/today`, `/inbox`, and `/notifications` under the Sprint 5F structural quality strategy.
 4. Convert remaining routes by business wave:
-   - work execution support routes;
    - governance, budget, reports;
    - integrations and workspace/admin.
 5. Extend typed data, selectors, mock API boundaries, smoke coverage, and structural gates with each converted wave.
