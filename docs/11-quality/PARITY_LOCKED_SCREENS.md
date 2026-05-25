@@ -45,6 +45,10 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 39 | `/governance/policies` | `GovernancePoliciesScreen` / `AppShell` | 7.8260% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_39` layout assets rendered |
 | 40 | `/audit-log` | `AuditLogScreen` / `AppShell` | 8.3532% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_40` layout assets rendered |
 | 41 | `/risk-center` | `RiskCenterScreen` / `AppShell` | 9.3348% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_41` layout assets rendered |
+| 42 | `/cost` | `CostDashboardScreen` / `AppShell` | 9.2909% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_42` layout assets rendered |
+| 43 | `/budget/settings` | `BudgetSettingsScreen` / `AppShell` | 7.5558% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_43` layout assets rendered |
+| 44 | `/reports` | `ReportsDashboardScreen` / `AppShell` | 6.8316% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_44` layout assets rendered |
+| 45 | `/reports/new` | `ReportBuilderScreen` / `AppShell` | 7.5491% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_45` layout assets rendered |
 
 ## Real UI Demo v1 Lock
 
@@ -84,6 +88,10 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 39 | `/governance/policies` | Real UI | `GovernancePoliciesScreen + AppShell` | Pass | Pass 8/8 | 7.8260% | Real UI Structural PASS / Visual Polish Deferred |
 | 40 | `/audit-log` | Real UI | `AuditLogScreen + AppShell` | Pass | Pass 8/8 | 8.3532% | Real UI Structural PASS / Visual Polish Deferred |
 | 41 | `/risk-center` | Real UI | `RiskCenterScreen + AppShell` | Pass | Pass 8/8 | 9.3348% | Real UI Structural PASS / Visual Polish Deferred |
+| 42 | `/cost` | Real UI | `CostDashboardScreen + AppShell` | Pass | Pass 8/8 | 9.2909% | Real UI Structural PASS / Visual Polish Deferred |
+| 43 | `/budget/settings` | Real UI | `BudgetSettingsScreen + AppShell` | Pass | Pass 8/8 | 7.5558% | Real UI Structural PASS / Visual Polish Deferred |
+| 44 | `/reports` | Real UI | `ReportsDashboardScreen + AppShell` | Pass | Pass 8/8 | 6.8316% | Real UI Structural PASS / Visual Polish Deferred |
+| 45 | `/reports/new` | Real UI | `ReportBuilderScreen + AppShell` | Pass | Pass 8/8 | 7.5491% | Real UI Structural PASS / Visual Polish Deferred |
 
 ## Rules
 
@@ -168,3 +176,6 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screens 38 through 41 are governance support Real UI routes promoted in Sprint 5J.
 - Do not revert Screens 38-41 to static slices to chase pixel diff.
 - Screens 38-41 use shared selector-driven approval, policy, audit, risk, workflow event, and agent data with structural bbox gates.
+- Screens 42 through 45 are budget/reporting Real UI routes promoted in Sprint 5K.
+- Do not revert Screens 42-45 to static slices to chase pixel diff.
+- Screens 42-45 use shared selector-driven cost, budget, report, artifact, run, and agent data with structural bbox gates.

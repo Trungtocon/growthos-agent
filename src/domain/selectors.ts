@@ -559,6 +559,165 @@ export function selectRiskCenterViewModel() {
   };
 }
 
+export function selectCostDashboardViewModel() {
+  const data = currentData();
+  const budgetUsed = Math.round((data.costBreakdown.total / data.workspace.aiBudgetMonthly) * 100);
+  const runSpend = data.runs.reduce((sum, run) => sum + run.cost, 0);
+  const ticketSpendRows = data.tickets.map((ticket) => {
+    const run = data.runs.find((item) => item.ticketId === ticket.id);
+    const agent = findAgent(ticket.ownerAgentId);
+    return {
+      id: ticket.id,
+      code: ticket.code,
+      title: ticket.title,
+      agent: agent.name,
+      status: statusLabel(ticket.status),
+      risk: riskLabel(ticket.riskLevel),
+      cost: run?.cost ?? 0.06,
+    };
+  }).sort((a, b) => b.cost - a.cost);
+
+  return {
+    workspace: data.workspace,
+    costBreakdown: data.costBreakdown,
+    budgetUsed,
+    runSpend,
+    ticketSpendRows,
+    agentSpend: data.costBreakdown.byAgent.map((item) => ({
+      ...item,
+      status: item.percent > 28 ? 'Review' : item.percent > 18 ? 'Watch' : 'On track',
+      tone: item.percent > 28 ? 'amber' : item.percent > 18 ? 'blue' : 'green',
+    })),
+    toolSpend: data.costBreakdown.byTool,
+    alerts: [
+      { id: 'budget-velocity', title: 'Monthly budget velocity', detail: `${budgetUsed}% of monthly budget used in ${data.costBreakdown.period}.`, severity: budgetUsed > 75 ? 'High' : 'Medium', tone: budgetUsed > 75 ? 'red' : 'amber' },
+      { id: 'research-spike', title: 'Research spend concentration', detail: 'Research and QA runs account for the largest variable spend this period.', severity: 'Medium', tone: 'amber' },
+      { id: 'approval-threshold', title: 'Approval threshold active', detail: 'Budget changes above $25 still require reviewer approval.', severity: 'Low', tone: 'green' },
+    ],
+    kpis: [
+      { label: 'MTD spend', value: currency(data.costBreakdown.total), tone: 'blue' },
+      { label: 'Budget used', value: `${budgetUsed}%`, tone: budgetUsed > 75 ? 'amber' : 'green' },
+      { label: 'Run spend', value: currency(runSpend), tone: 'cyan' },
+      { label: 'Remaining', value: currency(Math.max(0, data.workspace.aiBudgetMonthly - data.costBreakdown.total)), tone: 'purple' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectBudgetSettingsViewModel() {
+  const data = currentData();
+  const used = data.costBreakdown.total;
+  const remaining = Math.max(0, data.workspace.aiBudgetMonthly - used);
+  const policyRows = data.agents.map((agent, index) => ({
+    id: agent.id,
+    agent: agent.name,
+    monthlyLimit: Math.round(agent.costMonthToDate * (index % 2 === 0 ? 2.4 : 2.8)),
+    used: agent.costMonthToDate,
+    approvalThreshold: index % 2 === 0 ? '$25' : '$50',
+    status: agent.riskLevel === 'high' ? 'Review' : 'Enabled',
+  }));
+
+  return {
+    workspace: data.workspace,
+    policyRows,
+    thresholdRows: [
+      { id: 'tool-spend', label: 'Tool call approval', value: '$25', owner: 'Ops reviewer', tone: 'blue' },
+      { id: 'external-send', label: 'External send approval', value: '$0', owner: 'Risk reviewer', tone: 'red' },
+      { id: 'monthly-alert', label: 'Monthly budget alert', value: '80%', owner: data.currentUser.name, tone: 'amber' },
+      { id: 'agent-hard-cap', label: 'Agent hard cap', value: '120%', owner: 'Workspace admin', tone: 'purple' },
+    ],
+    approvalPolicies: data.approvals.map((approval) => ({
+      id: approval.id,
+      title: approval.policy,
+      severity: riskLabel(approval.severity),
+      agent: findAgent(approval.agentId).name,
+      status: statusLabel(approval.status),
+    })),
+    kpis: [
+      { label: 'Monthly budget', value: currency(data.workspace.aiBudgetMonthly), tone: 'blue' },
+      { label: 'Used', value: currency(used), tone: 'amber' },
+      { label: 'Remaining', value: currency(remaining), tone: 'green' },
+      { label: 'Guardrails', value: String(data.approvals.length), tone: 'purple' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectReportsDashboardViewModel() {
+  const data = currentData();
+  const artifacts = artifactRows();
+  const reportArtifacts = artifacts.filter((artifact) => artifact.type === 'report');
+  const scheduled = data.goals.map((goal, index) => ({
+    id: `schedule-${goal.id}`,
+    title: `${goal.title} weekly report`,
+    owner: findAgent(goal.ownerId).name,
+    cadence: index % 2 === 0 ? 'Weekly' : 'Bi-weekly',
+    nextRun: goal.dueAt.slice(0, 10),
+    status: goal.progress > 80 ? 'Ready' : 'Draft',
+  }));
+
+  return {
+    artifacts: reportArtifacts,
+    scheduled,
+    recentRuns: data.runs.map((run) => ({
+      id: run.id,
+      ticket: findTicket(run.ticketId).title,
+      agent: findAgent(run.agentId).name,
+      status: statusLabel(run.status),
+      cost: currency(run.cost),
+      duration: formatDuration(run.elapsedSeconds),
+    })),
+    insightRows: [
+      { id: 'quality', label: 'Quality trend', value: `${Math.round(data.agents.reduce((sum, agent) => sum + agent.outputQuality, 0) / data.agents.length)}%`, tone: 'green' },
+      { id: 'tickets', label: 'Tickets summarized', value: String(data.tickets.length), tone: 'blue' },
+      { id: 'cost', label: 'Cost included', value: currency(data.costBreakdown.total), tone: 'purple' },
+    ],
+    kpis: [
+      { label: 'Reports', value: String(reportArtifacts.length + scheduled.length), tone: 'blue' },
+      { label: 'Scheduled', value: String(scheduled.length), tone: 'cyan' },
+      { label: 'Delivered', value: String(reportArtifacts.length), tone: 'green' },
+      { label: 'Drafts', value: String(scheduled.filter((item) => item.status === 'Draft').length), tone: 'amber' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectReportBuilderViewModel() {
+  const data = currentData();
+  const reportSections = [
+    { id: 'executive-summary', title: 'Executive summary', source: 'Goals, risks, approvals', included: true },
+    { id: 'agent-performance', title: 'Agent performance', source: 'Agents and runs', included: true },
+    { id: 'ticket-progress', title: 'Ticket progress', source: 'Tickets board', included: true },
+    { id: 'cost-breakdown', title: 'Cost breakdown', source: 'Cost model', included: true },
+    { id: 'audit-evidence', title: 'Audit evidence', source: 'Activities and artifacts', included: false },
+  ];
+
+  return {
+    workspace: data.workspace,
+    templates: [
+      { id: 'weekly-ceo', title: 'Weekly CEO Report', owner: data.currentUser.name, cadence: 'Weekly', sections: 5 },
+      { id: 'agent-ops', title: 'Agent Operations Review', owner: 'Operations Lead', cadence: 'Weekly', sections: 4 },
+      { id: 'risk-cost', title: 'Risk and Cost Digest', owner: 'Risk Reviewer', cadence: 'Monthly', sections: 4 },
+    ],
+    reportSections,
+    recipients: [
+      data.currentUser.email,
+      'ops@demo-company.local',
+      'risk@demo-company.local',
+    ],
+    preview: {
+      title: 'Weekly CEO Report',
+      goalCount: data.goals.length,
+      agentCount: data.agents.length,
+      ticketCount: data.tickets.length,
+      cost: currency(data.costBreakdown.total),
+    },
+    kpis: [
+      { label: 'Sections', value: String(reportSections.length), tone: 'blue' },
+      { label: 'Recipients', value: '3', tone: 'cyan' },
+      { label: 'Data sources', value: '6', tone: 'purple' },
+      { label: 'Schedule', value: 'Weekly', tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectCompanyOverviewViewModel() {
   const data = currentData();
   const activeAgents = data.agents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length;

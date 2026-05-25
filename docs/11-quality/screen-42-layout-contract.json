@@ -1,0 +1,15 @@
+{
+  "viewport": { "width": 1672, "height": 941 },
+  "contractSource": "sprint-5k-current-real-ui-dom",
+  "reference": "public/stitch_ui/42_Cost_Dashboard.png",
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 1334, "tolerance": 12 },
+    "cost.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 12 },
+    "cost.kpi-band": { "x": 240, "y": 174, "width": 1410, "height": 62, "tolerance": 12 },
+    "cost.main-grid": { "x": 240, "y": 252, "width": 1410, "height": 1172, "tolerance": 12 },
+    "cost.breakdown-panel": { "x": 240, "y": 252, "width": 970, "height": 1172, "tolerance": 16 },
+    "cost.alerts-panel": { "x": 1230, "y": 252, "width": 420, "height": 1172, "tolerance": 16 }
+  }
+}

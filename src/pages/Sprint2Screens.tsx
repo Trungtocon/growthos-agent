@@ -51,11 +51,15 @@ import {
   selectArtifactsLibraryViewModel,
   selectApprovalDetailViewModel,
   selectAuditLogViewModel,
+  selectBudgetSettingsViewModel,
+  selectCostDashboardViewModel,
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectGovernancePoliciesViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
+  selectReportBuilderViewModel,
+  selectReportsDashboardViewModel,
   selectRiskCenterViewModel,
   selectSkillsRegistryViewModel,
   selectTicketsListViewModel,
@@ -97,6 +101,10 @@ export const sprint2Routes = new Set([
   '/governance/policies',
   '/audit-log',
   '/risk-center',
+  '/cost',
+  '/budget/settings',
+  '/reports',
+  '/reports/new',
 ]);
 
 type OnboardingStep = {
@@ -2394,6 +2402,174 @@ function RiskCenterScreen() {
   );
 }
 
+function CostDashboardScreen() {
+  const vm = selectCostDashboardViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="cost.header"
+        title="Cost Dashboard"
+        subtitle="Theo doi chi phi AI theo agent, tool, run va budget velocity cua workspace."
+        actions={<><Button variant="secondary"><CalendarDays className="h-4 w-4" />This month</Button><Button><BarChart3 className="h-4 w-4" />Export cost</Button></>}
+      />
+      <MetricBand parityId="cost.kpi-band" items={vm.kpis} />
+      <div data-parity-id="cost.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="cost.breakdown-panel" className="space-y-5">
+          <Panel title="Agent spend allocation">
+            <div className="space-y-4 p-5">
+              {vm.agentSpend.map((item) => (
+                <div key={item.id} className="rounded-xl border border-slate-100 p-4">
+                  <div className="mb-2 flex items-center justify-between gap-3"><b>{item.label}</b><span className="font-bold text-[#0f6bff]">{currencyDisplay(item.value)}</span></div>
+                  <ProgressBar value={item.percent} tone={item.tone as Tone} label={`${item.label} spend allocation`} />
+                  <div className="mt-2 flex justify-between text-sm text-slate-500"><span>{item.percent}% of period spend</span><Badge tone={item.tone as Tone}>{item.status}</Badge></div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Ticket spend register">
+            <div className="p-4">
+              <div className="grid grid-cols-[110px_1fr_160px_90px_90px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Ticket</span><span>Scope</span><span>Agent</span><span>Risk</span><span>Cost</span></div>
+              {vm.ticketSpendRows.slice(0, 7).map((row) => <div key={row.id} className="grid grid-cols-[110px_1fr_160px_90px_90px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.code}</b><span>{row.title}</span><span className="text-slate-500">{row.agent}</span><Badge tone={row.risk === 'High' ? 'red' : row.risk === 'Medium' ? 'amber' : 'green'}>{row.risk}</Badge><b>{currencyDisplay(row.cost)}</b></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="cost.alerts-panel" className="space-y-5">
+          <Panel title="Budget velocity">
+            <div className="p-5">
+              <div className="flex items-end justify-between"><div><div className="text-sm font-semibold text-slate-500">{vm.workspace.name}</div><b className="text-3xl text-slate-950">{vm.budgetUsed}%</b></div><Badge tone={vm.budgetUsed > 75 ? 'amber' : 'green'}>{vm.costBreakdown.period}</Badge></div>
+              <div className="mt-4"><ProgressBar value={vm.budgetUsed} tone={vm.budgetUsed > 75 ? 'amber' : 'green'} label="Monthly budget used" height={10} /></div>
+            </div>
+          </Panel>
+          <Panel title="Tool spend">
+            <div className="space-y-4 p-5">{vm.toolSpend.map((item) => <div key={item.id}><div className="mb-2 flex justify-between text-sm"><b>{item.label}</b><span>{currencyDisplay(item.value)}</span></div><ProgressBar value={item.percent} tone={item.percent > 35 ? 'amber' : 'blue'} label={`${item.label} tool spend`} /></div>)}</div>
+          </Panel>
+          <Panel title="Cost alerts">
+            <div className="divide-y divide-slate-100 p-4">{vm.alerts.map((alert) => <div key={alert.id} className="py-3"><div className="flex items-center justify-between gap-3"><b className="text-sm">{alert.title}</b><Badge tone={alert.tone as Tone}>{alert.severity}</Badge></div><p className="mt-1 text-sm leading-6 text-slate-500">{alert.detail}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BudgetSettingsScreen() {
+  const vm = selectBudgetSettingsViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="budget.header"
+        title="Budget Settings"
+        subtitle="Cau hinh monthly cap, approval threshold va guardrail cho tung agent."
+        actions={<><Button variant="secondary"><ShieldCheck className="h-4 w-4" />Review policies</Button><Button><Check className="h-4 w-4" />Save settings</Button></>}
+      />
+      <MetricBand parityId="budget.kpi-band" items={vm.kpis} />
+      <div data-parity-id="budget.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="budget.policy-panel" className="space-y-5">
+          <Panel title="Agent budget policies">
+            <div className="p-4">
+              <div className="grid grid-cols-[1fr_130px_130px_140px_100px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Agent</span><span>Limit</span><span>Used</span><span>Approval</span><span>Status</span></div>
+              {vm.policyRows.map((row) => <div key={row.id} className="grid grid-cols-[1fr_130px_130px_140px_100px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.agent}</b><span>{currencyDisplay(row.monthlyLimit)}</span><span>{currencyDisplay(row.used)}</span><Badge tone="blue">{row.approvalThreshold}</Badge><Badge tone={row.status === 'Review' ? 'amber' : 'green'}>{row.status}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Approval policy links">
+            <div className="divide-y divide-slate-100 p-4">{vm.approvalPolicies.slice(0, 6).map((policy) => <div key={policy.id} className="py-3"><div className="flex items-center justify-between gap-3"><b className="text-sm">{policy.title}</b><Badge tone={policy.severity === 'High' ? 'red' : policy.severity === 'Medium' ? 'amber' : 'green'}>{policy.severity}</Badge></div><p className="mt-1 text-sm text-slate-500">{policy.agent} - {policy.status}</p></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="budget.threshold-panel" className="space-y-5">
+          <Panel title="Workspace budget">
+            <div className="space-y-4 p-5">
+              <FieldRow label="Workspace" value={vm.workspace.name} />
+              <FieldRow label="Plan" value={vm.workspace.plan} />
+              <FieldRow label="Monthly AI cap" value={currencyDisplay(vm.workspace.aiBudgetMonthly)} />
+            </div>
+          </Panel>
+          <Panel title="Threshold matrix">
+            <div className="space-y-3 p-5">{vm.thresholdRows.map((row) => <div key={row.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{row.label}</b><Badge tone={row.tone as Tone}>{row.value}</Badge></div><p className="mt-1 text-sm text-slate-500">Owner: {row.owner}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportsDashboardScreen() {
+  const vm = selectReportsDashboardViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="reports.header"
+        title="Reports Dashboard"
+        subtitle="Quan ly report da giao, lich lap lai va insight executive tu doi AI."
+        actions={<><Button variant="secondary"><Search className="h-4 w-4" />Search</Button><Button><FileText className="h-4 w-4" />New report</Button></>}
+      />
+      <MetricBand parityId="reports.kpi-band" items={vm.kpis} />
+      <div data-parity-id="reports.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="reports.list-panel" className="space-y-5">
+          <Panel title="Scheduled reports">
+            <div className="space-y-4 p-5">{vm.scheduled.map((report) => <div key={report.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{report.title}</b><Badge tone={report.status === 'Ready' ? 'green' : 'amber'}>{report.status}</Badge></div><p className="mt-1 text-sm text-slate-500">Owner: {report.owner} - {report.cadence} - Next {report.nextRun}</p></div>)}</div>
+          </Panel>
+          <Panel title="Recent report runs">
+            <div className="p-4">
+              <div className="grid grid-cols-[1fr_160px_110px_100px_100px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Ticket</span><span>Agent</span><span>Status</span><span>Duration</span><span>Cost</span></div>
+              {vm.recentRuns.map((run) => <div key={run.id} className="grid grid-cols-[1fr_160px_110px_100px_100px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><span>{run.ticket}</span><b>{run.agent}</b><Badge tone={run.status === 'Failed' ? 'red' : run.status === 'Running' ? 'blue' : 'green'}>{run.status}</Badge><span>{run.duration}</span><b>{run.cost}</b></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="reports.schedule-panel" className="space-y-5">
+          <Panel title="Published artifacts">
+            <div className="divide-y divide-slate-100 p-4">{vm.artifacts.map((artifact) => <div key={artifact.id} className="py-3"><div className="flex items-center gap-3"><IconBubble icon={FileText} tone="green" /><div><b className="text-sm">{artifact.name}</b><p className="mt-1 text-sm text-slate-500">{artifact.ticketCode} - {artifact.createdAt.slice(0, 10)}</p></div></div></div>)}</div>
+          </Panel>
+          <Panel title="Report insights">
+            <div className="space-y-4 p-5">{vm.insightRows.map((row) => <div key={row.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{row.label}</span><Badge tone={row.tone as Tone}>{row.value}</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportBuilderScreen() {
+  const vm = selectReportBuilderViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="report-builder.header"
+        title="Report Builder"
+        subtitle="Tao report executive tu sources, sections, recipients va schedule co san."
+        actions={<><Button variant="secondary"><Eye className="h-4 w-4" />Preview</Button><Button><CheckCircle2 className="h-4 w-4" />Schedule report</Button></>}
+      />
+      <div data-parity-id="report-builder.steps" className="mt-4 grid grid-cols-4 gap-4">
+        {['Template', 'Sections', 'Recipients', 'Schedule'].map((step, index) => <div key={step} className={`rounded-xl border px-4 py-3 text-sm font-bold ${index === 1 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{index + 1}. {step}</div>)}
+      </div>
+      <div data-parity-id="report-builder.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="report-builder.form-panel" className="space-y-5">
+          <Panel title="Report templates">
+            <div className="grid grid-cols-3 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={FileText} tone="blue" /><b className="mt-3 block">{template.title}</b><p className="mt-1 text-sm text-slate-500">{template.cadence} - {template.sections} sections</p><div className="mt-3 text-xs font-semibold text-slate-400">{template.owner}</div></div>)}</div>
+          </Panel>
+          <Panel title="Included sections">
+            <div className="space-y-3 p-5">{vm.reportSections.map((section) => <div key={section.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><div><b>{section.title}</b><p className="mt-1 text-sm text-slate-500">{section.source}</p></div><Badge tone={section.included ? 'green' : 'slate'}>{section.included ? 'Included' : 'Optional'}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="report-builder.preview-panel" className="space-y-5">
+          <Panel title="Live preview">
+            <div className="space-y-4 p-5">
+              <div className="rounded-2xl bg-blue-50 p-5"><b className="text-xl text-[#0f6bff]">{vm.preview.title}</b><p className="mt-2 text-sm leading-6 text-slate-600">{vm.workspace.name} - {vm.preview.agentCount} agents - {vm.preview.ticketCount} tickets - {vm.preview.cost} spend</p></div>
+              {vm.recipients.map((email) => <FieldRow key={email} label="Recipient" value={email} />)}
+            </div>
+          </Panel>
+          <Panel title="Output rules">
+            <div className="space-y-3 p-5">{['Attach artifacts automatically', 'Include cost and risk appendix', 'Notify owner after delivery'].map((rule, index) => <div key={rule} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{rule}</span><Badge tone={index === 1 ? 'purple' : 'green'}>On</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function currencyDisplay(value: number) {
+  return `$${value.toLocaleString('en-US', { maximumFractionDigits: value % 1 === 0 ? 0 : 2 })}`;
+}
+
 export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/login') return <LoginOnboardingParityPage />;
   if (route === '/register') return <RegisterOnboardingParityPage />;
@@ -2428,5 +2604,9 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/governance/policies') return <GovernancePoliciesScreen />;
   if (route === '/audit-log') return <AuditLogScreen />;
   if (route === '/risk-center') return <RiskCenterScreen />;
+  if (route === '/cost') return <CostDashboardScreen />;
+  if (route === '/budget/settings') return <BudgetSettingsScreen />;
+  if (route === '/reports') return <ReportsDashboardScreen />;
+  if (route === '/reports/new') return <ReportBuilderScreen />;
   return null;
 }

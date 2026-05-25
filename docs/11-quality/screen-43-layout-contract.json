@@ -1,0 +1,15 @@
+{
+  "viewport": { "width": 1672, "height": 941 },
+  "contractSource": "sprint-5k-current-real-ui-dom",
+  "reference": "public/stitch_ui/43_Budget_Settings.png",
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 1004, "tolerance": 12 },
+    "budget.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 12 },
+    "budget.kpi-band": { "x": 240, "y": 174, "width": 1410, "height": 62, "tolerance": 12 },
+    "budget.main-grid": { "x": 240, "y": 252, "width": 1410, "height": 842, "tolerance": 12 },
+    "budget.policy-panel": { "x": 240, "y": 252, "width": 970, "height": 842, "tolerance": 16 },
+    "budget.threshold-panel": { "x": 1230, "y": 252, "width": 420, "height": 842, "tolerance": 16 }
+  }
+}

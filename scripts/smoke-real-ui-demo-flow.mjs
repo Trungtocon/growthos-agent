@@ -43,6 +43,10 @@ const routes = [
   { screen: 39, route: '/governance/policies', mainSelector: '[data-parity-id="governance.header"]', heading: 'Governance Policy' },
   { screen: 40, route: '/audit-log', mainSelector: '[data-parity-id="audit.header"]', heading: 'Audit Log' },
   { screen: 41, route: '/risk-center', mainSelector: '[data-parity-id="risk.header"]', heading: 'Risk Center' },
+  { screen: 42, route: '/cost', mainSelector: '[data-parity-id="cost.header"]', heading: 'Cost Dashboard' },
+  { screen: 43, route: '/budget/settings', mainSelector: '[data-parity-id="budget.header"]', heading: 'Budget Settings' },
+  { screen: 44, route: '/reports', mainSelector: '[data-parity-id="reports.header"]', heading: 'Reports Dashboard' },
+  { screen: 45, route: '/reports/new', mainSelector: '[data-parity-id="report-builder.header"]', heading: 'Report Builder' },
 ];
 
 function writeJson(filePath, data) {
