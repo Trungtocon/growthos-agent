@@ -447,6 +447,118 @@ export function selectApprovalCenterViewModel() {
   };
 }
 
+export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
+  const data = currentData();
+  const approval = data.approvals.find((item) => item.id === approvalId) ?? data.approvals[0];
+  const ticket = findTicket(approval.ticketId);
+  const agent = findAgent(approval.agentId);
+  const run = approval.runId ? data.runs.find((item) => item.id === approval.runId) : undefined;
+  const events = getWorkflowState().events.filter((event) => [approval.id, approval.ticketId, approval.runId].includes(event.entityId));
+  return {
+    approval,
+    ticket,
+    agent,
+    run,
+    events,
+    kpis: [
+      { label: 'Severity', value: riskLabel(approval.severity), tone: approval.severity === 'high' || approval.severity === 'critical' ? 'red' : 'amber' },
+      { label: 'Status', value: statusLabel(approval.status), tone: approval.status === 'pending' ? 'amber' : approval.status === 'approved' ? 'green' : 'red' },
+      { label: 'Audit trail', value: String(approval.auditTrail.length + events.length), tone: 'blue' },
+      { label: 'Linked run', value: run ? statusLabel(run.status) : 'None', tone: run?.status === 'failed' ? 'red' : 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectGovernancePoliciesViewModel() {
+  const data = currentData();
+  const tools = [...new Set(data.agents.flatMap((agent) => agent.tools))];
+  const highRiskApprovals = data.approvals.filter((approval) => approval.severity === 'high' || approval.severity === 'critical');
+  return {
+    policies: [
+      { id: 'policy-approval', name: 'Human approval for high-risk actions', owner: data.currentUser.name, status: 'Enforced', coverage: 96, severity: 'high' },
+      { id: 'policy-terminal', name: 'Terminal and filesystem write guardrails', owner: 'Hermes QA Agent', status: 'Enforced', coverage: 91, severity: 'high' },
+      { id: 'policy-webhook', name: 'External webhook allowlist', owner: 'Growth Strategy Agent', status: 'Review', coverage: 78, severity: 'medium' },
+      { id: 'policy-evidence', name: 'Evidence retention and audit logging', owner: 'Report Agent', status: 'Enforced', coverage: 88, severity: 'medium' },
+    ],
+    rules: tools.map((tool, index) => ({
+      id: `rule-${index + 1}`,
+      tool,
+      action: index % 2 === 0 ? 'Require approval' : 'Allow with logging',
+      risk: index % 3 === 0 ? 'High' : index % 3 === 1 ? 'Medium' : 'Low',
+    })),
+    kpis: [
+      { label: 'Policies', value: '4', tone: 'blue' },
+      { label: 'Enforced', value: '3', tone: 'green' },
+      { label: 'Review', value: '1', tone: 'amber' },
+      { label: 'High risk approvals', value: String(highRiskApprovals.length), tone: 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectAuditLogViewModel() {
+  const data = currentData();
+  const workflowEvents = getWorkflowState().events;
+  const approvalEvents = data.approvals.flatMap((approval) => approval.auditTrail.map((entry) => ({
+    id: entry.id,
+    actor: data.agents.find((agent) => agent.id === entry.actorId)?.name ?? data.currentUser.name,
+    action: entry.action,
+    entity: approval.title,
+    status: statusLabel(approval.status),
+    createdAt: entry.createdAt,
+    severity: approval.severity,
+  })));
+  const activityEvents = data.activities.map((activity) => ({
+    id: activity.id,
+    actor: activity.actorAgentId ? findAgent(activity.actorAgentId).name : data.currentUser.name,
+    action: activity.title,
+    entity: activity.description,
+    status: statusLabel(activity.status),
+    createdAt: activity.createdAt,
+    severity: activity.status === 'failed' ? 'high' : activity.status === 'warning' ? 'medium' : 'low',
+  }));
+  return {
+    rows: [...approvalEvents, ...activityEvents, ...workflowEvents.map((event) => ({
+      id: event.id,
+      actor: event.actorId,
+      action: event.command,
+      entity: event.entityId,
+      status: statusLabel(event.status),
+      createdAt: event.createdAt,
+      severity: event.status === 'failed' ? 'high' : 'medium',
+    }))].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    kpis: [
+      { label: 'Audit rows', value: String(approvalEvents.length + activityEvents.length + workflowEvents.length), tone: 'blue' },
+      { label: 'Approvals', value: String(data.approvals.length), tone: 'amber' },
+      { label: 'Activities', value: String(data.activities.length), tone: 'cyan' },
+      { label: 'Failures', value: String(data.activities.filter((activity) => activity.status === 'failed').length), tone: 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectRiskCenterViewModel() {
+  const data = currentData();
+  const riskyAgents = data.agents.filter((agent) => agent.riskLevel === 'high' || agent.riskLevel === 'critical');
+  const riskyTickets = data.tickets.filter((ticket) => ticket.riskLevel === 'high' || ticket.riskLevel === 'critical');
+  const riskyRuns = data.runs.filter((run) => run.riskLevel === 'high' || run.status === 'failed');
+  return {
+    riskyAgents,
+    riskyTickets,
+    riskyRuns,
+    controls: [
+      { label: 'Approval queue coverage', value: 92, tone: 'green' },
+      { label: 'Tool policy coverage', value: 86, tone: 'blue' },
+      { label: 'Artifact evidence coverage', value: 78, tone: 'amber' },
+      { label: 'Failed run follow-up', value: 64, tone: 'red' },
+    ],
+    kpis: [
+      { label: 'Risk items', value: String(riskyAgents.length + riskyTickets.length + riskyRuns.length), tone: 'red' },
+      { label: 'High risk tickets', value: String(riskyTickets.length), tone: 'amber' },
+      { label: 'Risky agents', value: String(riskyAgents.length), tone: 'purple' },
+      { label: 'Failed runs', value: String(data.runs.filter((run) => run.status === 'failed').length), tone: 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectCompanyOverviewViewModel() {
   const data = currentData();
   const activeAgents = data.agents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length;

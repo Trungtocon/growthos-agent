@@ -49,10 +49,14 @@ import {
   selectCreateTicketViewModel,
   selectArtifactDetailViewModel,
   selectArtifactsLibraryViewModel,
+  selectApprovalDetailViewModel,
+  selectAuditLogViewModel,
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
+  selectGovernancePoliciesViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
+  selectRiskCenterViewModel,
   selectSkillsRegistryViewModel,
   selectTicketsListViewModel,
   selectToolsPermissionsViewModel,
@@ -89,6 +93,10 @@ export const sprint2Routes = new Set([
   '/tickets/new',
   '/artifacts',
   '/artifacts/demo-artifact',
+  '/approvals/demo-approval',
+  '/governance/policies',
+  '/audit-log',
+  '/risk-center',
 ]);
 
 type OnboardingStep = {
@@ -2267,6 +2275,125 @@ function ArtifactDetailScreen() {
   );
 }
 
+function ApprovalDetailScreen() {
+  const vm = selectApprovalDetailViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="approval-detail.header" title="Approval Detail" subtitle="Review request, linked ticket, policy context va audit trail truoc khi phe duyet." actions={<><Button variant="secondary"><AlertTriangle className="h-4 w-4" />Reject</Button><Button><CheckCircle2 className="h-4 w-4" />Approve</Button></>} />
+      <MetricBand parityId="approval-detail.kpi-band" items={vm.kpis} />
+      <div data-parity-id="approval-detail.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="approval-detail.request-panel" className="space-y-5">
+          <Panel title={vm.approval.title}>
+            <div className="space-y-4 p-5">
+              <p className="leading-7 text-slate-600">{vm.approval.description}</p>
+              <div className="grid grid-cols-2 gap-4">
+                <FieldRow label="Ticket" value={`${vm.ticket.code} · ${vm.ticket.title}`} />
+                <FieldRow label="Agent" value={vm.agent.name} />
+                <FieldRow label="Policy" value={vm.approval.policy} />
+                <FieldRow label="Requested" value={vm.approval.requestedAt.slice(0, 10)} />
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Audit trail">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.approval.auditTrail.map((entry) => <div key={entry.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{entry.action}</b><p className="mt-1 text-sm text-slate-500">{entry.createdAt.slice(0, 19)}</p></div><Badge tone="blue">{entry.actorId}</Badge></div>)}
+              {vm.events.map((event) => <div key={event.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{event.command}</b><p className="mt-1 text-sm text-slate-500">{event.createdAt.slice(0, 19)}</p></div><Badge tone={event.status === 'failed' ? 'red' : 'green'}>{event.status}</Badge></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="approval-detail.policy-panel" className="space-y-5">
+          <Panel title="Decision context">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Run" value={vm.run?.id ?? 'No run'} />
+              <FieldRow label="Current step" value={vm.run?.currentStep ?? 'Manual approval'} />
+              <FieldRow label="Cost" value={vm.run ? `$${vm.run.cost}` : '$0'} />
+              <FieldRow label="Risk" value={vm.approval.severity} />
+            </div>
+          </Panel>
+          <Panel title="Required checks">
+            <div className="space-y-3 p-5">{['Requester authorized', 'Tool policy matched', 'Run evidence attached', 'Rollback path available'].map((item, index) => <div key={item} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{item}</span><Badge tone={index < 3 ? 'green' : 'amber'}>{index < 3 ? 'Pass' : 'Review'}</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GovernancePoliciesScreen() {
+  const vm = selectGovernancePoliciesViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="governance.header" title="Governance Policy" subtitle="Quan ly policy, guardrail va enforcement cho toan bo AI workforce." actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Export</Button><Button><ShieldCheck className="h-4 w-4" />New policy</Button></>} />
+      <MetricBand parityId="governance.kpi-band" items={vm.kpis} />
+      <div data-parity-id="governance.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="governance.policy-panel">
+          <Panel title="Policy registry">
+            <div className="space-y-4 p-5">{vm.policies.map((policy) => <div key={policy.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{policy.name}</b><Badge tone={policy.status === 'Enforced' ? 'green' : 'amber'}>{policy.status}</Badge></div><p className="mt-1 text-sm text-slate-500">Owner: {policy.owner}</p><div className="mt-3"><ProgressBar value={policy.coverage} tone={policy.coverage > 85 ? 'green' : 'amber'} label={`${policy.name} coverage`} /></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="governance.rules-panel">
+          <Panel title="Tool rules">
+            <div className="divide-y divide-slate-100 p-4">{vm.rules.map((rule) => <div key={rule.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{rule.tool}</b><Badge tone={rule.risk === 'High' ? 'red' : rule.risk === 'Medium' ? 'amber' : 'green'}>{rule.risk}</Badge></div><p className="mt-1 text-sm text-slate-500">{rule.action}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AuditLogScreen() {
+  const vm = selectAuditLogViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="audit.header" title="Audit Log" subtitle="Lich su hanh dong, approval, workflow event va audit evidence tren workspace." actions={<Button variant="secondary"><Search className="h-4 w-4" />Search logs</Button>} />
+      <MetricBand parityId="audit.kpi-band" items={vm.kpis} />
+      <div data-parity-id="audit.main-grid" className="mt-4 grid grid-cols-[1fr_360px] gap-5">
+        <div data-parity-id="audit.log-panel">
+          <Panel title="Event stream">
+            <div className="p-4">
+              <div className="grid grid-cols-[150px_160px_1fr_120px_120px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Time</span><span>Actor</span><span>Event</span><span>Status</span><span>Severity</span></div>
+              {vm.rows.slice(0, 12).map((row) => <div key={row.id} className="grid grid-cols-[150px_160px_1fr_120px_120px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><span className="text-slate-500">{row.createdAt.slice(0, 16)}</span><b>{row.actor}</b><div><b>{row.action}</b><p className="mt-1 text-slate-500">{row.entity}</p></div><Badge tone={row.status === 'Failed' ? 'red' : row.status === 'Warning' ? 'amber' : 'green'}>{row.status}</Badge><Badge tone={row.severity === 'high' ? 'red' : row.severity === 'medium' ? 'amber' : 'green'}>{row.severity}</Badge></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="audit.filter-panel">
+          <Panel title="Audit filters">
+            <div className="space-y-3 p-5">{['All events', 'Approval decisions', 'Workflow commands', 'Policy changes', 'Failures only'].map((filter, index) => <div key={filter} className={`rounded-xl border px-4 py-3 text-sm font-semibold ${index === 0 ? 'border-blue-200 bg-blue-50 text-[#0f6bff]' : 'border-slate-100 text-slate-600'}`}>{filter}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RiskCenterScreen() {
+  const vm = selectRiskCenterViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="risk.header" title="Risk Center" subtitle="Theo doi risk exposure theo agent, ticket, run va governance control." actions={<><Button variant="secondary"><AlertTriangle className="h-4 w-4" />Escalate</Button><Button><ShieldCheck className="h-4 w-4" />Review controls</Button></>} />
+      <MetricBand parityId="risk.kpi-band" items={vm.kpis} />
+      <div data-parity-id="risk.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="risk.exposure-panel" className="space-y-5">
+          <Panel title="Risk exposure">
+            <div className="grid grid-cols-3 gap-4 p-5">
+              {vm.riskyTickets.map((ticket) => <div key={ticket.id} className="rounded-xl border border-red-100 bg-red-50 p-4"><b className="text-red-700">{ticket.code}</b><p className="mt-2 text-sm text-slate-600">{ticket.title}</p><Badge tone="red">{ticket.riskLevel}</Badge></div>)}
+              {vm.riskyAgents.map((agent) => <div key={agent.id} className="rounded-xl border border-amber-100 bg-amber-50 p-4"><b className="text-amber-700">{agent.name}</b><p className="mt-2 text-sm text-slate-600">{agent.role}</p><Badge tone="amber">{agent.riskLevel}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Risky runs">
+            <div className="divide-y divide-slate-100 p-4">{vm.riskyRuns.map((run) => <div key={run.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{run.id}</b><p className="mt-1 text-sm text-slate-500">{run.currentStep}</p></div><Badge tone={run.status === 'failed' ? 'red' : 'amber'}>{run.status}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="risk.controls-panel">
+          <Panel title="Control coverage">
+            <div className="space-y-4 p-5">{vm.controls.map((control) => <div key={control.label}><div className="mb-2 flex justify-between text-sm"><b>{control.label}</b><span>{control.value}%</span></div><ProgressBar value={control.value} tone={control.tone as Tone} label={`${control.label} coverage`} /></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/login') return <LoginOnboardingParityPage />;
   if (route === '/register') return <RegisterOnboardingParityPage />;
@@ -2297,5 +2424,9 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/tickets/new') return <CreateTicketScreen />;
   if (route === '/artifacts') return <ArtifactsLibraryScreen />;
   if (route === '/artifacts/demo-artifact') return <ArtifactDetailScreen />;
+  if (route === '/approvals/demo-approval') return <ApprovalDetailScreen />;
+  if (route === '/governance/policies') return <GovernancePoliciesScreen />;
+  if (route === '/audit-log') return <AuditLogScreen />;
+  if (route === '/risk-center') return <RiskCenterScreen />;
   return null;
 }

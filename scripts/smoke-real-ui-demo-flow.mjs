@@ -39,6 +39,10 @@ const routes = [
   { screen: 35, route: '/artifacts', mainSelector: '[data-parity-id="artifacts.header"]', heading: 'Artifacts Library' },
   { screen: 36, route: '/artifacts/demo-artifact', mainSelector: '[data-parity-id="artifact.header"]', heading: 'Artifact Detail' },
   { screen: 37, route: '/approvals', mainSelector: '[data-parity-id="approval.header"]', heading: 'Approval Center' },
+  { screen: 38, route: '/approvals/demo-approval', mainSelector: '[data-parity-id="approval-detail.header"]', heading: 'Approval Detail' },
+  { screen: 39, route: '/governance/policies', mainSelector: '[data-parity-id="governance.header"]', heading: 'Governance Policy' },
+  { screen: 40, route: '/audit-log', mainSelector: '[data-parity-id="audit.header"]', heading: 'Audit Log' },
+  { screen: 41, route: '/risk-center', mainSelector: '[data-parity-id="risk.header"]', heading: 'Risk Center' },
 ];
 
 function writeJson(filePath, data) {
