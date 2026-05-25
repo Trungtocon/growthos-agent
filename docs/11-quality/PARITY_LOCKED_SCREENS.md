@@ -25,7 +25,14 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 19 | `/projects/new` | `CreateProjectScreen` / `AppShell` | 7.5966% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_19` layout assets rendered |
 | 20 | `/workforce` | `WorkforceOverviewRealPage` | 9.4318% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_20` layout assets rendered |
 | 21 | `/org-chart` | `OrgChartRealPage` | 11.4165% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_21` layout assets rendered |
+| 22 | `/agents` | `AgentsListScreen` / `AppShell` | 8.5378% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_22` layout assets rendered |
 | 23 | `/agents/demo-agent` | `AgentDetailRealPage` | 8.0451% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_23` layout assets rendered |
+| 24 | `/agents/new` | `CreateAgentScreen` / `AppShell` | 8.8690% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_24` layout assets rendered |
+| 25 | `/agents/templates` | `AgentTemplatesScreen` / `AppShell` | 10.9707% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_25` layout assets rendered |
+| 26 | `/agents/performance` | `AgentPerformanceScreen` / `AppShell` | 17.7707% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_26` layout assets rendered |
+| 27 | `/agents/memory` | `AgentMemoryScreen` / `AppShell` | 7.8775% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_27` layout assets rendered |
+| 28 | `/skills` | `SkillsRegistryScreen` / `AppShell` | 8.9239% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_28` layout assets rendered |
+| 29 | `/tools/permissions` | `ToolsPermissionsScreen` / `AppShell` | 8.0755% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_29` layout assets rendered |
 | 30 | `/tickets` | `TicketsBoardRealPage` | 10.6961% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
 | 32 | `/tickets/demo-ticket` | `TicketDetailRealPage` | 7.7372% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_32` layout assets rendered |
 | 34 | `/runs/demo-run` | `RunConsoleRealPage` | 12.5042% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_34` layout assets rendered |
@@ -49,7 +56,14 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 19 | `/projects/new` | Real UI | `CreateProjectScreen + AppShell` | Pass | Pass 7/7 | 7.5966% | Real UI Structural PASS / Visual Polish Deferred |
 | 20 | `/workforce` | Real UI | `WorkforceOverviewRealPage + AppShell` | Pass | Pass 14/14 | 9.4318% | Real UI Structural PASS / Visual Polish Deferred |
 | 21 | `/org-chart` | Real UI | `OrgChartRealPage + AppShell` | Pass | Pass 10/10 | 11.4165% | Real UI Structural PASS / Visual Polish Deferred |
+| 22 | `/agents` | Real UI | `AgentsListScreen + AppShell` | Pass | Pass 8/8 | 8.5378% | Real UI Structural PASS / Visual Polish Deferred |
 | 23 | `/agents/demo-agent` | Real UI | `AgentDetailRealPage + AppShell` | Pass | Pass 18/18 | 8.0451% | Real UI Structural PASS / Visual Polish Deferred |
+| 24 | `/agents/new` | Real UI | `CreateAgentScreen + AppShell` | Pass | Pass 8/8 | 8.8690% | Real UI Structural PASS / Visual Polish Deferred |
+| 25 | `/agents/templates` | Real UI | `AgentTemplatesScreen + AppShell` | Pass | Pass 8/8 | 10.9707% | Real UI Structural PASS / Visual Polish Deferred |
+| 26 | `/agents/performance` | Real UI | `AgentPerformanceScreen + AppShell` | Pass | Pass 8/8 | 17.7707% | Real UI Structural PASS / Visual Polish Deferred |
+| 27 | `/agents/memory` | Real UI | `AgentMemoryScreen + AppShell` | Pass | Pass 8/8 | 7.8775% | Real UI Structural PASS / Visual Polish Deferred |
+| 28 | `/skills` | Real UI | `SkillsRegistryScreen + AppShell` | Pass | Pass 8/8 | 8.9239% | Real UI Structural PASS / Visual Polish Deferred |
+| 29 | `/tools/permissions` | Real UI | `ToolsPermissionsScreen + AppShell` | Pass | Pass 8/8 | 8.0755% | Real UI Structural PASS / Visual Polish Deferred |
 | 30 | `/tickets` | Real UI | `TicketsBoardRealPage + AppShell` | Pass | Pass 12/12 | 10.6961% | Real UI Structural PASS / Visual Polish Deferred |
 | 32 | `/tickets/demo-ticket` | Real UI | `TicketDetailRealPage + AppShell` | Pass | Pass 15/15 | 7.7372% | Real UI Structural PASS / Visual Polish Deferred |
 | 34 | `/runs/demo-run` | Real UI | `RunConsoleRealPage + AppShell` | Pass | Pass 16/16 | 12.5042% | Real UI Structural PASS / Visual Polish Deferred |
@@ -129,3 +143,6 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screens 12 through 19 are company/goals/projects Real UI routes promoted in Sprint 5G.
 - Do not revert Screens 12-19 to static slices to chase pixel diff.
 - Screens 12-19 use shared selector-driven demo data and route-level structural bbox gates.
+- Screens 22 and 24-29 are workforce support Real UI routes promoted in Sprint 5H.
+- Do not revert Screens 22 or 24-29 to static slices to chase pixel diff.
+- Screen 26 is structurally accepted, but remains a visual polish outlier at 17.7707%.

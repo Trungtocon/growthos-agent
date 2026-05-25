@@ -1,0 +1,14 @@
+{
+  "viewport": { "width": 1672, "height": 941 },
+  "source": { "reference": "public/stitch_ui/22_Agents_List.png", "contractSource": "sprint-5h-current-real-ui-dom" },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 952, "tolerance": 16 },
+    "agents.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 16 },
+    "agents.kpi-band": { "x": 240, "y": 174, "width": 1410, "height": 62, "tolerance": 16 },
+    "agents.main-grid": { "x": 240, "y": 252, "width": 1410, "height": 790, "tolerance": 16 },
+    "agents.list-panel": { "x": 240, "y": 252, "width": 1000, "height": 790, "tolerance": 16 },
+    "agents.detail-panel": { "x": 1260, "y": 252, "width": 390, "height": 790, "tolerance": 16 }
+  }
+}

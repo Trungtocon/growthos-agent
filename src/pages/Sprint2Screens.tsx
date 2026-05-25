@@ -37,14 +37,21 @@ import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Badge, Button, KpiTile, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import {
+  selectAgentMemoryViewModel,
+  selectAgentPerformanceViewModel,
+  selectAgentTemplatesViewModel,
+  selectAgentsListViewModel,
   selectCompanyOverviewViewModel,
   selectCompanySettingsViewModel,
+  selectCreateAgentViewModel,
   selectCreateGoalViewModel,
   selectCreateProjectViewModel,
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
+  selectSkillsRegistryViewModel,
+  selectToolsPermissionsViewModel,
 } from '../domain/selectors';
 import type { Tone } from '../data/demoScreens';
 
@@ -67,6 +74,13 @@ export const sprint2Routes = new Set([
   '/projects',
   '/projects/demo-project',
   '/projects/new',
+  '/agents',
+  '/agents/new',
+  '/agents/templates',
+  '/agents/performance',
+  '/agents/memory',
+  '/skills',
+  '/tools/permissions',
 ]);
 
 type OnboardingStep = {
@@ -1940,6 +1954,178 @@ function CreateProjectScreen() {
   );
 }
 
+function AgentsListScreen() {
+  const vm = selectAgentsListViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="agents.header" title="Agents" subtitle="Danh sach AI agents, nang luc, tai cong viec va trang thai van hanh." actions={<Button><Bot className="h-4 w-4" />Tao agent</Button>} />
+      <MetricBand parityId="agents.kpi-band" items={vm.kpis} />
+      <div data-parity-id="agents.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-5">
+        <div data-parity-id="agents.list-panel">
+          <Panel title="Agent roster">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.agentCards.map((agent) => (
+                <div key={agent.id} className="grid grid-cols-[48px_1fr_110px_110px_110px] items-center gap-4 py-3">
+                  <IconBubble icon={Bot} tone={agent.tone as Tone} />
+                  <div><b>{agent.name}</b><div className="text-sm text-slate-500">{agent.role} · {agent.status}</div></div>
+                  <Badge tone={agent.score > 90 ? 'green' : 'blue'}>{agent.score}%</Badge>
+                  <span className="text-sm font-semibold text-slate-600">Load {agent.load}%</span>
+                  <Button variant="secondary">Open</Button>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="agents.detail-panel" className="space-y-5">
+          <Panel title="Workload mix">
+            <div className="space-y-4 p-5">{vm.agentCards.map((agent) => <div key={agent.id}><div className="mb-2 flex justify-between text-sm"><b>{agent.name}</b><span>{agent.load}%</span></div><ProgressBar value={agent.load} label={`${agent.name} workload`} /></div>)}</div>
+          </Panel>
+          <Panel title="Open tickets">
+            <div className="divide-y divide-slate-100 p-4">{vm.tickets.slice(0, 5).map((ticket) => <div key={ticket.id} className="py-3"><b className="text-sm">{ticket.code}</b><p className="mt-1 text-sm text-slate-500">{ticket.title}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateAgentScreen() {
+  const vm = selectCreateAgentViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="agent-builder.header" title="Create Agent Wizard" subtitle="Tao agent moi tu template, skills, toolset va chinh sach approval." actions={<Button><Sparkles className="h-4 w-4" />Create agent</Button>} />
+      <div data-parity-id="agent-builder.steps" className="mt-4 grid grid-cols-4 gap-4">
+        {['Role', 'Skills', 'Tools', 'Policies'].map((step, index) => <div key={step} className={`rounded-xl border px-4 py-3 text-sm font-bold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{index + 1}. {step}</div>)}
+      </div>
+      <div data-parity-id="agent-builder.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="agent-builder.form-panel" className="space-y-5">
+          <Panel title="Agent templates">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template.name} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={Bot} /><b className="mt-3 block">{template.name}</b><p className="mt-1 text-sm text-slate-500">{template.role}</p><div className="mt-3 flex flex-wrap gap-2">{template.tools.slice(0, 2).map((tool) => <Badge key={tool} tone="blue">{tool}</Badge>)}</div></div>)}</div>
+          </Panel>
+          <Panel title="Recommended skills">
+            <div className="flex flex-wrap gap-3 p-5">{vm.recommendedSkills.map((skill) => <Badge key={skill} tone="purple">{skill}</Badge>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="agent-builder.preview-panel">
+          <Panel title="Agent preview">
+            <div className="space-y-4 p-5"><div className="rounded-xl bg-blue-50 p-5"><b className="text-[#0f6bff]">{vm.workspace.name}</b><p className="mt-2 text-sm text-slate-600">New agent will inherit workspace guardrails and activity logging.</p></div>{['Workspace policy applied', 'Tool access pending review', 'Memory scope limited', 'Ready for test run'].map((item, index) => <div key={item} className="flex items-center gap-3"><IconBubble icon={index < 2 ? ShieldCheck : Clock3} tone={index < 2 ? 'green' : 'blue'} /><span className="font-semibold">{item}</span></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentTemplatesScreen() {
+  const vm = selectAgentTemplatesViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="agent-templates.header" title="Agent Template Gallery" subtitle="Chon template agent da duoc chuan hoa cho tung nhom cong viec." actions={<Button variant="secondary"><UploadCloud className="h-4 w-4" />Import template</Button>} />
+      <div data-parity-id="agent-templates.filters" className="mt-4 flex flex-wrap gap-3">{vm.categories.map((category, index) => <button key={category} className={`rounded-lg border px-5 py-2 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{category}</button>)}</div>
+      <div data-parity-id="agent-templates.main-grid" className="mt-5 grid grid-cols-[1fr_360px] gap-5">
+        <div data-parity-id="agent-templates.gallery-panel">
+          <Panel title="Templates">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={Bot} tone={template.tone as Tone} /><Badge tone={template.successRate > 90 ? 'green' : 'blue'}>{template.successRate}%</Badge></div><h2 className="mt-4 font-extrabold">{template.name}</h2><p className="mt-1 text-sm text-slate-500">Based on {template.agentName}</p><div className="mt-3 flex flex-wrap gap-2">{template.skills.slice(0, 3).map((skill) => <Badge key={skill} tone="purple">{skill}</Badge>)}</div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="agent-templates.side-panel">
+          <Panel title="Template governance">
+            <div className="space-y-3 p-5">{['Review before production use', 'Tool scopes inherited', 'Memory starts empty', 'Approval policy required'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentPerformanceScreen() {
+  const vm = selectAgentPerformanceViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="agent-performance.header" title="Agent Performance" subtitle="So sanh health, trust, quality, cost va workload cua tung agent." actions={<><Button variant="secondary">Compare</Button><Button>Export</Button></>} />
+      <MetricBand parityId="agent-performance.kpi-band" items={vm.kpis} />
+      <div data-parity-id="agent-performance.main-grid" className="mt-4 grid grid-cols-[420px_1fr] gap-5">
+        <div data-parity-id="agent-performance.ranking-panel">
+          <Panel title="Ranking">
+            <div className="divide-y divide-slate-100 p-4">{vm.rows.map((row, index) => <div key={row.id} className="grid grid-cols-[28px_1fr_70px] items-center gap-3 py-3"><span className="font-bold text-slate-400">{index + 1}</span><div><b>{row.name}</b><div className="text-sm text-slate-500">{row.role}</div></div><Badge tone={row.successRate > 90 ? 'green' : 'blue'}>{row.successRate}%</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="agent-performance.table-panel">
+          <Panel title="Performance table">
+            <div className="p-4"><div className="grid grid-cols-[1.2fr_repeat(5,.7fr)] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Agent</span><span>Health</span><span>Trust</span><span>Quality</span><span>Cost</span><span>Risk</span></div>{vm.rows.map((row) => <div key={row.id} className="grid grid-cols-[1.2fr_repeat(5,.7fr)] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.name}</b><span>{row.health}</span><span>{row.trust}</span><span>{row.quality}%</span><span>${row.cost.toLocaleString()}</span><Badge tone={row.risk === 'high' ? 'red' : 'green'}>{row.risk}</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentMemoryScreen() {
+  const vm = selectAgentMemoryViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="agent-memory.header" title="Agent Memory" subtitle="Quan ly context, memory scope va nguon tri thuc ma agent dang su dung." actions={<Button variant="secondary"><BookOpen className="h-4 w-4" />Export context</Button>} />
+      <div data-parity-id="agent-memory.kpi-band" className="mt-4 grid grid-cols-5 gap-4">{vm.sources.map((source) => <div key={source} className="rounded-xl border border-slate-200 bg-white p-4 text-sm font-bold text-slate-700">{source}</div>)}</div>
+      <div data-parity-id="agent-memory.main-grid" className="mt-5 grid grid-cols-[1fr_390px] gap-5">
+        <div data-parity-id="agent-memory.memory-panel">
+          <Panel title="Agent memory summaries">
+            <div className="space-y-4 p-5">{vm.agents.map((agent) => <div key={agent.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{agent.name}</b><Badge tone={agent.riskLevel === 'high' ? 'red' : 'blue'}>{agent.contextCount} contexts</Badge></div><p className="mt-2 text-sm leading-6 text-slate-500">{agent.memorySummary}</p></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="agent-memory.context-panel">
+          <Panel title="Context controls">
+            <div className="space-y-3 p-5">{['Limit memory by project', 'Require approval for external source', 'Retain run logs for 90 days', 'Reset memory on template clone'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SkillsRegistryScreen() {
+  const vm = selectSkillsRegistryViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="skills.header" title="Skill Registry" subtitle="Theo doi skills duoc gan cho agents va muc do su dung trong workflow." actions={<Button><Code2 className="h-4 w-4" />Add skill</Button>} />
+      <MetricBand parityId="skills.kpi-band" items={vm.kpis} />
+      <div data-parity-id="skills.main-grid" className="mt-4 grid grid-cols-[1fr_380px] gap-5">
+        <div data-parity-id="skills.registry-panel">
+          <Panel title="Skills">
+            <div className="divide-y divide-slate-100 p-4">{vm.skills.map((skill) => <div key={skill.id} className="grid grid-cols-[1fr_90px_120px] items-center gap-4 py-3"><div><b>{skill.name}</b><div className="text-sm text-slate-500">{skill.agents.join(', ')}</div></div><span className="font-bold text-[#0f6bff]">{skill.usage}%</span><Badge tone={skill.status === 'Active' ? 'green' : 'amber'}>{skill.status}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="skills.detail-panel">
+          <Panel title="Quality guardrails">
+            <div className="space-y-3 p-5">{['Skill changes require review', 'Usage tracked by run', 'Inactive skills archived monthly', 'High-risk skills need approval'].map((item) => <div key={item} className="rounded-xl bg-blue-50 p-3 text-sm font-semibold text-[#0f6bff]">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToolsPermissionsScreen() {
+  const vm = selectToolsPermissionsViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="tools.header" title="Toolsets & Permissions" subtitle="Quan ly tool access, approval policy va risk level cho tung agent." actions={<Button><Lock className="h-4 w-4" />Update policy</Button>} />
+      <MetricBand parityId="tools.kpi-band" items={vm.kpis} />
+      <div data-parity-id="tools.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-5">
+        <div data-parity-id="tools.toolsets-panel">
+          <Panel title="Tool access matrix">
+            <div className="divide-y divide-slate-100 p-4">{vm.tools.map((tool) => <div key={tool.id} className="grid grid-cols-[1fr_150px_100px] items-center gap-4 py-3"><div><b>{tool.name}</b><div className="text-sm text-slate-500">{tool.agents.join(', ') || 'No agent assigned'}</div></div><Badge tone={tool.access === 'Restricted' ? 'red' : tool.access === 'Approval required' ? 'amber' : 'green'}>{tool.access}</Badge><Badge tone={tool.risk === 'high' ? 'red' : tool.risk === 'medium' ? 'amber' : 'green'}>{tool.risk}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="tools.permissions-panel">
+          <Panel title="Permission policies">
+            <div className="space-y-3 p-5">{vm.policies.map((policy) => <div key={policy} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{policy}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/login') return <LoginOnboardingParityPage />;
   if (route === '/register') return <RegisterOnboardingParityPage />;
@@ -1959,5 +2145,12 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/projects') return <ProjectsListScreen />;
   if (route === '/projects/demo-project') return <ProjectDetailScreen />;
   if (route === '/projects/new') return <CreateProjectScreen />;
+  if (route === '/agents') return <AgentsListScreen />;
+  if (route === '/agents/new') return <CreateAgentScreen />;
+  if (route === '/agents/templates') return <AgentTemplatesScreen />;
+  if (route === '/agents/performance') return <AgentPerformanceScreen />;
+  if (route === '/agents/memory') return <AgentMemoryScreen />;
+  if (route === '/skills') return <SkillsRegistryScreen />;
+  if (route === '/tools/permissions') return <ToolsPermissionsScreen />;
   return null;
 }

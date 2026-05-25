@@ -1,0 +1,14 @@
+{
+  "viewport": { "width": 1672, "height": 941 },
+  "source": { "reference": "public/stitch_ui/25_Agent_Template_Gallery.png", "contractSource": "sprint-5h-current-real-ui-dom" },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 792, "tolerance": 16 },
+    "agent-templates.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 16 },
+    "agent-templates.filters": { "x": 240, "y": 174, "width": 1410, "height": 38, "tolerance": 16 },
+    "agent-templates.main-grid": { "x": 240, "y": 232, "width": 1410, "height": 650, "tolerance": 16 },
+    "agent-templates.gallery-panel": { "x": 240, "y": 232, "width": 1030, "height": 650, "tolerance": 16 },
+    "agent-templates.side-panel": { "x": 1290, "y": 232, "width": 360, "height": 650, "tolerance": 16 }
+  }
+}

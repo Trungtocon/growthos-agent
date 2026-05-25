@@ -491,6 +491,144 @@ export function selectCreateProjectViewModel() {
   };
 }
 
+export function selectAgentsListViewModel() {
+  const data = currentData();
+  const cards = data.agents.map(agentToCard);
+  return {
+    agents: data.agents,
+    agentCards: cards,
+    tickets: data.tickets,
+    kpis: [
+      { label: 'Total agents', value: String(data.agents.length), tone: 'blue' },
+      { label: 'Active', value: String(data.agents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length), tone: 'green' },
+      { label: 'Waiting', value: String(data.agents.filter((agent) => ['waiting', 'idle'].includes(agent.status)).length), tone: 'amber' },
+      { label: 'Avg success', value: `${(data.agents.reduce((sum, agent) => sum + agent.successRate, 0) / data.agents.length).toFixed(1)}%`, tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectCreateAgentViewModel() {
+  const data = currentData();
+  return {
+    workspace: data.workspace,
+    templates: [
+      { name: 'Research Analyst', role: 'Research', tools: ['Web research', 'Source validation', 'Report draft'] },
+      { name: 'QA Operator', role: 'Quality', tools: ['Browser QA', 'Console audit', 'Evidence capture'] },
+      { name: 'Content Producer', role: 'Content', tools: ['Briefing', 'Drafting', 'Publishing handoff'] },
+      { name: 'Growth Strategist', role: 'Strategy', tools: ['CRM analysis', 'Campaign planning', 'Budget guardrails'] },
+    ],
+    recommendedSkills: [...new Set(data.agents.flatMap((agent) => agent.skills))],
+  };
+}
+
+export function selectAgentTemplatesViewModel() {
+  const data = currentData();
+  return {
+    templates: data.agents.map((agent) => ({
+      id: `template-${agent.id}`,
+      name: `${agent.role} Template`,
+      agentName: agent.name,
+      role: agent.role,
+      skills: agent.skills,
+      tools: agent.tools,
+      successRate: agent.successRate,
+      tone: agentTone(agent),
+    })),
+    categories: ['All', 'Research', 'Content', 'QA', 'Reporting', 'Growth'],
+  };
+}
+
+export function selectAgentPerformanceViewModel() {
+  const data = currentData();
+  const rows = data.agents.map((agent) => {
+    const tickets = data.tickets.filter((ticket) => ticket.ownerAgentId === agent.id);
+    const runs = data.runs.filter((run) => run.agentId === agent.id);
+    return {
+      id: agent.id,
+      name: agent.name,
+      role: agent.role,
+      health: agent.healthScore,
+      trust: agent.trustScore,
+      quality: agent.outputQuality,
+      costEfficiency: agent.costEfficiency,
+      successRate: agent.successRate,
+      workload: tickets.length + runs.length,
+      cost: agent.costMonthToDate,
+      risk: agent.riskLevel,
+    };
+  }).sort((a, b) => b.successRate - a.successRate);
+  return {
+    rows,
+    kpis: [
+      { label: 'Avg health', value: `${(rows.reduce((sum, row) => sum + row.health, 0) / rows.length).toFixed(0)}/100`, tone: 'blue' },
+      { label: 'Avg trust', value: `${(rows.reduce((sum, row) => sum + row.trust, 0) / rows.length).toFixed(0)}/100`, tone: 'green' },
+      { label: 'Quality', value: `${(rows.reduce((sum, row) => sum + row.quality, 0) / rows.length).toFixed(0)}%`, tone: 'cyan' },
+      { label: 'Cost MTD', value: currency(rows.reduce((sum, row) => sum + row.cost, 0)), tone: 'purple' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectAgentMemoryViewModel() {
+  const data = currentData();
+  return {
+    agents: data.agents.map((agent) => ({
+      id: agent.id,
+      name: agent.name,
+      role: agent.role,
+      memorySummary: agent.memorySummary,
+      contextCount: agent.skills.length + agent.tools.length + agent.currentTicketIds.length,
+      riskLevel: agent.riskLevel,
+    })),
+    sources: ['Project notes', 'Ticket history', 'Run logs', 'Approval decisions', 'Tool outputs'],
+  };
+}
+
+export function selectSkillsRegistryViewModel() {
+  const data = currentData();
+  const skills = [...new Set(data.agents.flatMap((agent) => agent.skills))].map((skill, index) => ({
+    id: `skill-${index + 1}`,
+    name: skill,
+    agents: data.agents.filter((agent) => agent.skills.includes(skill)).map((agent) => agent.name),
+    usage: 42 + index * 7,
+    status: index % 4 === 0 ? 'Review' : 'Active',
+  }));
+  return {
+    skills,
+    kpis: [
+      { label: 'Skills', value: String(skills.length), tone: 'blue' },
+      { label: 'Active', value: String(skills.filter((skill) => skill.status === 'Active').length), tone: 'green' },
+      { label: 'Review', value: String(skills.filter((skill) => skill.status === 'Review').length), tone: 'amber' },
+      { label: 'Avg usage', value: `${Math.round(skills.reduce((sum, skill) => sum + skill.usage, 0) / skills.length)}%`, tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectToolsPermissionsViewModel() {
+  const data = currentData();
+  const tools = [...new Set(data.agents.flatMap((agent) => agent.tools))].map((tool, index) => ({
+    id: `tool-${index + 1}`,
+    name: tool,
+    access: index % 3 === 0 ? 'Restricted' : index % 3 === 1 ? 'Approval required' : 'Allowed',
+    agents: data.agents.filter((agent) => agent.tools.includes(tool)).map((agent) => agent.name),
+    risk: index % 3 === 0 ? 'high' : index % 3 === 1 ? 'medium' : 'low',
+  }));
+  return {
+    tools,
+    policies: [
+      'Production writes require human approval',
+      'External webhooks restricted to approved projects',
+      'Browser automation logs must attach evidence',
+      'High-risk tool calls create approval records',
+    ],
+    kpis: [
+      { label: 'Tools', value: String(tools.length), tone: 'blue' },
+      { label: 'Restricted', value: String(tools.filter((tool) => tool.access === 'Restricted').length), tone: 'red' },
+      { label: 'Approval required', value: String(tools.filter((tool) => tool.access === 'Approval required').length), tone: 'amber' },
+      { label: 'Allowed', value: String(tools.filter((tool) => tool.access === 'Allowed').length), tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function getRecentActivities(): Activity[] {
   return mergeActivityTimeline(currentData().activities, getWorkflowState().events);
 }
