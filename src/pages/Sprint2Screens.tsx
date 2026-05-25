@@ -34,7 +34,18 @@ import {
   Zap,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Badge, Button, KpiTile, Panel, RowAction } from '../components/ui/DemoPrimitives';
+import type { ReactNode } from 'react';
+import { Badge, Button, KpiTile, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
+import {
+  selectCompanyOverviewViewModel,
+  selectCompanySettingsViewModel,
+  selectCreateGoalViewModel,
+  selectCreateProjectViewModel,
+  selectGoalDetailViewModel,
+  selectGoalsDashboardViewModel,
+  selectProjectDetailViewModel,
+  selectProjectsListViewModel,
+} from '../domain/selectors';
 import type { Tone } from '../data/demoScreens';
 
 export const sprint2Routes = new Set([
@@ -48,6 +59,14 @@ export const sprint2Routes = new Set([
   '/today',
   '/inbox',
   '/notifications',
+  '/company/overview',
+  '/company/settings',
+  '/goals',
+  '/goals/demo-goal',
+  '/goals/new',
+  '/projects',
+  '/projects/demo-project',
+  '/projects/new',
 ]);
 
 type OnboardingStep = {
@@ -1601,6 +1620,326 @@ function NotificationScreen() {
   );
 }
 
+function metricIcon(label: string): LucideIcon {
+  if (label.toLowerCase().includes('budget') || label.toLowerCase().includes('cost')) return BarChart3;
+  if (label.toLowerCase().includes('agent')) return Bot;
+  if (label.toLowerCase().includes('ticket')) return Ticket;
+  if (label.toLowerCase().includes('approval') || label.toLowerCase().includes('risk')) return ShieldCheck;
+  if (label.toLowerCase().includes('goal') || label.toLowerCase().includes('progress')) return Target;
+  if (label.toLowerCase().includes('project')) return Folder;
+  return CheckCircle2;
+}
+
+function MetricBand({ items, parityId }: { items: { label: string; value: string; tone: Tone }[]; parityId: string }) {
+  return (
+    <div data-parity-id={parityId} className="mt-4 grid grid-cols-4 gap-4">
+      {items.map((item) => <KpiTile key={item.label} label={item.label} value={item.value} tone={item.tone} icon={metricIcon(item.label)} compact />)}
+    </div>
+  );
+}
+
+function SimpleHeader({ parityId, title, subtitle, actions }: { parityId: string; title: string; subtitle: string; actions?: ReactNode }) {
+  return (
+    <div data-parity-id={parityId} className="flex min-h-[68px] items-start justify-between gap-4">
+      <div>
+        <h1 className="text-[32px] font-extrabold leading-tight text-slate-950">{title}</h1>
+        <p className="mt-1 max-w-3xl text-slate-500">{subtitle}</p>
+      </div>
+      {actions ? <div className="flex gap-3">{actions}</div> : null}
+    </div>
+  );
+}
+
+function CompanyOverviewScreen() {
+  const vm = selectCompanyOverviewViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="company.header"
+        title="Company Overview"
+        subtitle="Tong quan workspace, muc tieu va nang luc van hanh AI cua doanh nghiep."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Bao cao</Button><Button><Building2 className="h-4 w-4" />Cap nhat cong ty</Button></>}
+      />
+      <MetricBand parityId="company.kpi-band" items={vm.kpis} />
+      <div data-parity-id="company.main-grid" className="mt-4 grid grid-cols-[1.1fr_.9fr] gap-5">
+        <div data-parity-id="company.left-panel" className="space-y-5">
+          <Panel title="Ho so cong ty">
+            <div className="grid grid-cols-[88px_1fr] gap-5 p-5">
+              <div className="grid h-20 w-20 place-items-center rounded-2xl bg-blue-50 text-3xl font-extrabold text-[#0f6bff]">UI</div>
+              <div>
+                <h2 className="text-2xl font-extrabold text-slate-950">{vm.workspace.name}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500">Workspace dang van hanh doi ngu AI cho marketing, research, QA va bao cao dieu hanh.</p>
+                <div className="mt-4 flex gap-3"><Badge tone="green">Plan {vm.workspace.plan}</Badge><Badge tone="blue">Created {vm.workspace.createdAt.slice(0, 10)}</Badge></div>
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Muc tieu chien luoc">
+            <div className="space-y-4 p-5">
+              {vm.goals.map((goal) => (
+                <div key={goal.id} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex items-center justify-between"><b>{goal.title}</b><span className="font-bold text-[#0f6bff]">{goal.progress}%</span></div>
+                  <p className="mt-1 text-sm text-slate-500">{goal.description}</p>
+                  <ProgressBar value={goal.progress} tone={goal.progress > 80 ? 'green' : 'blue'} label={`${goal.title} progress`} />
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="company.right-panel" className="space-y-5">
+          <Panel title="Doi AI dang hoat dong">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.agents.map((agent) => <div key={agent.id} className="flex items-center justify-between py-3"><div className="flex items-center gap-3"><IconBubble icon={Bot} tone={agent.status === 'failed' ? 'red' : 'blue'} /><div><b>{agent.name}</b><div className="text-sm text-slate-500">{agent.role}</div></div></div><Badge tone={agent.status === 'failed' ? 'red' : 'green'}>{agent.status}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Hoat dong moi">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.activities.slice(0, 5).map((activity) => <div key={activity.id} className="py-3"><b className="text-sm">{activity.title}</b><p className="mt-1 text-sm text-slate-500">{activity.description}</p></div>)}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IconBubble({ icon: Icon, tone = 'blue' }: { icon: LucideIcon; tone?: Tone }) {
+  const classes: Record<Tone, string> = {
+    blue: 'bg-blue-50 text-[#0f6bff]',
+    cyan: 'bg-cyan-50 text-cyan-600',
+    green: 'bg-emerald-50 text-emerald-600',
+    amber: 'bg-amber-50 text-amber-600',
+    red: 'bg-red-50 text-red-600',
+    purple: 'bg-violet-50 text-violet-600',
+    slate: 'bg-slate-100 text-slate-500',
+  };
+  return <span className={`grid h-10 w-10 place-items-center rounded-xl ${classes[tone]}`}><Icon className="h-5 w-5" /></span>;
+}
+
+function CompanySettingsScreen() {
+  const vm = selectCompanySettingsViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="company-settings.header" title="Company Settings" subtitle="Quan ly thong tin cong ty, thanh vien va chinh sach van hanh AI." actions={<Button><Settings className="h-4 w-4" />Luu thay doi</Button>} />
+      <div data-parity-id="company-settings.main-grid" className="mt-5 grid grid-cols-[.95fr_1.05fr] gap-5">
+        <div data-parity-id="company-settings.profile-panel" className="space-y-5">
+          <Panel title="Thong tin workspace">
+            <div className="space-y-4 p-5">
+              {[['Ten cong ty', vm.workspace.name], ['Plan', vm.workspace.plan], ['Budget AI thang', `$${vm.workspace.aiBudgetMonthly.toLocaleString()}`], ['Owner', vm.currentUser.name]].map(([label, value]) => <FieldRow key={label} label={label} value={value} />)}
+            </div>
+          </Panel>
+          <Panel title="Thanh vien">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.members.map((member) => <div key={member.id} className="flex items-center justify-between py-3"><div><b>{member.name}</b><div className="text-sm text-slate-500">{member.email}</div></div><Badge tone="blue">{member.role}</Badge></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="company-settings.policy-panel" className="space-y-5">
+          <Panel title="Chinh sach van hanh">
+            <div className="grid grid-cols-2 gap-4 p-5">
+              {vm.policies.map((policy) => <div key={policy.label} className="rounded-xl border border-slate-100 p-4"><div className="text-sm text-slate-500">{policy.label}</div><div className="mt-3"><Badge tone={policy.tone as Tone}>{policy.value}</Badge></div></div>)}
+            </div>
+          </Panel>
+          <Panel title="Audit va bao mat">
+            <div className="space-y-3 p-5">
+              {['Require reviewer for high-risk approval', 'Record agent tool usage', 'Notify owner on budget variance', 'Restrict external webhook writes'].map((item, index) => <div key={item} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{item}</span><Badge tone={index === 3 ? 'amber' : 'green'}>{index === 3 ? 'Review' : 'On'}</Badge></div>)}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FieldRow({ label, value }: { label: string; value: string }) {
+  return <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-xs font-semibold uppercase text-slate-400">{label}</div><div className="mt-1 font-bold text-slate-900">{value}</div></div>;
+}
+
+function GoalsDashboardScreen() {
+  const vm = selectGoalsDashboardViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="goals.header" title="Goals Dashboard" subtitle="Theo doi muc tieu chien luoc va cac ticket AI dang dong gop vao ket qua." actions={<Button><Target className="h-4 w-4" />Tao goal</Button>} />
+      <MetricBand parityId="goals.kpi-band" items={vm.kpis} />
+      <div data-parity-id="goals.main-grid" className="mt-4 grid grid-cols-[1fr_380px] gap-5">
+        <div data-parity-id="goals.list-panel">
+          <Panel title="Muc tieu dang chay">
+            <div className="space-y-4 p-5">
+              {vm.goals.map((goal) => <GoalSummary key={goal.id} goal={goal} />)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="goals.timeline-panel" className="space-y-5">
+          <Panel title="Ticket lien quan">
+            <div className="divide-y divide-slate-100 p-4">{vm.tickets.slice(0, 6).map((ticket) => <div key={ticket.id} className="py-3"><b className="text-sm">{ticket.code}</b><p className="mt-1 text-sm text-slate-500">{ticket.title}</p></div>)}</div>
+          </Panel>
+          <Panel title="Nhac viec">
+            <div className="space-y-3 p-5">{['Review progress this week', 'Assign owner for blocked ticket', 'Prepare CEO goal update'].map((item) => <div key={item} className="rounded-xl bg-blue-50 p-3 text-sm font-semibold text-[#0f6bff]">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GoalSummary({ goal }: { goal: ReturnType<typeof selectGoalsDashboardViewModel>['goals'][number] }) {
+  return (
+    <div className="rounded-xl border border-slate-100 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div><h2 className="text-lg font-extrabold text-slate-950">{goal.title}</h2><p className="mt-1 text-sm leading-6 text-slate-500">{goal.description}</p></div>
+        <Badge tone={goal.progress > 80 ? 'green' : goal.progress > 65 ? 'blue' : 'amber'}>{goal.progress}%</Badge>
+      </div>
+      <div className="mt-4"><ProgressBar value={goal.progress} label={`${goal.title} progress`} /></div>
+      <div className="mt-3 text-sm text-slate-500">Due {goal.dueAt.slice(0, 10)} · {goal.linkedTicketIds.length} tickets</div>
+    </div>
+  );
+}
+
+function GoalDetailScreen() {
+  const vm = selectGoalDetailViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="goal.header" title={vm.goal.title} subtitle={vm.goal.description} actions={<><Button variant="secondary">Chinh sua</Button><Button>Review tien do</Button></>} />
+      <div data-parity-id="goal.progress-band" className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+        <div className="flex items-center justify-between"><div><b>Progress</b><p className="text-sm text-slate-500">Owner: {vm.owner.name} · Due {vm.goal.dueAt.slice(0, 10)}</p></div><span className="text-3xl font-extrabold text-[#0f6bff]">{vm.goal.progress}%</span></div>
+        <div className="mt-4"><ProgressBar value={vm.goal.progress} label="Goal progress" height={10} /></div>
+      </div>
+      <div data-parity-id="goal.main-grid" className="mt-5 grid grid-cols-[1fr_380px] gap-5">
+        <div data-parity-id="goal.ticket-panel">
+          <Panel title="Linked tickets">
+            <div className="divide-y divide-slate-100 p-4">{vm.tickets.map((ticket) => <div key={ticket.id} className="grid grid-cols-[1fr_120px_110px] items-center gap-4 py-3"><div><b>{ticket.title}</b><div className="text-sm text-slate-500">{ticket.code}</div></div><Badge tone={ticket.status === 'done' ? 'green' : ticket.status === 'blocked' ? 'red' : 'blue'}>{ticket.status}</Badge><Badge tone={ticket.riskLevel === 'high' ? 'red' : 'amber'}>{ticket.riskLevel}</Badge></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="goal.activity-panel" className="space-y-5">
+          <Panel title="Activity">
+            <div className="divide-y divide-slate-100 p-4">{vm.activities.slice(0, 5).map((activity) => <div key={activity.id} className="py-3"><b className="text-sm">{activity.title}</b><p className="mt-1 text-sm text-slate-500">{activity.description}</p></div>)}</div>
+          </Panel>
+          <Panel title="Risk check">
+            <div className="p-5"><Badge tone={vm.goal.progress > 70 ? 'green' : 'amber'}>{vm.goal.progress > 70 ? 'On track' : 'Needs attention'}</Badge><p className="mt-3 text-sm leading-6 text-slate-500">Progress is recalculated from linked tickets and recent agent activity.</p></div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateGoalScreen() {
+  const vm = selectCreateGoalViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="create-goal.header" title="Create Goal Wizard" subtitle="Thiet lap muc tieu, owner, KPI va ticket lien quan cho doi AI." actions={<Button><Check className="h-4 w-4" />Tao goal</Button>} />
+      <div data-parity-id="create-goal.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="create-goal.form-panel" className="space-y-5">
+          <Panel title="Thong tin muc tieu">
+            <div className="grid grid-cols-2 gap-4 p-5">
+              <FieldRow label="Goal name" value="Increase qualified leads 30%" />
+              <FieldRow label="Owner" value={vm.agents[4]?.name ?? vm.agents[0].name} />
+              <FieldRow label="Due date" value="2026-06-30" />
+              <FieldRow label="Primary KPI" value="Qualified leads" />
+            </div>
+          </Panel>
+          <Panel title="Templates">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={Target} /><b className="mt-3 block">{template}</b><p className="mt-1 text-sm text-slate-500">Starter workflow with suggested agents and approval rules.</p></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="create-goal.preview-panel">
+          <Panel title="Preview">
+            <div className="space-y-4 p-5">
+              <div className="rounded-xl bg-blue-50 p-5"><b className="text-[#0f6bff]">{vm.workspace.name}</b><p className="mt-2 text-sm text-slate-600">Goal will create project, ticket backlog, and weekly review cadence.</p></div>
+              {['Create goal record', 'Generate ticket backlog', 'Assign owner agent', 'Enable weekly progress report'].map((item, index) => <div key={item} className="flex items-center gap-3"><IconBubble icon={index < 2 ? CheckCircle2 : Clock3} tone={index < 2 ? 'green' : 'blue'} /><span className="font-semibold">{item}</span></div>)}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectsListScreen() {
+  const vm = selectProjectsListViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="projects.header" title="Projects" subtitle="Quan ly cac chuong trinh thuc thi lien ket voi muc tieu va agent." actions={<Button><Folder className="h-4 w-4" />Tao project</Button>} />
+      <MetricBand parityId="projects.kpi-band" items={vm.kpis} />
+      <div data-parity-id="projects.main-grid" className="mt-4 grid grid-cols-[1fr_360px] gap-5">
+        <div data-parity-id="projects.list-panel">
+          <Panel title="Project portfolio">
+            <div className="space-y-4 p-5">{vm.projects.map((project) => <ProjectCard key={project.id} project={project} />)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="projects.side-panel" className="space-y-5">
+          <Panel title="Capacity">
+            <div className="space-y-4 p-5">{vm.projects.map((project) => <div key={project.id}><div className="mb-2 flex justify-between text-sm"><b>{project.owner}</b><span>{project.progress}%</span></div><ProgressBar value={project.progress} label={`${project.title} capacity`} /></div>)}</div>
+          </Panel>
+          <Panel title="Governance">
+            <div className="space-y-3 p-5">{['Weekly owner review', 'Approval required for external publish', 'Budget alert at 80%'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectCard({ project }: { project: ReturnType<typeof selectProjectsListViewModel>['projects'][number] }) {
+  return (
+    <div className="rounded-xl border border-slate-100 p-5">
+      <div className="flex items-start justify-between gap-4"><div><h2 className="text-lg font-extrabold text-slate-950">{project.title}</h2><p className="mt-1 text-sm leading-6 text-slate-500">{project.description}</p></div><Badge tone={project.status === 'On track' ? 'green' : 'amber'}>{project.status}</Badge></div>
+      <div className="mt-4"><ProgressBar value={project.progress} label={`${project.title} progress`} /></div>
+      <div className="mt-3 flex gap-4 text-sm text-slate-500"><span>Owner: {project.owner}</span><span>{project.tickets.length} tickets</span><span>Due {project.dueAt.slice(0, 10)}</span></div>
+    </div>
+  );
+}
+
+function ProjectDetailScreen() {
+  const vm = selectProjectDetailViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="project.header" title={vm.project.title} subtitle={vm.project.description} actions={<><Button variant="secondary">Export</Button><Button>Update project</Button></>} />
+      <div data-parity-id="project.main-grid" className="mt-5 grid grid-cols-[1fr_400px] gap-5">
+        <div data-parity-id="project.milestone-panel" className="space-y-5">
+          <Panel title="Milestones">
+            <div className="space-y-4 p-5">{vm.milestones.map((milestone) => <div key={milestone.title} className="rounded-xl border border-slate-100 p-4"><div className="flex justify-between"><b>{milestone.title}</b><Badge tone={milestone.status === 'Done' ? 'green' : milestone.status === 'Running' ? 'blue' : 'amber'}>{milestone.status}</Badge></div><div className="mt-3"><ProgressBar value={milestone.progress} label={`${milestone.title} progress`} /></div></div>)}</div>
+          </Panel>
+          <Panel title="Ticket execution">
+            <div className="divide-y divide-slate-100 p-4">{vm.project.tickets.map((ticket) => <div key={ticket.id} className="py-3"><b>{ticket.title}</b><div className="mt-1 text-sm text-slate-500">{ticket.code} · {ticket.status}</div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="project.detail-panel" className="space-y-5">
+          <Panel title="Project health">
+            <div className="p-5"><div className="text-4xl font-extrabold text-[#0f6bff]">{vm.project.progress}%</div><p className="mt-2 text-sm text-slate-500">Current aggregate progress from milestones and linked tickets.</p><div className="mt-4"><ProgressBar value={vm.project.progress} label="Project health" height={10} /></div></div>
+          </Panel>
+          <Panel title="Owner and controls">
+            <div className="space-y-3 p-5"><FieldRow label="Owner" value={vm.project.owner} /><FieldRow label="Status" value={vm.project.status} /><Button className="w-full">Open weekly review</Button></div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CreateProjectScreen() {
+  const vm = selectCreateProjectViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="create-project.header" title="Create Project Wizard" subtitle="Tao project moi tu goal, template va agent execution plan." actions={<Button><Folder className="h-4 w-4" />Tao project</Button>} />
+      <div data-parity-id="create-project.main-grid" className="mt-5 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="create-project.form-panel" className="space-y-5">
+          <Panel title="Project setup">
+            <div className="grid grid-cols-2 gap-4 p-5"><FieldRow label="Project name" value="GrowthOS V2 Launch" /><FieldRow label="Linked goal" value={vm.goals[0].title} /><FieldRow label="Lead agent" value={vm.agents[4]?.name ?? vm.agents[0].name} /><FieldRow label="Cadence" value="Weekly review" /></div>
+          </Panel>
+          <Panel title="Template gallery">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={Folder} /><b className="mt-3 block">{template}</b><p className="mt-1 text-sm text-slate-500">Includes milestones, tickets, and approval gates.</p></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="create-project.preview-panel">
+          <Panel title="Generated plan">
+            <div className="space-y-4 p-5">{['Create project workspace', 'Generate milestones', 'Create initial ticket board', 'Invite reviewer', 'Schedule progress report'].map((item, index) => <div key={item} className="flex items-center gap-3"><IconBubble icon={index < 2 ? CheckCircle2 : Clock3} tone={index < 2 ? 'green' : 'blue'} /><span className="font-semibold">{item}</span></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/login') return <LoginOnboardingParityPage />;
   if (route === '/register') return <RegisterOnboardingParityPage />;
@@ -1612,5 +1951,13 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/today') return <TodayScreen />;
   if (route === '/inbox') return <InboxScreen />;
   if (route === '/notifications') return <NotificationScreen />;
+  if (route === '/company/overview') return <CompanyOverviewScreen />;
+  if (route === '/company/settings') return <CompanySettingsScreen />;
+  if (route === '/goals') return <GoalsDashboardScreen />;
+  if (route === '/goals/demo-goal') return <GoalDetailScreen />;
+  if (route === '/goals/new') return <CreateGoalScreen />;
+  if (route === '/projects') return <ProjectsListScreen />;
+  if (route === '/projects/demo-project') return <ProjectDetailScreen />;
+  if (route === '/projects/new') return <CreateProjectScreen />;
   return null;
 }

@@ -356,6 +356,141 @@ export function selectApprovalCenterViewModel() {
   };
 }
 
+export function selectCompanyOverviewViewModel() {
+  const data = currentData();
+  const activeAgents = data.agents.filter((agent) => ['active', 'running', 'busy'].includes(agent.status)).length;
+  const openTickets = data.tickets.filter((ticket) => ticket.status !== 'done').length;
+  const pendingApprovals = data.approvals.filter((approval) => approval.status === 'pending').length;
+
+  return {
+    workspace: data.workspace,
+    currentUser: data.currentUser,
+    goals: data.goals,
+    agents: data.agents,
+    tickets: data.tickets,
+    activities: getRecentActivities(),
+    kpis: [
+      { label: 'AI budget', value: currency(data.workspace.aiBudgetMonthly), tone: 'blue' },
+      { label: 'Active agents', value: String(activeAgents), tone: 'green' },
+      { label: 'Open tickets', value: String(openTickets), tone: 'cyan' },
+      { label: 'Pending approvals', value: String(pendingApprovals), tone: 'amber' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectCompanySettingsViewModel() {
+  const data = currentData();
+  return {
+    workspace: data.workspace,
+    currentUser: data.currentUser,
+    policies: [
+      { label: 'Approval required for production changes', value: 'Enabled', tone: 'green' },
+      { label: 'Budget alert threshold', value: '80%', tone: 'amber' },
+      { label: 'External tool access', value: 'Restricted', tone: 'blue' },
+      { label: 'Audit retention', value: '180 days', tone: 'purple' },
+    ],
+    members: [
+      data.currentUser,
+      { id: 'user-ops', name: 'Operations Lead', email: 'ops@demo-company.local', role: 'operator' as const },
+      { id: 'user-review', name: 'Risk Reviewer', email: 'risk@demo-company.local', role: 'reviewer' as const },
+    ],
+  };
+}
+
+export function selectGoalsDashboardViewModel() {
+  const data = currentData();
+  const linkedTickets = data.goals.reduce((sum, goal) => sum + goal.linkedTicketIds.length, 0);
+  const averageProgress = data.goals.reduce((sum, goal) => sum + goal.progress, 0) / data.goals.length;
+  return {
+    goals: data.goals,
+    tickets: data.tickets,
+    kpis: [
+      { label: 'Active goals', value: String(data.goals.length), tone: 'blue' },
+      { label: 'Average progress', value: `${averageProgress.toFixed(0)}%`, tone: 'green' },
+      { label: 'Linked tickets', value: String(linkedTickets), tone: 'cyan' },
+      { label: 'At risk', value: String(data.goals.filter((goal) => goal.progress < 70).length), tone: 'amber' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectGoalDetailViewModel(goalId = 'goal-lead-growth') {
+  const data = currentData();
+  const goal = data.goals.find((item) => item.id === goalId) ?? data.goals[0];
+  const owner = findAgent(goal.ownerId);
+  const tickets = data.tickets.filter((ticket) => goal.linkedTicketIds.includes(ticket.id));
+  const activities = getRecentActivities().filter((activity) => activity.type === 'goal' || (activity.relatedTicketId && goal.linkedTicketIds.includes(activity.relatedTicketId)));
+  return { goal, owner, tickets, activities };
+}
+
+export function selectCreateGoalViewModel() {
+  const data = currentData();
+  return {
+    workspace: data.workspace,
+    agents: data.agents,
+    templates: [
+      'Increase qualified leads',
+      'Reduce reporting cycle time',
+      'Automate content operations',
+      'Improve customer response SLA',
+    ],
+  };
+}
+
+function projectRows() {
+  const data = currentData();
+  return data.goals.map((goal, index) => {
+    const tickets = data.tickets.filter((ticket) => goal.linkedTicketIds.includes(ticket.id));
+    const owner = findAgent(goal.ownerId);
+    return {
+      id: `project-${goal.id}`,
+      title: index === 0 ? 'GrowthOS V2 Launch' : index === 1 ? 'Content Operations Automation' : 'Executive Reporting System',
+      description: goal.description,
+      status: goal.progress > 80 ? 'On track' : goal.progress > 65 ? 'Needs attention' : 'At risk',
+      progress: goal.progress,
+      owner: owner.name,
+      tickets,
+      dueAt: goal.dueAt,
+    };
+  });
+}
+
+export function selectProjectsListViewModel() {
+  const projects = projectRows();
+  return {
+    projects,
+    kpis: [
+      { label: 'Projects', value: String(projects.length), tone: 'blue' },
+      { label: 'On track', value: String(projects.filter((project) => project.status === 'On track').length), tone: 'green' },
+      { label: 'Needs attention', value: String(projects.filter((project) => project.status !== 'On track').length), tone: 'amber' },
+      { label: 'Linked tickets', value: String(projects.reduce((sum, project) => sum + project.tickets.length, 0)), tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectProjectDetailViewModel(projectId = 'project-goal-lead-growth') {
+  const projects = projectRows();
+  const project = projects.find((item) => item.id === projectId) ?? projects[0];
+  return {
+    project,
+    milestones: [
+      { title: 'Strategy brief', status: 'Done', progress: 100 },
+      { title: 'Agent execution plan', status: 'Running', progress: Math.max(45, project.progress - 12) },
+      { title: 'Review and approval', status: 'Pending', progress: Math.max(20, project.progress - 28) },
+      { title: 'Launch report', status: 'Planned', progress: 10 },
+    ],
+  };
+}
+
+export function selectCreateProjectViewModel() {
+  const data = currentData();
+  return {
+    workspace: data.workspace,
+    goals: data.goals,
+    agents: data.agents,
+    templates: ['Growth campaign', 'Workflow automation', 'Research sprint', 'Executive reporting'],
+  };
+}
+
 export function getRecentActivities(): Activity[] {
   return mergeActivityTimeline(currentData().activities, getWorkflowState().events);
 }

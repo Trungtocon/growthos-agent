@@ -10,6 +10,17 @@ const reportPath = path.join(root, 'parity-reports/real-ui-demo-flow-smoke.json'
 
 const routes = [
   { screen: 8, route: '/command-center', mainSelector: '[data-parity-id="command.header"]', heading: 'Command Center' },
+  { screen: 9, route: '/today', mainSelector: '[data-parity-id="today.header"]', heading: 'Today' },
+  { screen: 10, route: '/inbox', mainSelector: '[data-parity-id="inbox.header"]', heading: 'AI Inbox' },
+  { screen: 11, route: '/notifications', mainSelector: '[data-parity-id="notifications.header"]', heading: 'Notification Center' },
+  { screen: 12, route: '/company/overview', mainSelector: '[data-parity-id="company.header"]', heading: 'Company Overview' },
+  { screen: 13, route: '/company/settings', mainSelector: '[data-parity-id="company-settings.header"]', heading: 'Company Settings' },
+  { screen: 14, route: '/goals', mainSelector: '[data-parity-id="goals.header"]', heading: 'Goals Dashboard' },
+  { screen: 15, route: '/goals/demo-goal', mainSelector: '[data-parity-id="goal.header"]', heading: 'Tang lead marketing' },
+  { screen: 16, route: '/goals/new', mainSelector: '[data-parity-id="create-goal.header"]', heading: 'Create Goal Wizard' },
+  { screen: 17, route: '/projects', mainSelector: '[data-parity-id="projects.header"]', heading: 'Projects' },
+  { screen: 18, route: '/projects/demo-project', mainSelector: '[data-parity-id="project.header"]', heading: 'GrowthOS V2 Launch' },
+  { screen: 19, route: '/projects/new', mainSelector: '[data-parity-id="create-project.header"]', heading: 'Create Project Wizard' },
   { screen: 20, route: '/workforce', mainSelector: '[data-parity-id="workforce.header"]', heading: 'AI Workforce' },
   { screen: 21, route: '/org-chart', mainSelector: '[data-parity-id="org.main-grid"]', heading: 'Org Chart' },
   { screen: 23, route: '/agents/demo-agent', mainSelector: '[data-parity-id="agent.main-grid"]', heading: 'Agent Detail' },

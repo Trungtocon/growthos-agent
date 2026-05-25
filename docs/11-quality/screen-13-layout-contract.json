@@ -1,0 +1,13 @@
+{
+  "viewport": { "width": 1672, "height": 941 },
+  "source": { "reference": "public/stitch_ui/13_Company_Settings.png", "contractSource": "sprint-5g-current-real-ui-dom" },
+  "regions": {
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
+    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 814, "tolerance": 16 },
+    "company-settings.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 16 },
+    "company-settings.main-grid": { "x": 240, "y": 178, "width": 1410, "height": 726, "tolerance": 16 },
+    "company-settings.profile-panel": { "x": 240, "y": 178, "width": 660.3, "height": 726, "tolerance": 16 },
+    "company-settings.policy-panel": { "x": 920.3, "y": 178, "width": 729.7, "height": 726, "tolerance": 16 }
+  }
+}
