@@ -4,9 +4,9 @@
 
 - Total manifest screens: 55.
 - Locked onboarding/auth static parity screens: 7.
-- Real UI structural pass screens: 42.
+- Real UI structural pass screens: 48.
 - Partial utility Real UI screens: 0.
-- Scaffold placeholder screens: 6.
+- Scaffold placeholder screens: 0.
 
 ## Sprint Progress
 
@@ -21,7 +21,8 @@
 | 5J | Convert governance support wave | Complete | Pending | Build, bbox 38/39/40/41, parity reference 38/39/40/41 | Approval detail, governance policies, audit log, and risk center now render Real UI components with structural gates |
 | 5K | Convert budget and reporting wave | Complete | Pending | Build, bbox 42/43/44/45, parity reference 42/43/44/45 | Cost dashboard, budget settings, reports dashboard, and report builder now render Real UI components with structural gates |
 | 5L | Convert integrations and workspace management wave | Complete | Pending | Build, bbox 46/47/48/49, parity reference 46/47/48/49 | Integrations hub/detail, MCP server manager, and workspaces manager now render Real UI components with structural gates |
-| 5M-5N | Convert remaining manifest route waves | Planned | Pending | Per-wave route, bbox, smoke, and parity reference gates | Use manifest and PNG evidence per screen |
+| 5M | Convert admin, security, billing, and help routes | Complete | Pending | Build, bbox 50-55, parity reference 50-55 | Screens 50-55 now render Real UI components with structural gates |
+| 5N | Final full app exit gate | Planned | Pending | Full build, data validation, smoke, interactions, workflow, bbox 08-55, onboarding parity, static guardrail | Verify all 55 manifest screens after route coverage completion |
 | 5O-5R | Interaction, data hardening, polish, and final exit | Planned | Pending | Full gate suite | Final decision recorded in exit report |
 
 ## Screens Completed
@@ -37,16 +38,17 @@
 | 38-41 | `/approvals/demo-approval`, `/governance/policies`, `/audit-log`, `/risk-center` | Real UI structural pass and pixel polish deferred |
 | 42-45 | `/cost`, `/budget/settings`, `/reports`, `/reports/new` | Real UI structural pass and pixel polish deferred |
 | 46-49 | `/integrations`, `/integrations/demo-integration`, `/mcp`, `/workspaces` | Real UI structural pass and pixel polish deferred |
+| 50-55 | `/secrets`, `/team`, `/roles-permissions`, `/settings`, `/billing`, `/help` | Real UI structural pass and pixel polish deferred |
 
 ## Remaining Screens
 
-- Admin/help: 50-55.
+- None. All 55 manifest screens now have route-specific implementations.
 
 ## Blockers
 
 - No baseline blocker at audit time.
-- The completion scope is large enough to require sprint checkpoints; scaffold fallback must remain visible in reports until each wave is converted.
+- The completion scope still requires a final full-app exit gate, but no manifest screen currently depends on the generic scaffold fallback.
 
 ## Next Action
 
-Start Sprint 5M by converting admin/security/account routes 50-55 into audited Real UI route coverage.
+Run Sprint 5N full-app exit gate across all locked static onboarding screens and Real UI structural routes 08-55.

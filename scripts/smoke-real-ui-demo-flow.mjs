@@ -51,6 +51,12 @@ const routes = [
   { screen: 47, route: '/integrations/demo-integration', mainSelector: '[data-parity-id="integration-detail.header"]', heading: 'Integration Detail' },
   { screen: 48, route: '/mcp', mainSelector: '[data-parity-id="mcp.header"]', heading: 'MCP Server Manager' },
   { screen: 49, route: '/workspaces', mainSelector: '[data-parity-id="workspaces.header"]', heading: 'Workspaces Manager' },
+  { screen: 50, route: '/secrets', mainSelector: '[data-parity-id="secrets.header"]', heading: 'Secrets Manager' },
+  { screen: 51, route: '/team', mainSelector: '[data-parity-id="team.header"]', heading: 'Team Members' },
+  { screen: 52, route: '/roles-permissions', mainSelector: '[data-parity-id="roles.header"]', heading: 'Role & Permission' },
+  { screen: 53, route: '/settings', mainSelector: '[data-parity-id="settings.header"]', heading: 'System Settings' },
+  { screen: 54, route: '/billing', mainSelector: '[data-parity-id="billing.header"]', heading: 'Billing / Plan' },
+  { screen: 55, route: '/help', mainSelector: '[data-parity-id="help.header"]', heading: 'Help / Template Center' },
 ];
 
 function writeJson(filePath, data) {

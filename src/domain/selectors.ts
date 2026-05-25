@@ -1155,6 +1155,196 @@ export function selectWorkspacesManagerViewModel() {
   };
 }
 
+export function selectSecretsManagerViewModel() {
+  const data = currentData();
+  const secretRows = [
+    { id: 'secret-openai', name: 'OPENAI_API_KEY', scope: 'Runtime inference', owner: data.currentUser.name, status: 'Configured', rotation: '18 days', access: 'Runtime only', risk: 'Medium', tone: 'green' },
+    { id: 'secret-github', name: 'GITHUB_TOKEN', scope: 'Repository sync', owner: 'Operations Lead', status: 'Configured', rotation: '42 days', access: 'Read metadata', risk: 'Low', tone: 'green' },
+    { id: 'secret-crm', name: 'CRM_PRIVATE_APP_TOKEN', scope: 'HubSpot sandbox', owner: 'Growth Strategy Agent', status: 'Needs rotation', rotation: 'Overdue', access: 'Approval required', risk: 'High', tone: 'amber' },
+    { id: 'secret-slack', name: 'SLACK_BOT_TOKEN', scope: 'Notifications', owner: 'Operations Lead', status: 'Configured', rotation: '64 days', access: 'Post messages', risk: 'Medium', tone: 'blue' },
+  ];
+
+  return {
+    secretRows,
+    accessRows: data.agents.map((agent) => ({
+      id: agent.id,
+      agent: agent.name,
+      tools: agent.tools.length,
+      policy: agent.riskLevel === 'high' ? 'Manual approval' : 'Scoped access',
+      risk: riskLabel(agent.riskLevel),
+    })),
+    auditRows: getRecentActivities().slice(0, 5).map((activity) => ({
+      id: activity.id,
+      title: activity.title,
+      status: statusLabel(activity.status),
+      createdAt: activity.createdAt.slice(0, 16),
+    })),
+    kpis: [
+      { label: 'Secrets', value: String(secretRows.length), tone: 'blue' },
+      { label: 'Configured', value: String(secretRows.filter((row) => row.status === 'Configured').length), tone: 'green' },
+      { label: 'Needs rotation', value: String(secretRows.filter((row) => row.status !== 'Configured').length), tone: 'amber' },
+      { label: 'High risk', value: String(secretRows.filter((row) => row.risk === 'High').length), tone: 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectTeamMembersViewModel() {
+  const data = currentData();
+  const members = [
+    data.currentUser,
+    { id: 'user-ops', name: 'Operations Lead', email: 'ops@demo-company.local', role: 'operator' as const },
+    { id: 'user-review', name: 'Risk Reviewer', email: 'risk@demo-company.local', role: 'reviewer' as const },
+  ];
+
+  return {
+    members: members.map((member, index) => ({
+      ...member,
+      status: index === 0 ? 'Active now' : index === 1 ? 'Active today' : 'Invited',
+      lastSeen: index === 0 ? 'Now' : index === 1 ? '2 hours ago' : 'Pending',
+      access: member.role === 'owner' ? 'Full workspace' : member.role === 'operator' ? 'Operations' : 'Review queue',
+    })),
+    agentOwnership: data.agents.map((agent) => ({
+      id: agent.id,
+      agent: agent.name,
+      owner: agent.riskLevel === 'low' ? 'Operations Lead' : data.currentUser.name,
+      tickets: agent.currentTicketIds.length,
+      runs: agent.currentRunIds.length,
+    })),
+    invites: [
+      { id: 'invite-finance', email: 'finance@demo-company.local', role: 'reviewer', status: 'Pending' },
+      { id: 'invite-admin', email: 'admin@demo-company.local', role: 'operator', status: 'Draft' },
+    ],
+    kpis: [
+      { label: 'Members', value: String(members.length), tone: 'blue' },
+      { label: 'Active', value: '2', tone: 'green' },
+      { label: 'Invites', value: '2', tone: 'amber' },
+      { label: 'Agent owners', value: String(data.agents.length), tone: 'purple' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectRolesPermissionsViewModel() {
+  const data = currentData();
+  const roles = [
+    { id: 'role-owner', name: 'Owner', members: 1, permissions: 12, description: 'Workspace, billing, policy and all operational controls.', tone: 'purple' },
+    { id: 'role-operator', name: 'Operator', members: 1, permissions: 8, description: 'Agent operations, tickets, runs and reports.', tone: 'blue' },
+    { id: 'role-reviewer', name: 'Reviewer', members: 1, permissions: 5, description: 'Approvals, risk review and audit evidence.', tone: 'amber' },
+  ];
+
+  return {
+    roles,
+    permissionRows: [
+      { id: 'agent-control', module: 'Agent control', owner: 'Operator', status: 'Allowed', risk: 'Medium', tone: 'green' },
+      { id: 'budget-change', module: 'Budget changes', owner: 'Owner', status: 'Approval required', risk: 'High', tone: 'amber' },
+      { id: 'secret-access', module: 'Secret access', owner: 'Owner', status: 'Blocked by default', risk: 'High', tone: 'red' },
+      { id: 'report-export', module: 'Report export', owner: 'Reviewer', status: 'Allowed', risk: 'Low', tone: 'blue' },
+      { id: 'integration-write', module: 'Integration writes', owner: 'Owner', status: 'Manual review', risk: 'High', tone: 'amber' },
+    ],
+    policyCoverage: data.agents.map((agent) => ({
+      id: agent.id,
+      label: agent.name,
+      value: agent.policyCompliance,
+      tone: agent.policyCompliance > 90 ? 'green' : 'amber',
+    })),
+    kpis: [
+      { label: 'Roles', value: String(roles.length), tone: 'blue' },
+      { label: 'Permissions', value: String(roles.reduce((sum, role) => sum + role.permissions, 0)), tone: 'purple' },
+      { label: 'High risk rules', value: '3', tone: 'red' },
+      { label: 'Coverage', value: `${Math.round(data.agents.reduce((sum, agent) => sum + agent.policyCompliance, 0) / data.agents.length)}%`, tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectSystemSettingsViewModel() {
+  const data = currentData();
+  return {
+    workspace: data.workspace,
+    settings: [
+      { id: 'timezone', label: 'Workspace timezone', value: 'Asia/Saigon', status: 'Enabled', tone: 'blue' },
+      { id: 'audit-retention', label: 'Audit retention', value: '180 days', status: 'Enabled', tone: 'green' },
+      { id: 'workflow-mode', label: 'Workflow mode', value: 'Human-in-the-loop', status: 'Enabled', tone: 'purple' },
+      { id: 'failure-policy', label: 'Failure rollback', value: 'Automatic', status: 'Enabled', tone: 'green' },
+      { id: 'external-actions', label: 'External actions', value: 'Manual approval', status: 'Restricted', tone: 'amber' },
+    ],
+    notificationRows: [
+      { id: 'approval', label: 'Approval requests', channel: 'In-app + email', status: 'On', tone: 'green' },
+      { id: 'budget', label: 'Budget warnings', channel: 'In-app', status: 'On', tone: 'green' },
+      { id: 'risk', label: 'Risk alerts', channel: 'In-app + email', status: 'On', tone: 'amber' },
+      { id: 'weekly', label: 'Weekly reports', channel: 'Email', status: 'On', tone: 'blue' },
+    ],
+    kpis: [
+      { label: 'Settings', value: '5', tone: 'blue' },
+      { label: 'Notifications', value: '4', tone: 'cyan' },
+      { label: 'Guardrails', value: String(data.approvals.length), tone: 'purple' },
+      { label: 'Audit days', value: '180', tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectBillingPlanViewModel() {
+  const data = currentData();
+  const used = data.costBreakdown.total;
+  const planRows = [
+    { id: 'current', name: 'Enterprise', price: '$1,250/mo', agents: 'Unlimited', status: 'Current', tone: 'green' },
+    { id: 'growth', name: 'Growth', price: '$499/mo', agents: '25 agents', status: 'Available', tone: 'blue' },
+    { id: 'demo', name: 'Demo', price: '$99/mo', agents: '5 agents', status: 'Downgrade locked', tone: 'slate' },
+  ];
+
+  return {
+    workspace: data.workspace,
+    planRows,
+    invoiceRows: [
+      { id: 'invoice-may', period: 'May 2026', amount: '$1,250', status: 'Paid', due: '2026-05-01' },
+      { id: 'invoice-apr', period: 'April 2026', amount: '$1,250', status: 'Paid', due: '2026-04-01' },
+      { id: 'invoice-mar', period: 'March 2026', amount: '$1,250', status: 'Paid', due: '2026-03-01' },
+    ],
+    usageRows: data.costBreakdown.byAgent.map((item) => ({
+      id: item.id,
+      label: item.label,
+      value: item.value,
+      percent: item.percent,
+      tone: item.percent > 28 ? 'amber' : 'blue',
+    })),
+    kpis: [
+      { label: 'Current plan', value: data.workspace.plan, tone: 'purple' },
+      { label: 'AI budget', value: currency(data.workspace.aiBudgetMonthly), tone: 'blue' },
+      { label: 'MTD usage', value: currency(used), tone: 'amber' },
+      { label: 'Remaining', value: currency(Math.max(0, data.workspace.aiBudgetMonthly - used)), tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectHelpTemplateCenterViewModel() {
+  const data = currentData();
+  const templates = [
+    { id: 'template-ticket', title: 'Create a scoped AI ticket', category: 'Ticket workflow', owner: 'Operations', status: 'Recommended', tone: 'blue' },
+    { id: 'template-agent', title: 'Launch a new agent safely', category: 'Agent setup', owner: 'AI operations', status: 'Popular', tone: 'green' },
+    { id: 'template-approval', title: 'Review high-risk approval', category: 'Governance', owner: 'Risk review', status: 'Required', tone: 'amber' },
+    { id: 'template-report', title: 'Build weekly executive report', category: 'Reporting', owner: 'Leadership', status: 'Recommended', tone: 'purple' },
+  ];
+
+  return {
+    templates,
+    helpRows: [
+      { id: 'getting-started', title: 'Getting started with AI Workforce OS', kind: 'Guide', time: '8 min' },
+      { id: 'workflow-actions', title: 'Understanding optimistic workflow actions', kind: 'Guide', time: '6 min' },
+      { id: 'structural-gates', title: 'Real UI structural gates and visual polish', kind: 'Reference', time: '10 min' },
+      { id: 'security-policy', title: 'Secrets, roles and approval guardrails', kind: 'Policy', time: '7 min' },
+    ],
+    supportRows: [
+      { id: 'support-chat', label: 'Support chat', value: 'Business hours', tone: 'green' },
+      { id: 'status-page', label: 'System status', value: 'Operational', tone: 'green' },
+      { id: 'feedback', label: 'Product feedback', value: 'Open', tone: 'blue' },
+    ],
+    kpis: [
+      { label: 'Templates', value: String(templates.length), tone: 'blue' },
+      { label: 'Guides', value: '4', tone: 'green' },
+      { label: 'Agent flows', value: String(data.agents.length), tone: 'purple' },
+      { label: 'Support status', value: 'Online', tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function getRecentActivities(): Activity[] {
   return mergeActivityTimeline(currentData().activities, getWorkflowState().events);
 }

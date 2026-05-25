@@ -51,20 +51,26 @@ import {
   selectArtifactsLibraryViewModel,
   selectApprovalDetailViewModel,
   selectAuditLogViewModel,
+  selectBillingPlanViewModel,
   selectBudgetSettingsViewModel,
   selectCostDashboardViewModel,
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectGovernancePoliciesViewModel,
+  selectHelpTemplateCenterViewModel,
   selectIntegrationDetailViewModel,
   selectIntegrationsHubViewModel,
   selectMcpServerManagerViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
+  selectRolesPermissionsViewModel,
   selectReportBuilderViewModel,
   selectReportsDashboardViewModel,
   selectRiskCenterViewModel,
+  selectSecretsManagerViewModel,
   selectSkillsRegistryViewModel,
+  selectSystemSettingsViewModel,
+  selectTeamMembersViewModel,
   selectTicketsListViewModel,
   selectToolsPermissionsViewModel,
   selectWorkspacesManagerViewModel,
@@ -113,6 +119,12 @@ export const sprint2Routes = new Set([
   '/integrations/demo-integration',
   '/mcp',
   '/workspaces',
+  '/secrets',
+  '/team',
+  '/roles-permissions',
+  '/settings',
+  '/billing',
+  '/help',
 ]);
 
 type OnboardingStep = {
@@ -2706,6 +2718,165 @@ function WorkspacesManagerScreen() {
   );
 }
 
+function SecretsManagerScreen() {
+  const vm = selectSecretsManagerViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="secrets.header" title="Secrets Manager" subtitle="Quan ly metadata secret, rotation policy va agent access ma khong hien thi secret that." actions={<><Button variant="secondary"><ShieldCheck className="h-4 w-4" />Audit access</Button><Button><Lock className="h-4 w-4" />Add secret</Button></>} />
+      <MetricBand parityId="secrets.kpi-band" items={vm.kpis} />
+      <div data-parity-id="secrets.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="secrets.vault-panel" className="space-y-5">
+          <Panel title="Secret vault">
+            <div className="p-4">
+              <div className="grid grid-cols-[1fr_180px_140px_140px_110px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Name</span><span>Scope</span><span>Rotation</span><span>Access</span><span>Status</span></div>
+              {vm.secretRows.map((row) => <div key={row.id} className="grid grid-cols-[1fr_180px_140px_140px_110px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><div><b>{row.name}</b><p className="mt-1 text-xs text-slate-500">••••••••••••</p></div><span>{row.scope}</span><span>{row.rotation}</span><span>{row.access}</span><Badge tone={row.tone as Tone}>{row.status}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Agent secret access">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.accessRows.map((row) => <div key={row.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{row.agent}</b><Badge tone={row.risk === 'High' ? 'red' : row.risk === 'Medium' ? 'amber' : 'green'}>{row.risk}</Badge></div><p className="mt-2 text-sm text-slate-500">{row.tools} tools - {row.policy}</p></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="secrets.audit-panel" className="space-y-5">
+          <Panel title="Rotation policy">
+            <div className="space-y-3 p-5">{['Rotate production secrets every 90 days', 'Block plaintext display in UI', 'Require approval for secret scope changes', 'Log every secret access event'].map((item, index) => <div key={item} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{item}</span><Badge tone={index === 1 ? 'red' : 'green'}>{index === 1 ? 'Blocked' : 'On'}</Badge></div>)}</div>
+          </Panel>
+          <Panel title="Audit activity">
+            <div className="divide-y divide-slate-100 p-4">{vm.auditRows.map((row) => <div key={row.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{row.title}</b><Badge tone={row.status === 'Failed' ? 'red' : 'green'}>{row.status}</Badge></div><p className="mt-1 text-sm text-slate-500">{row.createdAt}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamMembersScreen() {
+  const vm = selectTeamMembersViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="team.header" title="Team Members" subtitle="Quan ly thanh vien, role, ownership va invitation cho workspace." actions={<><Button variant="secondary"><Mail className="h-4 w-4" />Invite link</Button><Button><Users className="h-4 w-4" />Invite member</Button></>} />
+      <MetricBand parityId="team.kpi-band" items={vm.kpis} />
+      <div data-parity-id="team.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="team.member-panel" className="space-y-5">
+          <Panel title="Members">
+            <div className="space-y-4 p-5">{vm.members.map((member) => <div key={member.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><div><b className="text-lg">{member.name}</b><p className="mt-1 text-sm text-slate-500">{member.email}</p></div><Badge tone={member.role === 'owner' ? 'purple' : member.role === 'operator' ? 'blue' : 'amber'}>{member.role}</Badge></div><div className="mt-4 grid grid-cols-3 gap-3"><FieldRow label="Status" value={member.status} /><FieldRow label="Access" value={member.access} /><FieldRow label="Last seen" value={member.lastSeen} /></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="team.ownership-panel" className="space-y-5">
+          <Panel title="Agent ownership">
+            <div className="divide-y divide-slate-100 p-4">{vm.agentOwnership.map((row) => <div key={row.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{row.agent}</b><Badge tone="blue">{row.owner}</Badge></div><p className="mt-1 text-sm text-slate-500">{row.tickets} tickets - {row.runs} runs</p></div>)}</div>
+          </Panel>
+          <Panel title="Invitations">
+            <div className="space-y-3 p-5">{vm.invites.map((invite) => <div key={invite.id} className="rounded-xl border border-slate-100 p-4"><b>{invite.email}</b><div className="mt-2 flex justify-between"><Badge tone="blue">{invite.role}</Badge><Badge tone={invite.status === 'Pending' ? 'amber' : 'slate'}>{invite.status}</Badge></div></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RolesPermissionsScreen() {
+  const vm = selectRolesPermissionsViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="roles.header" title="Role & Permission" subtitle="Thiet lap role, permission matrix va policy coverage cho team va agent." actions={<><Button variant="secondary"><Eye className="h-4 w-4" />Review matrix</Button><Button><ShieldCheck className="h-4 w-4" />New role</Button></>} />
+      <MetricBand parityId="roles.kpi-band" items={vm.kpis} />
+      <div data-parity-id="roles.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="roles.matrix-panel" className="space-y-5">
+          <Panel title="Role matrix">
+            <div className="grid grid-cols-3 gap-4 p-5">{vm.roles.map((role) => <div key={role.id} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={ShieldCheck} tone={role.tone as Tone} /><b className="mt-4 block text-lg">{role.name}</b><p className="mt-1 min-h-[44px] text-sm leading-6 text-slate-500">{role.description}</p><div className="mt-4 flex justify-between text-sm text-slate-500"><span>{role.members} members</span><span>{role.permissions} permissions</span></div></div>)}</div>
+          </Panel>
+          <Panel title="Permission rules">
+            <div className="p-4">
+              <div className="grid grid-cols-[1fr_150px_160px_110px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Module</span><span>Owner</span><span>Status</span><span>Risk</span></div>
+              {vm.permissionRows.map((row) => <div key={row.id} className="grid grid-cols-[1fr_150px_160px_110px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.module}</b><span>{row.owner}</span><Badge tone={row.tone as Tone}>{row.status}</Badge><span>{row.risk}</span></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="roles.coverage-panel">
+          <Panel title="Policy coverage">
+            <div className="space-y-4 p-5">{vm.policyCoverage.map((row) => <div key={row.id}><div className="mb-2 flex justify-between text-sm"><b>{row.label}</b><span>{row.value}%</span></div><ProgressBar value={row.value} tone={row.tone as Tone} label={`${row.label} policy coverage`} /></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SystemSettingsScreen() {
+  const vm = selectSystemSettingsViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="settings.header" title="System Settings" subtitle="Cau hinh workspace runtime, notification, audit retention va workflow safety." actions={<><Button variant="secondary"><Settings className="h-4 w-4" />Reset</Button><Button><Check className="h-4 w-4" />Save settings</Button></>} />
+      <MetricBand parityId="settings.kpi-band" items={vm.kpis} />
+      <div data-parity-id="settings.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="settings.config-panel">
+          <Panel title="Workspace settings">
+            <div className="space-y-4 p-5">{vm.settings.map((setting) => <div key={setting.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><div><b>{setting.label}</b><p className="mt-1 text-sm text-slate-500">{setting.value}</p></div><Badge tone={setting.tone as Tone}>{setting.status}</Badge></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="settings.notification-panel" className="space-y-5">
+          <Panel title="Notification channels">
+            <div className="space-y-3 p-5">{vm.notificationRows.map((row) => <div key={row.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><b>{row.label}</b><Badge tone={row.tone as Tone}>{row.status}</Badge></div><p className="mt-1 text-sm text-slate-500">{row.channel}</p></div>)}</div>
+          </Panel>
+          <Panel title="Workspace">
+            <div className="space-y-3 p-5"><FieldRow label="Name" value={vm.workspace.name} /><FieldRow label="Plan" value={vm.workspace.plan} /><FieldRow label="Created" value={vm.workspace.createdAt.slice(0, 10)} /></div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BillingPlanScreen() {
+  const vm = selectBillingPlanViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="billing.header" title="Billing / Plan" subtitle="Theo doi plan hien tai, usage, invoice va budget allocation cho workspace." actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Download invoice</Button><Button><BarChart3 className="h-4 w-4" />Review usage</Button></>} />
+      <MetricBand parityId="billing.kpi-band" items={vm.kpis} />
+      <div data-parity-id="billing.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="billing.plan-panel" className="space-y-5">
+          <Panel title="Plans">
+            <div className="grid grid-cols-3 gap-4 p-5">{vm.planRows.map((plan) => <div key={plan.id} className="rounded-xl border border-slate-100 p-4"><Badge tone={plan.tone as Tone}>{plan.status}</Badge><b className="mt-4 block text-xl">{plan.name}</b><p className="mt-1 text-sm text-slate-500">{plan.agents}</p><div className="mt-4 text-2xl font-extrabold text-[#0f6bff]">{plan.price}</div></div>)}</div>
+          </Panel>
+          <Panel title="Usage allocation">
+            <div className="space-y-4 p-5">{vm.usageRows.map((row) => <div key={row.id}><div className="mb-2 flex justify-between text-sm"><b>{row.label}</b><span>{currencyDisplay(row.value)}</span></div><ProgressBar value={row.percent} tone={row.tone as Tone} label={`${row.label} billing usage`} /></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="billing.invoice-panel">
+          <Panel title="Invoices">
+            <div className="divide-y divide-slate-100 p-4">{vm.invoiceRows.map((invoice) => <div key={invoice.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{invoice.period}</b><p className="mt-1 text-sm text-slate-500">Due {invoice.due}</p></div><div className="text-right"><b>{invoice.amount}</b><div className="mt-1"><Badge tone="green">{invoice.status}</Badge></div></div></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HelpTemplateCenterScreen() {
+  const vm = selectHelpTemplateCenterViewModel();
+  return (
+    <div>
+      <SimpleHeader parityId="help.header" title="Help / Template Center" subtitle="Tim huong dan, template workflow va support channels cho AI Workforce OS." actions={<><Button variant="secondary"><Search className="h-4 w-4" />Search docs</Button><Button><HelpCircle className="h-4 w-4" />Contact support</Button></>} />
+      <MetricBand parityId="help.kpi-band" items={vm.kpis} />
+      <div data-parity-id="help.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="help.template-panel" className="space-y-5">
+          <Panel title="Workflow templates">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><IconBubble icon={BookOpen} tone={template.tone as Tone} /><b className="mt-4 block text-lg">{template.title}</b><p className="mt-1 text-sm text-slate-500">{template.category} - {template.owner}</p><div className="mt-3"><Badge tone={template.tone as Tone}>{template.status}</Badge></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="help.support-panel" className="space-y-5">
+          <Panel title="Help library">
+            <div className="divide-y divide-slate-100 p-4">{vm.helpRows.map((row) => <div key={row.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{row.title}</b><Badge tone="blue">{row.kind}</Badge></div><p className="mt-1 text-sm text-slate-500">{row.time}</p></div>)}</div>
+          </Panel>
+          <Panel title="Support status">
+            <div className="space-y-3 p-5">{vm.supportRows.map((row) => <div key={row.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{row.label}</span><Badge tone={row.tone as Tone}>{row.value}</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function currencyDisplay(value: number) {
   return `$${value.toLocaleString('en-US', { maximumFractionDigits: value % 1 === 0 ? 0 : 2 })}`;
 }
@@ -2752,5 +2923,11 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
   if (route === '/workspaces') return <WorkspacesManagerScreen />;
+  if (route === '/secrets') return <SecretsManagerScreen />;
+  if (route === '/team') return <TeamMembersScreen />;
+  if (route === '/roles-permissions') return <RolesPermissionsScreen />;
+  if (route === '/settings') return <SystemSettingsScreen />;
+  if (route === '/billing') return <BillingPlanScreen />;
+  if (route === '/help') return <HelpTemplateCenterScreen />;
   return null;
 }
