@@ -47,17 +47,37 @@ async function ensureServer() {
     await waitForServer(baseUrl, 1500);
     return null;
   } catch {
-    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-    const child = spawn(npmCommand, ['run', 'dev', '--', '--host', '127.0.0.1'], {
+    const command = process.platform === 'win32' ? 'cmd.exe' : 'npm';
+    const args = process.platform === 'win32'
+      ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1']
+      : ['run', 'dev', '--', '--host', '127.0.0.1'];
+    const child = spawn(command, args, {
       cwd: root,
       stdio: ['ignore', 'pipe', 'pipe'],
       shell: false,
+      windowsHide: true,
     });
     child.stdout.on('data', (chunk) => fs.appendFileSync(path.join(root, 'parity-reports/vite-dev.out.log'), chunk));
     child.stderr.on('data', (chunk) => fs.appendFileSync(path.join(root, 'parity-reports/vite-dev.err.log'), chunk));
     await waitForServer(baseUrl, 20000);
     return child;
   }
+}
+
+async function stopServer(child) {
+  if (!child || child.killed) return;
+  if (process.platform === 'win32' && child.pid) {
+    await new Promise((resolve) => {
+      const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      killer.on('close', resolve);
+      killer.on('error', resolve);
+    });
+    return;
+  }
+  child.kill();
 }
 
 function formatBox(box) {
@@ -157,9 +177,7 @@ try {
   console.log(`\nBBox audit summary: ${report.summary.passed}/${report.summary.checked} passed. Report: ${path.relative(root, reportPath)}`);
 } finally {
   await browser.close();
-  if (serverProcess) {
-    serverProcess.kill();
-  }
+  await stopServer(serverProcess);
 }
 
 process.exit(exitCode);

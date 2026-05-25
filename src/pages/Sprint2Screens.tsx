@@ -1353,17 +1353,19 @@ const todayKpis = [
 export function TodayScreen() {
   return (
     <div>
+      <div data-parity-id="today.header">
       <h1 className="text-[32px] font-extrabold text-slate-950">Today</h1>
       <p className="mt-1 text-slate-500">Những việc quan trọng cần xử lý hôm nay để đội AI vận hành thông suốt</p>
-      <div className="mt-3 grid grid-cols-5 gap-4">{todayKpis.map((kpi) => <KpiTile key={kpi.label} {...kpi} />)}</div>
-      <div className="mt-3 grid grid-cols-[1.05fr_1fr] items-start gap-4">
-        <div className="space-y-4">
+      </div>
+      <div data-parity-id="today.kpi-band" className="mt-3 grid grid-cols-5 gap-4">{todayKpis.map((kpi) => <KpiTile key={kpi.label} {...kpi} />)}</div>
+      <div data-parity-id="today.main-grid" className="mt-3 grid grid-cols-[1.05fr_1fr] items-start gap-4">
+        <div data-parity-id="today.priority-panel" className="space-y-4">
           <Panel title="Việc cần ưu tiên" action={<button className="text-sm font-bold text-[#0f6bff]">Xem tất cả →</button>}>
             <TaskRows rows={['Duyệt Hermes QA Report cho Module 3', 'Review failed run của Research Agent', 'Phê duyệt Content Agent xuất bản 10 bài social', 'Tăng budget cho SEO Agent']} />
           </Panel>
           <Panel title="Ticket đến hạn hôm nay"><TaskRows rows={['Audit Module 3', 'Create SEO Topic Cluster', 'Prepare Weekly CEO Report', 'Review Landing Page Copy']} ticket /></Panel>
         </div>
-        <div className="space-y-4">
+        <div data-parity-id="today.summary-panel" className="space-y-4">
           <Panel title="Tóm tắt trong ngày"><div className="m-5 rounded-xl border border-blue-100 bg-blue-50 p-5 leading-7 text-slate-700">Hôm nay có 12 việc cần xử lý. Trong đó có 4 approval, 3 ticket đến hạn và 2 agent đang chờ phản hồi.</div></Panel>
           <Panel title="Agent đang chờ phản hồi"><CompactRows rows={['Hermes QA Agent', 'Content Agent', 'Research Agent', 'CRM Agent']} /></Panel>
           <Panel title="Run lỗi cần xử lý"><CompactRows rows={['Research Agent - Web search timeout', 'Hermes QA Agent - Workspace permission denied', 'Report Agent - Missing data source']} warning /></Panel>
@@ -1480,10 +1482,12 @@ function InboxScreen() {
   };
   return (
     <div>
+      <div data-parity-id="inbox.header">
       <h1 className="text-[32px] font-extrabold leading-tight text-slate-950">AI Inbox</h1>
       <p className="mt-1 text-slate-500">Tất cả phản hồi, phê duyệt và quyết định mà đội AI đang cần từ bạn</p>
-      <div className="mt-5 flex flex-wrap gap-3">{['All', 'Unread 8', 'Needs Action', 'Approvals 5', 'Agent Questions 3', 'Failed Runs 2', 'Budget 2', 'Risk 1', 'Archived'].map((tab, index) => <button key={tab} className={`rounded-lg border px-7 py-3 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{tab}</button>)}</div>
-      <div className="mt-3 flex items-center justify-between gap-4">
+      </div>
+      <div data-parity-id="inbox.tabs" className="mt-5 flex flex-wrap gap-3">{['All', 'Unread 8', 'Needs Action', 'Approvals 5', 'Agent Questions 3', 'Failed Runs 2', 'Budget 2', 'Risk 1', 'Archived'].map((tab, index) => <button key={tab} className={`rounded-lg border px-7 py-3 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{tab}</button>)}</div>
+      <div data-parity-id="inbox.filters" className="mt-3 flex items-center justify-between gap-4">
         <div className="flex gap-3">
           {['Project    Tất cả', 'Agent    Tất cả', 'Priority    Tất cả', 'Due date    Tất cả'].map((filter) => (
             <button key={filter} className="h-10 rounded-lg border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600">{filter}</button>
@@ -1494,7 +1498,8 @@ function InboxScreen() {
           <button className="h-10 w-10 rounded-lg border border-slate-200 bg-white text-slate-600">≡</button>
         </div>
       </div>
-      <div className="mt-5 grid grid-cols-[.82fr_1.08fr] gap-5">
+      <div data-parity-id="inbox.main-grid" className="mt-5 grid grid-cols-[.82fr_1.08fr] gap-5">
+        <div data-parity-id="inbox.list-panel">
         <Panel>
           <div className="divide-y divide-slate-100">
             {messages.map((message, index) => {
@@ -1527,6 +1532,8 @@ function InboxScreen() {
             </div>
           </div>
         </Panel>
+        </div>
+        <div data-parity-id="inbox.detail-panel">
         <Panel>
           <div className="p-6">
             <div className="flex items-start justify-between"><div><Badge tone="blue">Approval Request</Badge><h2 className="mt-4 text-2xl font-extrabold">Hermes QA Agent cần bạn duyệt báo cáo audit Module 3</h2></div><button className="text-2xl">...</button></div>
@@ -1541,6 +1548,7 @@ function InboxScreen() {
             <div className="mt-6 flex gap-4"><Button>Phê duyệt</Button><Button variant="secondary">Yêu cầu chỉnh sửa</Button><Button variant="danger">Từ chối</Button><Button variant="secondary">Lưu trữ</Button></div>
           </div>
         </Panel>
+        </div>
       </div>
     </div>
   );
@@ -1567,13 +1575,13 @@ function NotificationScreen() {
   ];
   return (
     <div>
-      <div className="flex items-start justify-between">
+      <div data-parity-id="notifications.header" className="flex items-start justify-between">
         <div><h1 className="text-[32px] font-extrabold text-slate-950">Notification Center</h1><p className="mt-2 text-slate-500">Theo dõi toàn bộ thông báo, cảnh báo và hoạt động quan trọng trong hệ thống</p></div>
         <div className="flex gap-3"><Button variant="secondary">Đánh dấu tất cả đã đọc</Button><Button variant="secondary"><Settings className="h-4 w-4" />Cài đặt thông báo</Button></div>
       </div>
-      <div className="mt-7 grid grid-cols-4 gap-5">{notificationKpis.map((kpi) => <KpiTile key={kpi.label} {...kpi} />)}</div>
-      <div className="mt-5 grid grid-cols-[1fr_380px] gap-5">
-        <div>
+      <div data-parity-id="notifications.kpi-band" className="mt-7 grid grid-cols-4 gap-5">{notificationKpis.map((kpi) => <KpiTile key={kpi.label} {...kpi} />)}</div>
+      <div data-parity-id="notifications.main-grid" className="mt-5 grid grid-cols-[1fr_380px] gap-5">
+        <div data-parity-id="notifications.list-panel">
           <Panel><div className="flex gap-8 px-6 py-4 text-sm font-semibold text-slate-600">{['All', 'Unread', 'Agent', 'Ticket', 'Approval', 'Cost', 'Risk', 'Integration', 'Report', 'Security', 'System'].map((tab, index) => <span key={tab} className={index === 0 ? 'text-[#0f6bff]' : ''}>{tab}</span>)}</div></Panel>
           <Panel className="mt-4" title="Mới nhất">
             <div className="divide-y divide-slate-100 p-4">
@@ -1581,11 +1589,13 @@ function NotificationScreen() {
             </div>
           </Panel>
         </div>
+        <div data-parity-id="notifications.settings-panel">
         <Panel title="Cài đặt thông báo">
           <div className="space-y-5 p-5">
             {['In-app', 'Email', 'Telegram', 'Slack', 'Approval required', 'Failed run', 'Budget warning', 'Weekly report', 'Security alert'].map((item, index) => <div key={item} className="flex items-center justify-between"><span className="font-semibold text-slate-700">{item}</span><span className={`rounded-full px-3 py-1 text-xs font-bold ${index === 2 || index === 3 ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-600'}`}>{index === 2 || index === 3 ? 'Tắt' : 'Bật'}</span></div>)}
           </div>
         </Panel>
+        </div>
       </div>
     </div>
   );

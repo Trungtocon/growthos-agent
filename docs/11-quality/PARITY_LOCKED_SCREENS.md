@@ -12,6 +12,9 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 06 | `/onboarding/hermes` | `HermesOnboardingParityPage` | 0.0148% | Frozen | `public/stitch_ui/parity_06/*` |
 | 07 | `/onboarding/complete` | `CompleteOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_07/*` |
 | 08 | `/command-center` | `CommandCenter` / `AppShell` | 10.5256% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_08` layout assets rendered |
+| 09 | `/today` | `TodayScreen` / `AppShell` | 7.5771% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_09` layout assets rendered |
+| 10 | `/inbox` | `InboxScreen` / `AppShell` | 7.4725% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_10` layout assets rendered |
+| 11 | `/notifications` | `NotificationScreen` / `AppShell` | 7.0263% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_11` layout assets rendered |
 | 20 | `/workforce` | `WorkforceOverviewRealPage` | 9.4318% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_20` layout assets rendered |
 | 21 | `/org-chart` | `OrgChartRealPage` | 11.4165% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_21` layout assets rendered |
 | 23 | `/agents/demo-agent` | `AgentDetailRealPage` | 8.0451% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_23` layout assets rendered |
@@ -25,6 +28,9 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | Screen | Route | Mode | Component | Static Guardrail | Structural Gate | Pixel Diff | Status |
 |---|---|---|---|---|---|---:|---|
 | 08 | `/command-center` | Real UI | `CommandCenter + AppShell` | Pass | Pass 14/14 | 10.5256% | Real UI Structural PASS / Visual Polish Deferred |
+| 09 | `/today` | Real UI | `TodayScreen + AppShell` | Pass | Pass 8/8 | 7.5771% | Real UI Structural PASS / Visual Polish Deferred |
+| 10 | `/inbox` | Real UI | `InboxScreen + AppShell` | Pass | Pass 9/9 | 7.4725% | Real UI Structural PASS / Visual Polish Deferred |
+| 11 | `/notifications` | Real UI | `NotificationScreen + AppShell` | Pass | Pass 8/8 | 7.0263% | Real UI Structural PASS / Visual Polish Deferred |
 | 20 | `/workforce` | Real UI | `WorkforceOverviewRealPage + AppShell` | Pass | Pass 14/14 | 9.4318% | Real UI Structural PASS / Visual Polish Deferred |
 | 21 | `/org-chart` | Real UI | `OrgChartRealPage + AppShell` | Pass | Pass 10/10 | 11.4165% | Real UI Structural PASS / Visual Polish Deferred |
 | 23 | `/agents/demo-agent` | Real UI | `AgentDetailRealPage + AppShell` | Pass | Pass 18/18 | 8.0451% | Real UI Structural PASS / Visual Polish Deferred |
@@ -99,3 +105,8 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Structural bbox gate is the primary acceptance gate for real UI conversion; pixel diff is a visual polish metric.
 - Real UI Demo v1 routes are locked at structural parity: 08, 20, 21, 23, 30, 32, 34, and 37.
 - Pixel diff remains a visual polish metric and must not be used as the primary gate for Real UI Demo v1 acceptance.
+- Screens 09, 10, and 11 are command-support Real UI routes promoted in Sprint 5F.
+- Do not revert Screens 09, 10, or 11 to static slices to chase pixel diff.
+- Screen 09 active real component is `TodayScreen + AppShell`; static guardrail Pass; structural gate Pass 8/8; pixel diff 7.5771%.
+- Screen 10 active real component is `InboxScreen + AppShell`; static guardrail Pass; structural gate Pass 9/9; pixel diff 7.4725%.
+- Screen 11 active real component is `NotificationScreen + AppShell`; static guardrail Pass; structural gate Pass 8/8; pixel diff 7.0263%.

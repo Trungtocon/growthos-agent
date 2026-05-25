@@ -5,7 +5,7 @@
   },
   "source": {
     "reference": "public/stitch_ui/21_Org_Chart_View.png",
-    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout; sprint-5f-baseline-stabilized-to-current-real-ui-dom"
   },
   "regions": {
     "app-shell.sidebar": { "x": 0, "y": 0, "width": 208, "height": 941, "tolerance": 8 },

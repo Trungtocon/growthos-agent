@@ -8,8 +8,8 @@ Audit baseline on 2026-05-23:
 - Manifest routes with an app route entry: 55.
 - Design-backed implementations beyond the scaffold fallback: 18.
 - Locked static parity onboarding/auth screens: 7.
-- Real UI routes with structural bbox gates: 8.
-- Partial utility Real UI routes without route-specific parity or bbox gates: 3.
+- Real UI routes with structural bbox gates: 11.
+- Partial utility Real UI routes without route-specific parity or bbox gates: 0.
 - Scaffold placeholders still falling through `ScreenPage`: 37.
 - Real UI Demo v1 flow remains healthy at audit time: build pass, onboarding parity pass, bbox gates pass for 08/20/21/23/30/32/34/37, smoke flow pass, interaction smoke pass.
 
@@ -27,9 +27,9 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 06 | `/onboarding/hermes` | Connect Hermes Runtime | `HermesOnboardingParityPage` | `src/pages/Sprint2Screens.tsx` | STATIC_PARITY | No | PASS |
 | 07 | `/onboarding/complete` | Onboarding Complete / First Task | `CompleteOnboardingParityPage` | `src/pages/Sprint2Screens.tsx` | STATIC_PARITY | No | PASS |
 | 08 | `/command-center` | Executive Command Center | `CommandCenter` | `src/pages/DemoScreens.tsx` | REAL_UI | Yes | PASS |
-| 09 | `/today` | Today Workspace | `TodayScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PARTIAL |
-| 10 | `/inbox` | Inbox | `InboxScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PARTIAL |
-| 11 | `/notifications` | Notification Center | `NotificationScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PARTIAL |
+| 09 | `/today` | Today Workspace | `TodayScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
+| 10 | `/inbox` | Inbox | `InboxScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
+| 11 | `/notifications` | Notification Center | `NotificationScreen` | `src/pages/Sprint2Screens.tsx` | REAL_UI | Yes | PASS |
 | 12 | `/company/overview` | Company Overview | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
 | 13 | `/company/settings` | Company Profile / Settings | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
 | 14 | `/goals` | Goals List | `ScreenPage` scaffold fallback | `src/pages/ScreenPage.tsx` | PLACEHOLDER | Yes | NOT_STARTED |
@@ -81,6 +81,9 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 |---|---|---|---|---|---|
 | 01-07 | Auth and onboarding | Pass at <=1% regression threshold | N/A | Route parity coverage | Frozen static-first parity screens |
 | 08 | `/command-center` | Pixel polish deferred, 10.5256% reference diff | Pass 14/14 | Pass | Real UI structural baseline |
+| 09 | `/today` | Pixel polish deferred, 7.5771% reference diff | Pass 8/8 | Pass | Command-support Real UI route promoted in Sprint 5F |
+| 10 | `/inbox` | Pixel polish deferred, 7.4725% reference diff | Pass 9/9 | Pass | Command-support Real UI route promoted in Sprint 5F |
+| 11 | `/notifications` | Pixel polish deferred, 7.0263% reference diff | Pass 8/8 | Pass | Command-support Real UI route promoted in Sprint 5F |
 | 20 | `/workforce` | Pixel polish deferred, 9.4318% reference diff | Pass 14/14 | Pass | Real UI structural baseline |
 | 21 | `/org-chart` | Pixel polish deferred, 11.4165% reference diff | Pass 10/10 | Pass | Real UI structural baseline |
 | 23 | `/agents/demo-agent` | Pixel polish deferred, 8.0451% reference diff | Pass 18/18 | Pass | Real UI structural baseline |
@@ -88,7 +91,6 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 32 | `/tickets/demo-ticket` | Pixel polish deferred, 7.7372% reference diff | Pass 15/15 | Pass | Real UI structural baseline |
 | 34 | `/runs/demo-run` | Pixel polish deferred, 12.5042% reference diff | Pass 16/16 | Pass | Real UI structural baseline |
 | 37 | `/approvals` | Pixel polish deferred, 8.6397% reference diff | Pass 13/13 | Pass | Real UI structural baseline |
-| 09-11 | Utility command-center routes | Not audited against PNG in this pass | Missing | Missing from real UI flow smoke | Existing Sprint 2 components need promotion into the quality strategy |
 | 12-19,22,24-29,31,33,35-36,38-55 | Remaining manifest routes | Scaffold only | Missing | Missing | Convert in prioritized waves |
 
 ## 4. Static Asset Audit
@@ -99,6 +101,9 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 |---|---|---|---|---|
 | `/login` through `/onboarding/complete` | Yes, intentionally | Onboarding parity page dispatch in `Sprint2Screens.tsx` | Accepted | Keep frozen unless onboarding sprint changes policy |
 | `/command-center` | No | Guardrail scan has no `parity_08` source match | Low | Keep structural gate and guardrail |
+| `/today` | No | Guardrail scan has no production `parity_09` source match | Low | Keep structural gate and guardrail |
+| `/inbox` | No | Guardrail scan has no production `parity_10` source match | Low | Keep structural gate and guardrail |
+| `/notifications` | No | Guardrail scan has no production `parity_11` source match | Low | Keep structural gate and guardrail |
 | `/workforce` | No | Guardrail scan has no `parity_20` source match | Low | Keep structural gate and guardrail |
 | `/org-chart` | No | Guardrail scan has no `parity_21` source match | Low | Keep structural gate and guardrail |
 | `/agents/demo-agent` | No | Guardrail scan has no `parity_23` source match | Low | Keep structural gate and guardrail |
@@ -127,7 +132,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 | Dimension | Assessment | Evidence |
 |---|---|---|
-| UI coverage | Partial | 18 of 55 screens have design-backed UI beyond the scaffold fallback |
+| UI coverage | Partial | 18 of 55 screens have design-backed UI beyond the scaffold fallback; 11 authenticated routes now have structural gates |
 | Interaction readiness | Partial | Selection/navigation wiring exists for Demo v1 only |
 | Data readiness | Partial | Typed fixtures and selectors exist for Demo v1 entities |
 | API readiness | Foundation only | Mock read service exists; backend adapter and mutation flow remain |
@@ -141,9 +146,6 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 | Screen | Route | Missing UI | Missing interaction | Missing data/API | Missing test/gate | Priority |
 |---|---|---|---|---|---|---|
-| 09 | `/today` | Promote Sprint 2 UI to audited Real UI | Daily task actions | Today view model | Bbox/smoke parity | P1 important product flow |
-| 10 | `/inbox` | Promote inbox structure | Triage and thread selection | Inbox fixture and selector | Bbox/smoke parity | P1 important product flow |
-| 11 | `/notifications` | Promote notification structure | Filters and preferences | Notification fixture and selector | Bbox/smoke parity | P1 important product flow |
 | 12-19 | Company/goals/projects | All design UI beyond scaffold | CRUD-like navigation and forms | Goal/project/company models | Per-screen screen gates | P1 important product flow |
 | 22,24-29 | Workforce support | List, builder, templates, performance, memory, skill/tool screens | Agent creation, inspection, permission flows | Extended agent/skill/tool data | Per-screen screen gates | P1 important product flow |
 | 31,33,35-36 | Work execution support | Tickets list/new and artifact screens | Create/review flows | Ticket/artifact selectors | Per-screen screen gates | P1 important product flow |
@@ -167,7 +169,7 @@ Audit commands scanned `src` for Real UI parity route folders, `sidebar.png`, `t
 
 1. Keep onboarding 01-07 frozen and keep Real UI Demo v1 structural gates unchanged.
 2. Build the workflow command/event layer next so ticket, run, and approval actions share optimistic mutation, rollback, and activity behavior before more surfaces depend on them.
-3. Promote `/today`, `/inbox`, and `/notifications` from partial Sprint 2 screens into the Real UI quality strategy.
+3. Keep `/today`, `/inbox`, and `/notifications` under the Sprint 5F structural quality strategy.
 4. Convert remaining routes by business wave:
    - company, goals, projects;
    - workforce support routes;

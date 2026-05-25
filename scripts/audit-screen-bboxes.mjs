@@ -64,8 +64,11 @@ async function ensureServer() {
     await waitForServer(baseUrl, 1500);
     return null;
   } catch {
-    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-    const child = spawn(npmCommand, ['run', 'dev', '--', '--host', '127.0.0.1'], {
+    const command = process.platform === 'win32' ? 'cmd.exe' : 'npm';
+    const spawnArgs = process.platform === 'win32'
+      ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1']
+      : ['run', 'dev', '--', '--host', '127.0.0.1'];
+    const child = spawn(command, spawnArgs, {
       cwd: root,
       stdio: ['ignore', 'pipe', 'pipe'],
       shell: false,
@@ -76,6 +79,24 @@ async function ensureServer() {
     await waitForServer(baseUrl, 20000);
     return child;
   }
+}
+
+function stopServer(child) {
+  if (!child?.pid) return;
+  if (process.platform === 'win32') {
+    return new Promise((resolve) => {
+      const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      });
+      killer.on('error', () => {
+        child.kill();
+        resolve();
+      });
+      killer.on('exit', () => resolve());
+    });
+  }
+  child.kill();
 }
 
 function formatBox(box) {
@@ -176,9 +197,7 @@ try {
   console.log(`\nBBox audit summary: ${report.summary.passed}/${report.summary.checked} passed. Report: ${path.relative(root, reportPath)}`);
 } finally {
   await browser.close();
-  if (serverProcess) {
-    serverProcess.kill();
-  }
+  await stopServer(serverProcess);
 }
 
 process.exit(exitCode);
