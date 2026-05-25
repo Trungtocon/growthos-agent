@@ -49,6 +49,10 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 43 | `/budget/settings` | `BudgetSettingsScreen` / `AppShell` | 7.5558% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_43` layout assets rendered |
 | 44 | `/reports` | `ReportsDashboardScreen` / `AppShell` | 6.8316% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_44` layout assets rendered |
 | 45 | `/reports/new` | `ReportBuilderScreen` / `AppShell` | 7.5491% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_45` layout assets rendered |
+| 46 | `/integrations` | `IntegrationsHubScreen` / `AppShell` | 7.8805% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_46` layout assets rendered |
+| 47 | `/integrations/demo-integration` | `IntegrationDetailScreen` / `AppShell` | 6.9364% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_47` layout assets rendered |
+| 48 | `/mcp` | `McpServerManagerScreen` / `AppShell` | 7.1559% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_48` layout assets rendered |
+| 49 | `/workspaces` | `WorkspacesManagerScreen` / `AppShell` | 7.1471% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_49` layout assets rendered |
 
 ## Real UI Demo v1 Lock
 
@@ -92,6 +96,10 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 43 | `/budget/settings` | Real UI | `BudgetSettingsScreen + AppShell` | Pass | Pass 8/8 | 7.5558% | Real UI Structural PASS / Visual Polish Deferred |
 | 44 | `/reports` | Real UI | `ReportsDashboardScreen + AppShell` | Pass | Pass 8/8 | 6.8316% | Real UI Structural PASS / Visual Polish Deferred |
 | 45 | `/reports/new` | Real UI | `ReportBuilderScreen + AppShell` | Pass | Pass 8/8 | 7.5491% | Real UI Structural PASS / Visual Polish Deferred |
+| 46 | `/integrations` | Real UI | `IntegrationsHubScreen + AppShell` | Pass | Pass 8/8 | 7.8805% | Real UI Structural PASS / Visual Polish Deferred |
+| 47 | `/integrations/demo-integration` | Real UI | `IntegrationDetailScreen + AppShell` | Pass | Pass 8/8 | 6.9364% | Real UI Structural PASS / Visual Polish Deferred |
+| 48 | `/mcp` | Real UI | `McpServerManagerScreen + AppShell` | Pass | Pass 8/8 | 7.1559% | Real UI Structural PASS / Visual Polish Deferred |
+| 49 | `/workspaces` | Real UI | `WorkspacesManagerScreen + AppShell` | Pass | Pass 8/8 | 7.1471% | Real UI Structural PASS / Visual Polish Deferred |
 
 ## Rules
 
@@ -179,3 +187,6 @@ These screens have passed the strict visual parity gate and are frozen for futur
 - Screens 42 through 45 are budget/reporting Real UI routes promoted in Sprint 5K.
 - Do not revert Screens 42-45 to static slices to chase pixel diff.
 - Screens 42-45 use shared selector-driven cost, budget, report, artifact, run, and agent data with structural bbox gates.
+- Screens 46 through 49 are integrations/workspace Real UI routes promoted in Sprint 5L.
+- Do not revert Screens 46-49 to static slices to chase pixel diff.
+- Screens 46-49 use shared selector-driven integration, MCP, workspace, activity, run, and agent data with structural bbox gates.

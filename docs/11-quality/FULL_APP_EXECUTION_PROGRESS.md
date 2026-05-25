@@ -4,9 +4,9 @@
 
 - Total manifest screens: 55.
 - Locked onboarding/auth static parity screens: 7.
-- Real UI structural pass screens: 38.
+- Real UI structural pass screens: 42.
 - Partial utility Real UI screens: 0.
-- Scaffold placeholder screens: 10.
+- Scaffold placeholder screens: 6.
 
 ## Sprint Progress
 
@@ -20,7 +20,8 @@
 | 5I | Convert work execution support wave | Complete | Pending | Build, bbox 31/33/35/36, parity reference 31/33/35/36 | Tickets list/new and artifact routes now render Real UI components with structural gates |
 | 5J | Convert governance support wave | Complete | Pending | Build, bbox 38/39/40/41, parity reference 38/39/40/41 | Approval detail, governance policies, audit log, and risk center now render Real UI components with structural gates |
 | 5K | Convert budget and reporting wave | Complete | Pending | Build, bbox 42/43/44/45, parity reference 42/43/44/45 | Cost dashboard, budget settings, reports dashboard, and report builder now render Real UI components with structural gates |
-| 5L-5N | Convert remaining manifest route waves | Planned | Pending | Per-wave route, bbox, smoke, and parity reference gates | Use manifest and PNG evidence per screen |
+| 5L | Convert integrations and workspace management wave | Complete | Pending | Build, bbox 46/47/48/49, parity reference 46/47/48/49 | Integrations hub/detail, MCP server manager, and workspaces manager now render Real UI components with structural gates |
+| 5M-5N | Convert remaining manifest route waves | Planned | Pending | Per-wave route, bbox, smoke, and parity reference gates | Use manifest and PNG evidence per screen |
 | 5O-5R | Interaction, data hardening, polish, and final exit | Planned | Pending | Full gate suite | Final decision recorded in exit report |
 
 ## Screens Completed
@@ -35,10 +36,11 @@
 | 31,33,35-36 | `/tickets/list`, `/tickets/new`, `/artifacts`, `/artifacts/demo-artifact` | Real UI structural pass and pixel polish deferred |
 | 38-41 | `/approvals/demo-approval`, `/governance/policies`, `/audit-log`, `/risk-center` | Real UI structural pass and pixel polish deferred |
 | 42-45 | `/cost`, `/budget/settings`, `/reports`, `/reports/new` | Real UI structural pass and pixel polish deferred |
+| 46-49 | `/integrations`, `/integrations/demo-integration`, `/mcp`, `/workspaces` | Real UI structural pass and pixel polish deferred |
 
 ## Remaining Screens
 
-- Integrations/workspace/admin/help: 46-55.
+- Admin/help: 50-55.
 
 ## Blockers
 
@@ -47,4 +49,4 @@
 
 ## Next Action
 
-Start Sprint 5L by converting integrations and workspace/admin routes into audited Real UI route coverage.
+Start Sprint 5M by converting admin/security/account routes 50-55 into audited Real UI route coverage.

@@ -56,6 +56,9 @@ import {
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectGovernancePoliciesViewModel,
+  selectIntegrationDetailViewModel,
+  selectIntegrationsHubViewModel,
+  selectMcpServerManagerViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
   selectReportBuilderViewModel,
@@ -64,6 +67,7 @@ import {
   selectSkillsRegistryViewModel,
   selectTicketsListViewModel,
   selectToolsPermissionsViewModel,
+  selectWorkspacesManagerViewModel,
 } from '../domain/selectors';
 import type { Tone } from '../data/demoScreens';
 
@@ -105,6 +109,10 @@ export const sprint2Routes = new Set([
   '/budget/settings',
   '/reports',
   '/reports/new',
+  '/integrations',
+  '/integrations/demo-integration',
+  '/mcp',
+  '/workspaces',
 ]);
 
 type OnboardingStep = {
@@ -2566,6 +2574,138 @@ function ReportBuilderScreen() {
   );
 }
 
+function IntegrationsHubScreen() {
+  const vm = selectIntegrationsHubViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="integrations.header"
+        title="Integrations Hub"
+        subtitle="Quan ly ket noi, sync health va policy guardrail cho cac he thong ben ngoai."
+        actions={<><Button variant="secondary"><Search className="h-4 w-4" />Search</Button><Button><Zap className="h-4 w-4" />Add integration</Button></>}
+      />
+      <MetricBand parityId="integrations.kpi-band" items={vm.kpis} />
+      <div data-parity-id="integrations.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="integrations.list-panel" className="space-y-5">
+          <Panel title="Connected systems">
+            <div className="grid grid-cols-2 gap-4 p-5">
+              {vm.integrationRows.map((integration) => <div key={integration.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-start justify-between gap-3"><IconBubble icon={integration.id === 'github' ? Code2 : integration.id === 'slack' ? MessageCircleQuestion : integration.id === 'notion' ? BookOpen : Layers3} tone={integration.tone as Tone} /><Badge tone={integration.tone as Tone}>{integration.status}</Badge></div><b className="mt-4 block text-lg">{integration.name}</b><p className="mt-1 text-sm text-slate-500">{integration.category}</p><div className="mt-4"><ProgressBar value={integration.health} tone={integration.tone as Tone} label={`${integration.name} sync health`} /></div><div className="mt-3 flex justify-between text-sm text-slate-500"><span>{integration.events} events</span><span>{integration.lastSync}</span></div></div>)}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="integrations.policy-panel" className="space-y-5">
+          <Panel title="Integration policies">
+            <div className="space-y-3 p-5">{vm.policyRows.map((policy) => <div key={policy.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{policy.label}</span><Badge tone={policy.tone as Tone}>{policy.value}</Badge></div>)}</div>
+          </Panel>
+          <Panel title="Recent sync activity">
+            <div className="divide-y divide-slate-100 p-4">{vm.activityRows.map((activity) => <div key={activity.id} className="py-3"><div className="flex items-center justify-between gap-3"><b className="text-sm">{activity.title}</b><Badge tone={activity.status === 'Failed' ? 'red' : 'green'}>{activity.status}</Badge></div><p className="mt-1 text-sm leading-6 text-slate-500">{activity.description}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IntegrationDetailScreen() {
+  const vm = selectIntegrationDetailViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="integration-detail.header"
+        title="Integration Detail"
+        subtitle={`${vm.integration.name} - ${vm.integration.category} - owner ${vm.integration.owner}`}
+        actions={<><Button variant="secondary"><Eye className="h-4 w-4" />View logs</Button><Button><Settings className="h-4 w-4" />Configure</Button></>}
+      />
+      <MetricBand parityId="integration-detail.kpi-band" items={vm.kpis} />
+      <div data-parity-id="integration-detail.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="integration-detail.sync-panel" className="space-y-5">
+          <Panel title="Sync runs">
+            <div className="p-4">
+              <div className="grid grid-cols-[1fr_160px_110px_100px_110px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Ticket</span><span>Agent</span><span>Status</span><span>Cost</span><span>Started</span></div>
+              {vm.syncRuns.map((run) => <div key={run.id} className="grid grid-cols-[1fr_160px_110px_100px_110px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><span>{run.title}</span><b>{run.agent}</b><Badge tone={run.status === 'Failed' ? 'red' : run.status === 'Running' ? 'blue' : 'green'}>{run.status}</Badge><span>{run.cost}</span><span className="text-slate-500">{run.startedAt}</span></div>)}
+            </div>
+          </Panel>
+          <Panel title="Permission scopes">
+            <div className="space-y-4 p-5">{vm.scopes.map((scope) => <div key={scope.id} className="rounded-xl border border-slate-100 p-4"><div className="mb-2 flex items-center justify-between"><b>{scope.label}</b><Badge tone={scope.tone as Tone}>{scope.status}</Badge></div><ProgressBar value={scope.coverage} tone={scope.tone as Tone} label={`${scope.label} coverage`} /></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="integration-detail.audit-panel" className="space-y-5">
+          <Panel title="Connection health">
+            <div className="space-y-4 p-5">
+              <FieldRow label="Status" value={vm.integration.status} />
+              <FieldRow label="Last sync" value={vm.integration.lastSync} />
+              <FieldRow label="Risk" value={vm.integration.risk} />
+            </div>
+          </Panel>
+          <Panel title="Audit activity">
+            <div className="divide-y divide-slate-100 p-4">{vm.auditRows.map((row) => <div key={row.id} className="py-3"><b className="text-sm">{row.title}</b><p className="mt-1 text-sm text-slate-500">{row.createdAt} - {row.status}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function McpServerManagerScreen() {
+  const vm = selectMcpServerManagerViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="mcp.header"
+        title="MCP Server Manager"
+        subtitle="Theo doi MCP servers, tool inventory va guardrail cho runtime cua agent."
+        actions={<><Button variant="secondary"><Code2 className="h-4 w-4" />View schema</Button><Button><Play className="h-4 w-4" />Test server</Button></>}
+      />
+      <MetricBand parityId="mcp.kpi-band" items={vm.kpis} />
+      <div data-parity-id="mcp.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="mcp.server-panel" className="space-y-5">
+          <Panel title="Server registry">
+            <div className="grid grid-cols-2 gap-4 p-5">{vm.servers.map((server) => <div key={server.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-start justify-between"><IconBubble icon={Code2} tone={server.tone as Tone} /><Badge tone={server.tone as Tone}>{server.status}</Badge></div><b className="mt-4 block text-lg">{server.name}</b><p className="mt-1 text-sm text-slate-500">{server.environment}</p><div className="mt-4 grid grid-cols-2 gap-3"><FieldRow label="Latency" value={`${server.latency}ms`} /><FieldRow label="Tools" value={String(server.tools)} /></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="mcp.tool-panel" className="space-y-5">
+          <Panel title="Tool inventory">
+            <div className="divide-y divide-slate-100 p-4">{vm.toolRows.map((tool) => <div key={tool.id} className="py-3"><div className="flex items-center justify-between gap-3"><b className="text-sm">{tool.name}</b><Badge tone={tool.tone as Tone}>{tool.status}</Badge></div><p className="mt-1 text-sm text-slate-500">{tool.server} - {tool.agents} agents</p></div>)}</div>
+          </Panel>
+          <Panel title="Runtime policies">
+            <div className="space-y-3 p-5">{vm.policyRows.map((policy) => <div key={policy.id} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3"><span className="font-semibold">{policy.label}</span><Badge tone={policy.tone as Tone}>{policy.status}</Badge></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WorkspacesManagerScreen() {
+  const vm = selectWorkspacesManagerViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="workspaces.header"
+        title="Workspaces Manager"
+        subtitle="Quan ly workspace, members, plan limits va usage allocation cho AI workforce."
+        actions={<><Button variant="secondary"><Users className="h-4 w-4" />Invite</Button><Button><Building2 className="h-4 w-4" />New workspace</Button></>}
+      />
+      <MetricBand parityId="workspaces.kpi-band" items={vm.kpis} />
+      <div data-parity-id="workspaces.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="workspaces.list-panel" className="space-y-5">
+          <Panel title="Workspace registry">
+            <div className="space-y-4 p-5">{vm.workspaceRows.map((workspace) => <div key={workspace.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-start justify-between gap-3"><div><b className="text-lg">{workspace.name}</b><p className="mt-1 text-sm text-slate-500">{workspace.region} - owner {workspace.owner}</p></div><Badge tone={workspace.tone as Tone}>{workspace.status}</Badge></div><div className="mt-4 grid grid-cols-3 gap-3"><FieldRow label="Plan" value={workspace.plan} /><FieldRow label="Agents" value={String(workspace.agents)} /><FieldRow label="Budget" value={currencyDisplay(workspace.budget)} /></div></div>)}</div>
+          </Panel>
+        </div>
+        <div data-parity-id="workspaces.member-panel" className="space-y-5">
+          <Panel title="Members">
+            <div className="divide-y divide-slate-100 p-4">{vm.members.map((member) => <div key={member.id} className="flex items-center justify-between py-3"><div><b>{member.name}</b><p className="mt-1 text-sm text-slate-500">{member.email}</p></div><Badge tone="blue">{member.role}</Badge></div>)}</div>
+          </Panel>
+          <Panel title="Agent usage">
+            <div className="divide-y divide-slate-100 p-4">{vm.usageRows.map((row) => <div key={row.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{row.agent}</b><span className="font-bold text-[#0f6bff]">{row.cost}</span></div><p className="mt-1 text-sm text-slate-500">{row.tickets} tickets - {row.runs} runs - {row.workspace}</p></div>)}</div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function currencyDisplay(value: number) {
   return `$${value.toLocaleString('en-US', { maximumFractionDigits: value % 1 === 0 ? 0 : 2 })}`;
 }
@@ -2608,5 +2748,9 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/budget/settings') return <BudgetSettingsScreen />;
   if (route === '/reports') return <ReportsDashboardScreen />;
   if (route === '/reports/new') return <ReportBuilderScreen />;
+  if (route === '/integrations') return <IntegrationsHubScreen />;
+  if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
+  if (route === '/mcp') return <McpServerManagerScreen />;
+  if (route === '/workspaces') return <WorkspacesManagerScreen />;
   return null;
 }

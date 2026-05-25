@@ -1026,6 +1026,135 @@ export function selectArtifactDetailViewModel(artifactId?: string) {
   };
 }
 
+export function selectIntegrationsHubViewModel() {
+  const data = currentData();
+  const integrationRows = [
+    { id: 'github', name: 'GitHub', category: 'Code repository', status: 'Connected', health: 96, owner: data.currentUser.name, lastSync: '12 minutes ago', events: 128, risk: 'Low', tone: 'green' },
+    { id: 'slack', name: 'Slack', category: 'Team notifications', status: 'Connected', health: 92, owner: 'Operations Lead', lastSync: '18 minutes ago', events: 84, risk: 'Low', tone: 'green' },
+    { id: 'notion', name: 'Notion', category: 'Knowledge base', status: 'Connected', health: 88, owner: 'Research Agent', lastSync: '41 minutes ago', events: 45, risk: 'Medium', tone: 'blue' },
+    { id: 'hubspot', name: 'HubSpot CRM', category: 'Customer records', status: 'Review', health: 74, owner: 'Growth Strategy Agent', lastSync: '2 hours ago', events: 31, risk: 'Medium', tone: 'amber' },
+    { id: 'gmail', name: 'Gmail', category: 'Customer communication', status: 'Approval required', health: 68, owner: 'Content Agent', lastSync: 'Paused', events: 12, risk: 'High', tone: 'red' },
+  ];
+
+  return {
+    integrationRows,
+    activityRows: getRecentActivities().slice(0, 6).map((activity) => ({
+      id: activity.id,
+      title: activity.title,
+      description: activity.description,
+      status: statusLabel(activity.status),
+      createdAt: activity.createdAt.slice(0, 16),
+    })),
+    policyRows: [
+      { id: 'write-approval', label: 'Production write approval', value: 'Required', tone: 'amber' },
+      { id: 'audit-log', label: 'Audit logging', value: 'Enabled', tone: 'green' },
+      { id: 'secret-read', label: 'Secret access', value: 'Blocked', tone: 'red' },
+      { id: 'external-send', label: 'External send', value: 'Manual review', tone: 'purple' },
+    ],
+    kpis: [
+      { label: 'Connected', value: String(integrationRows.filter((row) => row.status === 'Connected').length), tone: 'green' },
+      { label: 'Needs review', value: String(integrationRows.filter((row) => row.status !== 'Connected').length), tone: 'amber' },
+      { label: 'Sync events', value: String(integrationRows.reduce((sum, row) => sum + row.events, 0)), tone: 'blue' },
+      { label: 'High risk', value: String(integrationRows.filter((row) => row.risk === 'High').length), tone: 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectIntegrationDetailViewModel(integrationId = 'github') {
+  const hub = selectIntegrationsHubViewModel();
+  const integration = hub.integrationRows.find((row) => row.id === integrationId) ?? hub.integrationRows[0];
+  const data = currentData();
+  return {
+    integration,
+    scopes: [
+      { id: 'read-metadata', label: 'Read metadata', status: 'Allowed', coverage: 100, tone: 'green' },
+      { id: 'read-content', label: 'Read content', status: 'Allowed', coverage: 92, tone: 'green' },
+      { id: 'write-content', label: 'Write content', status: 'Approval required', coverage: 64, tone: 'amber' },
+      { id: 'admin-change', label: 'Admin changes', status: 'Blocked', coverage: 0, tone: 'red' },
+    ],
+    syncRuns: data.runs.map((run) => ({
+      id: run.id,
+      title: findTicket(run.ticketId).title,
+      agent: findAgent(run.agentId).name,
+      status: statusLabel(run.status),
+      cost: currency(run.cost),
+      startedAt: run.startedAt.slice(0, 16),
+    })),
+    auditRows: hub.activityRows,
+    kpis: [
+      { label: 'Health', value: `${integration.health}%`, tone: integration.tone as Metric['tone'] },
+      { label: 'Events', value: String(integration.events), tone: 'blue' },
+      { label: 'Scopes', value: '4', tone: 'purple' },
+      { label: 'Risk', value: integration.risk, tone: integration.risk === 'High' ? 'red' : integration.risk === 'Medium' ? 'amber' : 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectMcpServerManagerViewModel() {
+  const data = currentData();
+  const servers = [
+    { id: 'mcp-filesystem', name: 'Filesystem MCP', environment: 'Local runtime', status: 'Online', latency: 42, tools: 8, owner: 'Hermes QA Agent', risk: 'Medium', tone: 'green' },
+    { id: 'mcp-browser', name: 'Browser MCP', environment: 'Playwright runtime', status: 'Online', latency: 56, tools: 6, owner: 'Hermes QA Agent', risk: 'Medium', tone: 'green' },
+    { id: 'mcp-docs', name: 'Docs MCP', environment: 'Knowledge workspace', status: 'Online', latency: 75, tools: 5, owner: 'Research Agent', risk: 'Low', tone: 'blue' },
+    { id: 'mcp-crm', name: 'CRM MCP', environment: 'Sandbox connector', status: 'Restricted', latency: 120, tools: 4, owner: 'Growth Strategy Agent', risk: 'High', tone: 'amber' },
+  ];
+
+  return {
+    servers,
+    toolRows: [...new Set(data.agents.flatMap((agent) => agent.tools))].map((tool, index) => ({
+      id: `mcp-tool-${index + 1}`,
+      name: tool,
+      server: servers[index % servers.length].name,
+      agents: data.agents.filter((agent) => agent.tools.includes(tool)).length,
+      status: index % 4 === 0 ? 'Approval required' : 'Enabled',
+      tone: index % 4 === 0 ? 'amber' : 'green',
+    })),
+    policyRows: [
+      { id: 'evidence', label: 'Tool call evidence', status: 'Required', tone: 'green' },
+      { id: 'external-write', label: 'External writes', status: 'Approval required', tone: 'amber' },
+      { id: 'secret-scope', label: 'Secret scopes', status: 'Blocked', tone: 'red' },
+    ],
+    kpis: [
+      { label: 'MCP servers', value: String(servers.length), tone: 'blue' },
+      { label: 'Online', value: String(servers.filter((server) => server.status === 'Online').length), tone: 'green' },
+      { label: 'Tools', value: String(servers.reduce((sum, server) => sum + server.tools, 0)), tone: 'cyan' },
+      { label: 'Restricted', value: String(servers.filter((server) => server.status !== 'Online').length), tone: 'amber' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectWorkspacesManagerViewModel() {
+  const data = currentData();
+  const workspaceRows = [
+    { id: data.workspace.id, name: data.workspace.name, plan: data.workspace.plan, owner: data.currentUser.name, agents: data.agents.length, budget: data.workspace.aiBudgetMonthly, status: 'Active', region: 'Asia/Saigon', tone: 'green' },
+    { id: 'workspace-growth-lab', name: 'Growth Lab Sandbox', plan: 'team', owner: 'Operations Lead', agents: 3, budget: 8000, status: 'Sandbox', region: 'Singapore', tone: 'blue' },
+    { id: 'workspace-client-demo', name: 'Client Demo Workspace', plan: 'trial', owner: 'Risk Reviewer', agents: 2, budget: 3000, status: 'Review', region: 'US West', tone: 'amber' },
+  ];
+
+  return {
+    workspaceRows,
+    members: [
+      data.currentUser,
+      { id: 'user-ops', name: 'Operations Lead', email: 'ops@demo-company.local', role: 'operator' as const },
+      { id: 'user-review', name: 'Risk Reviewer', email: 'risk@demo-company.local', role: 'reviewer' as const },
+    ],
+    usageRows: data.agents.map((agent) => ({
+      id: agent.id,
+      agent: agent.name,
+      workspace: data.workspace.name,
+      tickets: agent.currentTicketIds.length,
+      runs: agent.currentRunIds.length,
+      cost: currency(agent.costMonthToDate),
+    })),
+    kpis: [
+      { label: 'Workspaces', value: String(workspaceRows.length), tone: 'blue' },
+      { label: 'Active agents', value: String(data.agents.length), tone: 'green' },
+      { label: 'Members', value: '3', tone: 'purple' },
+      { label: 'Monthly budget', value: currency(workspaceRows.reduce((sum, row) => sum + row.budget, 0)), tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function getRecentActivities(): Activity[] {
   return mergeActivityTimeline(currentData().activities, getWorkflowState().events);
 }

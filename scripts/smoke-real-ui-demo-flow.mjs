@@ -47,6 +47,10 @@ const routes = [
   { screen: 43, route: '/budget/settings', mainSelector: '[data-parity-id="budget.header"]', heading: 'Budget Settings' },
   { screen: 44, route: '/reports', mainSelector: '[data-parity-id="reports.header"]', heading: 'Reports Dashboard' },
   { screen: 45, route: '/reports/new', mainSelector: '[data-parity-id="report-builder.header"]', heading: 'Report Builder' },
+  { screen: 46, route: '/integrations', mainSelector: '[data-parity-id="integrations.header"]', heading: 'Integrations Hub' },
+  { screen: 47, route: '/integrations/demo-integration', mainSelector: '[data-parity-id="integration-detail.header"]', heading: 'Integration Detail' },
+  { screen: 48, route: '/mcp', mainSelector: '[data-parity-id="mcp.header"]', heading: 'MCP Server Manager' },
+  { screen: 49, route: '/workspaces', mainSelector: '[data-parity-id="workspaces.header"]', heading: 'Workspaces Manager' },
 ];
 
 function writeJson(filePath, data) {
