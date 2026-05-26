@@ -1993,9 +1993,26 @@ function ProjectColumn({ column }: { column: ReturnType<typeof selectProjectsLis
     <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white">
       <div className="flex h-9 items-center justify-between border-b border-slate-100 px-3 text-xs font-bold text-slate-700"><span>{column.title}</span><Badge tone={column.tone as Tone}>{column.items.length}</Badge></div>
       <div className="min-h-0 flex-1 space-y-2 overflow-hidden p-2">
-        {column.items.map((project) => <ProjectKanbanCard key={project.title} project={project} />)}
+        {column.items.map((project) => <ProjectKanbanCardCompact key={project.title} project={project} />)}
       </div>
       <button className="h-9 border-t border-slate-100 text-xs font-semibold text-slate-500">+ Thêm dự án</button>
+    </div>
+  );
+}
+
+function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof selectProjectsListViewModel>['projectColumns'][number]['items'][number] }) {
+  const statusLabel = project.tone === 'green' ? 'Hoàn thành' : project.column;
+  const goal = project.title.includes('Marketing') ? 'Tự động hóa content' : project.title.includes('CRM') ? 'Tăng hiệu quả chăm sóc lead' : 'Nâng cấp vận hành AI';
+  return (
+    <div className={`h-[96px] overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
+      <div className="flex items-start justify-between gap-2">
+        <b className="line-clamp-2 max-w-[108px] leading-3 text-slate-950">{project.title}</b>
+        <span className={`shrink-0 rounded-md border px-2 py-1 text-[10px] font-semibold leading-3 ${project.tone === 'red' ? 'border-red-200 bg-red-50 text-red-600' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-600' : project.tone === 'green' ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-cyan-200 bg-cyan-50 text-cyan-600'}`}>{statusLabel}</span>
+      </div>
+      <p className="mt-1 truncate text-[10px] leading-3 text-slate-500">Goal: {goal}</p>
+      <div className="mt-1 flex items-center justify-between text-[10px] text-slate-500"><span>Owner</span><span className="truncate pl-2">{project.owner}</span></div>
+      <div className="mt-1"><div className="mb-0.5 flex justify-between text-[10px] font-bold text-slate-600"><span>{project.progress}%</span><span>{project.cost}</span></div><ProgressBar value={project.progress} tone={project.tone} height={5} label={`${project.title} progress`} /></div>
+      <div className="mt-1 flex justify-between text-[10px] text-slate-500"><span>{project.tickets} tickets</span><span>{project.due}</span></div>
     </div>
   );
 }
