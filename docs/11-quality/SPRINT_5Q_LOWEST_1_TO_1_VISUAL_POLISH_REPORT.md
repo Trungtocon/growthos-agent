@@ -10,7 +10,7 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 |---|---|---:|---:|---:|---:|---|
 | 34 | `/runs/demo-run` | 12.2634% | 87.7366% | 10.0151% | 89.9849% | Improved |
 | 21 | `/org-chart` | 11.1021% | 88.8979% | 10.6991% | 89.3009% | Improved |
-| 26 | `/agents/performance` | 11.2214% | 88.7786% | 11.2214% | 88.7786% | Unchanged |
+| 26 | `/agents/performance` | 11.2214% | 88.7786% | 11.1229% | 88.8771% | Improved |
 | 17 | `/projects` | 11.1671% | 88.8329% | 11.0437% | 88.9563% | Improved |
 | 25 | `/agents/templates` | 10.9707% | 89.0293% | 10.9105% | 89.0895% | Improved |
 
@@ -23,6 +23,7 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 - Screen 21 follow-up pass further reduced right panel padding and row spacing so the locked detail/insight cards reveal more reference-like actions and suggestions without changing bbox contracts.
 - Screen 17 Projects side panel now uses AI suggestion cards like the PNG reference while preserving the existing `projects.side-panel` bbox.
 - Screen 25 Agent Templates header title now matches the PNG reference copy more closely while preserving the existing header bbox.
+- Screen 26 Agent Performance now uses a route-specific compact header with the PNG reference chart icon and smaller title while preserving the existing `agent-performance.header` bbox.
 - Screen 34 bbox contract was updated only for `run.tool-calls-card` and `run.logs-card` to document the measured PNG-aligned tool/log recalibration.
 - No static parity screenshots, cropped slices, or `backgroundImage` usage were introduced.
 
