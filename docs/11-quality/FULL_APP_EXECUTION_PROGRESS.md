@@ -31,6 +31,7 @@
 | 5Q-org-3 | Org chart right-panel visual density follow-up | Partial | Pending | Build pass, bbox 21 pass 10/10, five-screen pixel reference pass | Screen 21 improved from 10.8708% to 10.6991% by further compacting the locked right detail and insight cards without changing bbox contracts |
 | 5Q-run-log | Run Console tool/log layout recalibration | Partial | Pending | Build pass, bbox 34 pass 16/16, Screen 34 pixel reference pass | Screen 34 improved from 12.1734% to 10.0151% by constraining the middle tool-calls card and surfacing the logs panel closer to the PNG reference |
 | 5Q-projects-side | Projects AI suggestion side-panel polish | Partial | Pending | Build pass, bbox 17 pass 8/8, Screen 17 pixel reference pass | Screen 17 improved from 11.1671% to 11.0437% by matching the right side panel to the PNG's AI suggestion cards while preserving structural geometry |
+| 5Q-templates-copy | Agent Templates header copy polish | Partial | Pending | Build pass, bbox 25 pass 8/8, Screen 25 pixel reference pass | Screen 25 improved from 10.9707% to 10.9105% by matching the page title to the PNG reference |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed

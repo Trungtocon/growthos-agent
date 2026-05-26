@@ -2072,7 +2072,7 @@ function AgentTemplatesScreen() {
   const vm = selectAgentTemplatesViewModel();
   return (
     <div>
-      <SimpleHeader parityId="agent-templates.header" title="Agent Template Gallery" subtitle="Chon template agent da duoc chuan hoa cho tung nhom cong viec." actions={<Button variant="secondary"><UploadCloud className="h-4 w-4" />Import template</Button>} />
+      <SimpleHeader parityId="agent-templates.header" title="Agent Templates" subtitle="Chon template agent da duoc chuan hoa cho tung nhom cong viec." actions={<Button variant="secondary"><UploadCloud className="h-4 w-4" />Import template</Button>} />
       <div data-parity-id="agent-templates.filters" className="mt-4 flex flex-wrap gap-3">{vm.categories.map((category, index) => <button key={category} className={`rounded-lg border px-5 py-2 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{category}</button>)}</div>
       <div data-parity-id="agent-templates.main-grid" className="mt-5 grid grid-cols-[1fr_360px] gap-5">
         <div data-parity-id="agent-templates.gallery-panel">
