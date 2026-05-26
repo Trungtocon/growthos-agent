@@ -27,6 +27,7 @@
 | 5P | Screen 34 Run Console shell polish | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, a11y smoke 48/48, bbox 34, onboarding parity 7/7, Screen 34 pixel 12.2634% | Run Console route-specific AppShell polish reduced topbar/sidebar mismatch without changing structural contract |
 | 5Q-lowest | Lowest 1:1 visual polish pass | Partial | Pending | Build pass, bbox 34 pass 16/16, five-screen pixel reference pass | Screen 34 improved from 12.2634% to 12.1734%; attempted 17/25/26 variants were reverted because measured diff worsened |
 | 5Q-org | Org chart detail-panel visual polish | Partial | Pending | Build pass, bbox 21 pass 10/10, five-screen pixel reference pass | Screen 21 improved from 11.1021% to 10.9151% by increasing right detail-card density while preserving bbox |
+| 5Q-org-2 | Org chart insight-card visual polish | Partial | Pending | Build pass, bbox 21 pass 10/10, Screen 21 pixel reference pass | Screen 21 improved from 10.9151% to 10.8708% by replacing the right insight paragraph with compact AI suggestion rows |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed
