@@ -29,7 +29,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 23 | `/agents/demo-agent` | `AgentDetailRealPage` | 8.0451% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_23` layout assets rendered |
 | 24 | `/agents/new` | `CreateAgentScreen` / `AppShell` | 8.8690% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_24` layout assets rendered |
 | 25 | `/agents/templates` | `AgentTemplatesScreen` / `AppShell` | 10.9105% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_25` layout assets rendered |
-| 26 | `/agents/performance` | `AgentPerformanceScreen` / `AppShell` | 11.1229% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_26` layout assets rendered |
+| 26 | `/agents/performance` | `AgentPerformanceScreen` / `AppShell` | 11.1039% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_26` layout assets rendered |
 | 27 | `/agents/memory` | `AgentMemoryScreen` / `AppShell` | 7.8775% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_27` layout assets rendered |
 | 28 | `/skills` | `SkillsRegistryScreen` / `AppShell` | 8.9239% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_28` layout assets rendered |
 | 29 | `/tools/permissions` | `ToolsPermissionsScreen` / `AppShell` | 8.0755% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_29` layout assets rendered |
@@ -82,7 +82,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 23 | `/agents/demo-agent` | Real UI | `AgentDetailRealPage + AppShell` | Pass | Pass 18/18 | 8.0451% | Real UI Structural PASS / Visual Polish Deferred |
 | 24 | `/agents/new` | Real UI | `CreateAgentScreen + AppShell` | Pass | Pass 8/8 | 8.8690% | Real UI Structural PASS / Visual Polish Deferred |
 | 25 | `/agents/templates` | Real UI | `AgentTemplatesScreen + AppShell` | Pass | Pass 8/8 | 10.9105% | Real UI Structural PASS / Visual Polish Deferred |
-| 26 | `/agents/performance` | Real UI | `AgentPerformanceScreen + AppShell` | Pass | Pass 12/12 | 11.1229% | Real UI Structural PASS / Visual Polish Deferred |
+| 26 | `/agents/performance` | Real UI | `AgentPerformanceScreen + AppShell` | Pass | Pass 12/12 | 11.1039% | Real UI Structural PASS / Visual Polish Deferred |
 | 27 | `/agents/memory` | Real UI | `AgentMemoryScreen + AppShell` | Pass | Pass 8/8 | 7.8775% | Real UI Structural PASS / Visual Polish Deferred |
 | 28 | `/skills` | Real UI | `SkillsRegistryScreen + AppShell` | Pass | Pass 8/8 | 8.9239% | Real UI Structural PASS / Visual Polish Deferred |
 | 29 | `/tools/permissions` | Real UI | `ToolsPermissionsScreen + AppShell` | Pass | Pass 8/8 | 8.0755% | Real UI Structural PASS / Visual Polish Deferred |

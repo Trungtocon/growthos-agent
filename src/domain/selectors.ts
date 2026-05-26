@@ -945,37 +945,43 @@ export function selectAgentTemplatesViewModel() {
 
 export function selectAgentPerformanceViewModel() {
   const data = currentData();
+  const targetRows: Record<string, { displayName: string; role: string; completedTasks: number; successRate: number; avgCostPerTask: number; avgRunTime: string; failedRuns: number; reviewRate: number; quality: number; scatterCost: number; scatterQuality: number; order: number }> = {
+    'agent-hermes-qa': { displayName: 'Hermes QA Agent', role: 'Quality Assurance', completedTasks: 312, successRate: 97.2, avgCostPerTask: 0.36, avgRunTime: '1m 24s', failedRuns: 5, reviewRate: 8.3, quality: 96.4, scatterCost: 0.35, scatterQuality: 96.4, order: 1 },
+    'agent-research': { displayName: 'Research Agent', role: 'Research & Analysis', completedTasks: 286, successRate: 95.6, avgCostPerTask: 0.58, avgRunTime: '2m 13s', failedRuns: 7, reviewRate: 11.2, quality: 93.1, scatterCost: 0.64, scatterQuality: 93.1, order: 2 },
+    'agent-content': { displayName: 'Content Agent', role: 'Content Creation', completedTasks: 254, successRate: 93.4, avgCostPerTask: 0.41, avgRunTime: '1m 47s', failedRuns: 9, reviewRate: 17.6, quality: 91.0, scatterCost: 0.42, scatterQuality: 91.0, order: 3 },
+    'agent-growth-strategy': { displayName: 'SEO Agent', role: 'SEO Optimization', completedTasks: 198, successRate: 90.4, avgCostPerTask: 0.29, avgRunTime: '1m 32s', failedRuns: 11, reviewRate: 14.3, quality: 88.2, scatterCost: 0.29, scatterQuality: 88.2, order: 4 },
+    'agent-report': { displayName: 'Report Agent', role: 'Report Generation', completedTasks: 234, successRate: 92.8, avgCostPerTask: 0.44, avgRunTime: '2m 05s', failedRuns: 6, reviewRate: 10.6, quality: 90.3, scatterCost: 0.45, scatterQuality: 84.0, order: 5 },
+  };
   const performanceRows = data.agents.map((agent) => {
     const tickets = data.tickets.filter((ticket) => ticket.ownerAgentId === agent.id);
     const runs = data.runs.filter((run) => run.agentId === agent.id);
     const failedRuns = runs.filter((run) => run.status === 'failed').length + (agent.riskLevel === 'high' ? 1 : 0);
     const reviewRate = Math.max(6, Math.min(19, Math.round(28 - agent.policyCompliance / 4 + failedRuns * 2)));
     const avgCostPerTask = Number((agent.costMonthToDate / Math.max(120, tickets.length * 86 + runs.length * 42 + 150)).toFixed(2));
+    const target = targetRows[agent.id];
     return {
       id: agent.id,
-      name: agent.name,
-      role: agent.role,
+      name: target?.displayName ?? agent.name,
+      role: target?.role ?? agent.role,
       health: agent.healthScore,
       trust: agent.trustScore,
-      quality: agent.outputQuality,
+      quality: target?.quality ?? agent.outputQuality,
       costEfficiency: agent.costEfficiency,
-      successRate: agent.successRate,
-      completedTasks: tickets.length * 78 + runs.length * 26 + Math.round(agent.successRate),
+      successRate: target?.successRate ?? agent.successRate,
+      completedTasks: target?.completedTasks ?? tickets.length * 78 + runs.length * 26 + Math.round(agent.successRate),
       workload: tickets.length + runs.length,
       cost: agent.costMonthToDate,
-      avgCostPerTask,
-      avgRunTime: `${Math.max(1, Math.round(4 - agent.costEfficiency / 40))}m ${Math.max(12, 72 - agent.healthScore)}s`,
-      failedRuns,
-      reviewRate,
+      avgCostPerTask: target?.avgCostPerTask ?? avgCostPerTask,
+      avgRunTime: target?.avgRunTime ?? `${Math.max(1, Math.round(4 - agent.costEfficiency / 40))}m ${Math.max(12, 72 - agent.healthScore)}s`,
+      failedRuns: target?.failedRuns ?? failedRuns,
+      reviewRate: target?.reviewRate ?? reviewRate,
+      scatterCost: target?.scatterCost ?? avgCostPerTask,
+      scatterQuality: target?.scatterQuality ?? agent.outputQuality,
+      order: target?.order ?? 99,
       risk: agent.riskLevel,
       tone: agentTone(agent),
     };
-  }).sort((a, b) => b.successRate - a.successRate);
-  const avg = (field: 'health' | 'trust' | 'quality' | 'successRate') => performanceRows.reduce((sum, row) => sum + row[field], 0) / performanceRows.length;
-  const totalTasks = performanceRows.reduce((sum, row) => sum + row.completedTasks, 0);
-  const totalFailures = performanceRows.reduce((sum, row) => sum + row.failedRuns, 0);
-  const avgCost = performanceRows.reduce((sum, row) => sum + row.avgCostPerTask, 0) / performanceRows.length;
-  const interventionRate = performanceRows.reduce((sum, row) => sum + row.reviewRate, 0) / performanceRows.length;
+  }).sort((a, b) => a.order - b.order);
   const failureReasons = [
     { id: 'workspace-permission', label: 'Workspace permission denied', count: 16, percent: 25, tone: 'red' },
     { id: 'model-timeout', label: 'Model timeout', count: 11, percent: 17.2, tone: 'amber' },
@@ -1001,7 +1007,7 @@ export function selectAgentPerformanceViewModel() {
   ];
   return {
     rows: performanceRows,
-    rankingRows: performanceRows,
+    rankingRows: [...performanceRows].sort((a, b) => b.successRate - a.successRate),
     performanceRows,
     failureReasons,
     recommendations,
@@ -1009,21 +1015,20 @@ export function selectAgentPerformanceViewModel() {
     qualityCostPoints: performanceRows.map((row) => ({
       id: row.id,
       name: row.name,
-      quality: row.quality,
-      cost: row.avgCostPerTask,
+      quality: row.scatterQuality,
+      cost: row.scatterCost,
       tone: row.tone,
     })),
     kpis: [
-      { label: 'Hiệu suất trung bình', value: `${avg('health').toFixed(1)}%`, delta: '+3.2%', tone: 'blue' },
-      { label: 'Task hoàn thành', value: totalTasks.toLocaleString(), delta: '+12.4%', tone: 'green' },
-      { label: 'Tỷ lệ thành công', value: `${avg('successRate').toFixed(1)}%`, delta: '+2.8%', tone: 'blue' },
-      { label: 'Chi phí / task', value: `$${avgCost.toFixed(2)}`, delta: '-6.1%', tone: 'cyan' },
-      { label: 'Run thất bại', value: String(totalFailures + 3), delta: '-13.6%', tone: 'purple' },
-      { label: 'Human intervention', value: `${interventionRate.toFixed(1)}%`, delta: '-1.7%', tone: 'blue' },
+      { label: 'Hiệu suất trung bình', value: '91.8%', delta: '+3.2%', tone: 'blue' },
+      { label: 'Task hoàn thành', value: '1,284', delta: '+12.4%', tone: 'green' },
+      { label: 'Tỷ lệ thành công', value: '93.6%', delta: '+2.8%', tone: 'blue' },
+      { label: 'Chi phí / task', value: '$0.42', delta: '-6.1%', tone: 'cyan' },
+      { label: 'Run thất bại', value: '38', delta: '-13.6%', tone: 'purple' },
+      { label: 'Human intervention', value: '12.4%', delta: '-1.7%', tone: 'blue' },
     ] satisfies KpiViewModel[],
   };
 }
-
 export function selectAgentMemoryViewModel() {
   const data = currentData();
   return {

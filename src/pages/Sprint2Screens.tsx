@@ -2243,8 +2243,8 @@ function AgentPerformanceScreen() {
                   <span>Agent</span><span>Tasks</span><span>Success</span><span>Avg Cost</span><span>Avg Run</span><span>Failed</span><span>Quality</span><span>Actions</span>
                 </div>
                 {vm.performanceRows.slice(0, 5).map((row) => (
-                  <div key={row.id} className="grid grid-cols-[1.25fr_.6fr_.7fr_.7fr_.7fr_.7fr_.7fr_64px] items-center gap-3 border-b border-slate-100 py-2.5 text-xs">
-                    <div className="flex min-w-0 items-center gap-2"><IconBubble icon={row.name.includes('Research') ? Search : row.name.includes('Content') ? Megaphone : Bot} tone={row.tone as Tone} /><div className="min-w-0"><b className="block truncate text-slate-950">{row.name}</b><span className="truncate text-slate-500">{row.role}</span></div></div>
+                  <div key={row.id} className="grid grid-cols-[1.25fr_.6fr_.7fr_.7fr_.7fr_.7fr_.7fr_64px] items-center gap-3 border-b border-slate-100 py-1.5 text-xs">
+                    <div className="flex min-w-0 items-center gap-2"><IconBubble icon={row.name.includes('Research') ? Search : row.name.includes('Content') ? Megaphone : Bot} tone={row.tone as Tone} /><div className="min-w-0"><b className="block truncate text-slate-950">{row.name}</b><span className="block truncate text-[11px] leading-3 text-slate-500">{row.role}</span></div></div>
                     <span>{row.completedTasks}</span>
                     <span className="font-bold text-emerald-600">{row.successRate}%</span>
                     <span>${row.avgCostPerTask.toFixed(2)}</span>
@@ -2275,12 +2275,12 @@ function AgentPerformanceScreen() {
           <div className="space-y-4">
             <div data-parity-id="agent-performance.recommendations-panel">
               <Panel title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4" />Goi y toi uu</span>} className="h-[168px] overflow-hidden">
-                <div className="space-y-2 p-3">{vm.recommendations.map((item) => <div key={item.id} className="grid grid-cols-[32px_1fr_20px] items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2 text-xs"><IconBubble icon={item.tone === 'cyan' ? Search : item.tone === 'green' ? Megaphone : item.tone === 'purple' ? BarChart3 : Bot} tone={item.tone as Tone} /><span><b>{item.agent}</b> {item.text}</span><RowAction /></div>)}</div>
+                <div className="space-y-1.5 p-3">{vm.recommendations.map((item) => <div key={item.id} className="grid grid-cols-[28px_1fr_18px] items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-1.5 text-[11px] leading-4"><IconBubble icon={item.tone === 'cyan' ? Search : item.tone === 'green' ? Megaphone : item.tone === 'purple' ? BarChart3 : Bot} tone={item.tone as Tone} /><span><b>{item.agent}</b> {item.text}</span><RowAction /></div>)}</div>
               </Panel>
             </div>
             <div data-parity-id="agent-performance.attention-panel">
               <Panel title={<span className="flex items-center gap-2"><Bell className="h-4 w-4" />Agent can chu y</span>} className="h-[124px] overflow-hidden">
-                <div className="space-y-2 p-3">{vm.attentionAgents.map((agent) => <div key={agent.id} className="grid grid-cols-[32px_1fr_72px_18px] items-center gap-3 rounded-lg border border-red-100 bg-red-50/40 px-3 py-2 text-xs"><IconBubble icon={agent.name.includes('Research') ? Search : agent.name.includes('Content') ? Megaphone : BarChart3} tone={agent.tone as Tone} /><span><b className="block">{agent.name}</b><span className="text-slate-500">{agent.issue}</span></span><Badge tone="red">Canh bao</Badge><RowAction /></div>)}</div>
+                <div className="space-y-1.5 p-3">{vm.attentionAgents.map((agent) => <div key={agent.id} className="grid grid-cols-[28px_1fr_66px_18px] items-center gap-2 rounded-lg border border-red-100 bg-red-50/40 px-3 py-1.5 text-[11px] leading-4"><IconBubble icon={agent.name.includes('Research') ? Search : agent.name.includes('Content') ? Megaphone : BarChart3} tone={agent.tone as Tone} /><span className="min-w-0"><b className="block truncate">{agent.name}</b><span className="block truncate text-slate-500">{agent.issue}</span></span><span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-[10px] font-semibold text-red-600">Canh bao</span><RowAction /></div>)}</div>
               </Panel>
             </div>
           </div>
