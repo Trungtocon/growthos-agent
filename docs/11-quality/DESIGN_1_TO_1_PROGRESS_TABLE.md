@@ -49,7 +49,7 @@
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
 | 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass | 89.0895% |
-| 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 88.9775% |
+| 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 88.9798% |
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
 | 29 - Toolsets & Permissions | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/tools/permissions` | Real UI structural pass | 91.9245% |
@@ -57,7 +57,7 @@
 | 31 - Tickets List | Quản lý ticket, run console và artifact | `/tickets/list` | Real UI structural pass | 92.6968% |
 | 32 - Ticket Detail | Quản lý ticket, run console và artifact | `/tickets/demo-ticket` | Real UI structural pass | 92.2628% |
 | 33 - Create Ticket Wizard | Quản lý ticket, run console và artifact | `/tickets/new` | Real UI structural pass | 91.4178% |
-| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 90.0021% |
+| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 90.0031% |
 | 35 - Artifacts Library | Quản lý ticket, run console và artifact | `/artifacts` | Real UI structural pass | 93.2318% |
 | 36 - Artifact Detail / Review | Quản lý ticket, run console và artifact | `/artifacts/demo-artifact` | Real UI structural pass | 93.4793% |
 | 37 - Approval Center | Phê duyệt, chính sách, audit và rủi ro | `/approvals` | Real UI structural pass | 91.3603% |
@@ -85,7 +85,7 @@
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
 | 1 | 17 - Projects List | `/projects` | 87.6792% |
-| 2 | 26 - Agent Performance | `/agents/performance` | 88.9775% |
+| 2 | 26 - Agent Performance | `/agents/performance` | 88.9798% |
 | 3 | 25 - Agent Template Gallery | `/agents/templates` | 89.0895% |
 | 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |
-| 5 | 34 - Run Console | `/runs/demo-run` | 90.0021% |
+| 5 | 34 - Run Console | `/runs/demo-run` | 90.0031% |

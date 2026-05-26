@@ -312,7 +312,7 @@ function shellProfile(currentPath: string): ShellProfile {
       company: 'Demo Company',
       searchPlaceholder: 'Tim kiem agents, projects, tasks...',
       searchWidth: 456,
-      searchGap: 164,
+      searchGap: 136,
       costLabel: 'AI Cost',
       costValue: '$1,248.75',
       notificationCount: 9,
