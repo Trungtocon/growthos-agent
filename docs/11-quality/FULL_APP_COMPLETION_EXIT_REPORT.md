@@ -45,6 +45,7 @@
 - Pixel-perfect 1:1 parity is not complete for authenticated Real UI routes.
 - Screen 26 `/agents/performance` was recalibrated in Sprint 5O and further polished to 10.8215%, below the 15% polish safety gate.
 - Screen 17 `/projects` was further polished to 12.3122% by restoring the separate workspace and user sections in the Projects sidebar bottom area.
+- Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Pixel-perfect 1:1 parity still requires additional authenticated-route polish beyond structural acceptance.
 - Backend integration remains mock-only by design.
 - Accessibility now has a lightweight Playwright smoke gate across 48 Real UI routes; this is not a full WCAG certification.
