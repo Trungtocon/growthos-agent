@@ -2183,10 +2183,10 @@ function AgentTemplatesScreen() {
     <div>
       <SimpleHeader parityId="agent-templates.header" title="Agent Templates" subtitle="Chon template agent da duoc chuan hoa cho tung nhom cong viec." actions={<Button variant="secondary"><UploadCloud className="h-4 w-4" />Import template</Button>} />
       <div data-parity-id="agent-templates.filters" className="mt-4 flex flex-wrap gap-3">{vm.categories.map((category, index) => <button key={category} className={`rounded-lg border px-5 py-2 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{category}</button>)}</div>
-      <div data-parity-id="agent-templates.main-grid" className="mt-5 grid grid-cols-[1fr_360px] gap-5">
+      <div data-parity-id="agent-templates.main-grid" className="mt-5 grid h-[650px] grid-cols-[1fr_360px] gap-5 overflow-hidden">
         <div data-parity-id="agent-templates.gallery-panel">
           <Panel title="Templates">
-            <div className="grid grid-cols-2 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={Bot} tone={template.tone as Tone} /><Badge tone={template.successRate > 90 ? 'green' : 'blue'}>{template.successRate}%</Badge></div><h2 className="mt-4 font-extrabold">{template.name}</h2><p className="mt-1 text-sm text-slate-500">Based on {template.agentName}</p><div className="mt-3 flex flex-wrap gap-2">{template.skills.slice(0, 3).map((skill) => <Badge key={skill} tone="purple">{skill}</Badge>)}</div></div>)}</div>
+            <div className="grid grid-cols-3 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={Bot} tone={template.tone as Tone} /><Badge tone={template.successRate > 90 ? 'green' : 'blue'}>{template.successRate}%</Badge></div><h2 className="mt-4 font-extrabold">{template.name}</h2><p className="mt-1 text-sm text-slate-500">Based on {template.agentName}</p><div className="mt-3 flex flex-wrap gap-2">{template.skills.slice(0, 3).map((skill) => <Badge key={skill} tone="purple">{skill}</Badge>)}</div></div>)}</div>
           </Panel>
         </div>
         <div data-parity-id="agent-templates.side-panel">
