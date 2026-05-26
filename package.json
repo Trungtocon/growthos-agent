@@ -65,6 +65,7 @@
     "smoke:real-ui-flow": "node scripts/smoke-real-ui-demo-flow.mjs",
     "smoke:interactions": "node scripts/smoke-interactions.mjs",
     "smoke:workflow-actions": "node scripts/smoke-workflow-actions.mjs",
+    "audit:a11y:real-ui": "node scripts/audit-accessibility-smoke.mjs",
     "validate:demo-data": "node scripts/validate-demo-data.mjs",
     "parity:core": "node scripts/visual-parity-check.mjs --ids=8,20,21,23,30,32,34,37",
     "codegraph:init": "codegraph init -i",

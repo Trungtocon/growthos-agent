@@ -11,11 +11,14 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleDollarSign,
   Clock3,
   Code2,
+  Download,
   Eye,
   FileText,
   Folder,
+  Gauge,
   Megaphone,
   Play,
   Search,
@@ -27,15 +30,17 @@ import {
   Settings,
   ShieldCheck,
   Sparkles,
+  SlidersHorizontal,
   Target,
   Ticket,
+  Trophy,
   UploadCloud,
   Users,
   Zap,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Badge, Button, KpiTile, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
+import { Badge, Button, KpiTile, MoreButton, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import {
   selectAgentMemoryViewModel,
   selectAgentPerformanceViewModel,
@@ -2084,22 +2089,110 @@ function AgentTemplatesScreen() {
 
 function AgentPerformanceScreen() {
   const vm = selectAgentPerformanceViewModel();
+  const kpiIcons = [Gauge, CheckCircle2, Target, CircleDollarSign, AlertTriangle, Users];
   return (
     <div>
-      <SimpleHeader parityId="agent-performance.header" title="Agent Performance" subtitle="So sanh health, trust, quality, cost va workload cua tung agent." actions={<><Button variant="secondary">Compare</Button><Button>Export</Button></>} />
-      <MetricBand parityId="agent-performance.kpi-band" items={vm.kpis} />
-      <div data-parity-id="agent-performance.main-grid" className="mt-4 grid grid-cols-[420px_1fr] gap-5">
-        <div data-parity-id="agent-performance.ranking-panel">
-          <Panel title="Ranking">
-            <div className="divide-y divide-slate-100 p-4">{vm.rows.map((row, index) => <div key={row.id} className="grid grid-cols-[28px_1fr_70px] items-center gap-3 py-3"><span className="font-bold text-slate-400">{index + 1}</span><div><b>{row.name}</b><div className="text-sm text-slate-500">{row.role}</div></div><Badge tone={row.successRate > 90 ? 'green' : 'blue'}>{row.successRate}%</Badge></div>)}</div>
-          </Panel>
+      <SimpleHeader
+        parityId="agent-performance.header"
+        title="Agent Performance"
+        subtitle="Do luong hieu suat, chat luong, chi phi va do tin cay cua doi ngu AI Agent"
+        actions={<><Button variant="secondary"><SlidersHorizontal className="h-4 w-4" />Compare Agents</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button variant="secondary"><CalendarDays className="h-4 w-4" />01/05/2024 - 31/05/2024</Button></>}
+      />
+      <div data-parity-id="agent-performance.kpi-band" className="mt-4 grid grid-cols-6 gap-3">
+        {vm.kpis.map((item, index) => <KpiTile key={item.label} label={item.label} value={item.value} delta={item.delta} tone={item.tone} icon={kpiIcons[index] ?? CheckCircle2} />)}
+      </div>
+      <div data-parity-id="agent-performance.main-grid" className="mt-5 space-y-4">
+        <div className="grid grid-cols-[320px_1fr_420px] gap-4">
+          <div data-parity-id="agent-performance.ranking-panel">
+            <Panel title={<span className="flex items-center gap-2"><Trophy className="h-4 w-4" />Bang xep hang Agent</span>} className="h-[332px] overflow-hidden">
+              <div className="space-y-3 p-4">{vm.rankingRows.slice(0, 5).map((row, index) => (
+                <div key={row.id} className="grid grid-cols-[32px_36px_1fr_52px] items-center gap-3">
+                  <span className={`grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${index < 3 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{index + 1}</span>
+                  <IconBubble icon={row.name.includes('Research') ? Search : row.name.includes('Content') ? Megaphone : row.name.includes('Report') ? FileText : Bot} tone={row.tone as Tone} />
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-bold text-slate-950">{row.name}</div>
+                    <ProgressBar value={row.successRate} height={6} label={`${row.name} success rate`} />
+                  </div>
+                  <span className="text-right text-sm font-bold text-slate-700">{row.successRate}%</span>
+                </div>
+              ))}</div>
+            </Panel>
+          </div>
+          <div data-parity-id="agent-performance.table-panel">
+            <Panel title={<span className="flex items-center gap-2"><BarChart3 className="h-4 w-4" />Hieu suat chi tiet</span>} action={<MoreButton />} className="h-[332px] overflow-hidden">
+              <div className="px-4 pb-4">
+                <div className="grid grid-cols-[1.25fr_.6fr_.7fr_.7fr_.7fr_.7fr_.7fr_64px] gap-3 border-b border-slate-100 py-3 text-[11px] font-bold uppercase leading-4 text-slate-400">
+                  <span>Agent</span><span>Tasks</span><span>Success</span><span>Avg Cost</span><span>Avg Run</span><span>Failed</span><span>Quality</span><span>Actions</span>
+                </div>
+                {vm.performanceRows.slice(0, 5).map((row) => (
+                  <div key={row.id} className="grid grid-cols-[1.25fr_.6fr_.7fr_.7fr_.7fr_.7fr_.7fr_64px] items-center gap-3 border-b border-slate-100 py-2.5 text-xs">
+                    <div className="flex min-w-0 items-center gap-2"><IconBubble icon={row.name.includes('Research') ? Search : row.name.includes('Content') ? Megaphone : Bot} tone={row.tone as Tone} /><div className="min-w-0"><b className="block truncate text-slate-950">{row.name}</b><span className="truncate text-slate-500">{row.role}</span></div></div>
+                    <span>{row.completedTasks}</span>
+                    <span className="font-bold text-emerald-600">{row.successRate}%</span>
+                    <span>${row.avgCostPerTask.toFixed(2)}</span>
+                    <span>{row.avgRunTime}</span>
+                    <span className={row.failedRuns > 7 ? 'font-bold text-red-500' : 'text-red-500'}>{row.failedRuns}</span>
+                    <span>{row.quality}%</span>
+                    <span className="flex items-center gap-1"><MiniTrend direction={row.failedRuns > 7 ? 'down' : 'up'} /><MoreButton /></span>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </div>
+          <div data-parity-id="agent-performance.analysis-panel">
+            <Panel title={<span className="flex items-center gap-2"><AlertTriangle className="h-4 w-4" />Phan tich loi</span>} className="h-[332px] overflow-hidden">
+              <div className="space-y-3 p-4">
+                <div className="grid grid-cols-[1fr_46px_46px] gap-3 text-xs font-bold uppercase text-slate-400"><span>Ly do that bai</span><span>So lan</span><span>Ty le</span></div>
+                {vm.failureReasons.map((reason, index) => <div key={reason.id} className="grid grid-cols-[1fr_46px_46px] items-center gap-3 text-xs"><div className="min-w-0"><div className="flex items-center gap-2"><span className={`grid h-5 w-5 place-items-center rounded-full text-[10px] font-bold text-white ${reason.tone === 'red' ? 'bg-red-500' : reason.tone === 'amber' ? 'bg-amber-500' : reason.tone === 'cyan' ? 'bg-cyan-500' : reason.tone === 'purple' ? 'bg-violet-500' : 'bg-blue-500'}`}>{index + 1}</span><span className="truncate font-semibold">{reason.label}</span></div><ProgressBar value={reason.percent * 4} tone={reason.tone as Tone} height={6} label={`${reason.label} share`} /></div><b>{reason.count}</b><span>{reason.percent}%</span></div>)}
+              </div>
+            </Panel>
+          </div>
         </div>
-        <div data-parity-id="agent-performance.table-panel">
-          <Panel title="Performance table">
-            <div className="p-4"><div className="grid grid-cols-[1.2fr_repeat(5,.7fr)] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Agent</span><span>Health</span><span>Trust</span><span>Quality</span><span>Cost</span><span>Risk</span></div>{vm.rows.map((row) => <div key={row.id} className="grid grid-cols-[1.2fr_repeat(5,.7fr)] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.name}</b><span>{row.health}</span><span>{row.trust}</span><span>{row.quality}%</span><span>${row.cost.toLocaleString()}</span><Badge tone={row.risk === 'high' ? 'red' : 'green'}>{row.risk}</Badge></div>)}</div>
-          </Panel>
+        <div className="grid grid-cols-[1fr_420px] gap-4">
+          <div data-parity-id="agent-performance.scatter-panel">
+            <Panel title={<span className="flex items-center gap-2"><BarChart3 className="h-4 w-4" />Chi phi so voi chat luong</span>} className="h-[292px] overflow-hidden">
+              <AgentQualityCostChart points={vm.qualityCostPoints} />
+            </Panel>
+          </div>
+          <div className="space-y-4">
+            <div data-parity-id="agent-performance.recommendations-panel">
+              <Panel title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4" />Goi y toi uu</span>} className="h-[168px] overflow-hidden">
+                <div className="space-y-2 p-3">{vm.recommendations.map((item) => <div key={item.id} className="grid grid-cols-[32px_1fr_20px] items-center gap-3 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2 text-xs"><IconBubble icon={item.tone === 'cyan' ? Search : item.tone === 'green' ? Megaphone : item.tone === 'purple' ? BarChart3 : Bot} tone={item.tone as Tone} /><span><b>{item.agent}</b> {item.text}</span><RowAction /></div>)}</div>
+              </Panel>
+            </div>
+            <div data-parity-id="agent-performance.attention-panel">
+              <Panel title={<span className="flex items-center gap-2"><Bell className="h-4 w-4" />Agent can chu y</span>} className="h-[124px] overflow-hidden">
+                <div className="space-y-2 p-3">{vm.attentionAgents.map((agent) => <div key={agent.id} className="grid grid-cols-[32px_1fr_72px_18px] items-center gap-3 rounded-lg border border-red-100 bg-red-50/40 px-3 py-2 text-xs"><IconBubble icon={agent.name.includes('Research') ? Search : agent.name.includes('Content') ? Megaphone : BarChart3} tone={agent.tone as Tone} /><span><b className="block">{agent.name}</b><span className="text-slate-500">{agent.issue}</span></span><Badge tone="red">Canh bao</Badge><RowAction /></div>)}</div>
+              </Panel>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MiniTrend({ direction }: { direction: 'up' | 'down' }) {
+  const color = direction === 'up' ? '#10b981' : '#ef4444';
+  const path = direction === 'up' ? 'M2 22 L14 16 L24 18 L36 7 L48 11 L62 2' : 'M2 4 L14 11 L24 9 L36 20 L48 16 L62 26';
+  return <svg viewBox="0 0 64 28" className="h-7 w-12" aria-hidden="true"><path d={path} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+
+function AgentQualityCostChart({ points }: { points: Array<{ id: string; name: string; quality: number; cost: number; tone: string }> }) {
+  const toneColor = (tone: string) => tone === 'green' ? '#10b981' : tone === 'cyan' ? '#06b6d4' : tone === 'purple' ? '#8b5cf6' : tone === 'amber' ? '#f59e0b' : '#176bff';
+  const x = (cost: number) => 34 + Math.min(1, Math.max(0, (cost - 0.1) / 0.7)) * 760;
+  const y = (quality: number) => 190 - Math.min(1, Math.max(0, (quality - 60) / 40)) * 158;
+  return (
+    <div className="px-4 pb-4">
+      <div className="mb-1 text-xs font-semibold text-slate-500">Quality score (%)</div>
+      <svg viewBox="0 0 840 210" className="h-[214px] w-full" role="img" aria-label="Cost versus quality scatter chart">
+        {[60, 70, 80, 90, 100].map((tick) => <g key={tick}><line x1="34" x2="808" y1={y(tick)} y2={y(tick)} stroke="#dbe3ef" strokeDasharray="5 5" /><text x="0" y={y(tick) + 4} fontSize="12" fill="#64748b">{tick}</text></g>)}
+        {[0.1, 0.2, 0.4, 0.6, 0.8].map((tick) => <g key={tick}><text x={x(tick) - 10} y="205" fontSize="12" fill="#64748b">{tick.toFixed(2)}</text></g>)}
+        <line x1="34" x2="808" y1="190" y2="190" stroke="#cbd5e1" />
+        <line x1="34" x2="34" y1="32" y2="190" stroke="#cbd5e1" />
+        {points.map((point) => <g key={point.id}><circle cx={x(point.cost)} cy={y(point.quality)} r="6" fill={toneColor(point.tone)} /><text x={x(point.cost) + 10} y={y(point.quality) - 8} fontSize="12" fontWeight="700" fill="#334155">{point.name}</text></g>)}
+      </svg>
+      <div className="text-center text-xs font-semibold text-slate-500">Cost per task (USD)</div>
     </div>
   );
 }

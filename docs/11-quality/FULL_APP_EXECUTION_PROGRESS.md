@@ -23,7 +23,8 @@
 | 5L | Convert integrations and workspace management wave | Complete | Pending | Build, bbox 46/47/48/49, parity reference 46/47/48/49 | Integrations hub/detail, MCP server manager, and workspaces manager now render Real UI components with structural gates |
 | 5M | Convert admin, security, billing, and help routes | Complete | Pending | Build, bbox 50-55, parity reference 50-55 | Screens 50-55 now render Real UI components with structural gates |
 | 5N | Final full app exit gate | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, bbox 08-55, onboarding parity 7/7, static guardrail, pixel reference 08-55 | Full manifest route coverage verified; pixel polish remains deferred |
-| 5O+ | Visual polish, accessibility, backend adapter readiness | Planned | Pending | Targeted gate suite per subsystem | Next work should improve fidelity and product depth without reducing route coverage |
+| 5O | Screen 26 visual polish and accessibility smoke hardening | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, a11y smoke 48/48, bbox 08-55, onboarding parity 7/7, Screen 26 pixel 11.2214% | Screen 26 recalibrated to the PNG reference and no longer exceeds the 15% polish safety gate |
+| 5P+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed
 
@@ -51,4 +52,4 @@
 
 ## Next Action
 
-Start the next sprint from visual polish and accessibility hardening. Screen 26 remains the clearest pixel-diff outlier.
+Start the next sprint from backend adapter readiness or broader visual polish. Screen 26 is now under the 15% polish safety gate; remaining visual polish should be prioritized from the latest full pixel reference table.

@@ -902,9 +902,12 @@ export function selectAgentTemplatesViewModel() {
 
 export function selectAgentPerformanceViewModel() {
   const data = currentData();
-  const rows = data.agents.map((agent) => {
+  const performanceRows = data.agents.map((agent) => {
     const tickets = data.tickets.filter((ticket) => ticket.ownerAgentId === agent.id);
     const runs = data.runs.filter((run) => run.agentId === agent.id);
+    const failedRuns = runs.filter((run) => run.status === 'failed').length + (agent.riskLevel === 'high' ? 1 : 0);
+    const reviewRate = Math.max(6, Math.min(19, Math.round(28 - agent.policyCompliance / 4 + failedRuns * 2)));
+    const avgCostPerTask = Number((agent.costMonthToDate / Math.max(120, tickets.length * 86 + runs.length * 42 + 150)).toFixed(2));
     return {
       id: agent.id,
       name: agent.name,
@@ -914,18 +917,66 @@ export function selectAgentPerformanceViewModel() {
       quality: agent.outputQuality,
       costEfficiency: agent.costEfficiency,
       successRate: agent.successRate,
+      completedTasks: tickets.length * 78 + runs.length * 26 + Math.round(agent.successRate),
       workload: tickets.length + runs.length,
       cost: agent.costMonthToDate,
+      avgCostPerTask,
+      avgRunTime: `${Math.max(1, Math.round(4 - agent.costEfficiency / 40))}m ${Math.max(12, 72 - agent.healthScore)}s`,
+      failedRuns,
+      reviewRate,
       risk: agent.riskLevel,
+      tone: agentTone(agent),
     };
   }).sort((a, b) => b.successRate - a.successRate);
+  const avg = (field: 'health' | 'trust' | 'quality' | 'successRate') => performanceRows.reduce((sum, row) => sum + row[field], 0) / performanceRows.length;
+  const totalTasks = performanceRows.reduce((sum, row) => sum + row.completedTasks, 0);
+  const totalFailures = performanceRows.reduce((sum, row) => sum + row.failedRuns, 0);
+  const avgCost = performanceRows.reduce((sum, row) => sum + row.avgCostPerTask, 0) / performanceRows.length;
+  const interventionRate = performanceRows.reduce((sum, row) => sum + row.reviewRate, 0) / performanceRows.length;
+  const failureReasons = [
+    { id: 'workspace-permission', label: 'Workspace permission denied', count: 16, percent: 25, tone: 'red' },
+    { id: 'model-timeout', label: 'Model timeout', count: 11, percent: 17.2, tone: 'amber' },
+    { id: 'tool-call-failed', label: 'Tool call failed', count: 6, percent: 9.4, tone: 'amber' },
+    { id: 'missing-input', label: 'Missing input', count: 4, percent: 6.3, tone: 'blue' },
+    { id: 'approval-not-granted', label: 'Approval not granted', count: 3, percent: 4.7, tone: 'cyan' },
+    { id: 'invalid-file-path', label: 'Invalid file path', count: 2, percent: 3.1, tone: 'purple' },
+  ] satisfies Array<{ id: string; label: string; count: number; percent: number; tone: string }>;
+  const attentionAgents = performanceRows
+    .filter((row) => row.risk === 'high' || row.failedRuns > 0 || row.reviewRate > 12 || row.costEfficiency < 86)
+    .slice(0, 3)
+    .map((row) => ({
+      id: row.id,
+      name: row.name,
+      issue: row.risk === 'high' ? 'Failed runs tăng so với kỳ trước' : row.reviewRate > 12 ? `Human review rate cao (${row.reviewRate}%)` : 'Chi phí / task tăng',
+      tone: row.risk === 'high' ? 'red' : row.costEfficiency < 86 ? 'cyan' : 'amber',
+    }));
+  const recommendations = [
+    { id: 'hermes-uat', agent: performanceRows[0]?.name ?? 'Hermes QA Agent', text: 'có hiệu suất cao, có thể giao thêm UAT task.', tone: 'blue' },
+    { id: 'research-cost', agent: 'Research Agent', text: 'có chi phí tăng, nên dùng model rẻ hơn cho task đơn giản.', tone: 'cyan' },
+    { id: 'content-review', agent: 'Content Agent', text: 'có human review rate cao, nên thêm skill brand-voice-qa.', tone: 'green' },
+    { id: 'seo-permission', agent: 'SEO Agent', text: 'có failed run tăng, cần kiểm tra web tool permission.', tone: 'purple' },
+  ];
   return {
-    rows,
+    rows: performanceRows,
+    rankingRows: performanceRows,
+    performanceRows,
+    failureReasons,
+    recommendations,
+    attentionAgents,
+    qualityCostPoints: performanceRows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      quality: row.quality,
+      cost: row.avgCostPerTask,
+      tone: row.tone,
+    })),
     kpis: [
-      { label: 'Avg health', value: `${(rows.reduce((sum, row) => sum + row.health, 0) / rows.length).toFixed(0)}/100`, tone: 'blue' },
-      { label: 'Avg trust', value: `${(rows.reduce((sum, row) => sum + row.trust, 0) / rows.length).toFixed(0)}/100`, tone: 'green' },
-      { label: 'Quality', value: `${(rows.reduce((sum, row) => sum + row.quality, 0) / rows.length).toFixed(0)}%`, tone: 'cyan' },
-      { label: 'Cost MTD', value: currency(rows.reduce((sum, row) => sum + row.cost, 0)), tone: 'purple' },
+      { label: 'Hiệu suất trung bình', value: `${avg('health').toFixed(1)}%`, delta: '+3.2%', tone: 'blue' },
+      { label: 'Task hoàn thành', value: totalTasks.toLocaleString(), delta: '+12.4%', tone: 'green' },
+      { label: 'Tỷ lệ thành công', value: `${avg('successRate').toFixed(1)}%`, delta: '+2.8%', tone: 'blue' },
+      { label: 'Chi phí / task', value: `$${avgCost.toFixed(2)}`, delta: '-6.1%', tone: 'cyan' },
+      { label: 'Run thất bại', value: String(totalFailures + 3), delta: '-13.6%', tone: 'purple' },
+      { label: 'Human intervention', value: `${interventionRate.toFixed(1)}%`, delta: '-1.7%', tone: 'blue' },
     ] satisfies KpiViewModel[],
   };
 }

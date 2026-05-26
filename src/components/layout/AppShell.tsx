@@ -45,6 +45,7 @@ type ShellProfile = {
   bottom: 'command' | 'copilot' | 'workspace' | 'product' | 'none';
   mainClass: string;
   sidebarPaddingY?: number;
+  sidebarTheme?: 'light' | 'dark';
 };
 
 export const APP_SHELL_TOKENS = {
@@ -264,6 +265,32 @@ function shellProfile(currentPath: string): ShellProfile {
     };
   }
 
+  if (currentPath === '/agents/performance') {
+    return {
+      sidebarWidth: 204,
+      headerHeight: 60,
+      logoSubtitle: 'Growth on Autopilot.',
+      logoVariant: 'leaf',
+      company: 'Demo Company',
+      searchPlaceholder: 'Tim kiem agents, projects, tasks...',
+      searchWidth: 456,
+      searchGap: 164,
+      costLabel: 'AI Cost',
+      costValue: '$1,248.75',
+      notificationCount: 9,
+      userName: 'Nguyen Minh',
+      userRole: 'Admin',
+      createLabel: '+  Tao moi',
+      navItems: executiveNav.map((item) =>
+        item.href === '/inbox' ? { ...item, count: 12 } : item.href === '/tickets' ? { ...item, count: 8 } : item.href === '/approvals' ? { ...item, count: 5 } : item,
+      ),
+      bottom: 'command',
+      mainClass: 'px-[18px] py-[20px]',
+      sidebarPaddingY: 24,
+      sidebarTheme: 'dark',
+    };
+  }
+
   return {
     sidebarWidth: APP_SHELL_TOKENS.sidebarWidth,
     headerHeight: APP_SHELL_TOKENS.topbarHeight,
@@ -333,8 +360,20 @@ function UserAvatar() {
   );
 }
 
-function BottomPanel({ type }: { type: ShellProfile['bottom'] }) {
+function BottomPanel({ type, dark = false }: { type: ShellProfile['bottom']; dark?: boolean }) {
   if (type === 'none') return null;
+
+  if (dark) {
+    return (
+      <div className="absolute bottom-[18px] left-3 right-3 rounded-xl border border-[#24476f] bg-[#0b2a52] px-4 py-4 text-white">
+        <div className="mb-2 flex items-center gap-2 text-[12px] font-extrabold">
+          <span className="grid h-6 w-6 place-items-center rounded-full border border-blue-200">?</span>
+          Ban can tro giup?
+        </div>
+        <div className="text-[11px] font-semibold leading-4 text-blue-100">Trung tam ho tro</div>
+      </div>
+    );
+  }
 
   if (type === 'workspace') {
     return (
@@ -390,10 +429,11 @@ function BottomPanel({ type }: { type: ShellProfile['bottom'] }) {
 
 export function AppShell({ currentPath, children }: { currentPath: string; children: React.ReactNode }) {
   const profile = shellProfile(currentPath);
+  const darkSidebar = profile.sidebarTheme === 'dark';
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      <aside data-parity-id="app-shell.sidebar" className="fixed left-0 top-0 h-screen border-r border-slate-200 bg-white px-3" style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
+      <aside data-parity-id="app-shell.sidebar" className={`fixed left-0 top-0 h-screen border-r px-3 ${darkSidebar ? 'border-[#0d2544] bg-[#061426]' : 'border-slate-200 bg-white'}`} style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
         <div className="mb-[28px] px-5">
           <Logo profile={profile} />
         </div>
@@ -402,15 +442,15 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
             const Icon = item.icon;
             const active = isActive(currentPath, item.href);
             return (
-              <a key={`${item.href}-${item.label}`} href={item.href} style={{ height: APP_SHELL_TOKENS.navItemHeight }} className={`flex items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
+              <a key={`${item.href}-${item.label}`} href={item.href} style={{ height: APP_SHELL_TOKENS.navItemHeight }} className={`flex items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${darkSidebar ? active ? 'bg-[#0f8fff] text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white' : active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
                 <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.7 : 2.1} aria-hidden="true" />
                 <span className="flex-1">{item.label}</span>
-                {item.count ? <span className="rounded-full bg-[#e6f7ff] px-2.5 py-0.5 text-xs font-bold text-[#087dcc]">{item.count}</span> : null}
+                {item.count ? <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${darkSidebar ? 'bg-[#0f6bff] text-white' : 'bg-[#e6f7ff] text-[#087dcc]'}`}>{item.count}</span> : null}
               </a>
             );
           })}
         </nav>
-        <BottomPanel type={profile.bottom} />
+        <BottomPanel type={profile.bottom} dark={darkSidebar} />
       </aside>
 
       <div style={{ paddingLeft: profile.sidebarWidth }}>
@@ -421,7 +461,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
             </select>
             <div className="relative" style={{ width: profile.searchWidth }}>
               <Search className="absolute right-4 top-3 h-5 w-5 text-slate-500" aria-hidden="true" />
-              <input className="h-[42px] w-full rounded-lg border border-slate-200 bg-white py-2 pl-4 pr-12 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" placeholder={profile.searchPlaceholder} />
+              <input aria-label="Search workspace" className="h-[42px] w-full rounded-lg border border-slate-200 bg-white py-2 pl-4 pr-12 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100" placeholder={profile.searchPlaceholder} />
             </div>
           </div>
 

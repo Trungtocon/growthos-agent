@@ -43,9 +43,10 @@
 ## 4. Remaining Gaps
 
 - Pixel-perfect 1:1 parity is not complete for authenticated Real UI routes.
-- Screen 26 `/agents/performance` is the largest current visual polish outlier at 17.7707%.
+- Screen 26 `/agents/performance` was recalibrated in Sprint 5O and improved from 17.7707% to 11.2214%, below the 15% polish safety gate.
+- Pixel-perfect 1:1 parity still requires additional authenticated-route polish beyond structural acceptance.
 - Backend integration remains mock-only by design.
-- Accessibility has practical component coverage but still needs a broader audit and hardening pass.
+- Accessibility now has a lightweight Playwright smoke gate across 48 Real UI routes; this is not a full WCAG certification.
 - Responsive behavior is desktop-first and should receive targeted QA after visual polish.
 
 ## 5. Product Readiness Assessment

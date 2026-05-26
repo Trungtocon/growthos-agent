@@ -147,9 +147,18 @@ export function Badge({ children, tone = 'blue' }: { children: ReactNode; tone?:
 }
 
 export function ProgressBar({ value, tone = 'blue', height = 6, label }: { value: number; tone?: Tone; height?: number; label?: string }) {
+  const safeValue = Math.max(0, Math.min(100, value));
   return (
-    <div aria-label={label} className="overflow-hidden rounded-full bg-slate-100" style={{ height }}>
-      <div className={`h-full rounded-full ${toneClasses[tone].fill}`} style={{ width: `${Math.max(4, Math.min(100, value))}%` }} />
+    <div
+      role="progressbar"
+      aria-label={label ?? `Progress ${Math.round(safeValue)} percent`}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(safeValue)}
+      className="overflow-hidden rounded-full bg-slate-100"
+      style={{ height }}
+    >
+      <div className={`h-full rounded-full ${toneClasses[tone].fill}`} style={{ width: `${Math.max(4, safeValue)}%` }} />
     </div>
   );
 }
@@ -274,7 +283,7 @@ export function CostDistributionChart({ total, rows }: { total: string; rows: Ar
 }
 
 export function MoreButton() {
-  return <button className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100"><MoreVertical className="h-4 w-4" /></button>;
+  return <button type="button" aria-label="More actions" className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100"><MoreVertical className="h-4 w-4" aria-hidden="true" /></button>;
 }
 
 export function LinkFooter({ children }: { children: ReactNode }) {
