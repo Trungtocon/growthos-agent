@@ -268,7 +268,7 @@ function shellProfile(currentPath: string): ShellProfile {
       company: 'Demo Company',
       searchPlaceholder: 'Tim kiem...',
       searchWidth: 414,
-      searchGap: 144,
+      searchGap: 40,
       costLabel: 'Chi phi AI',
       costValue: '$1,240',
       notificationCount: 3,
