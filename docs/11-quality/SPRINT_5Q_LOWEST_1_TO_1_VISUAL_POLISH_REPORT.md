@@ -9,7 +9,7 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 | Screen | Route | Before diff | Before 1:1 | After diff | After 1:1 | Result |
 |---|---|---:|---:|---:|---:|---|
 | 34 | `/runs/demo-run` | 12.2634% | 87.7366% | 12.1734% | 87.8266% | Improved |
-| 21 | `/org-chart` | 11.1021% | 88.8979% | 10.8708% | 89.1292% | Improved |
+| 21 | `/org-chart` | 11.1021% | 88.8979% | 10.6991% | 89.3009% | Improved |
 | 26 | `/agents/performance` | 11.2214% | 88.7786% | 11.2214% | 88.7786% | Unchanged |
 | 17 | `/projects` | 11.1671% | 88.8329% | 11.1671% | 88.8329% | Unchanged |
 | 25 | `/agents/templates` | 10.9707% | 89.0293% | 10.9707% | 89.0293% | Unchanged |
@@ -19,6 +19,7 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 - Screen 34 Run Console status KPI cards now use the compact metric variant while preserving the existing `run.status-band` bounding box.
 - Screen 21 Org Chart right detail card now includes denser metadata/tags inside the existing locked `org.agent-card` bbox.
 - Screen 21 Org Chart right insight card now uses compact AI suggestion rows inside the existing locked `org.insight-card` bbox.
+- Screen 21 follow-up pass further reduced right panel padding and row spacing so the locked detail/insight cards reveal more reference-like actions and suggestions without changing bbox contracts.
 - No bbox contract changes were made.
 - No static parity screenshots, cropped slices, or `backgroundImage` usage were introduced.
 

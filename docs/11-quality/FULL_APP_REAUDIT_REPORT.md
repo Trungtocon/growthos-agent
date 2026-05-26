@@ -86,7 +86,7 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 11 | `/notifications` | Pixel polish deferred, 7.0263% reference diff | Pass 8/8 | Pass | Command-support Real UI route promoted in Sprint 5F |
 | 12-19 | Company, goals, projects | Pixel polish deferred, 5.9535%-11.1671% reference diff | Pass 60/60 | Pass | Business planning wave promoted in Sprint 5G |
 | 20 | `/workforce` | Pixel polish deferred, 9.4318% reference diff | Pass 14/14 | Pass | Real UI structural baseline |
-| 21 | `/org-chart` | Pixel polish deferred, 10.8708% reference diff | Pass 10/10 | Pass | Real UI structural baseline |
+| 21 | `/org-chart` | Pixel polish deferred, 10.6991% reference diff | Pass 10/10 | Pass | Real UI structural baseline |
 | 22,24-29 | Workforce support | Pixel polish deferred, 7.8775%-17.7707% reference diff | Pass 56/56 | Pass | Workforce support wave promoted in Sprint 5H; Screen 26 remains visual polish outlier |
 | 23 | `/agents/demo-agent` | Pixel polish deferred, 8.0451% reference diff | Pass 18/18 | Pass | Real UI structural baseline |
 | 30 | `/tickets` | Pixel polish deferred, 10.6961% reference diff | Pass 12/12 | Pass | Real UI structural baseline |
