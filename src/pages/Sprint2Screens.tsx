@@ -1929,7 +1929,7 @@ function ProjectsListScreen() {
         actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Import Project</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button><Folder className="h-4 w-4" />Tạo dự án mới</Button></>}
       />
       <div data-parity-id="projects.kpi-band" className="mt-[2px] grid h-[88px] grid-cols-6 gap-3 overflow-hidden">
-        {vm.kpis.map((item, index) => <ProjectKpiCard key={item.label} label={item.label} value={item.value} tone={item.tone} icon={projectKpiIcons[index] ?? Folder} />)}
+        {vm.kpis.map((item, index) => <ProjectKpiCard key={item.label} label={item.label} value={item.value} caption={item.caption} tone={item.tone} icon={projectKpiIcons[index] ?? Folder} />)}
       </div>
       <div data-parity-id="projects.main-grid" className="mt-2 grid h-[672px] grid-cols-[1fr_280px] gap-4 overflow-hidden">
         <div className="min-h-0 overflow-hidden">
@@ -1964,7 +1964,7 @@ function ProjectsListScreen() {
   );
 }
 
-function ProjectKpiCard({ label, value, tone, icon: Icon }: { label: string; value: string; tone: Tone; icon: LucideIcon }) {
+function ProjectKpiCard({ label, value, caption, tone, icon: Icon }: { label: string; value: string; caption?: string; tone: Tone; icon: LucideIcon }) {
   const toneClass: { icon: string; soft: string } = {
     blue: { icon: 'text-blue-600', soft: 'bg-blue-50' },
     cyan: { icon: 'text-cyan-600', soft: 'bg-cyan-50' },
@@ -1982,6 +1982,7 @@ function ProjectKpiCard({ label, value, tone, icon: Icon }: { label: string; val
       <div className="min-w-0">
         <div className="truncate text-xs font-medium text-slate-500">{label}</div>
         <div className="mt-1 text-2xl font-bold leading-none tracking-tight text-slate-950">{value}</div>
+        {caption ? <div className="mt-1 truncate text-[11px] leading-none text-slate-500">{caption}</div> : null}
       </div>
     </div>
   );
@@ -2025,8 +2026,11 @@ function ProjectHealthOverview({ statusBreakdown, costBars }: { statusBreakdown:
       </div>
       <div className="rounded-xl border border-slate-100 p-4">
         <div className="mb-3 text-xs font-bold text-slate-500">Chi phí AI theo dự án</div>
-        <div className="flex h-[130px] items-end gap-4 border-b border-slate-100 px-3">
-          {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(20, (item.value / maxCost) * 112)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
+        <div className="grid h-[132px] grid-cols-[36px_1fr] gap-2">
+          <div className="flex flex-col justify-between pb-8 text-[10px] font-medium text-slate-500"><span>$1,500</span><span>$1,000</span><span>$500</span><span>$0</span></div>
+          <div className="flex items-end gap-4 border-b border-slate-100 px-2">
+            {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-[58px] max-w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(18, (item.value / maxCost) * 100)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
+          </div>
         </div>
       </div>
     </div>

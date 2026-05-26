@@ -11,6 +11,7 @@ import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, 
 export interface KpiViewModel {
   label: string;
   value: string;
+  caption?: string;
   delta?: string;
   tone: Metric['tone'];
 }
@@ -855,12 +856,12 @@ export function selectProjectsListViewModel() {
       { label: 'Lên kế hoạch', value: 4, tone: 'purple' },
     ] satisfies Array<{ label: string; value: number; tone: Metric['tone'] }>,
     kpis: [
-      { label: 'Tổng dự án', value: '18', tone: 'blue' },
-      { label: 'Đang triển khai', value: '9', tone: 'cyan' },
-      { label: 'Có rủi ro', value: '4', tone: 'amber' },
-      { label: 'Bị chặn', value: '2', tone: 'red' },
-      { label: 'Hoàn thành', value: '3', tone: 'green' },
-      { label: 'Chi phí AI', value: '$6,240', tone: 'purple' },
+      { label: 'Tổng dự án', value: '18', caption: 'Tất cả dự án', tone: 'blue' },
+      { label: 'Đang triển khai', value: '9', caption: '50% tổng số', tone: 'cyan' },
+      { label: 'Có rủi ro', value: '4', caption: '22% tổng số', tone: 'amber' },
+      { label: 'Bị chặn', value: '2', caption: '11% tổng số', tone: 'red' },
+      { label: 'Hoàn thành', value: '3', caption: '17% tổng số', tone: 'green' },
+      { label: 'Chi phí AI', value: '$6,240', caption: 'Tổng chi phí', tone: 'purple' },
     ] satisfies KpiViewModel[],
     recommendations: [
       { id: 'blocked-projects', title: `${Math.max(2, blocked)} dự án đang bị chặn`, text: 'do chờ approval', tone: 'red' },

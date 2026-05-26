@@ -17,8 +17,8 @@
 | Static parity locked screens | 7 |
 | Real UI structural pass screens | 48 |
 | Missing screens | 0 |
-| Average 1:1 across all screens | 92.72% |
-| Average 1:1 across Real UI screens | 91.67% |
+| Average 1:1 across all screens | 92.73% |
+| Average 1:1 across Real UI screens | 91.68% |
 
 ## Progress Table
 
@@ -40,7 +40,7 @@
 | 14 - Goals Dashboard | Quản trị công ty, mục tiêu và dự án | `/goals` | Real UI structural pass | 90.9209% |
 | 15 - Goal Detail | Quản trị công ty, mục tiêu và dự án | `/goals/demo-goal` | Real UI structural pass | 92.5892% |
 | 16 - Create Goal Wizard | Quản trị công ty, mục tiêu và dự án | `/goals/new` | Real UI structural pass | 93.1915% |
-| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 86.8848% |
+| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 87.2519% |
 | 18 - Project Detail | Quản trị công ty, mục tiêu và dự án | `/projects/demo-project` | Real UI structural pass | 90.7039% |
 | 19 - Create Project Wizard | Quản trị công ty, mục tiêu và dự án | `/projects/new` | Real UI structural pass | 92.4034% |
 | 20 - AI Workforce Overview | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/workforce` | Real UI structural pass | 90.5682% |
@@ -84,7 +84,7 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 17 - Projects List | `/projects` | 86.8848% |
+| 1 | 17 - Projects List | `/projects` | 87.2519% |
 | 2 | 26 - Agent Performance | `/agents/performance` | 88.8771% |
 | 3 | 25 - Agent Template Gallery | `/agents/templates` | 89.0895% |
 | 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |
