@@ -818,6 +818,7 @@ function projectRows() {
 
 export function selectProjectsListViewModel() {
   const projects = projectRows();
+  const blocked = projects.filter((project) => project.status !== 'On track').length;
   return {
     projects,
     kpis: [
@@ -826,6 +827,12 @@ export function selectProjectsListViewModel() {
       { label: 'Needs attention', value: String(projects.filter((project) => project.status !== 'On track').length), tone: 'amber' },
       { label: 'Linked tickets', value: String(projects.reduce((sum, project) => sum + project.tickets.length, 0)), tone: 'cyan' },
     ] satisfies KpiViewModel[],
+    recommendations: [
+      { id: 'blocked-projects', title: `${Math.max(2, blocked)} dự án đang bị chặn`, text: 'do chờ approval', tone: 'red' },
+      { id: 'late-content', title: 'Marketing Content Factory', text: 'đang chậm 5 ngày', tone: 'amber' },
+      { id: 'budget-crm', title: 'CRM Automation đã dùng', text: '84% ngân sách', tone: 'purple' },
+      { id: 'qa-agent', title: 'Nên thêm QA Agent vào', text: projects[0]?.title ?? 'GrowthOS V2 UI Parity', tone: 'blue' },
+    ] satisfies Array<{ id: string; title: string; text: string; tone: Metric['tone'] }>,
   };
 }
 

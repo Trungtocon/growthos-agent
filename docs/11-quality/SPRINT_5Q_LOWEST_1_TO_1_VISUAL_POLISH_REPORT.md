@@ -11,7 +11,7 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 | 34 | `/runs/demo-run` | 12.2634% | 87.7366% | 10.0151% | 89.9849% | Improved |
 | 21 | `/org-chart` | 11.1021% | 88.8979% | 10.6991% | 89.3009% | Improved |
 | 26 | `/agents/performance` | 11.2214% | 88.7786% | 11.2214% | 88.7786% | Unchanged |
-| 17 | `/projects` | 11.1671% | 88.8329% | 11.1671% | 88.8329% | Unchanged |
+| 17 | `/projects` | 11.1671% | 88.8329% | 11.0437% | 88.9563% | Improved |
 | 25 | `/agents/templates` | 10.9707% | 89.0293% | 10.9707% | 89.0293% | Unchanged |
 
 ## Changes Kept
@@ -21,12 +21,13 @@ Improve the five lowest 1:1 screens without reintroducing static parity slices o
 - Screen 21 Org Chart right detail card now includes denser metadata/tags inside the existing locked `org.agent-card` bbox.
 - Screen 21 Org Chart right insight card now uses compact AI suggestion rows inside the existing locked `org.insight-card` bbox.
 - Screen 21 follow-up pass further reduced right panel padding and row spacing so the locked detail/insight cards reveal more reference-like actions and suggestions without changing bbox contracts.
+- Screen 17 Projects side panel now uses AI suggestion cards like the PNG reference while preserving the existing `projects.side-panel` bbox.
 - Screen 34 bbox contract was updated only for `run.tool-calls-card` and `run.logs-card` to document the measured PNG-aligned tool/log recalibration.
 - No static parity screenshots, cropped slices, or `backgroundImage` usage were introduced.
 
 ## Reverted Attempts
 
-- Screen 17 and Screen 25 section-level rebuilds were tested but reverted because pixel diff worsened despite bbox passing.
+- Earlier Screen 17 full section-level rebuilds were tested but reverted because pixel diff worsened despite bbox passing; the kept Screen 17 change is limited to the right side-panel content.
 - Screen 26 selector-scale tuning for cost scatter data was tested but reverted because pixel diff worsened slightly.
 - Screen 34 macro vertical offset and compact tool-call table variants were tested and reverted because they worsened pixel diff or structural alignment.
 - Screen 17 and Screen 25 header/KPI/filter-only variants were tested and reverted because they worsened pixel diff.

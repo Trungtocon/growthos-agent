@@ -1923,18 +1923,21 @@ function ProjectsListScreen() {
     <div>
       <SimpleHeader parityId="projects.header" title="Projects" subtitle="Quan ly cac chuong trinh thuc thi lien ket voi muc tieu va agent." actions={<Button><Folder className="h-4 w-4" />Tao project</Button>} />
       <MetricBand parityId="projects.kpi-band" items={vm.kpis} />
-      <div data-parity-id="projects.main-grid" className="mt-4 grid grid-cols-[1fr_360px] gap-5">
-        <div data-parity-id="projects.list-panel">
-          <Panel title="Project portfolio">
+      <div data-parity-id="projects.main-grid" className="mt-4 grid h-[578px] grid-cols-[1fr_360px] gap-5 overflow-hidden">
+        <div data-parity-id="projects.list-panel" className="h-full overflow-hidden">
+          <Panel title="Project portfolio" className="h-full overflow-hidden">
             <div className="space-y-4 p-5">{vm.projects.map((project) => <ProjectCard key={project.id} project={project} />)}</div>
           </Panel>
         </div>
-        <div data-parity-id="projects.side-panel" className="space-y-5">
-          <Panel title="Capacity">
-            <div className="space-y-4 p-5">{vm.projects.map((project) => <div key={project.id}><div className="mb-2 flex justify-between text-sm"><b>{project.owner}</b><span>{project.progress}%</span></div><ProgressBar value={project.progress} label={`${project.title} capacity`} /></div>)}</div>
-          </Panel>
-          <Panel title="Governance">
-            <div className="space-y-3 p-5">{['Weekly owner review', 'Approval required for external publish', 'Budget alert at 80%'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
+        <div data-parity-id="projects.side-panel" className="h-full overflow-hidden">
+          <Panel title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-violet-600" />Gợi ý từ AI</span>} className="h-full overflow-hidden">
+            <div className="space-y-4 p-5">
+              {vm.recommendations.map((item) => {
+                const Icon = item.tone === 'red' ? AlertTriangle : item.tone === 'amber' ? Clock3 : item.tone === 'purple' ? CircleDollarSign : Bot;
+                return <div key={item.id} className={`rounded-xl border p-4 ${item.tone === 'red' ? 'border-red-100 bg-red-50/60' : item.tone === 'amber' ? 'border-amber-100 bg-amber-50/60' : item.tone === 'purple' ? 'border-violet-100 bg-violet-50/60' : 'border-blue-100 bg-blue-50/60'}`}><div className="flex items-start gap-3"><IconBubble icon={Icon} tone={item.tone as Tone} /><div className="min-w-0 flex-1"><b className="block text-slate-950">{item.title}</b><p className="mt-1 text-sm text-slate-600">{item.text}</p><button className="mt-3 text-sm font-bold text-[#0f6bff]">Xem chi tiết →</button></div></div></div>;
+              })}
+              <Button variant="secondary" className="w-full"><Sparkles className="h-4 w-4" />Xem tất cả gợi ý</Button>
+            </div>
           </Panel>
         </div>
       </div>
