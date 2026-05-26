@@ -36,6 +36,7 @@
 | 5R-projects-section | Projects section coverage rebuild | Partial | Pending | Build pass, bbox 17 pass 10/10, Screen 17 pixel reference pass at 12.7481% | Rebuilt Screen 17 to include PNG-level sections: six KPI cards, filter/view controls, five-column board, AI suggestions, and Project Health Overview; restored some polish with KPI helper copy and chart scale, but pixel polish remains above the previous 11.0437% checkpoint |
 | 5R-projects-density | Projects board card density polish | Partial | Pending | Build pass, bbox 17 pass 10/10, Screen 17 pixel reference pass at 12.6713% | Compacted project board cards so columns show the expected third cards and add-row controls while preserving the rebuilt section layout |
 | 5R-performance-data-density | Agent Performance data and row density polish | Partial | Pending | Build pass, bbox 26 pass 12/12, Screen 26 pixel reference pass at 11.1039% | Matched Screen 26 KPI/table/scatter data closer to the PNG reference and compacted table/recommendation/attention rows without changing the bbox contract |
+| 5R-run-subtitle | Run Console header copy polish | Partial | Pending | Build pass, bbox 34 pass 16/16, Screen 34 pixel reference pass at 9.9979% | Matched the Run Console subtitle closer to the PNG reference, improving Screen 34 from 10.0151% to 9.9979% without changing structural geometry |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed

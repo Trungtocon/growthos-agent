@@ -712,7 +712,7 @@ function RunConsoleRealPage() {
   return (
     <div data-demo-source={data.run.id}>
       <div data-parity-id="run.header">
-        <PageHeader dense title="Run Console" subtitle="Theo dõi thời gian thực quá trình AI Agent thực thi ticket, gọi tool, tạo log và sinh artifact" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
+        <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>
       <div data-parity-id="run.status-band" className="h-[230px] overflow-hidden">
         <Panel className="mb-5"><div className="grid grid-cols-[130px_1.4fr_1.2fr_1fr_1fr_1fr_1.5fr] divide-x divide-slate-100 p-4 text-sm"><InfoCell label="Run ID" value="run_2381" /><InfoCell label="Ticket" value="Audit Module 3 - Landing & Lead Capture" /><InfoCell label="Agent" value="Hermes QA Agent" /><InfoCell label="Project" value="GrowthOS V2" /><InfoCell label="Status" value={<WorkflowEntityStatus entityId={data.run.id} status={data.run.status} />} /><InfoCell label="Elapsed" value="8m 24s" /><InfoCell label="Current step" value={data.run.currentStep} /></div></Panel>
