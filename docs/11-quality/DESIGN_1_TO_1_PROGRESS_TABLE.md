@@ -40,7 +40,7 @@
 | 14 - Goals Dashboard | Quản trị công ty, mục tiêu và dự án | `/goals` | Real UI structural pass | 90.9209% |
 | 15 - Goal Detail | Quản trị công ty, mục tiêu và dự án | `/goals/demo-goal` | Real UI structural pass | 92.5892% |
 | 16 - Create Goal Wizard | Quản trị công ty, mục tiêu và dự án | `/goals/new` | Real UI structural pass | 93.1915% |
-| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 87.3287% |
+| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 87.6708% |
 | 18 - Project Detail | Quản trị công ty, mục tiêu và dự án | `/projects/demo-project` | Real UI structural pass | 90.7039% |
 | 19 - Create Project Wizard | Quản trị công ty, mục tiêu và dự án | `/projects/new` | Real UI structural pass | 92.4034% |
 | 20 - AI Workforce Overview | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/workforce` | Real UI structural pass | 90.5682% |
@@ -84,7 +84,7 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 17 - Projects List | `/projects` | 87.3287% |
+| 1 | 17 - Projects List | `/projects` | 87.6708% |
 | 2 | 26 - Agent Performance | `/agents/performance` | 88.8961% |
 | 3 | 25 - Agent Template Gallery | `/agents/templates` | 89.0895% |
 | 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |

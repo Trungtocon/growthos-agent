@@ -259,6 +259,28 @@ function shellProfile(currentPath: string): ShellProfile {
     };
   }
 
+  if (currentPath === '/projects') {
+    return {
+      sidebarWidth: APP_SHELL_TOKENS.sidebarWidth,
+      headerHeight: APP_SHELL_TOKENS.topbarHeight,
+      logoSubtitle: 'Growth on Autopilot.',
+      logoVariant: 'leaf',
+      company: 'Demo Company',
+      searchPlaceholder: 'Tim kiem...',
+      searchWidth: 414,
+      searchGap: 144,
+      costLabel: 'Chi phi AI',
+      costValue: '$1,240',
+      notificationCount: 3,
+      userName: 'Alex Nguyen',
+      userRole: 'Owner',
+      createLabel: '+  Create',
+      navItems: executiveNav,
+      bottom: 'workspace',
+      mainClass: 'px-[22px] py-[18px]',
+    };
+  }
+
   if (currentPath === '/agents/demo-agent' || currentPath === '/tickets/demo-ticket' || currentPath === '/runs/demo-run') {
     return {
       sidebarWidth: currentPath === '/runs/demo-run' ? 190 : 185,
@@ -457,8 +479,9 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
           {profile.navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(currentPath, item.href);
+            const projectActive = currentPath === '/projects' && active && !darkSidebar;
             return (
-              <a key={`${item.href}-${item.label}`} href={item.href} style={{ height: APP_SHELL_TOKENS.navItemHeight }} className={`flex items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${darkSidebar ? active ? 'bg-[#0f8fff] text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white' : active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
+              <a key={`${item.href}-${item.label}`} href={item.href} style={{ height: APP_SHELL_TOKENS.navItemHeight }} className={`flex items-center gap-4 rounded-lg px-4 text-[14px] font-semibold transition ${darkSidebar ? active ? 'bg-[#0f8fff] text-white' : 'text-slate-200 hover:bg-white/10 hover:text-white' : projectActive ? 'bg-gradient-to-r from-[#1264f4] to-[#00bcd4] text-white shadow-[0_10px_22px_rgba(0,82,204,0.18)]' : active ? 'bg-[#eaf3ff] text-[#0f6bff]' : 'text-[#536174] hover:bg-slate-50 hover:text-slate-950'}`}>
                 <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.7 : 2.1} aria-hidden="true" />
                 <span className="flex-1">{item.label}</span>
                 {item.count ? <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${darkSidebar ? 'bg-[#0f6bff] text-white' : 'bg-[#e6f7ff] text-[#087dcc]'}`}>{item.count}</span> : null}
