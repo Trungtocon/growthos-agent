@@ -22,8 +22,8 @@
 | 5K | Convert budget and reporting wave | Complete | Pending | Build, bbox 42/43/44/45, parity reference 42/43/44/45 | Cost dashboard, budget settings, reports dashboard, and report builder now render Real UI components with structural gates |
 | 5L | Convert integrations and workspace management wave | Complete | Pending | Build, bbox 46/47/48/49, parity reference 46/47/48/49 | Integrations hub/detail, MCP server manager, and workspaces manager now render Real UI components with structural gates |
 | 5M | Convert admin, security, billing, and help routes | Complete | Pending | Build, bbox 50-55, parity reference 50-55 | Screens 50-55 now render Real UI components with structural gates |
-| 5N | Final full app exit gate | Planned | Pending | Full build, data validation, smoke, interactions, workflow, bbox 08-55, onboarding parity, static guardrail | Verify all 55 manifest screens after route coverage completion |
-| 5O-5R | Interaction, data hardening, polish, and final exit | Planned | Pending | Full gate suite | Final decision recorded in exit report |
+| 5N | Final full app exit gate | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, bbox 08-55, onboarding parity 7/7, static guardrail, pixel reference 08-55 | Full manifest route coverage verified; pixel polish remains deferred |
+| 5O+ | Visual polish, accessibility, backend adapter readiness | Planned | Pending | Targeted gate suite per subsystem | Next work should improve fidelity and product depth without reducing route coverage |
 
 ## Screens Completed
 
@@ -51,4 +51,4 @@
 
 ## Next Action
 
-Run Sprint 5N full-app exit gate across all locked static onboarding screens and Real UI structural routes 08-55.
+Start the next sprint from visual polish and accessibility hardening. Screen 26 remains the clearest pixel-diff outlier.

@@ -2,13 +2,12 @@
 
 ## Planning Basis
 
-This roadmap is derived from the 2026-05-23 full app re-audit:
+This roadmap was derived from the 2026-05-23 full app re-audit and reconciled after the Sprint 5N exit gate:
 
 - 55 manifest screens exist.
 - 7 onboarding/auth screens are frozen static parity screens.
-- 8 Demo v1 routes are Real UI structural pass screens.
-- 3 utility command-center routes have bespoke Sprint 2 UI but no current structural gate.
-- 37 manifest screens remain generic scaffold placeholders.
+- 48 authenticated routes are Real UI structural pass screens.
+- 0 manifest screens remain generic scaffold placeholders.
 
 ## Phase 1 - Stabilization
 
@@ -32,7 +31,7 @@ Add a workflow command layer above the shared stores:
 
 ## Phase 3 - Remaining Real UI Screen Coverage
 
-Convert scaffold routes in product waves, preserving manifest routes and PNG references:
+Convert scaffold routes in product waves, preserving manifest routes and PNG references. This phase is complete as of Sprint 5N:
 
 - Command-center support: 09-11.
 - Company/goals/projects: 12-19.
@@ -42,7 +41,7 @@ Convert scaffold routes in product waves, preserving manifest routes and PNG ref
 - Budget/reporting: 42-45.
 - Integrations, workspace, admin, help: 46-55.
 
-Each new screen should use AppShell when authenticated, DOM/SVG/CSS Real UI, typed data/view models, route-specific smoke, and structural bbox gating where the existing Real UI strategy applies.
+Each converted screen uses AppShell when authenticated, DOM/SVG/CSS Real UI, typed data/view models where available, route-specific smoke, and structural bbox gating where the existing Real UI strategy applies.
 
 ## Phase 4 - Interaction Wiring
 
@@ -85,13 +84,10 @@ Each new screen should use AppShell when authenticated, DOM/SVG/CSS Real UI, typ
 | 5I | Workforce support wave | 22,24-29 | Agent list/builder/template/performance/memory/skill/tool pages | Build, smoke, bbox, static guardrail | Workforce support surfaces are Real UI |
 | 5J | Work execution support wave | 31,33,35-36 | Ticket list/create and artifact pages | Build, workflow smoke, bbox | Ticket and artifact supporting routes are Real UI |
 | 5K | Governance wave | 38-41 | Approval detail, policy, audit, risk pages | Build, workflow smoke, bbox | Governance support routes are Real UI |
-| 5L | Budget and reports wave | 42-45 | Cost, budget, report pages | Build, data validation, bbox | Budget/report surfaces are Real UI |
-| 5M | Integrations and admin wave A | 46-50 | Integration, MCP, workspace, secrets surfaces | Build, smoke, static guardrail | Admin adapters remain mock-safe and Real UI |
-| 5N | Integrations and admin wave B | 51-55 | Team, roles, settings, billing, help | Build, smoke, bbox | Remaining manifest screens are Real UI or documented exception |
-| 5O | Interaction expansion | New navigation, filters, forms, dialogs | Shared state, selectors, smoke scripts | Interaction and workflow smoke | New waves share interaction architecture |
-| 5P | Data/API hardening | Expanded fixtures, view models, adapter seams | `src/domain`, `src/data`, `src/services` | Build, data validation, typecheck | Screen-local mock drift reduced |
-| 5Q | Visual polish and accessibility | Converted screens | UI primitives, styles, QA docs | Accessibility pass, responsive QA, parity evidence | Consistent production UI behavior |
-| 5R | Full app exit gate | All 55 manifest screens | Reports and quality scripts | Full gate suite | Exit report declares pass, partial, or blocked |
+| 5L | Integrations and workspace wave | 46-49 | Integration, MCP, workspace pages | Build, data validation, bbox | Integration/workspace surfaces are Real UI |
+| 5M | Admin, security, billing, and help wave | 50-55 | Secrets, team, roles, settings, billing, help pages | Build, smoke, bbox, static guardrail | Remaining manifest screens are Real UI |
+| 5N | Full app exit gate | All 55 manifest screens | Reports and quality docs | Full gate suite | Exit report declares PASS |
+| 5O+ | Visual polish, accessibility, and backend adapter readiness | Converted screens and shared systems | UI primitives, styles, QA docs, adapter seams | Targeted build, smoke, bbox, parity, accessibility checks | Product depth improves without route coverage regression |
 
 ## Verification Template Per Core Sprint
 
