@@ -105,6 +105,22 @@ const detailNav: NavItem[] = [
   { label: 'Settings', href: '/settings', icon: Settings },
 ];
 
+const runConsoleNav: NavItem[] = [
+  { label: 'Tong quan', href: '/command-center', icon: LayoutDashboard },
+  { label: 'Goals', href: '/goals', icon: Target },
+  { label: 'Projects', href: '/projects', icon: Folder },
+  { label: 'Agents', href: '/agents', icon: Bot },
+  { label: 'Tickets', href: '/tickets', icon: Ticket },
+  { label: 'Runs', href: '/runs/demo-run', icon: PlaySquare },
+  { label: 'Workflows', href: '/workflows', icon: Workflow },
+  { label: 'Reports', href: '/reports', icon: FileText },
+  { label: 'Memory', href: '/agents/memory', icon: Inbox },
+  { label: 'Skills', href: '/skills', icon: Network },
+  { label: 'Tools', href: '/tools/permissions', icon: Workflow },
+  { label: 'Integrations', href: '/integrations', icon: Network },
+  { label: 'Settings', href: '/settings', icon: Settings },
+];
+
 function shellProfile(currentPath: string): ShellProfile {
   if (currentPath === '/inbox') {
     return {
@@ -252,14 +268,14 @@ function shellProfile(currentPath: string): ShellProfile {
       company: currentPath === '/runs/demo-run' ? 'GrowthOS Workspace' : 'UIKIGAI Technologies',
       searchPlaceholder: 'Tìm kiếm (Ctrl + K)',
       searchWidth: currentPath === '/runs/demo-run' ? 250 : 474,
-      searchGap: currentPath === '/runs/demo-run' ? 36 : 78,
+      searchGap: currentPath === '/runs/demo-run' ? 560 : 78,
       costLabel: currentPath === '/runs/demo-run' ? '' : 'AI Cost',
       costValue: currentPath === '/runs/demo-run' ? '' : '$2,840.00',
       notificationCount: currentPath === '/runs/demo-run' ? 0 : 8,
       userName: currentPath === '/runs/demo-run' ? 'Lê Tuấn Anh' : 'John Smith',
       userRole: currentPath === '/runs/demo-run' ? 'Admin' : 'Owner',
-      createLabel: '+  Create',
-      navItems: detailNav,
+      createLabel: currentPath === '/runs/demo-run' ? '' : '+  Create',
+      navItems: currentPath === '/runs/demo-run' ? runConsoleNav : detailNav,
       bottom: currentPath === '/runs/demo-run' ? 'workspace' : 'product',
       mainClass: currentPath === '/runs/demo-run' ? 'px-[26px] py-[16px]' : 'px-[30px] py-[12px]',
     };
@@ -481,7 +497,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
                 </svg>
               </div>
             ) : null}
-            <button className="h-[44px] rounded-lg bg-[#0f6bff] px-6 text-[15px] font-bold text-white shadow-[0_10px_20px_rgba(15,98,255,0.18)] hover:bg-brand-700">{profile.createLabel}</button>
+            {profile.createLabel ? <button className="h-[44px] rounded-lg bg-[#0f6bff] px-6 text-[15px] font-bold text-white shadow-[0_10px_20px_rgba(15,98,255,0.18)] hover:bg-brand-700">{profile.createLabel}</button> : null}
             <div className="h-10 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <UserAvatar />

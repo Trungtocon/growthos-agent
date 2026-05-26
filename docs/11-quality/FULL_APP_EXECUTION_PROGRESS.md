@@ -24,7 +24,8 @@
 | 5M | Convert admin, security, billing, and help routes | Complete | Pending | Build, bbox 50-55, parity reference 50-55 | Screens 50-55 now render Real UI components with structural gates |
 | 5N | Final full app exit gate | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, bbox 08-55, onboarding parity 7/7, static guardrail, pixel reference 08-55 | Full manifest route coverage verified; pixel polish remains deferred |
 | 5O | Screen 26 visual polish and accessibility smoke hardening | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, a11y smoke 48/48, bbox 08-55, onboarding parity 7/7, Screen 26 pixel 11.2214% | Screen 26 recalibrated to the PNG reference and no longer exceeds the 15% polish safety gate |
-| 5P+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
+| 5P | Screen 34 Run Console shell polish | Complete | Pending | Build, data validation, smoke 48/48, interactions 7/7, workflow 5/5, a11y smoke 48/48, bbox 34, onboarding parity 7/7, Screen 34 pixel 12.2634% | Run Console route-specific AppShell polish reduced topbar/sidebar mismatch without changing structural contract |
+| 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed
 
