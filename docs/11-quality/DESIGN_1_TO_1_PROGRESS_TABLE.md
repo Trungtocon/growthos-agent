@@ -57,7 +57,7 @@
 | 31 - Tickets List | Quản lý ticket, run console và artifact | `/tickets/list` | Real UI structural pass | 92.6968% |
 | 32 - Ticket Detail | Quản lý ticket, run console và artifact | `/tickets/demo-ticket` | Real UI structural pass | 92.2628% |
 | 33 - Create Ticket Wizard | Quản lý ticket, run console và artifact | `/tickets/new` | Real UI structural pass | 91.4178% |
-| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 87.8266% |
+| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 89.9849% |
 | 35 - Artifacts Library | Quản lý ticket, run console và artifact | `/artifacts` | Real UI structural pass | 93.2318% |
 | 36 - Artifact Detail / Review | Quản lý ticket, run console và artifact | `/artifacts/demo-artifact` | Real UI structural pass | 93.4793% |
 | 37 - Approval Center | Phê duyệt, chính sách, audit và rủi ro | `/approvals` | Real UI structural pass | 91.3603% |
@@ -84,8 +84,8 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 34 - Run Console | `/runs/demo-run` | 87.8266% |
-| 2 | 26 - Agent Performance | `/agents/performance` | 88.7786% |
-| 3 | 17 - Projects List | `/projects` | 88.8329% |
-| 4 | 25 - Agent Template Gallery | `/agents/templates` | 89.0293% |
-| 5 | 21 - Org Chart View | `/org-chart` | 89.3009% |
+| 1 | 26 - Agent Performance | `/agents/performance` | 88.7786% |
+| 2 | 17 - Projects List | `/projects` | 88.8329% |
+| 3 | 25 - Agent Template Gallery | `/agents/templates` | 89.0293% |
+| 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |
+| 5 | 34 - Run Console | `/runs/demo-run` | 89.9849% |

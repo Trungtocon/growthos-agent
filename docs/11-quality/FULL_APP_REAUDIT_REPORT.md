@@ -92,7 +92,7 @@ The route map is broad but product coverage is not yet broad. `ScreenPage` keeps
 | 30 | `/tickets` | Pixel polish deferred, 10.6961% reference diff | Pass 12/12 | Pass | Real UI structural baseline |
 | 31,33,35-36 | Work execution support | Pixel polish deferred, 6.5207%-8.5822% reference diff | Pass 31/31 | Pass | Work execution support wave promoted in Sprint 5I |
 | 32 | `/tickets/demo-ticket` | Pixel polish deferred, 7.7372% reference diff | Pass 15/15 | Pass | Real UI structural baseline |
-| 34 | `/runs/demo-run` | Pixel polish deferred, 12.5042% reference diff | Pass 16/16 | Pass | Real UI structural baseline |
+| 34 | `/runs/demo-run` | Pixel polish deferred, 10.0151% reference diff | Pass 16/16 | Pass | Real UI structural baseline |
 | 37 | `/approvals` | Pixel polish deferred, 8.6397% reference diff | Pass 13/13 | Pass | Real UI structural baseline |
 | 38-41 | Governance support | Pixel polish deferred, 7.8260%-9.3348% reference diff | Pass 32/32 | Pass | Governance support wave promoted in Sprint 5J |
 | 42-45 | Budget and reporting | Pixel polish deferred, 6.8316%-9.2909% reference diff | Pass 32/32 | Pass | Budget/reporting wave promoted in Sprint 5K |
