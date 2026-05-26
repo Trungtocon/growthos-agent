@@ -44,7 +44,7 @@
 | 18 - Project Detail | Quản trị công ty, mục tiêu và dự án | `/projects/demo-project` | Real UI structural pass | 90.7039% |
 | 19 - Create Project Wizard | Quản trị công ty, mục tiêu và dự án | `/projects/new` | Real UI structural pass | 92.4034% |
 | 20 - AI Workforce Overview | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/workforce` | Real UI structural pass | 90.5682% |
-| 21 - Org Chart View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/org-chart` | Real UI structural pass | 88.5835% |
+| 21 - Org Chart View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/org-chart` | Real UI structural pass | 88.8979% |
 | 22 - Agents List | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents` | Real UI structural pass | 91.4622% |
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
@@ -57,7 +57,7 @@
 | 31 - Tickets List | Quản lý ticket, run console và artifact | `/tickets/list` | Real UI structural pass | 92.6968% |
 | 32 - Ticket Detail | Quản lý ticket, run console và artifact | `/tickets/demo-ticket` | Real UI structural pass | 92.2628% |
 | 33 - Create Ticket Wizard | Quản lý ticket, run console và artifact | `/tickets/new` | Real UI structural pass | 91.4178% |
-| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 87.7366% |
+| 34 - Run Console | Quản lý ticket, run console và artifact | `/runs/demo-run` | Real UI structural pass | 87.8266% |
 | 35 - Artifacts Library | Quản lý ticket, run console và artifact | `/artifacts` | Real UI structural pass | 93.2318% |
 | 36 - Artifact Detail / Review | Quản lý ticket, run console và artifact | `/artifacts/demo-artifact` | Real UI structural pass | 93.4793% |
 | 37 - Approval Center | Phê duyệt, chính sách, audit và rủi ro | `/approvals` | Real UI structural pass | 91.3603% |
@@ -84,8 +84,8 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 34 - Run Console | `/runs/demo-run` | 87.7366% |
-| 2 | 21 - Org Chart View | `/org-chart` | 88.5835% |
-| 3 | 26 - Agent Performance | `/agents/performance` | 88.7786% |
-| 4 | 17 - Projects List | `/projects` | 88.8329% |
+| 1 | 34 - Run Console | `/runs/demo-run` | 87.8266% |
+| 2 | 26 - Agent Performance | `/agents/performance` | 88.7786% |
+| 3 | 17 - Projects List | `/projects` | 88.8329% |
+| 4 | 21 - Org Chart View | `/org-chart` | 88.8979% |
 | 5 | 25 - Agent Template Gallery | `/agents/templates` | 89.0293% |
