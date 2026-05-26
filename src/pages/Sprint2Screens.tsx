@@ -1919,26 +1919,114 @@ function CreateGoalScreen() {
 
 function ProjectsListScreen() {
   const vm = selectProjectsListViewModel();
+  const projectKpiIcons = [Folder, Play, AlertTriangle, Target, CheckCircle2, CircleDollarSign];
   return (
     <div>
-      <SimpleHeader parityId="projects.header" title="Projects" subtitle="Quan ly cac chuong trinh thuc thi lien ket voi muc tieu va agent." actions={<Button><Folder className="h-4 w-4" />Tao project</Button>} />
-      <MetricBand parityId="projects.kpi-band" items={vm.kpis} />
-      <div data-parity-id="projects.main-grid" className="mt-4 grid h-[578px] grid-cols-[1fr_360px] gap-5 overflow-hidden">
-        <div data-parity-id="projects.list-panel" className="h-full overflow-hidden">
-          <Panel title="Project portfolio" className="h-full overflow-hidden">
-            <div className="space-y-4 p-5">{vm.projects.map((project) => <ProjectCard key={project.id} project={project} />)}</div>
-          </Panel>
+      <SimpleHeader
+        parityId="projects.header"
+        title="Projects"
+        subtitle="Quản lý các dự án đang biến mục tiêu kinh doanh thành kết quả thực thi"
+        actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Import Project</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button><Folder className="h-4 w-4" />Tạo dự án mới</Button></>}
+      />
+      <div data-parity-id="projects.kpi-band" className="mt-[2px] grid h-[88px] grid-cols-6 gap-3 overflow-hidden">
+        {vm.kpis.map((item, index) => <ProjectKpiCard key={item.label} label={item.label} value={item.value} tone={item.tone} icon={projectKpiIcons[index] ?? Folder} />)}
+      </div>
+      <div data-parity-id="projects.main-grid" className="mt-2 grid h-[672px] grid-cols-[1fr_280px] gap-4 overflow-hidden">
+        <div className="min-h-0 overflow-hidden">
+          <div data-parity-id="projects.filters" className="flex h-[36px] items-center justify-between gap-3">
+            <div className="flex gap-2">{['Status', 'Goal', 'Owner', 'Agent', 'Priority', 'Due date', 'Project type'].map((filter) => <button key={filter} className="h-9 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-500">{filter}</button>)}</div>
+            <div className="grid h-9 grid-cols-3 overflow-hidden rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-500">
+              {['Board', 'List', 'Timeline'].map((view, index) => <button key={view} className={`px-7 ${index === 0 ? 'bg-[#0f6bff] text-white' : ''}`}>{view}</button>)}
+            </div>
+          </div>
+          <div data-parity-id="projects.board" className="mt-3 grid h-[392px] grid-cols-5 gap-3 overflow-hidden">
+            {vm.projectColumns.map((column) => <ProjectColumn key={column.id} column={column} />)}
+          </div>
+          <div data-parity-id="projects.health-overview" className="mt-3 h-[220px] overflow-hidden">
+            <Panel title="Project Health Overview" action={<button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500">30 ngày qua</button>} className="h-full overflow-hidden">
+              <ProjectHealthOverview statusBreakdown={vm.statusBreakdown} costBars={vm.costBars} />
+            </Panel>
+          </div>
         </div>
         <div data-parity-id="projects.side-panel" className="h-full overflow-hidden">
           <Panel title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-violet-600" />Gợi ý từ AI</span>} className="h-full overflow-hidden">
-            <div className="space-y-4 p-5">
+            <div className="space-y-3 p-3">
               {vm.recommendations.map((item) => {
                 const Icon = item.tone === 'red' ? AlertTriangle : item.tone === 'amber' ? Clock3 : item.tone === 'purple' ? CircleDollarSign : Bot;
-                return <div key={item.id} className={`rounded-xl border p-4 ${item.tone === 'red' ? 'border-red-100 bg-red-50/60' : item.tone === 'amber' ? 'border-amber-100 bg-amber-50/60' : item.tone === 'purple' ? 'border-violet-100 bg-violet-50/60' : 'border-blue-100 bg-blue-50/60'}`}><div className="flex items-start gap-3"><IconBubble icon={Icon} tone={item.tone as Tone} /><div className="min-w-0 flex-1"><b className="block text-slate-950">{item.title}</b><p className="mt-1 text-sm text-slate-600">{item.text}</p><button className="mt-3 text-sm font-bold text-[#0f6bff]">Xem chi tiết →</button></div></div></div>;
+                return <div key={item.id} className={`rounded-xl border p-3 ${item.tone === 'red' ? 'border-red-100 bg-red-50/60' : item.tone === 'amber' ? 'border-amber-100 bg-amber-50/60' : item.tone === 'purple' ? 'border-violet-100 bg-violet-50/60' : 'border-blue-100 bg-blue-50/60'}`}><div className="flex items-start gap-3"><IconBubble icon={Icon} tone={item.tone as Tone} /><div className="min-w-0 flex-1"><b className="block text-sm text-slate-950">{item.title}</b><p className="mt-1 text-xs leading-5 text-slate-600">{item.text}</p><button className="mt-2 text-xs font-bold text-[#0f6bff]">Xem chi tiết →</button></div></div></div>;
               })}
               <Button variant="secondary" className="w-full"><Sparkles className="h-4 w-4" />Xem tất cả gợi ý</Button>
             </div>
           </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectKpiCard({ label, value, tone, icon: Icon }: { label: string; value: string; tone: Tone; icon: LucideIcon }) {
+  const toneClass: { icon: string; soft: string } = {
+    blue: { icon: 'text-blue-600', soft: 'bg-blue-50' },
+    cyan: { icon: 'text-cyan-600', soft: 'bg-cyan-50' },
+    green: { icon: 'text-emerald-600', soft: 'bg-emerald-50' },
+    amber: { icon: 'text-amber-600', soft: 'bg-amber-50' },
+    red: { icon: 'text-red-600', soft: 'bg-red-50' },
+    purple: { icon: 'text-violet-600', soft: 'bg-violet-50' },
+    slate: { icon: 'text-slate-600', soft: 'bg-slate-100' },
+  }[tone];
+  return (
+    <div className="flex h-full items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+      <div className={`grid h-[52px] w-[52px] shrink-0 place-items-center rounded-xl ${toneClass.soft} ${toneClass.icon}`}>
+        <Icon className="h-7 w-7" />
+      </div>
+      <div className="min-w-0">
+        <div className="truncate text-xs font-medium text-slate-500">{label}</div>
+        <div className="mt-1 text-2xl font-bold leading-none tracking-tight text-slate-950">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectColumn({ column }: { column: ReturnType<typeof selectProjectsListViewModel>['projectColumns'][number] }) {
+  return (
+    <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white">
+      <div className="flex h-9 items-center justify-between border-b border-slate-100 px-3 text-xs font-bold text-slate-700"><span>{column.title}</span><Badge tone={column.tone as Tone}>{column.items.length}</Badge></div>
+      <div className="min-h-0 flex-1 space-y-2 overflow-hidden p-2">
+        {column.items.map((project) => <ProjectKanbanCard key={project.title} project={project} />)}
+      </div>
+      <button className="h-9 border-t border-slate-100 text-xs font-semibold text-slate-500">+ Thêm dự án</button>
+    </div>
+  );
+}
+
+function ProjectKanbanCard({ project }: { project: ReturnType<typeof selectProjectsListViewModel>['projectColumns'][number]['items'][number] }) {
+  return (
+    <div className={`rounded-lg border p-2.5 text-xs ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
+      <div className="flex items-start justify-between gap-2"><b className="leading-4 text-slate-950">{project.title}</b><Badge tone={project.tone}> {project.tone === 'green' ? 'Hoàn thành' : project.column}</Badge></div>
+      <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-slate-500">Goal: {project.title.includes('Marketing') ? 'Tự động hóa content' : project.title.includes('CRM') ? 'Tăng hiệu quả chăm sóc lead' : 'Nâng cấp vận hành AI'}</p>
+      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500"><span>Owner</span><span>{project.owner}</span></div>
+      <div className="mt-2"><div className="mb-1 flex justify-between text-[11px] font-bold text-slate-600"><span>{project.progress}%</span><span>{project.cost}</span></div><ProgressBar value={project.progress} tone={project.tone} label={`${project.title} progress`} /></div>
+      <div className="mt-2 flex justify-between text-[11px] text-slate-500"><span>{project.tickets} tickets</span><span>{project.due}</span></div>
+    </div>
+  );
+}
+
+function ProjectHealthOverview({ statusBreakdown, costBars }: { statusBreakdown: ReturnType<typeof selectProjectsListViewModel>['statusBreakdown']; costBars: ReturnType<typeof selectProjectsListViewModel>['costBars'] }) {
+  const maxCost = Math.max(...costBars.map((item) => item.value));
+  const toneColor: Record<Tone, string> = { blue: '#0f6bff', cyan: '#06b6d4', green: '#22c55e', amber: '#f59e0b', red: '#ef4444', purple: '#8b5cf6', slate: '#64748b' };
+  return (
+    <div className="grid h-full grid-cols-[300px_1fr] gap-4 p-4">
+      <div className="rounded-xl border border-slate-100 p-4">
+        <div className="mb-2 text-xs font-bold text-slate-500">Phân bổ tình trạng dự án</div>
+        <div className="flex items-center gap-5">
+          <div className="grid h-32 w-32 place-items-center rounded-full" style={{ background: 'conic-gradient(#06b6d4 0 50%, #f59e0b 50% 72%, #ef4444 72% 83%, #22c55e 83% 100%)' }}><div className="grid h-[72px] w-[72px] place-items-center rounded-full bg-white text-center"><b className="text-2xl">18</b><span className="text-[11px] text-slate-500">Tổng dự án</span></div></div>
+          <div className="flex-1 space-y-2">{statusBreakdown.map((item) => <div key={item.label} className="flex items-center justify-between text-xs"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ background: toneColor[item.tone] }} />{item.label}</span><b>{item.value}</b></div>)}</div>
+        </div>
+      </div>
+      <div className="rounded-xl border border-slate-100 p-4">
+        <div className="mb-3 text-xs font-bold text-slate-500">Chi phí AI theo dự án</div>
+        <div className="flex h-[130px] items-end gap-4 border-b border-slate-100 px-3">
+          {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(20, (item.value / maxCost) * 112)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
         </div>
       </div>
     </div>

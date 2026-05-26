@@ -819,13 +819,48 @@ function projectRows() {
 export function selectProjectsListViewModel() {
   const projects = projectRows();
   const blocked = projects.filter((project) => project.status !== 'On track').length;
+  const projectTemplates = [
+    { title: 'AI Chatbot Upgrade', column: 'Lên kế hoạch', progress: 18, owner: 'Product Agent', tone: 'blue', cost: '$260', tickets: 15, due: '15/08/2024' },
+    { title: 'Data Warehouse Build', column: 'Lên kế hoạch', progress: 22, owner: 'Data Engineer Agent', tone: 'purple', cost: '$220', tickets: 8, due: '20/08/2024' },
+    { title: 'HR Onboarding Flow', column: 'Lên kế hoạch', progress: 12, owner: 'HR Agent', tone: 'amber', cost: '$180', tickets: 6, due: '01/09/2024' },
+    { title: 'GrowthOS V2 UI Parity', column: 'Đang triển khai', progress: 78, owner: 'CTO Agent', tone: 'cyan', cost: '$1,450', tickets: 16, due: '30/06/2024' },
+    { title: 'Weekly CEO Reporting', column: 'Đang triển khai', progress: 84, owner: 'Report Agent', tone: 'blue', cost: '$360', tickets: 6, due: '30/06/2024' },
+    { title: 'Marketing Content Factory', column: 'Có rủi ro', progress: 64, owner: 'CMO Agent', tone: 'amber', cost: '$1,120', tickets: 24, due: '15/07/2024' },
+    { title: 'Social Media Automation', column: 'Có rủi ro', progress: 45, owner: 'Content Agent', tone: 'amber', cost: '$420', tickets: 9, due: '05/07/2024' },
+    { title: 'CRM Automation Setup', column: 'Bị chặn', progress: 52, owner: 'Automation Agent', tone: 'red', cost: '$980', tickets: 18, due: '31/07/2024' },
+    { title: 'Billing System Integration', column: 'Bị chặn', progress: 38, owner: 'Finance Agent', tone: 'red', cost: '$310', tickets: 7, due: '12/07/2024' },
+    { title: 'Brand Guidelines 2024', column: 'Hoàn thành', progress: 100, owner: 'Design Agent', tone: 'green', cost: '$90', tickets: 3, due: '15/06/2024' },
+    { title: 'Website Redesign', column: 'Hoàn thành', progress: 100, owner: 'Web Agent', tone: 'green', cost: '$160', tickets: 4, due: '10/06/2024' },
+    { title: 'Lead Scoring Model', column: 'Hoàn thành', progress: 100, owner: 'Data Scientist Agent', tone: 'green', cost: '$130', tickets: 5, due: '05/06/2024' },
+  ] satisfies Array<{ title: string; column: string; progress: number; owner: string; tone: Metric['tone']; cost: string; tickets: number; due: string }>;
+  const projectColumns = ['Lên kế hoạch', 'Đang triển khai', 'Có rủi ro', 'Bị chặn', 'Hoàn thành'].map((column) => ({
+    id: column,
+    title: column,
+    tone: column === 'Hoàn thành' ? 'green' : column === 'Bị chặn' ? 'red' : column === 'Có rủi ro' ? 'amber' : column === 'Đang triển khai' ? 'cyan' : 'blue',
+    items: projectTemplates.filter((project) => project.column === column),
+  }));
+  const costBars = projectTemplates.slice(3, 11).map((project) => ({
+    label: project.title,
+    value: Number(project.cost.replace(/[$,]/g, '')),
+  }));
   return {
     projects,
+    projectColumns,
+    costBars,
+    statusBreakdown: [
+      { label: 'Đang triển khai', value: 9, tone: 'cyan' },
+      { label: 'Có rủi ro', value: 4, tone: 'amber' },
+      { label: 'Bị chặn', value: 2, tone: 'red' },
+      { label: 'Hoàn thành', value: 3, tone: 'green' },
+      { label: 'Lên kế hoạch', value: 4, tone: 'purple' },
+    ] satisfies Array<{ label: string; value: number; tone: Metric['tone'] }>,
     kpis: [
-      { label: 'Projects', value: String(projects.length), tone: 'blue' },
-      { label: 'On track', value: String(projects.filter((project) => project.status === 'On track').length), tone: 'green' },
-      { label: 'Needs attention', value: String(projects.filter((project) => project.status !== 'On track').length), tone: 'amber' },
-      { label: 'Linked tickets', value: String(projects.reduce((sum, project) => sum + project.tickets.length, 0)), tone: 'cyan' },
+      { label: 'Tổng dự án', value: '18', tone: 'blue' },
+      { label: 'Đang triển khai', value: '9', tone: 'cyan' },
+      { label: 'Có rủi ro', value: '4', tone: 'amber' },
+      { label: 'Bị chặn', value: '2', tone: 'red' },
+      { label: 'Hoàn thành', value: '3', tone: 'green' },
+      { label: 'Chi phí AI', value: '$6,240', tone: 'purple' },
     ] satisfies KpiViewModel[],
     recommendations: [
       { id: 'blocked-projects', title: `${Math.max(2, blocked)} dự án đang bị chặn`, text: 'do chờ approval', tone: 'red' },
