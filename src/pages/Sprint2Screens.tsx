@@ -2204,7 +2204,7 @@ function AgentPerformanceScreen() {
   const kpiIcons = [Gauge, CheckCircle2, Target, CircleDollarSign, AlertTriangle, Users];
   return (
     <div>
-      <div data-parity-id="agent-performance.header" className="flex min-h-[68px] items-start justify-between gap-4">
+      <div data-parity-id="agent-performance.header" className="flex h-[48px] items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <span className="mt-1 grid h-9 w-9 place-items-center rounded-xl bg-blue-50 text-[#0f6bff]">
             <BarChart3 className="h-6 w-6" />

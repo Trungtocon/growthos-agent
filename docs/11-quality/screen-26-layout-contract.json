@@ -3,20 +3,20 @@
   "source": {
     "reference": "public/stitch_ui/26_Agent_Performance.png",
     "contractSource": "sprint-5o-reference-recalibrated-real-ui-dom",
-    "exception": "Sprint 5O recalibrates Screen 26 content regions and route-specific AppShell profile because the previous contract measured the simplified 5H implementation rather than the source PNG structure."
+    "exception": "Sprint 5O recalibrated Screen 26 content regions and route-specific AppShell profile because the previous contract measured the simplified 5H implementation rather than the source PNG structure. Sprint 5R follow-up compacts the header from 68px to 48px and shifts the content regions up 20px to better match public/stitch_ui/26_Agent_Performance.png."
   },
   "regions": {
     "app-shell.sidebar": { "x": 0, "y": 0, "width": 204, "height": 941, "tolerance": 8 },
     "app-shell.topbar": { "x": 204, "y": 0, "width": 1468, "height": 60, "tolerance": 8 },
-    "app-shell.main": { "x": 222, "y": 80, "width": 1432, "height": 872, "tolerance": 16 },
-    "agent-performance.header": { "x": 222, "y": 80, "width": 1432, "height": 68, "tolerance": 16 },
-    "agent-performance.kpi-band": { "x": 222, "y": 164, "width": 1432, "height": 112, "tolerance": 16 },
-    "agent-performance.main-grid": { "x": 222, "y": 296, "width": 1432, "height": 656, "tolerance": 16 },
-    "agent-performance.ranking-panel": { "x": 222, "y": 296, "width": 320, "height": 332, "tolerance": 16 },
-    "agent-performance.table-panel": { "x": 558, "y": 296, "width": 660, "height": 332, "tolerance": 16 },
-    "agent-performance.analysis-panel": { "x": 1234, "y": 296, "width": 420, "height": 332, "tolerance": 16 },
-    "agent-performance.scatter-panel": { "x": 222, "y": 644, "width": 996, "height": 308, "tolerance": 16 },
-    "agent-performance.recommendations-panel": { "x": 1234, "y": 644, "width": 420, "height": 168, "tolerance": 16 },
-    "agent-performance.attention-panel": { "x": 1234, "y": 828, "width": 420, "height": 124, "tolerance": 16 }
+    "app-shell.main": { "x": 222, "y": 80, "width": 1432, "height": 852, "tolerance": 16 },
+    "agent-performance.header": { "x": 222, "y": 80, "width": 1432, "height": 48, "tolerance": 16 },
+    "agent-performance.kpi-band": { "x": 222, "y": 144, "width": 1432, "height": 112, "tolerance": 16 },
+    "agent-performance.main-grid": { "x": 222, "y": 276, "width": 1432, "height": 656, "tolerance": 16 },
+    "agent-performance.ranking-panel": { "x": 222, "y": 276, "width": 320, "height": 332, "tolerance": 16 },
+    "agent-performance.table-panel": { "x": 558, "y": 276, "width": 660, "height": 332, "tolerance": 16 },
+    "agent-performance.analysis-panel": { "x": 1234, "y": 276, "width": 420, "height": 332, "tolerance": 16 },
+    "agent-performance.scatter-panel": { "x": 222, "y": 624, "width": 996, "height": 308, "tolerance": 16 },
+    "agent-performance.recommendations-panel": { "x": 1234, "y": 624, "width": 420, "height": 168, "tolerance": 16 },
+    "agent-performance.attention-panel": { "x": 1234, "y": 808, "width": 420, "height": 124, "tolerance": 16 }
   }
 }
