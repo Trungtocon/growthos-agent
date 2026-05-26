@@ -42,7 +42,7 @@ type ShellProfile = {
   userRole: string;
   createLabel: string;
   navItems: NavItem[];
-  bottom: 'command' | 'copilot' | 'workspace' | 'product' | 'none';
+  bottom: 'command' | 'copilot' | 'workspace' | 'project' | 'product' | 'none';
   mainClass: string;
   sidebarPaddingY?: number;
   sidebarTheme?: 'light' | 'dark';
@@ -276,7 +276,7 @@ function shellProfile(currentPath: string): ShellProfile {
       userRole: 'Owner',
       createLabel: '+  Create',
       navItems: executiveNav,
-      bottom: 'workspace',
+      bottom: 'project',
       mainClass: 'px-[22px] py-[18px]',
     };
   }
@@ -427,6 +427,33 @@ function BottomPanel({ type, dark = false }: { type: ShellProfile['bottom']; dar
         </div>
         <div className="mt-3 text-xs font-semibold text-emerald-600">• Pro Plan</div>
       </div>
+    );
+  }
+
+  if (type === 'project') {
+    return (
+      <>
+        <div className="absolute bottom-[138px] left-3 right-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-lg bg-[#eaf3ff] text-[#0f6bff]">
+              <LayoutDashboard className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-xs text-slate-500">Demo Workspace</div>
+              <div className="truncate text-sm font-semibold text-slate-700">Enterprise Plan</div>
+            </div>
+            <span className="text-slate-500">v</span>
+          </div>
+        </div>
+        <div className="absolute bottom-[28px] left-3 right-3 flex items-center gap-3 rounded-xl bg-white px-4 py-3">
+          <UserAvatar />
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-bold text-slate-900">Alex Nguyen</div>
+            <div className="text-xs text-slate-500">Owner</div>
+          </div>
+          <span className="text-slate-500">^</span>
+        </div>
+      </>
     );
   }
 

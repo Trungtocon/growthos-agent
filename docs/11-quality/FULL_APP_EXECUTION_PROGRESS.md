@@ -43,6 +43,7 @@
 | 5R-performance-topbar-search | Agent Performance topbar search alignment polish | Partial | Pending | Build pass, bbox 26 pass 12/12, Screen 26 pixel reference pass at 11.0162% | Reduced the Agent Performance route company/search gap to better align the search field with the PNG reference |
 | 5R-run-progress-icon | Run Console progress KPI icon polish | Partial | Pending | Build pass, bbox 34 pass 16/16, Screen 34 pixel reference pass at 9.9969% | Replaced the run progress KPI play icon with a gauge icon, improving Screen 34 from 9.9979% to 9.9969% |
 | 5R-performance-header-geometry | Agent Performance header geometry polish | Partial | Pending | Build pass, bbox 26 pass 12/12, Screen 26 pixel reference pass at 10.8215% | Compacted the Screen 26 header from 68px to 48px and shifted KPI/main regions up 20px to match the PNG reference more closely |
+| 5R-projects-sidebar-bottom | Projects sidebar bottom section polish | Partial | Pending | Build pass, bbox 17 pass 10/10, five-screen pixel reference pass | Screen 17 improved from 12.3208% to 12.3122% by restoring the PNG's separate workspace and user sections in the Projects AppShell sidebar |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed
