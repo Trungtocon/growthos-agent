@@ -40,7 +40,7 @@
 | 14 - Goals Dashboard | Quản trị công ty, mục tiêu và dự án | `/goals` | Real UI structural pass | 90.9209% |
 | 15 - Goal Detail | Quản trị công ty, mục tiêu và dự án | `/goals/demo-goal` | Real UI structural pass | 92.5892% |
 | 16 - Create Goal Wizard | Quản trị công ty, mục tiêu và dự án | `/goals/new` | Real UI structural pass | 93.1915% |
-| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 87.8067% |
+| 17 - Projects List | Quản trị công ty, mục tiêu và dự án | `/projects` | Real UI structural pass | 87.9960% |
 | 18 - Project Detail | Quản trị công ty, mục tiêu và dự án | `/projects/demo-project` | Real UI structural pass | 90.7039% |
 | 19 - Create Project Wizard | Quản trị công ty, mục tiêu và dự án | `/projects/new` | Real UI structural pass | 92.4034% |
 | 20 - AI Workforce Overview | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/workforce` | Real UI structural pass | 90.5682% |
@@ -84,7 +84,7 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 17 - Projects List | `/projects` | 87.8067% |
+| 1 | 17 - Projects List | `/projects` | 87.9960% |
 | 2 | 25 - Agent Template Gallery | `/agents/templates` | 89.1427% |
 | 3 | 26 - Agent Performance | `/agents/performance` | 89.2076% |
 | 4 | 08 - Executive Command Center | `/command-center` | 89.4744% |
