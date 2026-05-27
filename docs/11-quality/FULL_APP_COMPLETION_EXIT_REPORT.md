@@ -45,6 +45,7 @@
 - Pixel-perfect 1:1 parity is not complete for authenticated Real UI routes.
 - Screen 26 `/agents/performance` was recalibrated in Sprint 5O and further polished to 10.8215%, below the 15% polish safety gate.
 - Screen 17 `/projects` was further polished to 12.3122% by restoring the separate workspace and user sections in the Projects sidebar bottom area.
+- Screen 17 `/projects` was further polished to 12.1933% by increasing active/risk/blocked board card density and metadata to better match the source PNG.
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.
 - Screen 26 `/agents/performance` was further polished to 10.7924% by compacting the optimization recommendation rows.

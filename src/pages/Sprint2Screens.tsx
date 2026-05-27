@@ -2003,16 +2003,42 @@ function ProjectColumn({ column }: { column: ReturnType<typeof selectProjectsLis
 function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof selectProjectsListViewModel>['projectColumns'][number]['items'][number] }) {
   const statusLabel = project.tone === 'green' ? 'Hoàn thành' : project.column;
   const goal = project.title.includes('Marketing') ? 'Tự động hóa content' : project.title.includes('CRM') ? 'Tăng hiệu quả chăm sóc lead' : 'Nâng cấp vận hành AI';
+  const isPlanning = project.column.includes('kế hoạch');
+  const isDense = project.tone === 'cyan' || project.tone === 'amber' || project.tone === 'red';
+  const heightClass = isDense ? 'h-[154px]' : isPlanning ? 'h-[88px]' : 'h-[96px]';
+  const dotColors = project.tone === 'red' ? ['bg-blue-500', 'bg-amber-400', 'bg-slate-700'] : project.tone === 'amber' ? ['bg-violet-500', 'bg-cyan-500', 'bg-slate-700'] : ['bg-blue-500', 'bg-amber-400', 'bg-cyan-500', 'bg-slate-700'];
   return (
-    <div className={`h-[96px] overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
+    <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-2">
         <b className="line-clamp-2 max-w-[108px] leading-3 text-slate-950">{project.title}</b>
         <span className={`shrink-0 rounded-md border px-2 py-1 text-[10px] font-semibold leading-3 ${project.tone === 'red' ? 'border-red-200 bg-red-50 text-red-600' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-600' : project.tone === 'green' ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-cyan-200 bg-cyan-50 text-cyan-600'}`}>{statusLabel}</span>
       </div>
       <p className="mt-1 truncate text-[10px] leading-3 text-slate-500">Goal: {goal}</p>
       <div className="mt-1 flex items-center justify-between text-[10px] text-slate-500"><span>Owner</span><span className="truncate pl-2">{project.owner}</span></div>
-      <div className="mt-1"><div className="mb-0.5 flex justify-between text-[10px] font-bold text-slate-600"><span>{project.progress}%</span><span>{project.cost}</span></div><ProgressBar value={project.progress} tone={project.tone} height={5} label={`${project.title} progress`} /></div>
-      <div className="mt-1 flex justify-between text-[10px] text-slate-500"><span>{project.tickets} tickets</span><span>{project.due}</span></div>
+      {!isPlanning ? (
+        <>
+          <div className="mt-2">
+            <div className="mb-1 flex justify-between text-[10px] font-bold text-slate-600"><span>{project.progress}%</span><span>{project.cost}</span></div>
+            <ProgressBar value={project.progress} tone={project.tone} height={5} label={`${project.title} progress`} />
+          </div>
+          {isDense ? (
+            <div className="mt-2 flex items-end justify-between">
+              <div>
+                <div className="text-[9px] font-semibold text-slate-400">Agents</div>
+                <div className="mt-1 flex -space-x-1">
+                  {dotColors.map((color, index) => <span key={`${project.title}-${color}-${index}`} className={`h-4 w-4 rounded-full border border-white ${color}`} />)}
+                  <span className="grid h-4 w-4 place-items-center rounded-full border border-white bg-slate-100 text-[8px] font-bold text-slate-500">+1</span>
+                </div>
+              </div>
+              <div className="text-right text-[9px] font-semibold text-slate-500">AI Cost</div>
+            </div>
+          ) : null}
+        </>
+      ) : null}
+      <div className="mt-2 flex justify-between text-[10px] text-slate-500">
+        <span className="flex items-center gap-1"><Ticket className="h-3 w-3" />{project.tickets}</span>
+        <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{project.due}</span>
+      </div>
     </div>
   );
 }
