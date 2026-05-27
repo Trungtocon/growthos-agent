@@ -48,6 +48,7 @@
 | 5R-templates-gallery-columns | Agent Templates gallery column parity polish | Partial | Pending | Build pass, bbox 25 pass 8/8, Screen 25 pixel reference pass at 10.8573% | Screen 25 improved from 10.9105% to 10.8573% by matching the gallery to the PNG's three-column template grid while preserving the structural contract |
 | 5R-performance-recommendation-density | Agent Performance recommendation density polish | Partial | Pending | Build pass, bbox 26 pass 12/12, Screen 26 pixel reference pass at 10.7924% | Screen 26 improved from 10.8215% to 10.7924% by compacting the optimization recommendation rows so the panel better matches the PNG density |
 | 5R-projects-board-density | Projects board card density polish | Partial | Pending | Build pass, bbox 17 pass 10/10, Screen 17 pixel reference pass at 12.1933% | Screen 17 improved from 12.3122% to 12.1933% by matching active/risk/blocked project card density and metadata closer to the PNG board layout |
+| 5R-org-ticket-density | Org Chart and Tickets density polish | Partial | Pending | Build pass, bbox 21 pass 10/10, bbox 30 pass 12/12, pixel reference pass at 10.5198% and 10.4584% | Screen 21 improved from 10.6991% to 10.5198% by matching org node widths closer to the PNG; Screen 30 improved from 10.5671% to 10.4584% by compacting ticket board cards |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed

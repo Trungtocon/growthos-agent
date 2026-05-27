@@ -49,6 +49,8 @@
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.
 - Screen 26 `/agents/performance` was further polished to 10.7924% by compacting the optimization recommendation rows.
+- Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
+- Screen 30 `/tickets` was further polished to 10.4584% by compacting ticket board cards to better match the PNG density.
 - Pixel-perfect 1:1 parity still requires additional authenticated-route polish beyond structural acceptance.
 - Backend integration remains mock-only by design.
 - Accessibility now has a lightweight Playwright smoke gate across 48 Real UI routes; this is not a full WCAG certification.

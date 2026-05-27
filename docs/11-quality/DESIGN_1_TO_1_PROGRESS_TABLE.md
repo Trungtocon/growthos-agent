@@ -44,7 +44,7 @@
 | 18 - Project Detail | Quản trị công ty, mục tiêu và dự án | `/projects/demo-project` | Real UI structural pass | 90.7039% |
 | 19 - Create Project Wizard | Quản trị công ty, mục tiêu và dự án | `/projects/new` | Real UI structural pass | 92.4034% |
 | 20 - AI Workforce Overview | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/workforce` | Real UI structural pass | 90.5682% |
-| 21 - Org Chart View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/org-chart` | Real UI structural pass | 89.3009% |
+| 21 - Org Chart View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/org-chart` | Real UI structural pass | 89.4802% |
 | 22 - Agents List | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents` | Real UI structural pass | 91.4622% |
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
@@ -53,7 +53,7 @@
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
 | 29 - Toolsets & Permissions | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/tools/permissions` | Real UI structural pass | 91.9245% |
-| 30 - Tickets Board | Quản lý ticket, run console và artifact | `/tickets` | Real UI structural pass | 89.3039% |
+| 30 - Tickets Board | Quản lý ticket, run console và artifact | `/tickets` | Real UI structural pass | 89.5416% |
 | 31 - Tickets List | Quản lý ticket, run console và artifact | `/tickets/list` | Real UI structural pass | 92.6968% |
 | 32 - Ticket Detail | Quản lý ticket, run console và artifact | `/tickets/demo-ticket` | Real UI structural pass | 92.2628% |
 | 33 - Create Ticket Wizard | Quản lý ticket, run console và artifact | `/tickets/new` | Real UI structural pass | 91.4178% |
@@ -87,5 +87,5 @@
 | 1 | 17 - Projects List | `/projects` | 87.8067% |
 | 2 | 25 - Agent Template Gallery | `/agents/templates` | 89.1427% |
 | 3 | 26 - Agent Performance | `/agents/performance` | 89.2076% |
-| 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |
-| 5 | 30 - Tickets Board | `/tickets` | 89.3039% |
+| 4 | 08 - Executive Command Center | `/command-center` | 89.4744% |
+| 5 | 21 - Org Chart View | `/org-chart` | 89.4802% |
