@@ -46,6 +46,7 @@
 | 5R-projects-sidebar-bottom | Projects sidebar bottom section polish | Partial | Pending | Build pass, bbox 17 pass 10/10, five-screen pixel reference pass | Screen 17 improved from 12.3208% to 12.3122% by restoring the PNG's separate workspace and user sections in the Projects AppShell sidebar |
 | 5R-run-log-console | Run Console log console parity polish | Partial | Pending | Build pass, bbox 34 pass 16/16, Screen 34 pixel reference pass at 9.0119% | Screen 34 improved from 9.9969% to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines while preserving structural geometry |
 | 5R-templates-gallery-columns | Agent Templates gallery column parity polish | Partial | Pending | Build pass, bbox 25 pass 8/8, Screen 25 pixel reference pass at 10.8573% | Screen 25 improved from 10.9105% to 10.8573% by matching the gallery to the PNG's three-column template grid while preserving the structural contract |
+| 5R-performance-recommendation-density | Agent Performance recommendation density polish | Partial | Pending | Build pass, bbox 26 pass 12/12, Screen 26 pixel reference pass at 10.7924% | Screen 26 improved from 10.8215% to 10.7924% by compacting the optimization recommendation rows so the panel better matches the PNG density |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed

@@ -49,7 +49,7 @@
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
 | 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass | 89.1427% |
-| 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 89.1785% |
+| 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 89.2076% |
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
 | 29 - Toolsets & Permissions | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/tools/permissions` | Real UI structural pass | 91.9245% |
@@ -86,6 +86,6 @@
 |---:|---|---|---:|
 | 1 | 17 - Projects List | `/projects` | 87.6878% |
 | 2 | 25 - Agent Template Gallery | `/agents/templates` | 89.1427% |
-| 3 | 26 - Agent Performance | `/agents/performance` | 89.1785% |
+| 3 | 26 - Agent Performance | `/agents/performance` | 89.2076% |
 | 4 | 21 - Org Chart View | `/org-chart` | 89.3009% |
 | 5 | 30 - Tickets Board | `/tickets` | 89.3039% |

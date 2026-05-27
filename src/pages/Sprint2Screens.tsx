@@ -2275,7 +2275,7 @@ function AgentPerformanceScreen() {
           <div className="space-y-4">
             <div data-parity-id="agent-performance.recommendations-panel">
               <Panel title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4" />Goi y toi uu</span>} className="h-[168px] overflow-hidden">
-                <div className="space-y-1.5 p-3">{vm.recommendations.map((item) => <div key={item.id} className="grid grid-cols-[28px_1fr_18px] items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-1.5 text-[11px] leading-4"><IconBubble icon={item.tone === 'cyan' ? Search : item.tone === 'green' ? Megaphone : item.tone === 'purple' ? BarChart3 : Bot} tone={item.tone as Tone} /><span><b>{item.agent}</b> {item.text}</span><RowAction /></div>)}</div>
+                <div className="space-y-1 p-2">{vm.recommendations.map((item) => <div key={item.id} className="grid grid-cols-[24px_1fr_16px] items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-2 py-1 text-[10px] leading-3"><IconBubble icon={item.tone === 'cyan' ? Search : item.tone === 'green' ? Megaphone : item.tone === 'purple' ? BarChart3 : Bot} tone={item.tone as Tone} /><span><b>{item.agent}</b> {item.text}</span><RowAction /></div>)}</div>
               </Panel>
             </div>
             <div data-parity-id="agent-performance.attention-panel">
