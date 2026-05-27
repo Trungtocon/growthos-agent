@@ -47,6 +47,7 @@
 - Screen 17 `/projects` was further polished to 12.3122% by restoring the separate workspace and user sections in the Projects sidebar bottom area.
 - Screen 17 `/projects` was further polished to 12.1933% by increasing active/risk/blocked board card density and metadata to better match the source PNG.
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
+- Screen 34 `/runs/demo-run` was further polished to 9.0080% by adding the PNG-matched GrowthOS workspace card and Collapse control to the route-specific AppShell sidebar bottom section.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.
 - Screen 26 `/agents/performance` was further polished to 10.7924% by compacting the optimization recommendation rows.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.

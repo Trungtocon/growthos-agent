@@ -42,7 +42,7 @@ type ShellProfile = {
   userRole: string;
   createLabel: string;
   navItems: NavItem[];
-  bottom: 'command' | 'copilot' | 'workspace' | 'project' | 'product' | 'none';
+  bottom: 'command' | 'copilot' | 'workspace' | 'run' | 'project' | 'product' | 'none';
   mainClass: string;
   sidebarPaddingY?: number;
   sidebarTheme?: 'light' | 'dark';
@@ -298,7 +298,7 @@ function shellProfile(currentPath: string): ShellProfile {
       userRole: currentPath === '/runs/demo-run' ? 'Admin' : 'Owner',
       createLabel: currentPath === '/runs/demo-run' ? '' : '+  Create',
       navItems: currentPath === '/runs/demo-run' ? runConsoleNav : detailNav,
-      bottom: currentPath === '/runs/demo-run' ? 'workspace' : 'product',
+      bottom: currentPath === '/runs/demo-run' ? 'run' : 'product',
       mainClass: currentPath === '/runs/demo-run' ? 'px-[26px] py-[16px]' : 'px-[30px] py-[12px]',
     };
   }
@@ -427,6 +427,26 @@ function BottomPanel({ type, dark = false }: { type: ShellProfile['bottom']; dar
         </div>
         <div className="mt-3 text-xs font-semibold text-emerald-600">• Pro Plan</div>
       </div>
+    );
+  }
+
+  if (type === 'run') {
+    return (
+      <>
+        <div className="absolute bottom-[58px] left-4 right-4 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-lg bg-[#eaf3ff] text-[#0f6bff]">
+              <LayoutDashboard className="h-5 w-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs text-slate-500">Workspace</div>
+              <div className="truncate text-sm font-extrabold text-slate-900">GrowthOS Workspace</div>
+            </div>
+          </div>
+          <div className="mt-3 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-[#0f6bff]">Pro</div>
+        </div>
+        <button className="absolute bottom-[14px] left-4 right-4 h-[38px] rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-600">‹  Collapse</button>
+      </>
     );
   }
 
