@@ -2005,7 +2005,7 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
   const goal = project.title.includes('Marketing') ? 'Tự động hóa content' : project.title.includes('CRM') ? 'Tăng hiệu quả chăm sóc lead' : 'Nâng cấp vận hành AI';
   const isPlanning = project.column.includes('kế hoạch');
   const isDense = project.tone === 'cyan' || project.tone === 'amber' || project.tone === 'red';
-  const heightClass = isDense ? 'h-[154px]' : isPlanning ? 'h-[88px]' : 'h-[96px]';
+  const heightClass = isDense ? 'h-[96px]' : isPlanning ? 'h-[88px]' : 'h-[96px]';
   const avatarTones = project.tone === 'red' ? ['blue', 'amber', 'slate'] : project.tone === 'amber' ? ['violet', 'cyan', 'slate'] : ['blue', 'amber', 'cyan', 'slate'];
   return (
     <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>

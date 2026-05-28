@@ -15,6 +15,7 @@
     "parity:regions": "node scripts/analyze-parity-regions.mjs",
     "parity:offsets": "node scripts/analyze-parity-offsets.mjs",
     "audit:visual-polish-candidates": "node scripts/audit-visual-polish-candidates.mjs",
+    "audit:subregions:17": "node scripts/audit-screen-17-subregions.mjs",
     "audit:subregions:25": "node scripts/audit-screen-25-subregions.mjs",
     "audit:bbox:08": "node scripts/audit-screen-08-bboxes.mjs",
     "audit:bbox:09": "node scripts/audit-screen-bboxes.mjs --screen=09 --route=/today --contract=docs/11-quality/screen-09-layout-contract.json --out=parity-reports/09_today-view/bbox-report.json",
