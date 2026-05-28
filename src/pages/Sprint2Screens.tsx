@@ -2318,27 +2318,37 @@ function TemplateBotAvatar({ tone = 'blue', large = false }: { tone?: Tone; larg
 function TemplateMarketCard({ template, selected }: { template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number]; selected?: boolean }) {
   const category = templateCategory(template);
   const difficulty = template.successRate > 92 ? 'De' : 'Trung binh';
+  const chipClass = 'inline-flex h-[19px] items-center rounded-full px-2 text-[10px] font-bold leading-none';
+  const categoryTone = category.includes('QA')
+    ? 'bg-violet-100 text-violet-700'
+    : category.includes('Marketing')
+      ? 'bg-green-100 text-green-700'
+      : category.includes('Sales')
+        ? 'bg-blue-100 text-blue-700'
+        : category.includes('Reporting')
+          ? 'bg-purple-100 text-purple-700'
+          : 'bg-orange-100 text-orange-700';
   return (
-    <div className={`h-[324px] overflow-hidden rounded-xl border bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
-      <div className="flex items-start justify-between">
+    <div className={`relative h-[324px] overflow-hidden rounded-xl border bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
+      <div className="absolute left-4 top-4 [&>span]:absolute [&>span]:left-[284px] [&>span]:top-[-6px] [&>span]:text-lg [&>span]:leading-none">
         <TemplateBotAvatar tone={template.tone as Tone} />
         <span className="text-slate-300">☆</span>
       </div>
-      <div className="mt-3 flex items-center gap-2">
-        <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${category.includes('QA') ? 'bg-violet-100 text-violet-700' : category.includes('Marketing') ? 'bg-green-100 text-green-700' : category.includes('Sales') ? 'bg-blue-100 text-blue-700' : category.includes('Reporting') ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>{category}</span>
+      <div className="absolute left-[88px] right-8 top-[17px]">
+        <span className={`${chipClass} ${categoryTone}`}>{category}</span>
       </div>
-      <h2 className="mt-3 truncate text-[17px] font-bold text-slate-950">{template.name.replace('Template', 'Agent')}</h2>
-      <p className="mt-2 line-clamp-2 text-[12px] leading-5 text-slate-600">{templateDescription(template)}</p>
-      <div className="mt-3 space-y-2 border-t border-slate-100 pt-3 text-[11px] text-slate-500">
-        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Runtime</span><span className="font-semibold text-slate-600"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-green-500" />hermes_local</span></div>
-        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Skills</span><span className="flex flex-wrap gap-1">{template.skills.slice(0, 2).map((skill) => <Badge key={skill} tone="blue">{skill}</Badge>)}</span></div>
-        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Tools</span><span className="flex flex-wrap gap-1">{template.tools.slice(0, 3).map((tool) => <Badge key={tool} tone="slate">{tool}</Badge>)}</span></div>
+      <h2 className="absolute left-[88px] right-5 top-[48px] truncate text-[17px] font-bold leading-6 text-slate-950">{template.name.replace('Template', 'Agent')}</h2>
+      <p className="absolute left-4 right-4 top-[86px] line-clamp-2 text-[12px] leading-[18px] text-slate-600">{templateDescription(template)}</p>
+      <div className="absolute left-4 right-4 top-[126px] border-t border-slate-100 pt-3 text-[11px] text-slate-500">
+        <div className="grid h-[22px] grid-cols-[62px_1fr] items-center gap-2"><span>Runtime</span><span className="truncate font-semibold text-slate-600"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-green-500" />hermes_local</span></div>
+        <div className="mt-3 grid grid-cols-[62px_1fr] gap-2"><span className="pt-1">Skills</span><span className="flex max-h-[44px] flex-wrap gap-1 overflow-hidden">{template.skills.slice(0, 3).map((skill) => <span key={skill} className={`${chipClass} bg-blue-50 text-blue-700`}>{skill}</span>)}</span></div>
+        <div className="mt-3 grid grid-cols-[62px_1fr] gap-2"><span className="pt-1">Tools</span><span className="flex max-h-[44px] flex-wrap gap-1 overflow-hidden">{template.tools.slice(0, 3).map((tool) => <span key={tool} className={`${chipClass} bg-slate-100 text-slate-700`}>{tool}</span>)}</span></div>
       </div>
-      <div className="mt-3 flex items-center justify-between text-[11px]">
-        <Badge tone="green">{templateCost(template)}</Badge>
-        <Badge tone={difficulty === 'De' ? 'green' : 'amber'}>{difficulty}</Badge>
+      <div className="absolute bottom-[52px] left-4 right-4 flex items-center justify-between">
+        <span className={`${chipClass} bg-green-100 text-green-700`}>{templateCost(template)}</span>
+        <span className={`${chipClass} ${difficulty === 'De' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>{difficulty}</span>
       </div>
-      <div className="mt-3 grid grid-cols-[1fr_1.35fr] gap-2">
+      <div className="absolute bottom-3 left-4 right-4 grid grid-cols-[1fr_1.35fr] gap-2">
         <button className="h-8 rounded-lg border border-[#0f6bff] text-[12px] font-bold text-[#0f6bff]">Preview</button>
         <button className="h-8 rounded-lg bg-[#0f6bff] text-[12px] font-bold text-white">Dung template nay</button>
       </div>
@@ -2389,7 +2399,7 @@ function TemplateDetailDrawer({ template }: { template: ReturnType<typeof select
           <div><span className="text-[12px] text-slate-500">Chinh sach phe duyet</span><p className="mt-2 text-[13px] text-slate-600">Terminal command can phe duyet, secret access bi chan</p></div>
         </div>
       </div>
-      <button className="absolute bottom-[28px] left-6 right-6 h-10 rounded-lg bg-[#0f6bff] text-sm font-bold text-white">Dung template nay</button>
+      <button className="absolute bottom-[33px] left-6 right-6 h-10 rounded-lg bg-[#0f6bff] text-sm font-bold text-white">Dung template nay</button>
     </div>
   );
 }
