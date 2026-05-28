@@ -5,14 +5,14 @@ This report breaks `/projects` into source-PNG-aligned subregions so visual poli
 | Rank | Subregion | Diff % | Rect | Next action |
 |---:|---|---:|---|---|
 | 1 | 16 health chart left | 26.5696 | x=264, y=756, w=520, h=148 | Rebuild health overview subregion only |
-| 2 | 13 board archived column | 16.6413 | x=1136, y=304, w=218, h=392 | Rebuild board column/card subregion only |
-| 3 | 09 board active column | 16.3631 | x=240, y=304, w=216, h=392 | Rebuild board column/card subregion only |
+| 2 | 13 board archived column | 18.1497 | x=1136, y=304, w=218, h=392 | Rebuild board column/card subregion only |
+| 3 | 09 board active column | 16.3809 | x=240, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 4 | 17 health metrics right | 16.3087 | x=804, y=756, w=526, h=148 | Rebuild health overview subregion only |
-| 5 | 10 board at risk column | 15.7797 | x=464, y=304, w=216, h=392 | Rebuild board column/card subregion only |
-| 6 | 08 project board all columns | 15.4866 | x=240, y=304, w=1114, h=392 | Rebuild board column/card subregion only |
+| 5 | 10 board at risk column | 15.7844 | x=464, y=304, w=216, h=392 | Rebuild board column/card subregion only |
+| 6 | 08 project board all columns | 15.7669 | x=240, y=304, w=1114, h=392 | Rebuild board column/card subregion only |
 | 7 | 15 health overview | 15.4794 | x=240, y=708, w=1114, h=220 | Rebuild health overview subregion only |
-| 8 | 11 board blocked column | 15.3333 | x=688, y=304, w=216, h=392 | Rebuild board column/card subregion only |
-| 9 | 12 board completed column | 14.9388 | x=912, y=304, w=216, h=392 | Rebuild board column/card subregion only |
+| 8 | 11 board blocked column | 15.2860 | x=688, y=304, w=216, h=392 | Rebuild board column/card subregion only |
+| 9 | 12 board completed column | 14.8869 | x=912, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 10 | 05 page header title/actions | 13.4251 | x=240, y=90, w=1410, h=68 | Inspect crop before changing UI |
 | 11 | 07 filters and view controls | 13.2855 | x=240, y=256, w=1114, h=36 | Inspect crop before changing UI |
 | 12 | 04 sidebar bottom plan | 11.3121 | x=0, y=732, w=218, h=209 | Recalibrate route-specific AppShell subregion only |

@@ -1993,9 +1993,21 @@ function ProjectKpiCard({ label, value, caption, tone, icon: Icon }: { label: st
 }
 
 function ProjectColumn({ column }: { column: ReturnType<typeof selectProjectsListViewModel>['projectColumns'][number] }) {
+  const dotColor: Record<string, string> = {
+    blue: '#3b82f6',
+    cyan: '#14b8a6',
+    amber: '#f59e0b',
+    red: '#ef4444',
+    green: '#22c55e',
+    purple: '#8b5cf6',
+    slate: '#64748b',
+  };
   return (
     <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white">
-      <div className="flex h-9 items-center justify-between border-b border-slate-100 px-3 text-xs font-bold text-slate-700"><span>{column.title}</span><Badge tone={column.tone as Tone}>{column.items.length}</Badge></div>
+      <div className="flex h-9 items-center justify-between border-b border-slate-100 px-3 text-xs font-bold text-slate-700">
+        <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: dotColor[column.tone] ?? '#64748b' }} />{column.title}</span>
+        <span className="grid h-5 min-w-5 place-items-center rounded-full bg-slate-100 px-1.5 text-[11px] font-bold text-slate-500">{column.items.length}</span>
+      </div>
       <div className="min-h-0 flex-1 space-y-2 overflow-hidden p-2">
         {column.items.map((project) => <ProjectKanbanCardCompact key={project.title} project={project} />)}
       </div>
