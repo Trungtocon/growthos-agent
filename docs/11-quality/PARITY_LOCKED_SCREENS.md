@@ -20,7 +20,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 14 | `/goals` | `GoalsDashboardScreen` / `AppShell` | 9.0791% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_14` layout assets rendered |
 | 15 | `/goals/demo-goal` | `GoalDetailScreen` / `AppShell` | 7.4108% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_15` layout assets rendered |
 | 16 | `/goals/new` | `CreateGoalScreen` / `AppShell` | 6.8085% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_16` layout assets rendered |
-| 17 | `/projects` | `ProjectsListScreen` / `AppShell` | 11.0748% | Real UI Structural PASS / Section Coverage Rebuilt / Visual Polish Deferred | No static `parity_17` layout assets rendered |
+| 17 | `/projects` | `ProjectsListScreen` / `AppShell` | 11.0731% | Real UI Structural PASS / Section Coverage Rebuilt / Visual Polish Deferred | No static `parity_17` layout assets rendered |
 | 18 | `/projects/demo-project` | `ProjectDetailScreen` / `AppShell` | 9.2961% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_18` layout assets rendered |
 | 19 | `/projects/new` | `CreateProjectScreen` / `AppShell` | 7.5966% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_19` layout assets rendered |
 | 20 | `/workforce` | `WorkforceOverviewRealPage` | 9.4318% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_20` layout assets rendered |
@@ -73,7 +73,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 14 | `/goals` | Real UI | `GoalsDashboardScreen + AppShell` | Pass | Pass 8/8 | 9.0791% | Real UI Structural PASS / Visual Polish Deferred |
 | 15 | `/goals/demo-goal` | Real UI | `GoalDetailScreen + AppShell` | Pass | Pass 8/8 | 7.4108% | Real UI Structural PASS / Visual Polish Deferred |
 | 16 | `/goals/new` | Real UI | `CreateGoalScreen + AppShell` | Pass | Pass 7/7 | 6.8085% | Real UI Structural PASS / Visual Polish Deferred |
-| 17 | `/projects` | Real UI | `ProjectsListScreen + AppShell` | Pass | Pass 10/10 | 11.0748% | Real UI Structural PASS / Section Coverage Rebuilt / Visual Polish Deferred |
+| 17 | `/projects` | Real UI | `ProjectsListScreen + AppShell` | Pass | Pass 10/10 | 11.0731% | Real UI Structural PASS / Section Coverage Rebuilt / Visual Polish Deferred |
 | 18 | `/projects/demo-project` | Real UI | `ProjectDetailScreen + AppShell` | Pass | Pass 7/7 | 9.2961% | Real UI Structural PASS / Visual Polish Deferred |
 | 19 | `/projects/new` | Real UI | `CreateProjectScreen + AppShell` | Pass | Pass 7/7 | 7.5966% | Real UI Structural PASS / Visual Polish Deferred |
 | 20 | `/workforce` | Real UI | `WorkforceOverviewRealPage + AppShell` | Pass | Pass 14/14 | 9.4318% | Real UI Structural PASS / Visual Polish Deferred |

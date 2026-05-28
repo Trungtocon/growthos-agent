@@ -12,7 +12,7 @@ This report breaks `/projects` into source-PNG-aligned subregions so visual poli
 | 6 | 11 board blocked column | 15.2860 | x=688, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 7 | 12 board completed column | 14.8869 | x=912, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 8 | 15 health overview | 14.0836 | x=240, y=708, w=1114, h=220 | Rebuild health overview subregion only |
-| 9 | 05 page header title/actions | 13.4251 | x=240, y=90, w=1410, h=68 | Inspect crop before changing UI |
+| 9 | 05 page header title/actions | 13.3970 | x=240, y=90, w=1410, h=68 | Inspect crop before changing UI |
 | 10 | 07 filters and view controls | 13.2855 | x=240, y=256, w=1114, h=36 | Inspect crop before changing UI |
 | 11 | 17 health metrics right | 11.8988 | x=804, y=756, w=526, h=148 | Rebuild health overview subregion only |
 | 12 | 04 sidebar bottom plan | 11.3121 | x=0, y=732, w=218, h=209 | Recalibrate route-specific AppShell subregion only |

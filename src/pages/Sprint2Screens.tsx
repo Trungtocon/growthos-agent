@@ -20,6 +20,7 @@ import {
   Folder,
   Gauge,
   Megaphone,
+  Plus,
   Play,
   Search,
   HelpCircle,
@@ -34,6 +35,7 @@ import {
   Target,
   Ticket,
   Trophy,
+  Upload,
   UploadCloud,
   Users,
   Zap,
@@ -1926,7 +1928,7 @@ function ProjectsListScreen() {
         parityId="projects.header"
         title="Projects"
         subtitle="Quản lý các dự án đang biến mục tiêu kinh doanh thành kết quả thực thi"
-        actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Import Project</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button><Folder className="h-4 w-4" />Tạo dự án mới</Button></>}
+        actions={<><Button variant="secondary"><Upload className="h-4 w-4" />Import Project</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button><Plus className="h-4 w-4" />Tạo dự án mới</Button></>}
       />
       <div data-parity-id="projects.kpi-band" className="mt-[2px] grid h-[88px] grid-cols-6 gap-3 overflow-hidden">
         {vm.kpis.map((item, index) => <ProjectKpiCard key={item.label} label={item.label} value={item.value} caption={item.caption} tone={item.tone} icon={projectKpiIcons[index] ?? Folder} />)}
