@@ -48,7 +48,7 @@
 | 22 - Agents List | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents` | Real UI structural pass | 91.4622% |
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
-| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / source PNG section recalibrated | 88.3275% |
+| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / source PNG section recalibrated | 88.8825% |
 | 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 89.2076% |
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
@@ -84,8 +84,8 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 25 - Agent Template Gallery | `/agents/templates` | 88.3275% |
-| 2 | 17 - Projects List | `/projects` | 88.3995% |
+| 1 | 17 - Projects List | `/projects` | 88.3995% |
+| 2 | 25 - Agent Template Gallery | `/agents/templates` | 88.8825% |
 | 3 | 26 - Agent Performance | `/agents/performance` | 89.2076% |
 | 4 | 08 - Executive Command Center | `/command-center` | 89.4744% |
 | 5 | 21 - Org Chart View | `/org-chart` | 89.4802% |

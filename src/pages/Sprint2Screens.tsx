@@ -2389,7 +2389,7 @@ function TemplateDetailDrawer({ template }: { template: ReturnType<typeof select
           <div><span className="text-[12px] text-slate-500">Chinh sach phe duyet</span><p className="mt-2 text-[13px] text-slate-600">Terminal command can phe duyet, secret access bi chan</p></div>
         </div>
       </div>
-      <button className="mt-5 h-11 w-full rounded-lg bg-[#0f6bff] text-sm font-bold text-white">Dung template nay</button>
+      <button className="absolute bottom-[28px] left-6 right-6 h-10 rounded-lg bg-[#0f6bff] text-sm font-bold text-white">Dung template nay</button>
     </div>
   );
 }
