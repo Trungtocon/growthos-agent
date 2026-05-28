@@ -5,10 +5,10 @@ This report breaks `/projects` into source-PNG-aligned subregions so visual poli
 | Rank | Subregion | Diff % | Rect | Next action |
 |---:|---|---:|---|---|
 | 1 | 16 health chart left | 26.7022 | x=264, y=756, w=520, h=148 | Rebuild health overview subregion only |
-| 2 | 13 board archived column | 16.5816 | x=1136, y=304, w=218, h=392 | Rebuild board column/card subregion only |
-| 3 | 09 board active column | 16.3809 | x=240, y=304, w=216, h=392 | Rebuild board column/card subregion only |
+| 2 | 13 board archived column | 16.5793 | x=1136, y=304, w=218, h=392 | Rebuild board column/card subregion only |
+| 3 | 09 board active column | 15.8163 | x=240, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 4 | 10 board at risk column | 15.7844 | x=464, y=304, w=216, h=392 | Rebuild board column/card subregion only |
-| 5 | 08 project board all columns | 15.4600 | x=240, y=304, w=1114, h=392 | Rebuild board column/card subregion only |
+| 5 | 08 project board all columns | 15.3501 | x=240, y=304, w=1114, h=392 | Rebuild board column/card subregion only |
 | 6 | 11 board blocked column | 15.2860 | x=688, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 7 | 12 board completed column | 14.8869 | x=912, y=304, w=216, h=392 | Rebuild board column/card subregion only |
 | 8 | 15 health overview | 14.0836 | x=240, y=708, w=1114, h=220 | Rebuild health overview subregion only |

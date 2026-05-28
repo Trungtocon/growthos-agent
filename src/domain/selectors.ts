@@ -823,7 +823,7 @@ export function selectProjectsListViewModel() {
   const projectTemplates = [
     { title: 'AI Chatbot Upgrade', column: 'Lên kế hoạch', progress: 18, owner: 'Product Agent', tone: 'blue', cost: '$260', tickets: 15, due: '15/08/2024' },
     { title: 'Data Warehouse Build', column: 'Lên kế hoạch', progress: 22, owner: 'Data Engineer Agent', tone: 'purple', cost: '$220', tickets: 8, due: '20/08/2024' },
-    { title: 'HR Onboarding Flow', column: 'Lên kế hoạch', progress: 12, owner: 'HR Agent', tone: 'amber', cost: '$180', tickets: 6, due: '01/09/2024' },
+    { title: 'HR Onboarding Flow', column: 'Lên kế hoạch', progress: 12, owner: 'HR Agent', tone: 'blue', cost: '$180', tickets: 6, due: '01/09/2024' },
     { title: 'GrowthOS V2 UI Parity', column: 'Đang triển khai', progress: 78, owner: 'CTO Agent', tone: 'cyan', cost: '$1,450', tickets: 16, due: '30/06/2024' },
     { title: 'Weekly CEO Reporting', column: 'Đang triển khai', progress: 84, owner: 'Report Agent', tone: 'blue', cost: '$360', tickets: 6, due: '30/06/2024' },
     { title: 'Marketing Content Factory', column: 'Có rủi ro', progress: 64, owner: 'CMO Agent', tone: 'amber', cost: '$1,120', tickets: 24, due: '15/07/2024' },

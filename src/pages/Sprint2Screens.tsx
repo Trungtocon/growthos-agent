@@ -2024,7 +2024,7 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
   const heightClass = isDense ? 'h-[96px]' : isPlanning ? 'h-[88px]' : 'h-[96px]';
   const avatarTones = project.tone === 'red' ? ['blue', 'amber', 'slate'] : project.tone === 'amber' ? ['violet', 'cyan', 'slate'] : ['blue', 'amber', 'cyan', 'slate'];
   return (
-    <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
+    <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-2">
         <b className="line-clamp-2 max-w-[108px] leading-3 text-slate-950">{project.title}</b>
         <span className={`shrink-0 rounded-md border px-2 py-1 text-[10px] font-semibold leading-3 ${project.tone === 'red' ? 'border-red-200 bg-red-50 text-red-600' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-600' : project.tone === 'green' ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-cyan-200 bg-cyan-50 text-cyan-600'}`}>{statusLabel}</span>
@@ -3370,3 +3370,4 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/help') return <HelpTemplateCenterScreen />;
   return null;
 }
+
