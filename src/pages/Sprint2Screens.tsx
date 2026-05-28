@@ -2098,8 +2098,15 @@ function ProjectHealthOverview({ statusBreakdown, costBars }: { statusBreakdown:
         <div className="mb-1 text-[11px] font-bold text-slate-500">Chi phí AI theo dự án</div>
         <div className="grid h-[128px] grid-cols-[36px_1fr] gap-2">
           <div className="flex flex-col justify-between pb-8 text-[10px] font-medium text-slate-500"><span>$1,500</span><span>$1,000</span><span>$500</span><span>$0</span></div>
-          <div className="flex items-end gap-4 border-b border-slate-100 px-2">
-            {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-[58px] max-w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(14, (item.value / maxCost) * 84)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
+          <div className="relative border-b border-slate-100 px-2">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-3 bottom-8 flex flex-col justify-between">
+              <span className="border-t border-dashed border-slate-200/80" />
+              <span className="border-t border-dashed border-slate-200/80" />
+              <span className="border-t border-dashed border-slate-200/80" />
+            </div>
+            <div className="relative z-10 flex h-full items-end gap-4">
+              {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-[58px] max-w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(14, (item.value / maxCost) * 94)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
+            </div>
           </div>
         </div>
       </div>
