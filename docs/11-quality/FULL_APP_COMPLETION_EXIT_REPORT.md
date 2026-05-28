@@ -47,7 +47,7 @@
 - Screen 17 `/projects` was further polished to 12.3122% by restoring the separate workspace and user sections in the Projects sidebar bottom area.
 - Screen 17 `/projects` was further polished to 12.1933% by increasing active/risk/blocked board card density and metadata to better match the source PNG.
 - Screen 17 `/projects` was further polished to 12.0040% by shifting Project Health Overview upward within bbox tolerance to better align the lower dashboard section.
-- Screen 17 `/projects` was further polished to 11.6598% by reducing Project Health Overview height within bbox tolerance to better match the PNG crop.
+- Screen 17 `/projects` was further polished to 11.6005% by reducing Project Health Overview height within bbox tolerance, matching the sidebar subtitle, and replacing project agent dots with DOM mini avatars closer to the PNG board.
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Screen 34 `/runs/demo-run` was further polished to 9.0080% by adding the PNG-matched GrowthOS workspace card and Collapse control to the route-specific AppShell sidebar bottom section.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.

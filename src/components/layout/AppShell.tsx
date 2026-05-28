@@ -263,7 +263,7 @@ function shellProfile(currentPath: string): ShellProfile {
     return {
       sidebarWidth: APP_SHELL_TOKENS.sidebarWidth,
       headerHeight: APP_SHELL_TOKENS.topbarHeight,
-      logoSubtitle: 'Growth on Autopilot.',
+      logoSubtitle: 'AI Workforce OS',
       logoVariant: 'leaf',
       company: 'Demo Company',
       searchPlaceholder: 'Tim kiem...',

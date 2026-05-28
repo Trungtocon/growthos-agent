@@ -2006,7 +2006,7 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
   const isPlanning = project.column.includes('kế hoạch');
   const isDense = project.tone === 'cyan' || project.tone === 'amber' || project.tone === 'red';
   const heightClass = isDense ? 'h-[154px]' : isPlanning ? 'h-[88px]' : 'h-[96px]';
-  const dotColors = project.tone === 'red' ? ['bg-blue-500', 'bg-amber-400', 'bg-slate-700'] : project.tone === 'amber' ? ['bg-violet-500', 'bg-cyan-500', 'bg-slate-700'] : ['bg-blue-500', 'bg-amber-400', 'bg-cyan-500', 'bg-slate-700'];
+  const avatarTones = project.tone === 'red' ? ['blue', 'amber', 'slate'] : project.tone === 'amber' ? ['violet', 'cyan', 'slate'] : ['blue', 'amber', 'cyan', 'slate'];
   return (
     <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : project.tone === 'green' ? 'border-emerald-100 bg-white' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-2">
@@ -2026,7 +2026,7 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
               <div>
                 <div className="text-[9px] font-semibold text-slate-400">Agents</div>
                 <div className="mt-1 flex -space-x-1">
-                  {dotColors.map((color, index) => <span key={`${project.title}-${color}-${index}`} className={`h-4 w-4 rounded-full border border-white ${color}`} />)}
+                  {avatarTones.map((tone, index) => <ProjectMiniAvatar key={`${project.title}-${tone}-${index}`} tone={tone} />)}
                   <span className="grid h-4 w-4 place-items-center rounded-full border border-white bg-slate-100 text-[8px] font-bold text-slate-500">+1</span>
                 </div>
               </div>
@@ -2040,6 +2040,17 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
         <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{project.due}</span>
       </div>
     </div>
+  );
+}
+
+function ProjectMiniAvatar({ tone }: { tone: string }) {
+  const bg: Record<string, string> = { blue: '#dbeafe', amber: '#fef3c7', cyan: '#cffafe', violet: '#ede9fe', slate: '#e2e8f0' };
+  const shirt: Record<string, string> = { blue: '#2563eb', amber: '#f59e0b', cyan: '#0891b2', violet: '#7c3aed', slate: '#334155' };
+  return (
+    <span className="relative h-4 w-4 overflow-hidden rounded-full border border-white" style={{ backgroundColor: bg[tone] ?? '#e2e8f0' }}>
+      <span className="absolute left-[5px] top-[3px] h-[5px] w-[5px] rounded-full bg-[#f3c7aa]" />
+      <span className="absolute bottom-[-2px] left-[3px] h-[7px] w-[10px] rounded-t-full" style={{ backgroundColor: shirt[tone] ?? '#334155' }} />
+    </span>
   );
 }
 
