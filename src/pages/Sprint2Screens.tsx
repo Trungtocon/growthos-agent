@@ -1942,7 +1942,7 @@ function ProjectsListScreen() {
           <div data-parity-id="projects.board" className="mt-3 grid h-[392px] grid-cols-5 gap-3 overflow-hidden">
             {vm.projectColumns.map((column) => <ProjectColumn key={column.id} column={column} />)}
           </div>
-          <div data-parity-id="projects.health-overview" className="-mt-1 h-[220px] overflow-hidden">
+          <div data-parity-id="projects.health-overview" className="-mt-1 h-[204px] overflow-hidden">
             <Panel title="Project Health Overview" action={<button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500">30 ngày qua</button>} className="h-full overflow-hidden">
               <ProjectHealthOverview statusBreakdown={vm.statusBreakdown} costBars={vm.costBars} />
             </Panel>
