@@ -2356,7 +2356,7 @@ function TemplateMarketCard({ template, selected }: { template: ReturnType<typeo
   return (
     <div className={`relative h-[324px] overflow-hidden rounded-xl border bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
       <div className="absolute left-4 top-4 [&>span]:absolute [&>span]:left-[284px] [&>span]:top-[-6px] [&>span]:text-lg [&>span]:leading-none">
-        <TemplateBotAvatar tone={template.tone as Tone} />
+        <TemplateBotAvatar tone={(category.includes('QA') ? 'blue' : template.tone) as Tone} />
         <span className="text-slate-300">☆</span>
       </div>
       <div className="absolute left-[88px] right-8 top-[17px]">

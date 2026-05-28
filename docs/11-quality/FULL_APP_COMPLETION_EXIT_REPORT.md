@@ -61,6 +61,7 @@
 - Screen 25 `/agents/templates` was further polished to 11.6725% by restoring the missing recommended-template heading, refining the PNG-aligned gallery geometry, matching the marketplace card order, and improving the DOM/CSS robot avatars.
 - Screen 25 `/agents/templates` was further polished to 11.1175% after adding a subregion audit and anchoring the drawer primary CTA to the source-PNG bottom drawer region.
 - Screen 25 `/agents/templates` was further polished to 10.8725% by compacting template card internals and aligning the drawer primary CTA to the measured source-PNG region.
+- Screen 25 `/agents/templates` was further polished to 10.8721% by matching the Hermes QA card avatar tone closer to the source PNG; several text/category experiments were reverted because they worsened diff.
 - Screen 26 `/agents/performance` was further polished to 10.7924% by compacting the optimization recommendation rows.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
 - Screen 30 `/tickets` was further polished to 10.4584% by compacting ticket board cards to better match the PNG density.

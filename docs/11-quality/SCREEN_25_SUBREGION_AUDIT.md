@@ -5,9 +5,9 @@ This report breaks `/agents/templates` into source-PNG-aligned subregions so vis
 | Rank | Subregion | Diff % | Rect | Next action |
 |---:|---|---:|---|---|
 | 1 | 05 page header title/actions | 20.6721 | x=240, y=90, w=980, h=58 | Inspect crop before changing UI |
-| 2 | 11 card hermes | 18.5458 | x=236, y=270, w=296, h=326 | Rebuild template card/gallery subregion only |
+| 2 | 11 card hermes | 18.5386 | x=236, y=270, w=296, h=326 | Rebuild template card/gallery subregion only |
 | 3 | 10 gallery row two | 16.4602 | x=236, y=606, w=982, h=316 | Rebuild template card/gallery subregion only |
-| 4 | 09 gallery row one | 14.6608 | x=236, y=270, w=982, h=326 | Rebuild template card/gallery subregion only |
+| 4 | 09 gallery row one | 14.6586 | x=236, y=270, w=982, h=326 | Rebuild template card/gallery subregion only |
 | 5 | 02 topbar cost/create/user | 13.9570 | x=918, y=0, w=754, h=72 | Recalibrate route-specific AppShell subregion only |
 | 6 | 12 card content | 13.7198 | x=566, y=270, w=318, h=326 | Rebuild template card/gallery subregion only |
 | 7 | 13 card seo | 13.4358 | x=902, y=270, w=316, h=326 | Rebuild template card/gallery subregion only |
