@@ -2216,22 +2216,173 @@ function CreateAgentScreen() {
 
 function AgentTemplatesScreen() {
   const vm = selectAgentTemplatesViewModel();
+  const templates = vm.templates.slice(0, 6);
   return (
-    <div>
-      <SimpleHeader parityId="agent-templates.header" title="Agent Templates" subtitle="Chon template agent da duoc chuan hoa cho tung nhom cong viec." actions={<Button variant="secondary"><UploadCloud className="h-4 w-4" />Import template</Button>} />
-      <div data-parity-id="agent-templates.filters" className="mt-4 flex flex-wrap gap-3">{vm.categories.map((category, index) => <button key={category} className={`rounded-lg border px-5 py-2 text-sm font-semibold ${index === 0 ? 'border-[#0f6bff] bg-blue-50 text-[#0f6bff]' : 'border-slate-200 bg-white text-slate-600'}`}>{category}</button>)}</div>
-      <div data-parity-id="agent-templates.main-grid" className="mt-5 grid h-[650px] grid-cols-[1fr_360px] gap-5 overflow-hidden">
-        <div data-parity-id="agent-templates.gallery-panel">
-          <Panel title="Templates">
-            <div className="grid grid-cols-3 gap-4 p-5">{vm.templates.map((template) => <div key={template.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={Bot} tone={template.tone as Tone} /><Badge tone={template.successRate > 90 ? 'green' : 'blue'}>{template.successRate}%</Badge></div><h2 className="mt-4 font-extrabold">{template.name}</h2><p className="mt-1 text-sm text-slate-500">Based on {template.agentName}</p><div className="mt-3 flex flex-wrap gap-2">{template.skills.slice(0, 3).map((skill) => <Badge key={skill} tone="purple">{skill}</Badge>)}</div></div>)}</div>
-          </Panel>
+    <div className="pr-[430px]">
+      <div data-parity-id="agent-templates.header" className="flex h-[58px] items-start justify-between gap-6">
+        <div>
+          <h1 className="text-[30px] font-bold leading-9 text-slate-950">Agent Templates</h1>
+          <p className="mt-1 text-[14px] leading-5 text-slate-500">Chon mau AI agent phu hop de tao nhanh doi ngu AI cho doanh nghiep</p>
         </div>
-        <div data-parity-id="agent-templates.side-panel">
-          <Panel title="Template governance">
-            <div className="space-y-3 p-5">{['Review before production use', 'Tool scopes inherited', 'Memory starts empty', 'Approval policy required'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
-          </Panel>
+        <div className="flex gap-3">
+          <Button variant="secondary"><Code2 className="h-4 w-4" />Tao Agent tuy chinh</Button>
+          <Button><Bot className="h-4 w-4" />Tao Agent moi</Button>
         </div>
       </div>
+      <div data-parity-id="agent-templates.filters" className="relative mt-5 flex h-[38px] items-center gap-3">
+        <div className="relative w-[282px]">
+          <Search className="absolute left-4 top-2.5 h-4 w-4 text-slate-400" />
+          <input aria-label="Tim template" className="h-[38px] w-full rounded-lg border border-slate-200 bg-white pl-11 pr-4 text-sm outline-none" placeholder="Tim template..." />
+        </div>
+        {['Category', 'Runtime', 'Difficulty', 'Cost range'].map((filter, index) => (
+          <button key={filter} className={`flex h-[38px] items-center justify-between rounded-lg border bg-white px-4 text-sm text-slate-600 ${index === 0 ? 'w-[112px] border-[#0f6bff] text-slate-700 shadow-[0_0_0_2px_rgba(15,107,255,0.06)]' : 'w-[108px] border-slate-200'}`}>
+            {filter}
+            <ChevronDown className="h-4 w-4" />
+          </button>
+        ))}
+        <button className="ml-4 text-sm text-slate-500">Xoa bo loc</button>
+        <button className="grid h-8 w-8 place-items-center rounded-full text-slate-400"><Clock3 className="h-4 w-4" /></button>
+        <div className="absolute left-[294px] top-[40px] z-10 w-[136px] rounded-lg border border-slate-200 bg-white py-2 text-[12px] shadow-[0_16px_34px_rgba(15,23,42,0.12)]">
+          {vm.categories.map((category, index) => <div key={category} className="flex items-center justify-between px-4 py-2 text-slate-600">{category}<span className="text-[#0f6bff]">{index === 0 ? '✓' : ''}</span></div>)}
+        </div>
+      </div>
+      <div data-parity-id="agent-templates.main-grid" className="mt-[54px] h-[624px] w-[980px] overflow-hidden">
+        <div data-parity-id="agent-templates.gallery-panel" className="grid h-full grid-cols-3 gap-4">
+          {templates.map((template, index) => <TemplateMarketCard key={template.id} template={template} selected={index === 0} />)}
+        </div>
+      </div>
+      <div data-parity-id="agent-templates.side-panel" className="fixed right-0 top-[72px] z-10 h-[869px] w-[426px] border-l border-slate-200 bg-white shadow-[-12px_0_30px_rgba(15,23,42,0.08)]">
+        <TemplateDetailDrawer template={templates[0]} />
+      </div>
+    </div>
+  );
+}
+
+function templateCategory(template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number]) {
+  if (template.role.toLowerCase().includes('qa')) return 'QA & Governance';
+  if (template.name.toLowerCase().includes('content') || template.name.toLowerCase().includes('seo')) return 'Marketing & Content';
+  if (template.name.toLowerCase().includes('crm')) return 'Sales & CRM';
+  if (template.name.toLowerCase().includes('report')) return 'Reporting';
+  return 'Research & Strategy';
+}
+
+function templateDescription(template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number]) {
+  if (template.role.toLowerCase().includes('qa')) return 'Kiem thu, audit, UAT va danh gia chat luong output truoc khi duyet.';
+  if (template.name.toLowerCase().includes('content')) return 'Tao content brief, bai social, email va kich ban video ngan.';
+  if (template.name.toLowerCase().includes('seo')) return 'Nghien cuu tu khoa, tao topic cluster, outline SEO va toi uu bai viet.';
+  if (template.name.toLowerCase().includes('crm')) return 'Phan loai lead, de xuat automation va ho tro cham soc khach hang.';
+  if (template.name.toLowerCase().includes('report')) return 'Tao bao cao tuan, bao cao chi phi va bao cao tien do cho CEO.';
+  return 'Nghien cuu thi truong, doi thu, khach hang va xu huong tang truong.';
+}
+
+function templateCost(template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number]) {
+  if (template.role.toLowerCase().includes('qa')) return '$20-60/thang';
+  if (template.name.toLowerCase().includes('crm')) return '$30-90/thang';
+  if (template.name.toLowerCase().includes('report')) return '$15-50/thang';
+  if (template.name.toLowerCase().includes('research')) return '$30-100/thang';
+  return '$20-80/thang';
+}
+
+function TemplateBotAvatar({ tone = 'blue', large = false }: { tone?: Tone; large?: boolean }) {
+  const colors: Record<Tone, { bg: string; ring: string; face: string }> = {
+    blue: { bg: '#dbeafe', ring: '#60a5fa', face: '#0f6bff' },
+    cyan: { bg: '#cffafe', ring: '#22d3ee', face: '#0891b2' },
+    green: { bg: '#dcfce7', ring: '#4ade80', face: '#16a34a' },
+    amber: { bg: '#fef3c7', ring: '#f59e0b', face: '#ea580c' },
+    red: { bg: '#fee2e2', ring: '#f87171', face: '#dc2626' },
+    purple: { bg: '#ede9fe', ring: '#a78bfa', face: '#7c3aed' },
+    slate: { bg: '#e2e8f0', ring: '#94a3b8', face: '#475569' },
+  };
+  const palette = colors[tone];
+  const size = large ? 'h-[92px] w-[92px]' : 'h-[58px] w-[58px]';
+  return (
+    <div className={`relative grid ${size} place-items-center rounded-full border`} style={{ backgroundColor: palette.bg, borderColor: palette.ring }}>
+      <div className={`${large ? 'h-12 w-14' : 'h-8 w-9'} rounded-2xl border-2 bg-slate-900`} style={{ borderColor: palette.face }}>
+        <div className="mx-auto mt-2 flex w-7 justify-between">
+          <span className="h-2 w-2 rounded-full bg-cyan-300" />
+          <span className="h-2 w-2 rounded-full bg-cyan-300" />
+        </div>
+      </div>
+      <span className="absolute -right-1 top-1 h-4 w-4 rounded-full border border-white" style={{ backgroundColor: palette.face }} />
+    </div>
+  );
+}
+
+function TemplateMarketCard({ template, selected }: { template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number]; selected?: boolean }) {
+  const category = templateCategory(template);
+  const difficulty = template.successRate > 92 ? 'De' : 'Trung binh';
+  return (
+    <div className={`h-[306px] overflow-hidden rounded-xl border bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
+      <div className="flex items-start justify-between">
+        <TemplateBotAvatar tone={template.tone as Tone} />
+        <span className="text-slate-300">☆</span>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${category.includes('QA') ? 'bg-violet-100 text-violet-700' : category.includes('Marketing') ? 'bg-green-100 text-green-700' : category.includes('Sales') ? 'bg-blue-100 text-blue-700' : category.includes('Reporting') ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>{category}</span>
+      </div>
+      <h2 className="mt-3 truncate text-[17px] font-bold text-slate-950">{template.name.replace('Template', 'Agent')}</h2>
+      <p className="mt-2 line-clamp-2 text-[12px] leading-5 text-slate-600">{templateDescription(template)}</p>
+      <div className="mt-3 space-y-2 border-t border-slate-100 pt-3 text-[11px] text-slate-500">
+        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Runtime</span><span className="font-semibold text-slate-600"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-green-500" />hermes_local</span></div>
+        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Skills</span><span className="flex flex-wrap gap-1">{template.skills.slice(0, 2).map((skill) => <Badge key={skill} tone="blue">{skill}</Badge>)}</span></div>
+        <div className="grid grid-cols-[62px_1fr] gap-2"><span>Tools</span><span className="flex flex-wrap gap-1">{template.tools.slice(0, 3).map((tool) => <Badge key={tool} tone="slate">{tool}</Badge>)}</span></div>
+      </div>
+      <div className="mt-3 flex items-center justify-between text-[11px]">
+        <Badge tone="green">{templateCost(template)}</Badge>
+        <Badge tone={difficulty === 'De' ? 'green' : 'amber'}>{difficulty}</Badge>
+      </div>
+      <div className="mt-3 grid grid-cols-[1fr_1.35fr] gap-2">
+        <button className="h-8 rounded-lg border border-[#0f6bff] text-[12px] font-bold text-[#0f6bff]">Preview</button>
+        <button className="h-8 rounded-lg bg-[#0f6bff] text-[12px] font-bold text-white">Dung template nay</button>
+      </div>
+    </div>
+  );
+}
+
+function TemplateDetailDrawer({ template }: { template: ReturnType<typeof selectAgentTemplatesViewModel>['templates'][number] }) {
+  return (
+    <div className="relative h-full px-6 py-6">
+      <button className="absolute right-6 top-4 text-2xl leading-none text-slate-900" aria-label="Dong template detail">×</button>
+      <div className="flex flex-col items-center text-center">
+        <TemplateBotAvatar tone={template.tone as Tone} large />
+        <h2 className="mt-4 text-[24px] font-bold text-slate-950">Hermes QA Agent</h2>
+        <Badge tone="purple">QA & Governance</Badge>
+        <p className="mt-5 max-w-[260px] text-[14px] leading-6 text-slate-600">Kiem thu, audit, UAT va danh gia chat luong output truoc khi duyet.</p>
+      </div>
+      <div className="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+        {[
+          ['Khuyen nghi su dung', 'UI parity audit, module QA, UAT, worktree validation'],
+          ['Default runtime', 'hermes_local'],
+          ['Default model', 'Claude Sonnet'],
+          ['Default skills', 'growthos-module-uat   ui-parity-audit   worktree-clean-check'],
+        ].map(([label, value], index) => (
+          <div key={label} className="grid grid-cols-[44px_1fr] gap-3 py-4">
+            <IconBubble icon={index === 0 ? Sparkles : index === 1 ? Code2 : index === 2 ? Bot : ShieldCheck} tone="blue" />
+            <div>
+              <div className="text-[12px] text-slate-500">{label}</div>
+              <div className="mt-2 text-[14px] leading-6 text-slate-700">{value}</div>
+            </div>
+          </div>
+        ))}
+        <div className="grid grid-cols-[44px_1fr] gap-3 py-4">
+          <IconBubble icon={Lock} tone="blue" />
+          <div>
+            <div className="text-[12px] text-slate-500">Default tools & permissions</div>
+            <div className="mt-2 overflow-hidden rounded-lg border border-slate-200 text-[12px]">
+              {['File', 'Browser', 'Terminal'].map((tool, index) => <div key={tool} className="flex justify-between border-b border-slate-100 px-3 py-2 last:border-b-0"><span>{tool}</span><span className={index === 2 ? 'text-orange-500' : 'text-green-600'}>{index === 2 ? 'Requires Approval' : 'Allowed'}</span></div>)}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-[44px_1fr] gap-3 py-4">
+          <IconBubble icon={CircleDollarSign} tone="blue" />
+          <div className="flex items-center justify-between"><span className="text-[12px] text-slate-500">Ngan sach de xuat</span><Badge tone="green">$20-60/thang</Badge></div>
+        </div>
+        <div className="grid grid-cols-[44px_1fr] gap-3 py-4">
+          <IconBubble icon={ShieldCheck} tone="blue" />
+          <div><span className="text-[12px] text-slate-500">Chinh sach phe duyet</span><p className="mt-2 text-[13px] text-slate-600">Terminal command can phe duyet, secret access bi chan</p></div>
+        </div>
+      </div>
+      <button className="mt-5 h-11 w-full rounded-lg bg-[#0f6bff] text-sm font-bold text-white">Dung template nay</button>
     </div>
   );
 }

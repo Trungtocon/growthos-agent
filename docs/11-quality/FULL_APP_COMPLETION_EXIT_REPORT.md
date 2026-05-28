@@ -51,6 +51,7 @@
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Screen 34 `/runs/demo-run` was further polished to 9.0080% by adding the PNG-matched GrowthOS workspace card and Collapse control to the route-specific AppShell sidebar bottom section.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.
+- Screen 25 `/agents/templates` was recalibrated to the source PNG marketplace/drawer structure with a new contract and full detail drawer. Pixel diff reset to 11.9514%, still under the 15% safety gate, with visual polish deferred.
 - Screen 26 `/agents/performance` was further polished to 10.7924% by compacting the optimization recommendation rows.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
 - Screen 30 `/tickets` was further polished to 10.4584% by compacting ticket board cards to better match the PNG density.

@@ -928,17 +928,31 @@ export function selectCreateAgentViewModel() {
 
 export function selectAgentTemplatesViewModel() {
   const data = currentData();
+  const templates = data.agents.map((agent) => ({
+    id: `template-${agent.id}`,
+    name: `${agent.role} Template`,
+    agentName: agent.name,
+    role: agent.role,
+    skills: agent.skills,
+    tools: agent.tools,
+    successRate: agent.successRate,
+    tone: agentTone(agent),
+  }));
+  const growthAgent = data.agents.find((agent) => agent.id === 'agent-growth-strategy') ?? data.agents[0];
+  if (growthAgent) {
+    templates.push({
+      id: 'template-crm-automation',
+      name: 'CRM Automation Template',
+      agentName: growthAgent.name,
+      role: 'CRM Automation',
+      skills: ['crm-lead-segmentation', 'email-nurturing', 'lead-scoring'],
+      tools: ['CRM', 'File', 'Web'],
+      successRate: 90.6,
+      tone: 'blue',
+    });
+  }
   return {
-    templates: data.agents.map((agent) => ({
-      id: `template-${agent.id}`,
-      name: `${agent.role} Template`,
-      agentName: agent.name,
-      role: agent.role,
-      skills: agent.skills,
-      tools: agent.tools,
-      successRate: agent.successRate,
-      tone: agentTone(agent),
-    })),
+    templates,
     categories: ['All', 'Research', 'Content', 'QA', 'Reporting', 'Growth'],
   };
 }
