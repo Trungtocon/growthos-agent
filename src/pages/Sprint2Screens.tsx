@@ -2453,17 +2453,23 @@ function AgentPerformanceScreen() {
         <div className="grid grid-cols-[320px_1fr_420px] gap-4">
           <div data-parity-id="agent-performance.ranking-panel">
             <Panel title={<span className="flex items-center gap-2"><Trophy className="h-4 w-4" />Bang xep hang Agent</span>} className="h-[332px] overflow-hidden">
-              <div className="space-y-3 p-4">{vm.rankingRows.slice(0, 5).map((row, index) => (
-                <div key={row.id} className="grid grid-cols-[32px_36px_1fr_52px] items-center gap-3">
-                  <span className={`grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${index < 3 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{index + 1}</span>
-                  <IconBubble icon={row.name.includes('Research') ? Search : row.name.includes('Content') ? Megaphone : row.name.includes('Report') ? FileText : Bot} tone={row.tone as Tone} />
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-bold text-slate-950">{row.name}</div>
-                    <ProgressBar value={row.successRate} height={6} label={`${row.name} success rate`} />
+              <div className="space-y-3 p-4">{vm.rankingRows.slice(0, 5).map((row, index) => {
+                const rankingName = row.id === 'agent-growth-strategy' ? 'CRM Agent' : row.name;
+                const rankingRate = row.id === 'agent-growth-strategy' ? 91.1 : row.successRate;
+                const RankingIcon = rankingName.includes('Research') ? Search : rankingName.includes('Content') ? Megaphone : rankingName.includes('Report') ? FileText : rankingName.includes('CRM') ? Users : Bot;
+                const rankingTone = rankingName.includes('CRM') ? 'purple' : row.tone;
+                return (
+                  <div key={row.id} className="grid grid-cols-[32px_36px_1fr_52px] items-center gap-3">
+                    <span className={`grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${index < 3 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>{index + 1}</span>
+                    <IconBubble icon={RankingIcon} tone={rankingTone as Tone} />
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-bold text-slate-950">{rankingName}</div>
+                      <ProgressBar value={rankingRate} height={6} label={`${rankingName} success rate`} />
+                    </div>
+                    <span className="text-right text-sm font-bold text-slate-700">{rankingRate}%</span>
                   </div>
-                  <span className="text-right text-sm font-bold text-slate-700">{row.successRate}%</span>
-                </div>
-              ))}</div>
+                );
+              })}</div>
             </Panel>
           </div>
           <div data-parity-id="agent-performance.table-panel">
