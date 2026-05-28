@@ -17,8 +17,8 @@
 | Static parity locked screens | 7 |
 | Real UI structural pass screens | 48 |
 | Missing screens | 0 |
-| Average 1:1 across all screens | 92.73% |
-| Average 1:1 across Real UI screens | 91.68% |
+| Average 1:1 across all screens | 92.74% |
+| Average 1:1 across Real UI screens | 91.69% |
 
 ## Progress Table
 
@@ -48,7 +48,7 @@
 | 22 - Agents List | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents` | Real UI structural pass | 91.4622% |
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
-| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / source PNG section recalibrated | 88.0486% |
+| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / source PNG section recalibrated | 88.3275% |
 | 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 89.2076% |
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
@@ -84,7 +84,7 @@
 
 | Rank | Screen | Route | 1:1 Ratio |
 |---:|---|---|---:|
-| 1 | 25 - Agent Template Gallery | `/agents/templates` | 88.0486% |
+| 1 | 25 - Agent Template Gallery | `/agents/templates` | 88.3275% |
 | 2 | 17 - Projects List | `/projects` | 88.3995% |
 | 3 | 26 - Agent Performance | `/agents/performance` | 89.2076% |
 | 4 | 08 - Executive Command Center | `/command-center` | 89.4744% |

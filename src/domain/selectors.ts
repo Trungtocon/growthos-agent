@@ -928,29 +928,68 @@ export function selectCreateAgentViewModel() {
 
 export function selectAgentTemplatesViewModel() {
   const data = currentData();
-  const templates = data.agents.map((agent) => ({
+  const templateOverrides: Record<string, { name: string; role: string; skills?: string[]; tools?: string[] }> = {
+    'agent-hermes-qa': {
+      name: 'Hermes QA Template',
+      role: 'QA & Governance',
+      skills: ['growthos-module-uat', 'ui-parity-audit', 'worktree-clean-check'],
+      tools: ['File', 'Browser', 'Terminal'],
+    },
+    'agent-content': {
+      name: 'Content Template',
+      role: 'Content Agent',
+      skills: ['tiktok-script-factory', 'brand-voice', 'content-calendar'],
+      tools: ['Web', 'File', 'Creative'],
+    },
+    'agent-growth-strategy': {
+      name: 'SEO Template',
+      role: 'SEO Optimization',
+      skills: ['seo-content-brief', 'keyword-research', 'internal-linking'],
+      tools: ['Web', 'File'],
+    },
+    'agent-report': {
+      name: 'Report Template',
+      role: 'Reporting',
+      skills: ['weekly-ceo-report', 'cost-report', 'project-progress-report'],
+      tools: ['File', 'Productivity'],
+    },
+    'agent-research': {
+      name: 'Research Template',
+      role: 'Research & Strategy',
+      skills: ['market-research', 'competitor-analysis', 'customer-insight'],
+      tools: ['Web', 'File'],
+    },
+  };
+  const order = ['agent-hermes-qa', 'agent-content', 'agent-growth-strategy', 'template-crm-automation', 'agent-report', 'agent-research'];
+  const agentTemplates = data.agents.map((agent) => {
+    const override = templateOverrides[agent.id];
+    return {
     id: `template-${agent.id}`,
-    name: `${agent.role} Template`,
+    name: override?.name ?? `${agent.role} Template`,
     agentName: agent.name,
-    role: agent.role,
-    skills: agent.skills,
-    tools: agent.tools,
+    role: override?.role ?? agent.role,
+    skills: override?.skills ?? agent.skills,
+    tools: override?.tools ?? agent.tools,
     successRate: agent.successRate,
     tone: agentTone(agent),
-  }));
+    sourceAgentId: agent.id,
+  };
+  });
   const growthAgent = data.agents.find((agent) => agent.id === 'agent-growth-strategy') ?? data.agents[0];
   if (growthAgent) {
-    templates.push({
+    agentTemplates.push({
       id: 'template-crm-automation',
-      name: 'CRM Automation Template',
+      name: 'CRM Template',
       agentName: growthAgent.name,
-      role: 'CRM Automation',
+      role: 'Sales & CRM',
       skills: ['crm-lead-segmentation', 'email-nurturing', 'lead-scoring'],
       tools: ['CRM', 'File', 'Web'],
       successRate: 90.6,
       tone: 'blue',
+      sourceAgentId: 'template-crm-automation',
     });
   }
+  const templates = agentTemplates.sort((a, b) => order.indexOf(a.sourceAgentId) - order.indexOf(b.sourceAgentId));
   return {
     templates,
     categories: ['All', 'Research', 'Content', 'QA', 'Reporting', 'Growth'],

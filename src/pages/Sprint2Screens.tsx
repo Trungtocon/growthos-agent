@@ -2229,7 +2229,7 @@ function AgentTemplatesScreen() {
           <Button><Bot className="h-4 w-4" />Tao Agent moi</Button>
         </div>
       </div>
-      <div data-parity-id="agent-templates.filters" className="relative mt-5 flex h-[38px] items-center gap-3">
+      <div data-parity-id="agent-templates.filters" className="relative mt-7 flex h-[38px] items-center gap-3">
         <div className="relative w-[282px]">
           <Search className="absolute left-4 top-2.5 h-4 w-4 text-slate-400" />
           <input aria-label="Tim template" className="h-[38px] w-full rounded-lg border border-slate-200 bg-white pl-11 pr-4 text-sm outline-none" placeholder="Tim template..." />
@@ -2246,7 +2246,8 @@ function AgentTemplatesScreen() {
           {vm.categories.map((category, index) => <div key={category} className="flex items-center justify-between px-4 py-2 text-slate-600">{category}<span className="text-[#0f6bff]">{index === 0 ? '✓' : ''}</span></div>)}
         </div>
       </div>
-      <div data-parity-id="agent-templates.main-grid" className="mt-[54px] h-[624px] w-[980px] overflow-hidden">
+      <h2 className="mt-5 h-6 text-[18px] font-extrabold leading-6 text-slate-950">Template được đề xuất</h2>
+      <div data-parity-id="agent-templates.main-grid" className="mt-3 h-[652px] w-[980px] overflow-hidden">
         <div data-parity-id="agent-templates.gallery-panel" className="grid h-full grid-cols-3 gap-4">
           {templates.map((template, index) => <TemplateMarketCard key={template.id} template={template} selected={index === 0} />)}
         </div>
@@ -2296,11 +2297,17 @@ function TemplateBotAvatar({ tone = 'blue', large = false }: { tone?: Tone; larg
   const palette = colors[tone];
   const size = large ? 'h-[92px] w-[92px]' : 'h-[58px] w-[58px]';
   return (
-    <div className={`relative grid ${size} place-items-center rounded-full border`} style={{ backgroundColor: palette.bg, borderColor: palette.ring }}>
-      <div className={`${large ? 'h-12 w-14' : 'h-8 w-9'} rounded-2xl border-2 bg-slate-900`} style={{ borderColor: palette.face }}>
-        <div className="mx-auto mt-2 flex w-7 justify-between">
-          <span className="h-2 w-2 rounded-full bg-cyan-300" />
-          <span className="h-2 w-2 rounded-full bg-cyan-300" />
+    <div className={`relative grid ${size} place-items-center overflow-hidden rounded-full border`} style={{ backgroundColor: palette.bg, borderColor: palette.ring }}>
+      <div className={`relative ${large ? 'h-[64px] w-[56px]' : 'h-[42px] w-[38px]'}`}>
+        <span className={`absolute left-1/2 top-0 -translate-x-1/2 rounded-full border bg-white ${large ? 'h-5 w-5' : 'h-3.5 w-3.5'}`} style={{ borderColor: palette.ring }} />
+        <div className={`absolute left-1/2 top-[8px] -translate-x-1/2 rounded-2xl border-2 bg-slate-900 ${large ? 'h-[34px] w-[46px]' : 'h-[24px] w-[32px]'}`} style={{ borderColor: palette.face }}>
+          <div className={`mx-auto flex justify-between ${large ? 'mt-2.5 w-7' : 'mt-1.5 w-5'}`}>
+            <span className={`${large ? 'h-2.5 w-2.5' : 'h-2 w-2'} rounded-full bg-cyan-300`} />
+            <span className={`${large ? 'h-2.5 w-2.5' : 'h-2 w-2'} rounded-full bg-cyan-300`} />
+          </div>
+        </div>
+        <div className={`absolute left-1/2 rounded-b-2xl border bg-white shadow-sm ${large ? 'top-[39px] h-[23px] w-[40px]' : 'top-[30px] h-[13px] w-[29px]'}`} style={{ borderColor: palette.ring }}>
+          <span className="absolute left-1/2 top-1 h-1.5 w-4 -translate-x-1/2 rounded-full" style={{ backgroundColor: palette.face }} />
         </div>
       </div>
       <span className="absolute -right-1 top-1 h-4 w-4 rounded-full border border-white" style={{ backgroundColor: palette.face }} />
@@ -2312,7 +2319,7 @@ function TemplateMarketCard({ template, selected }: { template: ReturnType<typeo
   const category = templateCategory(template);
   const difficulty = template.successRate > 92 ? 'De' : 'Trung binh';
   return (
-    <div className={`h-[306px] overflow-hidden rounded-xl border bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
+    <div className={`h-[324px] overflow-hidden rounded-xl border bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between">
         <TemplateBotAvatar tone={template.tone as Tone} />
         <span className="text-slate-300">☆</span>
