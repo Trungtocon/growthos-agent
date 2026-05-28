@@ -840,10 +840,17 @@ export function selectProjectsListViewModel() {
     tone: column === 'Hoàn thành' ? 'green' : column === 'Bị chặn' ? 'red' : column === 'Có rủi ro' ? 'amber' : column === 'Đang triển khai' ? 'cyan' : 'blue',
     items: projectTemplates.filter((project) => project.column === column),
   }));
-  const costBars = projectTemplates.slice(3, 11).map((project) => ({
-    label: project.title,
-    value: Number(project.cost.replace(/[$,]/g, '')),
-  }));
+  const costBars = [
+    { label: 'GrowthOS V2 UI Parity', value: 1450 },
+    { label: 'Marketing Content Factory', value: 1120 },
+    { label: 'CRM Automation Setup', value: 980 },
+    { label: 'Weekly CEO Reporting', value: 360 },
+    { label: 'Social Media Automation', value: 420 },
+    { label: 'Billing System Integration', value: 310 },
+    { label: 'AI Chatbot Upgrade', value: 260 },
+    { label: 'Data Warehouse Build', value: 220 },
+    { label: 'Khác', value: 180 },
+  ];
   return {
     projects,
     projectColumns,

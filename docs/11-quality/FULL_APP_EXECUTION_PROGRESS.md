@@ -60,6 +60,7 @@
 | 5X-screen-25-subregions | Screen 25 subregion audit and drawer CTA recalibration | Complete | Pending | Build pass, bbox 25 pass 8/8, Screen 25 pixel reference pass at 11.1175% | Added Screen 25 subregion audit tooling and improved `/agents/templates` from 11.6725% to 11.1175% by anchoring the drawer CTA to the source-PNG region |
 | 5Y-screen-25-card-recalibration | Screen 25 template card and drawer CTA polish | Partial | Pending | Build pass, bbox 25 pass 8/8, Screen 25 pixel reference pass at 10.8725% | Improved `/agents/templates` from 11.1175% to 10.8725% by compacting template card internals and aligning the drawer CTA to the measured subregion |
 | 5Z-screen-17-board-density | Screen 17 projects board density polish | Partial | Pending | Build pass, bbox 17 pass 10/10, Screen 17 pixel reference pass at 11.5214% | Added Screen 17 subregion audit tooling and improved `/projects` from 11.6005% to 11.5214% by compacting dense project board cards |
+| 5AA-screen-17-health-overview | Screen 17 projects health overview recalibration | Partial | Pending | Build pass, bbox 17 pass 10/10, Screen 17 pixel reference pass at 11.3301% | Improved `/projects` from 11.5214% to 11.3301% by replacing the generic health panel wrapper, compacting donut/bar chart geometry, and matching the PNG cost-bar order |
 | 5Q+ | Backend adapter readiness and broader visual polish | Planned | Pending | Targeted gate suite per subsystem | Next work should improve product depth without reducing route coverage |
 
 ## Screens Completed

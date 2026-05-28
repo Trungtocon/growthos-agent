@@ -1942,10 +1942,14 @@ function ProjectsListScreen() {
           <div data-parity-id="projects.board" className="mt-3 grid h-[392px] grid-cols-5 gap-3 overflow-hidden">
             {vm.projectColumns.map((column) => <ProjectColumn key={column.id} column={column} />)}
           </div>
-          <div data-parity-id="projects.health-overview" className="-mt-1 h-[204px] overflow-hidden">
-            <Panel title="Project Health Overview" action={<button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500">30 ngày qua</button>} className="h-full overflow-hidden">
+          <div data-parity-id="projects.health-overview" className="-mt-1 h-[204px] overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="flex h-8 items-center justify-between px-4">
+              <h2 className="text-base font-bold leading-none text-slate-950">Project Health Overview</h2>
+              <button className="h-7 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-500">30 ngày qua</button>
+            </div>
+            <div className="h-[172px] overflow-hidden">
               <ProjectHealthOverview statusBreakdown={vm.statusBreakdown} costBars={vm.costBars} />
-            </Panel>
+            </div>
           </div>
         </div>
         <div data-parity-id="projects.side-panel" className="h-full overflow-hidden">
@@ -2070,20 +2074,20 @@ function ProjectHealthOverview({ statusBreakdown, costBars }: { statusBreakdown:
   const maxCost = Math.max(...costBars.map((item) => item.value));
   const toneColor: Record<Tone, string> = { blue: '#0f6bff', cyan: '#06b6d4', green: '#22c55e', amber: '#f59e0b', red: '#ef4444', purple: '#8b5cf6', slate: '#64748b' };
   return (
-    <div className="grid h-full grid-cols-[300px_1fr] gap-4 p-4">
-      <div className="rounded-xl border border-slate-100 p-4">
-        <div className="mb-2 text-xs font-bold text-slate-500">Phân bổ tình trạng dự án</div>
-        <div className="flex items-center gap-5">
-          <div className="grid h-32 w-32 place-items-center rounded-full" style={{ background: 'conic-gradient(#06b6d4 0 50%, #f59e0b 50% 72%, #ef4444 72% 83%, #22c55e 83% 100%)' }}><div className="grid h-[72px] w-[72px] place-items-center rounded-full bg-white text-center"><b className="text-2xl">18</b><span className="text-[11px] text-slate-500">Tổng dự án</span></div></div>
-          <div className="flex-1 space-y-2">{statusBreakdown.map((item) => <div key={item.label} className="flex items-center justify-between text-xs"><span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full" style={{ background: toneColor[item.tone] }} />{item.label}</span><b>{item.value}</b></div>)}</div>
+    <div className="grid h-full grid-cols-[300px_1fr] gap-3 px-3 pb-3 pt-1">
+      <div className="rounded-xl border border-slate-100 p-3">
+        <div className="mb-2 text-[11px] font-bold text-slate-500">Phân bổ tình trạng dự án</div>
+        <div className="flex items-center gap-4">
+          <div className="grid h-[118px] w-[118px] shrink-0 place-items-center rounded-full" style={{ background: 'conic-gradient(#06b6d4 0 50%, #f59e0b 50% 72%, #ef4444 72% 83%, #8b5cf6 83% 100%)' }}><div className="grid h-[68px] w-[68px] place-items-center rounded-full bg-white text-center leading-none"><b className="text-2xl">18</b><span className="text-[10px] text-slate-500">Tổng dự án</span></div></div>
+          <div className="min-w-0 flex-1 space-y-2">{statusBreakdown.map((item) => <div key={item.label} className="grid grid-cols-[1fr_42px] items-center gap-2 text-[11px] text-slate-600"><span className="flex min-w-0 items-center gap-2 truncate"><span className="h-2 w-2 shrink-0 rounded-full" style={{ background: toneColor[item.tone] }} />{item.label}</span><b className="text-right text-slate-700">{item.value}</b></div>)}</div>
         </div>
       </div>
-      <div className="rounded-xl border border-slate-100 p-4">
-        <div className="mb-3 text-xs font-bold text-slate-500">Chi phí AI theo dự án</div>
-        <div className="grid h-[132px] grid-cols-[36px_1fr] gap-2">
+      <div className="rounded-xl border border-slate-100 px-4 py-3">
+        <div className="mb-1 text-[11px] font-bold text-slate-500">Chi phí AI theo dự án</div>
+        <div className="grid h-[128px] grid-cols-[36px_1fr] gap-2">
           <div className="flex flex-col justify-between pb-8 text-[10px] font-medium text-slate-500"><span>$1,500</span><span>$1,000</span><span>$500</span><span>$0</span></div>
           <div className="flex items-end gap-4 border-b border-slate-100 px-2">
-            {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-[58px] max-w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(18, (item.value / maxCost) * 100)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
+            {costBars.map((item) => <div key={item.label} className="flex flex-1 flex-col items-center gap-1"><b className="text-[10px] text-[#0f6bff]">${item.value.toLocaleString()}</b><div className="w-[58px] max-w-full rounded-t-md bg-gradient-to-t from-[#0f6bff] to-[#60a5fa]" style={{ height: `${Math.max(14, (item.value / maxCost) * 84)}px` }} /><span className="h-7 text-center text-[9px] leading-3 text-slate-500">{item.label.split(' ').slice(0, 2).join(' ')}</span></div>)}
           </div>
         </div>
       </div>
