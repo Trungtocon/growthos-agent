@@ -2028,11 +2028,18 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
   return (
     <div className={`${heightClass} overflow-hidden rounded-lg border p-2 text-[11px] ${project.tone === 'red' ? 'border-red-200 bg-red-50/50' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50/50' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-2">
-        <b className="line-clamp-2 max-w-[108px] leading-3 text-slate-950">{project.title}</b>
-        <span className={`shrink-0 rounded-md border px-2 py-1 text-[10px] font-semibold leading-3 ${project.tone === 'red' ? 'border-red-200 bg-red-50 text-red-600' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-600' : project.tone === 'green' ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-cyan-200 bg-cyan-50 text-cyan-600'}`}>{statusLabel}</span>
+        <b className={`line-clamp-2 leading-3 text-slate-950 ${isPlanning ? 'max-w-[168px]' : 'max-w-[108px]'}`}>{project.title}</b>
+        {!isPlanning ? <span className={`shrink-0 rounded-md border px-2 py-1 text-[10px] font-semibold leading-3 ${project.tone === 'red' ? 'border-red-200 bg-red-50 text-red-600' : project.tone === 'amber' ? 'border-amber-200 bg-amber-50 text-amber-600' : project.tone === 'green' ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-cyan-200 bg-cyan-50 text-cyan-600'}`}>{statusLabel}</span> : null}
       </div>
       <p className="mt-1 truncate text-[10px] leading-3 text-slate-500">Goal: {goal}</p>
-      <div className="mt-1 flex items-center justify-between text-[10px] text-slate-500"><span>Owner</span><span className="truncate pl-2">{project.owner}</span></div>
+      {isPlanning ? (
+        <div className="mt-1 flex items-center gap-1 text-[10px] text-slate-500">
+          <ProjectMiniAvatar tone={project.tone === 'amber' ? 'violet' : project.tone} />
+          <span className="truncate">{project.owner}</span>
+        </div>
+      ) : (
+        <div className="mt-1 flex items-center justify-between text-[10px] text-slate-500"><span>Owner</span><span className="truncate pl-2">{project.owner}</span></div>
+      )}
       {!isPlanning ? (
         <>
           <div className="mt-2">
@@ -2053,9 +2060,9 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
           ) : null}
         </>
       ) : null}
-      <div className="mt-2 flex justify-between text-[10px] text-slate-500">
-        <span className="flex items-center gap-1"><Ticket className="h-3 w-3" />{project.tickets}</span>
-        <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{project.due}</span>
+      <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500">
+        {isPlanning ? <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{project.due}</span> : <span className="flex items-center gap-1"><Ticket className="h-3 w-3" />{project.tickets}</span>}
+        {isPlanning ? <span className="rounded-md bg-blue-50 px-2 py-1 text-[10px] font-semibold text-[#0f6bff]">Lên kế hoạch</span> : <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{project.due}</span>}
       </div>
     </div>
   );
