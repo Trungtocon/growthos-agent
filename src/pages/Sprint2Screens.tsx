@@ -2258,7 +2258,7 @@ function AgentTemplatesScreen() {
           <h1 className="text-[30px] font-bold leading-9 text-black">Agent Templates</h1>
           <p className="mt-1 text-[14px] leading-5 text-slate-500">Chon mau AI agent phu hop de tao nhanh doi ngu AI cho doanh nghiep</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 pt-[14px]">
           <Button variant="secondary"><PencilLine className="h-4 w-4" />Tao Agent tuy chinh</Button>
           <Button><Plus className="h-4 w-4" />Tao Agent moi</Button>
         </div>
