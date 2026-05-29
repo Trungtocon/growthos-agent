@@ -64,6 +64,7 @@
 - Screen 25 `/agents/templates` was further polished to 10.8725% by compacting template card internals and aligning the drawer primary CTA to the measured source-PNG region.
 - Screen 25 `/agents/templates` was further polished to 10.8721% by matching the Hermes QA card avatar tone closer to the source PNG; several text/category experiments were reverted because they worsened diff.
 - Screen 25 `/agents/templates` was further polished to 10.7950% by aligning the detail drawer hero with the PNG's horizontal avatar/title composition.
+- Screen 25 `/agents/templates` was further polished to 10.7929% by matching the source PNG header action icons/title tone and moving the Hermes card favorite star into the visible card region.
 - Screen 26 `/agents/performance` was further polished to 10.7794% by matching the ranking panel's fifth row to the source PNG while preserving the detailed table content.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
 - Screen 30 `/tickets` was further polished to 10.3084% by compacting the KPI band and surfacing Ready/Assigned ticket cards to better match the PNG density.

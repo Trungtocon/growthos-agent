@@ -20,6 +20,7 @@ import {
   Folder,
   Gauge,
   Megaphone,
+  PencilLine,
   Plus,
   Play,
   Search,
@@ -2253,12 +2254,12 @@ function AgentTemplatesScreen() {
     <div className="pr-[430px]">
       <div data-parity-id="agent-templates.header" className="flex h-[58px] items-start justify-between gap-6">
         <div>
-          <h1 className="text-[30px] font-bold leading-9 text-slate-950">Agent Templates</h1>
+          <h1 className="text-[30px] font-bold leading-9 text-black">Agent Templates</h1>
           <p className="mt-1 text-[14px] leading-5 text-slate-500">Chon mau AI agent phu hop de tao nhanh doi ngu AI cho doanh nghiep</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="secondary"><Code2 className="h-4 w-4" />Tao Agent tuy chinh</Button>
-          <Button><Bot className="h-4 w-4" />Tao Agent moi</Button>
+          <Button variant="secondary"><PencilLine className="h-4 w-4" />Tao Agent tuy chinh</Button>
+          <Button><Plus className="h-4 w-4" />Tao Agent moi</Button>
         </div>
       </div>
       <div data-parity-id="agent-templates.filters" className="relative mt-7 flex h-[38px] items-center gap-3">
@@ -2362,7 +2363,7 @@ function TemplateMarketCard({ template, selected }: { template: ReturnType<typeo
           : 'bg-orange-100 text-orange-700';
   return (
     <div className={`relative h-[324px] overflow-hidden rounded-xl border bg-white shadow-[0_8px_20px_rgba(15,23,42,0.04)] ${selected ? 'border-[#0f6bff] ring-1 ring-[#0f6bff]' : 'border-slate-200'}`}>
-      <div className="absolute left-4 top-4 [&>span]:absolute [&>span]:left-[284px] [&>span]:top-[-6px] [&>span]:text-lg [&>span]:leading-none">
+      <div className="absolute left-4 top-4 [&>span]:absolute [&>span]:left-[238px] [&>span]:top-[-2px] [&>span]:text-lg [&>span]:leading-none">
         <TemplateBotAvatar tone={(category.includes('QA') ? 'blue' : template.tone) as Tone} />
         <span className="text-slate-300">☆</span>
       </div>
