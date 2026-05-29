@@ -376,15 +376,16 @@ function Logo({ profile }: { profile: ShellProfile }) {
     );
   }
 
+  const hasFootnote = Boolean(profile.logoFootnote);
   const leafLogo = (
-    <div className="flex items-center gap-[9px]">
-      <div className="relative h-12 w-[37px]">
-        <span className="absolute left-0 top-2 h-9 w-5 rounded-br-[18px] rounded-tl-[18px] bg-gradient-to-b from-[#00bcd4] to-[#1273e6]" />
-        <span className="absolute left-[17px] top-0 h-11 w-5 rounded-bl-[18px] rounded-tr-[18px] bg-gradient-to-b from-[#00d2c7] to-[#0052cc]" />
+    <div className={`flex items-center ${hasFootnote ? 'gap-[6px]' : 'gap-[9px]'}`}>
+      <div className={hasFootnote ? 'relative h-10 w-[31px] shrink-0' : 'relative h-12 w-[37px]'}>
+        <span className={`absolute left-0 rounded-br-[18px] rounded-tl-[18px] bg-gradient-to-b from-[#00bcd4] to-[#1273e6] ${hasFootnote ? 'top-[7px] h-[30px] w-[17px]' : 'top-2 h-9 w-5'}`} />
+        <span className={`absolute top-0 rounded-bl-[18px] rounded-tr-[18px] bg-gradient-to-b from-[#00d2c7] to-[#0052cc] ${hasFootnote ? 'left-[14px] h-[37px] w-[17px]' : 'left-[17px] h-11 w-5'}`} />
       </div>
       <div>
-        <div className="text-[25px] font-extrabold leading-6 tracking-tight text-[#1264f4]">UIKIGAI</div>
-        <div className="text-[11px] font-semibold leading-3 text-[#3694d8]">{profile.logoSubtitle}</div>
+        <div className={`${hasFootnote ? 'text-[23px] leading-[22px]' : 'text-[25px] leading-6'} font-extrabold tracking-tight text-[#1264f4]`}>UIKIGAI</div>
+        <div className={`${hasFootnote ? 'whitespace-nowrap text-[10px] leading-3' : 'text-[11px] leading-3'} font-semibold text-[#3694d8]`}>{profile.logoSubtitle}</div>
       </div>
     </div>
   );
