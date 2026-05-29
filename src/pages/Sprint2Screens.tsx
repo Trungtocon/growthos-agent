@@ -2392,11 +2392,15 @@ function TemplateDetailDrawer({ template }: { template: ReturnType<typeof select
   return (
     <div className="relative h-full px-6 py-6">
       <button className="absolute right-6 top-4 text-2xl leading-none text-slate-900" aria-label="Dong template detail">×</button>
-      <div className="flex flex-col items-center text-center">
+      <div className="flex items-start gap-5 pr-8">
         <TemplateBotAvatar tone={template.tone as Tone} large />
-        <h2 className="mt-4 text-[24px] font-bold text-slate-950">Hermes QA Agent</h2>
-        <Badge tone="purple">QA & Governance</Badge>
-        <p className="mt-5 max-w-[260px] text-[14px] leading-6 text-slate-600">Kiem thu, audit, UAT va danh gia chat luong output truoc khi duyet.</p>
+        <div className="min-w-0 pt-3">
+          <h2 className="text-[24px] font-bold leading-7 text-slate-950">Hermes QA Agent</h2>
+          <div className="mt-2"><Badge tone="purple">QA & Governance</Badge></div>
+        </div>
+      </div>
+      <div className="mt-7 text-center">
+        <p className="mx-auto max-w-[285px] text-[14px] leading-6 text-slate-600">Kiem thu, audit, UAT va danh gia chat luong output truoc khi duyet.</p>
       </div>
       <div className="mt-6 divide-y divide-slate-200 border-y border-slate-200">
         {[

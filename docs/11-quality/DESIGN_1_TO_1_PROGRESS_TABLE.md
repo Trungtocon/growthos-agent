@@ -48,7 +48,7 @@
 | 22 - Agents List | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents` | Real UI structural pass | 91.4622% |
 | 23 - Agent Detail | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/demo-agent` | Real UI structural pass | 91.9549% |
 | 24 - Create Agent Wizard | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/new` | Real UI structural pass | 91.1310% |
-| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / source PNG section recalibrated | 89.1279% |
+| 25 - Agent Template Gallery | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/templates` | Real UI structural pass / drawer hero recalibrated toward PNG | 89.2050% |
 | 26 - Agent Performance | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/performance` | Real UI structural pass | 89.2206% |
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
