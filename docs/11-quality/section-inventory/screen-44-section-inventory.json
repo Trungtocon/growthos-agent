@@ -1,0 +1,89 @@
+{
+  "screenId": "44",
+  "screenName": "Reports Dashboard",
+  "route": "/reports",
+  "referencePng": "public/stitch_ui/44_Reports_Dashboard.png",
+  "generatedAt": "2026-05-29T17:13:01.063Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "reports.header",
+      "name": "Reports Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"reports.header\"], [data-section-id=\"reports.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "reports.kpi-band",
+      "name": "Reports Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"reports.kpi-band\"], [data-section-id=\"reports.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "reports.main-grid",
+      "name": "Reports Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"reports.main-grid\"], [data-section-id=\"reports.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "reports.list-panel",
+      "name": "Reports List Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"reports.list-panel\"], [data-section-id=\"reports.list-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "reports.schedule-panel",
+      "name": "Reports Schedule Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"reports.schedule-panel\"], [data-section-id=\"reports.schedule-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

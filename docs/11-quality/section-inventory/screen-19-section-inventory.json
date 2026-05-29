@@ -1,0 +1,79 @@
+{
+  "screenId": "19",
+  "screenName": "Create Project Wizard",
+  "route": "/projects/new",
+  "referencePng": "public/stitch_ui/19_Create_Project_Wizard.png",
+  "generatedAt": "2026-05-29T17:13:01.008Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "create-project.header",
+      "name": "Create Project Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"create-project.header\"], [data-section-id=\"create-project.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "create-project.main-grid",
+      "name": "Create Project Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"create-project.main-grid\"], [data-section-id=\"create-project.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "create-project.form-panel",
+      "name": "Create Project Form Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"create-project.form-panel\"], [data-section-id=\"create-project.form-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "create-project.preview-panel",
+      "name": "Create Project Preview Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"create-project.preview-panel\"], [data-section-id=\"create-project.preview-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

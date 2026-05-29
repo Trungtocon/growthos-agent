@@ -1,0 +1,89 @@
+{
+  "screenId": "35",
+  "screenName": "Artifacts Library",
+  "route": "/artifacts",
+  "referencePng": "public/stitch_ui/35_Artifacts_Library.png",
+  "generatedAt": "2026-05-29T17:13:01.041Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "artifacts.header",
+      "name": "Artifacts Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"artifacts.header\"], [data-section-id=\"artifacts.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "artifacts.kpi-band",
+      "name": "Artifacts Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"artifacts.kpi-band\"], [data-section-id=\"artifacts.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "artifacts.main-grid",
+      "name": "Artifacts Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"artifacts.main-grid\"], [data-section-id=\"artifacts.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "artifacts.library-panel",
+      "name": "Artifacts Library Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"artifacts.library-panel\"], [data-section-id=\"artifacts.library-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "artifacts.inspector-panel",
+      "name": "Artifacts Inspector Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"artifacts.inspector-panel\"], [data-section-id=\"artifacts.inspector-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

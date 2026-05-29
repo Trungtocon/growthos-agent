@@ -1,0 +1,89 @@
+{
+  "screenId": "51",
+  "screenName": "Team Members",
+  "route": "/team",
+  "referencePng": "public/stitch_ui/51_Team_Members.png",
+  "generatedAt": "2026-05-29T17:13:01.077Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "team.header",
+      "name": "Team Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"team.header\"], [data-section-id=\"team.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "team.kpi-band",
+      "name": "Team Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"team.kpi-band\"], [data-section-id=\"team.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "team.main-grid",
+      "name": "Team Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"team.main-grid\"], [data-section-id=\"team.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "team.member-panel",
+      "name": "Team Member Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"team.member-panel\"], [data-section-id=\"team.member-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "team.ownership-panel",
+      "name": "Team Ownership Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"team.ownership-panel\"], [data-section-id=\"team.ownership-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

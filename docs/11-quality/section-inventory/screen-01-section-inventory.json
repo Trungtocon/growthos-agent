@@ -1,0 +1,19 @@
+{
+  "screenId": "01",
+  "screenName": "Login",
+  "route": "/login",
+  "referencePng": "public/stitch_ui/01_Login.png",
+  "generatedAt": "2026-05-29T17:13:00.415Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

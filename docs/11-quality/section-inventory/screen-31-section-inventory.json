@@ -1,0 +1,89 @@
+{
+  "screenId": "31",
+  "screenName": "Tickets List",
+  "route": "/tickets/list",
+  "referencePng": "public/stitch_ui/31_Tickets_List.png",
+  "generatedAt": "2026-05-29T17:13:01.031Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets-list.header",
+      "name": "Tickets List Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets-list.header\"], [data-section-id=\"tickets-list.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets-list.kpi-band",
+      "name": "Tickets List Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets-list.kpi-band\"], [data-section-id=\"tickets-list.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets-list.main-grid",
+      "name": "Tickets List Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets-list.main-grid\"], [data-section-id=\"tickets-list.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets-list.list-panel",
+      "name": "Tickets List List Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets-list.list-panel\"], [data-section-id=\"tickets-list.list-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets-list.detail-panel",
+      "name": "Tickets List Detail Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets-list.detail-panel\"], [data-section-id=\"tickets-list.detail-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

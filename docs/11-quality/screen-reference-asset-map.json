@@ -1,0 +1,497 @@
+[
+  {
+    "screenId": "01",
+    "screenName": "Login",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/login",
+    "expectedComponent": "LoginOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/01_Login.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "02",
+    "screenName": "Register / Create Account",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/register",
+    "expectedComponent": "RegisterOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/02_Register_Create_Account.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "03",
+    "screenName": "Create First Company",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/onboarding/company",
+    "expectedComponent": "CompanyOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/03_Create_First_Company.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "04",
+    "screenName": "Use Case Selection",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/onboarding/use-case",
+    "expectedComponent": "UseCaseOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/04_Use_Case_Selection.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "05",
+    "screenName": "First AI Team Setup Wizard",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/onboarding/ai-team",
+    "expectedComponent": "AiTeamOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/05_First_AI_Team_Setup_Wizard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "06",
+    "screenName": "Connect Hermes Runtime",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/onboarding/hermes",
+    "expectedComponent": "HermesOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/06_Connect_Hermes_Runtime.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "07",
+    "screenName": "Onboarding Complete / First Task",
+    "moduleName": "Authentication & Onboarding",
+    "route": "/onboarding/complete",
+    "expectedComponent": "CompleteOnboardingParityPage",
+    "referencePngPath": "public/stitch_ui/07_Onboarding_Complete_First_Task.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "08",
+    "screenName": "Executive Command Center",
+    "moduleName": "Command Center",
+    "route": "/command-center",
+    "expectedComponent": "CommandCenter / AppShell",
+    "referencePngPath": "public/stitch_ui/08_Executive_Command_Center.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "09",
+    "screenName": "Today View",
+    "moduleName": "Command Center",
+    "route": "/today",
+    "expectedComponent": "TodayScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/09_Today_View.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "10",
+    "screenName": "AI Inbox",
+    "moduleName": "Command Center",
+    "route": "/inbox",
+    "expectedComponent": "InboxScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/10_AI_Inbox.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "11",
+    "screenName": "Notification Center",
+    "moduleName": "Command Center",
+    "route": "/notifications",
+    "expectedComponent": "NotificationScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/11_Notification_Center.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "12",
+    "screenName": "Company Overview",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/company/overview",
+    "expectedComponent": "CompanyOverviewScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/12_Company_Overview.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "13",
+    "screenName": "Company Settings",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/company/settings",
+    "expectedComponent": "CompanySettingsScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/13_Company_Settings.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "14",
+    "screenName": "Goals Dashboard",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/goals",
+    "expectedComponent": "GoalsDashboardScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/14_Goals_Dashboard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "15",
+    "screenName": "Goal Detail",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/goals/demo-goal",
+    "expectedComponent": "GoalDetailScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/15_Goal_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "16",
+    "screenName": "Create Goal Wizard",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/goals/new",
+    "expectedComponent": "CreateGoalScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/16_Create_Goal_Wizard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "17",
+    "screenName": "Projects List",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/projects",
+    "expectedComponent": "ProjectsListScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/17_Projects_List.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "18",
+    "screenName": "Project Detail",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/projects/demo-project",
+    "expectedComponent": "ProjectDetailScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/18_Project_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "19",
+    "screenName": "Create Project Wizard",
+    "moduleName": "Company, Goals & Projects",
+    "route": "/projects/new",
+    "expectedComponent": "CreateProjectScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/19_Create_Project_Wizard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "20",
+    "screenName": "AI Workforce Overview",
+    "moduleName": "AI Workforce",
+    "route": "/workforce",
+    "expectedComponent": "WorkforceOverviewRealPage",
+    "referencePngPath": "public/stitch_ui/20_AI_Workforce_Overview.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "21",
+    "screenName": "Org Chart View",
+    "moduleName": "AI Workforce",
+    "route": "/org-chart",
+    "expectedComponent": "OrgChartRealPage",
+    "referencePngPath": "public/stitch_ui/21_Org_Chart_View.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "22",
+    "screenName": "Agents List",
+    "moduleName": "AI Workforce",
+    "route": "/agents",
+    "expectedComponent": "AgentsListScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/22_Agents_List.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "23",
+    "screenName": "Agent Detail",
+    "moduleName": "AI Workforce",
+    "route": "/agents/demo-agent",
+    "expectedComponent": "AgentDetailRealPage",
+    "referencePngPath": "public/stitch_ui/23_Agent_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "24",
+    "screenName": "Create Agent Wizard",
+    "moduleName": "AI Workforce",
+    "route": "/agents/new",
+    "expectedComponent": "CreateAgentScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/24_Create_Agent_Wizard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "25",
+    "screenName": "Agent Template Gallery",
+    "moduleName": "AI Workforce",
+    "route": "/agents/templates",
+    "expectedComponent": "AgentTemplatesScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/25_Agent_Template_Gallery.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "26",
+    "screenName": "Agent Performance",
+    "moduleName": "AI Workforce",
+    "route": "/agents/performance",
+    "expectedComponent": "AgentPerformanceScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/26_Agent_Performance.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "27",
+    "screenName": "Agent Memory View",
+    "moduleName": "AI Workforce",
+    "route": "/agents/memory",
+    "expectedComponent": "AgentMemoryScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/27_Agent_Memory_View.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "28",
+    "screenName": "Agent Skills View",
+    "moduleName": "AI Workforce",
+    "route": "/skills",
+    "expectedComponent": "SkillsRegistryScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/28_Agent_Skills_View.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "29",
+    "screenName": "Toolsets & Permissions",
+    "moduleName": "AI Workforce",
+    "route": "/tools/permissions",
+    "expectedComponent": "ToolsPermissionsScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/29_Toolsets_Permissions.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "30",
+    "screenName": "Tickets Board",
+    "moduleName": "Work Execution",
+    "route": "/tickets",
+    "expectedComponent": "TicketsBoardRealPage",
+    "referencePngPath": "public/stitch_ui/30_Tickets_Board.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "31",
+    "screenName": "Tickets List",
+    "moduleName": "Work Execution",
+    "route": "/tickets/list",
+    "expectedComponent": "TicketsListScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/31_Tickets_List.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "32",
+    "screenName": "Ticket Detail",
+    "moduleName": "Work Execution",
+    "route": "/tickets/demo-ticket",
+    "expectedComponent": "TicketDetailRealPage",
+    "referencePngPath": "public/stitch_ui/32_Ticket_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "33",
+    "screenName": "Create Ticket Wizard",
+    "moduleName": "Work Execution",
+    "route": "/tickets/new",
+    "expectedComponent": "CreateTicketScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/33_Create_Ticket_Wizard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "34",
+    "screenName": "Run Console",
+    "moduleName": "Work Execution",
+    "route": "/runs/demo-run",
+    "expectedComponent": "RunConsoleRealPage",
+    "referencePngPath": "public/stitch_ui/34_Run_Console.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "35",
+    "screenName": "Artifacts Library",
+    "moduleName": "Work Execution",
+    "route": "/artifacts",
+    "expectedComponent": "ArtifactsLibraryScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/35_Artifacts_Library.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "36",
+    "screenName": "Artifact Detail / Review",
+    "moduleName": "Work Execution",
+    "route": "/artifacts/demo-artifact",
+    "expectedComponent": "ArtifactDetailScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/36_Artifact_Detail_Review.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "37",
+    "screenName": "Approval Center",
+    "moduleName": "Governance & Audit",
+    "route": "/approvals",
+    "expectedComponent": "ApprovalCenterRealPage",
+    "referencePngPath": "public/stitch_ui/37_Approval_Center.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "38",
+    "screenName": "Approval Detail",
+    "moduleName": "Governance & Audit",
+    "route": "/approvals/demo-approval",
+    "expectedComponent": "ApprovalDetailScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/38_Approval_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "39",
+    "screenName": "Governance Policy",
+    "moduleName": "Governance & Audit",
+    "route": "/governance/policies",
+    "expectedComponent": "GovernancePoliciesScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/39_Governance_Policy.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "40",
+    "screenName": "Audit Log",
+    "moduleName": "Governance & Audit",
+    "route": "/audit-log",
+    "expectedComponent": "AuditLogScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/40_Audit_Log.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "41",
+    "screenName": "Risk Center",
+    "moduleName": "Governance & Audit",
+    "route": "/risk-center",
+    "expectedComponent": "RiskCenterScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/41_Risk_Center.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "42",
+    "screenName": "Cost Dashboard",
+    "moduleName": "Budget & Reports",
+    "route": "/cost",
+    "expectedComponent": "CostDashboardScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/42_Cost_Dashboard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "43",
+    "screenName": "Budget Settings",
+    "moduleName": "Budget & Reports",
+    "route": "/budget/settings",
+    "expectedComponent": "BudgetSettingsScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/43_Budget_Settings.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "44",
+    "screenName": "Reports Dashboard",
+    "moduleName": "Budget & Reports",
+    "route": "/reports",
+    "expectedComponent": "ReportsDashboardScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/44_Reports_Dashboard.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "45",
+    "screenName": "Report Builder",
+    "moduleName": "Budget & Reports",
+    "route": "/reports/new",
+    "expectedComponent": "ReportBuilderScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/45_Report_Builder.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "46",
+    "screenName": "Integrations Hub",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/integrations",
+    "expectedComponent": "IntegrationsHubScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/46_Integrations.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "47",
+    "screenName": "Integration Detail",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/integrations/demo-integration",
+    "expectedComponent": "IntegrationDetailScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/47_Integration_Detail.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "48",
+    "screenName": "MCP Server Manager",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/mcp",
+    "expectedComponent": "McpServerManagerScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/48_MCP_Server_Manager.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "49",
+    "screenName": "Workspaces Manager",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/workspaces",
+    "expectedComponent": "WorkspacesManagerScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/49_Workspaces_Manager.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "50",
+    "screenName": "Secrets Manager",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/secrets",
+    "expectedComponent": "SecretsManagerScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/50_Secrets_Manager.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "51",
+    "screenName": "Team Members",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/team",
+    "expectedComponent": "TeamMembersScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/51_Team_Members.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "52",
+    "screenName": "Role & Permission",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/roles-permissions",
+    "expectedComponent": "RolesPermissionsScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/52_Role_Permission.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "53",
+    "screenName": "System Settings",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/settings",
+    "expectedComponent": "SystemSettingsScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/53_System_Settings.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "54",
+    "screenName": "Billing / Plan",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/billing",
+    "expectedComponent": "BillingPlanScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/54_Billing_Plan.png",
+    "referenceExists": true
+  },
+  {
+    "screenId": "55",
+    "screenName": "Help / Template Center",
+    "moduleName": "Integrations, Workspace, Admin",
+    "route": "/help",
+    "expectedComponent": "HelpTemplateCenterScreen / AppShell",
+    "referencePngPath": "public/stitch_ui/55_Help_Template_Center.png",
+    "referenceExists": true
+  }
+]

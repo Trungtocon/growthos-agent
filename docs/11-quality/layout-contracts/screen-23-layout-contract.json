@@ -1,0 +1,141 @@
+{
+  "screenId": "23",
+  "route": "/agents/demo-agent",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "estimated-from-reference-png-and-real-ui-layout",
+  "source": {
+    "reference": "public/stitch_ui/23_Agent_Detail.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 185,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 185,
+      "y": 0,
+      "width": 1487,
+      "height": 60,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 215,
+      "y": 72,
+      "width": 1427,
+      "height": 1087.5,
+      "tolerance": 16
+    },
+    "agent.header": {
+      "x": 215,
+      "y": 72,
+      "width": 1427,
+      "height": 201.5,
+      "tolerance": 16
+    },
+    "agent.kpi-band": {
+      "x": 215,
+      "y": 285.5,
+      "width": 1427,
+      "height": 62,
+      "tolerance": 16
+    },
+    "agent.tabs": {
+      "x": 215,
+      "y": 363.5,
+      "width": 1427,
+      "height": 46,
+      "tolerance": 16
+    },
+    "agent.main-grid": {
+      "x": 215,
+      "y": 425.5,
+      "width": 1427,
+      "height": 734,
+      "tolerance": 16
+    },
+    "agent.left-panel": {
+      "x": 215,
+      "y": 425.5,
+      "width": 330,
+      "height": 734,
+      "tolerance": 16
+    },
+    "agent.center-panel": {
+      "x": 561,
+      "y": 425.5,
+      "width": 675,
+      "height": 734,
+      "tolerance": 16
+    },
+    "agent.right-panel": {
+      "x": 1252,
+      "y": 425.5,
+      "width": 390,
+      "height": 734,
+      "tolerance": 16
+    },
+    "agent.profile-card": {
+      "x": 215,
+      "y": 425.5,
+      "width": 330,
+      "height": 284,
+      "tolerance": 16
+    },
+    "agent.skills-card": {
+      "x": 215,
+      "y": 725.5,
+      "width": 330,
+      "height": 428,
+      "tolerance": 16
+    },
+    "agent.assignment-card": {
+      "x": 561,
+      "y": 425.5,
+      "width": 675,
+      "height": 228,
+      "tolerance": 16
+    },
+    "agent.memory-card": {
+      "x": 561,
+      "y": 669.5,
+      "width": 675,
+      "height": 224,
+      "tolerance": 16
+    },
+    "agent.performance-card": {
+      "x": 561,
+      "y": 909.5,
+      "width": 675,
+      "height": 250,
+      "tolerance": 16
+    },
+    "agent.control-card": {
+      "x": 1252,
+      "y": 425.5,
+      "width": 390,
+      "height": 216,
+      "tolerance": 16
+    },
+    "agent.cost-card": {
+      "x": 1252,
+      "y": 657.5,
+      "width": 390,
+      "height": 152,
+      "tolerance": 16
+    },
+    "agent.risk-card": {
+      "x": 1252,
+      "y": 825.5,
+      "width": 390,
+      "height": 172,
+      "tolerance": 16
+    }
+  }
+}

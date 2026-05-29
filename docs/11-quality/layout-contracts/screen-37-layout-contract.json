@@ -1,0 +1,106 @@
+{
+  "screenId": "37",
+  "route": "/approvals",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "estimated-from-reference-png-and-real-ui-layout",
+  "source": {
+    "reference": "public/stitch_ui/37_Approval_Center.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 1690,
+      "tolerance": 16
+    },
+    "approval.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 64,
+      "tolerance": 16
+    },
+    "approval.kpi-band": {
+      "x": 240,
+      "y": 170,
+      "width": 1410,
+      "height": 112,
+      "tolerance": 16
+    },
+    "approval.main-grid": {
+      "x": 240,
+      "y": 356,
+      "width": 1410,
+      "height": 1424,
+      "tolerance": 20
+    },
+    "approval.queue-panel": {
+      "x": 240,
+      "y": 356,
+      "width": 601.6,
+      "height": 1424,
+      "tolerance": 20
+    },
+    "approval.detail-panel": {
+      "x": 857.6,
+      "y": 356,
+      "width": 792.4,
+      "height": 1424,
+      "tolerance": 20
+    },
+    "approval.policy-panel": {
+      "x": 878.6,
+      "y": 821,
+      "width": 750.4,
+      "height": 150,
+      "tolerance": 20
+    },
+    "approval.queue-card": {
+      "x": 240,
+      "y": 356,
+      "width": 601.6,
+      "height": 1424,
+      "tolerance": 20
+    },
+    "approval.detail-card": {
+      "x": 857.6,
+      "y": 356,
+      "width": 792.4,
+      "height": 696,
+      "tolerance": 20
+    },
+    "approval.audit-card": {
+      "x": 857.6,
+      "y": 1068,
+      "width": 792.4,
+      "height": 102,
+      "tolerance": 20
+    },
+    "approval.actions-card": {
+      "x": 878.6,
+      "y": 991,
+      "width": 750.4,
+      "height": 40,
+      "tolerance": 20
+    }
+  }
+}

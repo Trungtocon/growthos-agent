@@ -1,0 +1,70 @@
+{
+  "screenId": "52",
+  "route": "/roles-permissions",
+  "viewport": {
+    "width": 1440,
+    "height": 1024
+  },
+  "contractSource": "sprint-5m-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/52_Role_Permission.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 1024,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1222,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 844,
+      "tolerance": 12
+    },
+    "roles.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 68,
+      "tolerance": 12
+    },
+    "roles.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1178,
+      "height": 62,
+      "tolerance": 12
+    },
+    "roles.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1178,
+      "height": 682,
+      "tolerance": 12
+    },
+    "roles.matrix-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 738,
+      "height": 682,
+      "tolerance": 16
+    },
+    "roles.coverage-panel": {
+      "x": 998,
+      "y": 252,
+      "width": 420,
+      "height": 682,
+      "tolerance": 16
+    }
+  }
+}

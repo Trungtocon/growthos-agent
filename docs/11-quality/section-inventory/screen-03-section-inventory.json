@@ -1,0 +1,19 @@
+{
+  "screenId": "03",
+  "screenName": "Create First Company",
+  "route": "/onboarding/company",
+  "referencePng": "public/stitch_ui/03_Create_First_Company.png",
+  "generatedAt": "2026-05-29T17:13:00.580Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

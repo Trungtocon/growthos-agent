@@ -1,0 +1,85 @@
+{
+  "screenId": "17",
+  "route": "/projects",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-section-coverage-recalibrated-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/17_Projects_List.png",
+    "contractSource": "sprint-section-coverage-recalibrated-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 838,
+      "tolerance": 16
+    },
+    "projects.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "projects.kpi-band": {
+      "x": 240,
+      "y": 160,
+      "width": 1410,
+      "height": 88,
+      "tolerance": 16
+    },
+    "projects.main-grid": {
+      "x": 240,
+      "y": 256,
+      "width": 1410,
+      "height": 672,
+      "tolerance": 16
+    },
+    "projects.filters": {
+      "x": 240,
+      "y": 256,
+      "width": 1114,
+      "height": 36,
+      "tolerance": 16
+    },
+    "projects.board": {
+      "x": 240,
+      "y": 304,
+      "width": 1114,
+      "height": 392,
+      "tolerance": 16
+    },
+    "projects.side-panel": {
+      "x": 1370,
+      "y": 256,
+      "width": 280,
+      "height": 672,
+      "tolerance": 16
+    },
+    "projects.health-overview": {
+      "x": 240,
+      "y": 708,
+      "width": 1114,
+      "height": 220,
+      "tolerance": 16
+    }
+  }
+}

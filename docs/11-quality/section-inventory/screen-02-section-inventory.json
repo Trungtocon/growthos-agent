@@ -1,0 +1,19 @@
+{
+  "screenId": "02",
+  "screenName": "Register / Create Account",
+  "route": "/register",
+  "referencePng": "public/stitch_ui/02_Register_Create_Account.png",
+  "generatedAt": "2026-05-29T17:13:00.497Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

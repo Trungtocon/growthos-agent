@@ -1,0 +1,19 @@
+{
+  "screenId": "05",
+  "screenName": "First AI Team Setup Wizard",
+  "route": "/onboarding/ai-team",
+  "referencePng": "public/stitch_ui/05_First_AI_Team_Setup_Wizard.png",
+  "generatedAt": "2026-05-29T17:13:00.777Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

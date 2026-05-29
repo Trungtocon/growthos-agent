@@ -6,6 +6,7 @@ import { chromium } from 'playwright';
 
 const root = process.cwd();
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:5173';
+const manifestPath = path.join(root, 'docs/05-ui-ux/screen-manifest.csv');
 
 function parseArgs(argv) {
   const args = {};
@@ -17,14 +18,64 @@ function parseArgs(argv) {
   return args;
 }
 
-const args = parseArgs(process.argv.slice(2));
-const route = args.route;
-const contractPath = args.contract ? path.resolve(root, args.contract) : null;
-const reportPath = args.out ? path.resolve(root, args.out) : null;
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let value = '';
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    const next = text[index + 1];
+    if (quoted && char === '"' && next === '"') {
+      value += '"';
+      index += 1;
+      continue;
+    }
+    if (char === '"') {
+      quoted = !quoted;
+      continue;
+    }
+    if (!quoted && char === ',') {
+      row.push(value);
+      value = '';
+      continue;
+    }
+    if (!quoted && (char === '\n' || char === '\r')) {
+      if (char === '\r' && next === '\n') index += 1;
+      row.push(value);
+      if (row.some((cell) => cell.length > 0)) rows.push(row);
+      row = [];
+      value = '';
+      continue;
+    }
+    value += char;
+  }
+  if (value.length > 0 || row.length > 0) {
+    row.push(value);
+    rows.push(row);
+  }
+  const [header, ...records] = rows;
+  return records.map((record) => Object.fromEntries(header.map((key, index) => [key, record[index] ?? ''])));
+}
 
-if (!route || !contractPath || !reportPath) {
-  console.error('Usage: node scripts/audit-screen-bboxes.mjs --route=/path --contract=docs/...json --out=parity-reports/.../bbox-report.json');
-  process.exit(2);
+function screenKey(id) {
+  return String(id).padStart(2, '0');
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function manifestScreens() {
+  return parseCsv(fs.readFileSync(manifestPath, 'utf8')).map((screen) => ({
+    ...screen,
+    id: Number(screen.id),
+    key: screenKey(screen.id),
+  }));
 }
 
 function readJson(filePath) {
@@ -51,9 +102,7 @@ function waitForServer(url, timeoutMs = 15000) {
           setTimeout(attempt, 500);
         }
       });
-      req.setTimeout(1500, () => {
-        req.destroy();
-      });
+      req.setTimeout(1500, () => req.destroy());
     };
     attempt();
   });
@@ -108,40 +157,109 @@ function round(value) {
   return Math.round(value * 10) / 10;
 }
 
-const contract = readJson(contractPath);
-const expectedRegions = contract.regions;
-const serverProcess = await ensureServer();
-const browser = await chromium.launch();
+function defaultContractPath(screenKeyValue) {
+  const preferred = path.join(root, 'docs/11-quality/layout-contracts', `screen-${screenKeyValue}-layout-contract.json`);
+  if (fs.existsSync(preferred)) return preferred;
+  return path.join(root, 'docs/11-quality', `screen-${screenKeyValue}-layout-contract.json`);
+}
 
-let exitCode = 0;
-try {
+function defaultReportPath(screen) {
+  return path.join(root, 'parity-reports', `${screen.key}_${slugify(screen.screen_name)}`, 'bbox-report.json');
+}
+
+function targetScreens(args) {
+  const screens = manifestScreens();
+  if (args.route && args.contract && args.out) {
+    const screen = screens.find((item) => item.route === args.route || item.key === screenKey(args.screen ?? '0')) ?? {
+      key: screenKey(args.screen ?? '00'),
+      screen_name: args.route.replace(/^\//, '').replace(/\//g, '-'),
+      route: args.route,
+    };
+    return [{
+      ...screen,
+      contractPath: path.resolve(root, args.contract),
+      reportPath: path.resolve(root, args.out),
+    }];
+  }
+  if (args.all === 'true') {
+    return screens.map((screen) => ({
+      ...screen,
+      contractPath: defaultContractPath(screen.key),
+      reportPath: defaultReportPath(screen),
+    }));
+  }
+  if (args.ids) {
+    const wanted = new Set(args.ids.split(',').map((id) => screenKey(id.trim())));
+    return screens
+      .filter((screen) => wanted.has(screen.key))
+      .map((screen) => ({
+        ...screen,
+        contractPath: defaultContractPath(screen.key),
+        reportPath: defaultReportPath(screen),
+      }));
+  }
+  console.error('Usage: node scripts/audit-screen-bboxes.mjs --route=/path --contract=docs/...json --out=parity-reports/.../bbox-report.json');
+  console.error('   or: node scripts/audit-screen-bboxes.mjs --ids=8,20,21');
+  console.error('   or: node scripts/audit-screen-bboxes.mjs --all');
+  process.exit(2);
+}
+
+async function auditScreen(browser, screen) {
+  if (!fs.existsSync(screen.contractPath)) {
+    return {
+      screen: screen.key,
+      route: screen.route,
+      contract: path.relative(root, screen.contractPath),
+      status: 'failed',
+      error: 'Missing layout contract',
+      summary: { checked: 0, passed: 0, failed: 1 },
+      rows: [],
+    };
+  }
+
+  const contract = readJson(screen.contractPath);
+  const expectedRegions = contract.regions;
   const page = await browser.newPage({
     viewport: contract.viewport,
     deviceScaleFactor: 1,
   });
-  await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${baseUrl}${screen.route}`, { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(Number(process.env.BBOX_WAIT_MS || '750'));
 
   const actualRegions = await page.evaluate(() => {
-    const entries = Array.from(document.querySelectorAll('[data-parity-id]')).map((node) => {
+    const entries = [];
+    const rootRect = document.documentElement.getBoundingClientRect();
+    entries.push([
+      'page.root',
+      {
+        x: Math.round(rootRect.x * 10) / 10,
+        y: Math.round(rootRect.y * 10) / 10,
+        width: Math.round(rootRect.width * 10) / 10,
+        height: Math.round(rootRect.height * 10) / 10,
+      },
+    ]);
+
+    const nodes = Array.from(document.querySelectorAll('[data-parity-id], [data-section-id]'));
+    for (const node of nodes) {
+      const id = node.getAttribute('data-parity-id') || node.getAttribute('data-section-id');
+      if (!id) continue;
       const rect = node.getBoundingClientRect();
-      return [
-        node.getAttribute('data-parity-id'),
+      entries.push([
+        id,
         {
           x: Math.round(rect.x * 10) / 10,
           y: Math.round(rect.y * 10) / 10,
           width: Math.round(rect.width * 10) / 10,
           height: Math.round(rect.height * 10) / 10,
         },
-      ];
-    });
+      ]);
+    }
     return Object.fromEntries(entries);
   });
 
   const rows = Object.entries(expectedRegions).map(([region, expected]) => {
     const actual = actualRegions[region] ?? null;
     if (!actual) {
-      exitCode = 1;
       return {
         region,
         expected,
@@ -160,7 +278,6 @@ try {
     };
     const tolerance = expected.tolerance ?? 8;
     const passed = Object.values(delta).every((value) => Math.abs(value) <= tolerance);
-    if (!passed) exitCode = 1;
     return {
       region,
       expected,
@@ -173,10 +290,11 @@ try {
 
   const extraActualIds = Object.keys(actualRegions).filter((id) => !expectedRegions[id]).sort();
   const report = {
-    route,
-    url: `${baseUrl}${route}`,
+    screen: screen.key,
+    route: screen.route,
+    url: `${baseUrl}${screen.route}`,
     viewport: contract.viewport,
-    contract: path.relative(root, contractPath),
+    contract: path.relative(root, screen.contractPath),
     generatedAt: new Date().toISOString(),
     summary: {
       checked: rows.length,
@@ -186,18 +304,57 @@ try {
     },
     rows,
   };
-  writeJson(reportPath, report);
+  report.status = report.summary.failed === 0 ? 'passed' : 'failed';
+  writeJson(screen.reportPath, report);
+  await page.close();
+  return report;
+}
 
-  console.log('| Region | Expected | Actual | dx | dy | dw | dh | Status |');
-  console.log('|---|---|---|---:|---:|---:|---:|---|');
-  for (const row of rows) {
-    const delta = row.delta ?? { dx: '-', dy: '-', dw: '-', dh: '-' };
-    console.log(`| ${row.region} | ${formatBox(row.expected)} | ${formatBox(row.actual)} | ${delta.dx} | ${delta.dy} | ${delta.dw} | ${delta.dh} | ${row.status} |`);
+const args = parseArgs(process.argv.slice(2));
+const targets = targetScreens(args);
+const serverProcess = await ensureServer();
+const browser = await chromium.launch();
+const reports = [];
+
+try {
+  for (const screen of targets) {
+    const report = await auditScreen(browser, screen);
+    reports.push(report);
+
+    if (targets.length === 1) {
+      console.log('| Region | Expected | Actual | dx | dy | dw | dh | Status |');
+      console.log('|---|---|---|---:|---:|---:|---:|---|');
+      for (const row of report.rows) {
+        const delta = row.delta ?? { dx: '-', dy: '-', dw: '-', dh: '-' };
+        console.log(`| ${row.region} | ${formatBox(row.expected)} | ${formatBox(row.actual)} | ${delta.dx} | ${delta.dy} | ${delta.dw} | ${delta.dh} | ${row.status} |`);
+      }
+    }
+
+    console.log(`${report.status === 'passed' ? 'PASS' : 'FAIL'} ${screen.key} ${screen.route}: ${report.summary.passed}/${report.summary.checked} regions`);
   }
-  console.log(`\nBBox audit summary: ${report.summary.passed}/${report.summary.checked} passed. Report: ${path.relative(root, reportPath)}`);
 } finally {
   await browser.close();
   await stopServer(serverProcess);
 }
 
-process.exit(exitCode);
+const failed = reports.filter((report) => report.status !== 'passed');
+writeJson(path.join(root, 'parity-reports/bbox-audit-summary.json'), {
+  generatedAt: new Date().toISOString(),
+  checked: reports.length,
+  passed: reports.length - failed.length,
+  failed: failed.length,
+  screens: reports.map((report) => ({
+    screen: report.screen,
+    route: report.route,
+    status: report.status,
+    summary: report.summary,
+    error: report.error,
+  })),
+});
+
+if (targets.length === 1) {
+  const report = reports[0];
+  console.log(`\nBBox audit summary: ${report.summary.passed}/${report.summary.checked} passed. Report: ${path.relative(root, targets[0].reportPath)}`);
+}
+
+process.exit(failed.length === 0 ? 0 : 1);

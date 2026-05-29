@@ -1,0 +1,70 @@
+{
+  "screenId": "44",
+  "route": "/reports",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5k-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/44_Reports_Dashboard.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 820,
+      "tolerance": 12
+    },
+    "reports.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "reports.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 12
+    },
+    "reports.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 658,
+      "tolerance": 12
+    },
+    "reports.list-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 970,
+      "height": 658,
+      "tolerance": 16
+    },
+    "reports.schedule-panel": {
+      "x": 1230,
+      "y": 252,
+      "width": 420,
+      "height": 658,
+      "tolerance": 16
+    }
+  }
+}

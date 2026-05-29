@@ -1,0 +1,19 @@
+{
+  "screenId": "04",
+  "screenName": "Use Case Selection",
+  "route": "/onboarding/use-case",
+  "referencePng": "public/stitch_ui/04_Use_Case_Selection.png",
+  "generatedAt": "2026-05-29T17:13:00.662Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "screenId": "21",
+  "route": "/org-chart",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "estimated-from-reference-png-and-real-ui-layout; sprint-5f-baseline-stabilized-to-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/21_Org_Chart_View.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout; sprint-5f-baseline-stabilized-to-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 208,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 208,
+      "y": 0,
+      "width": 1464,
+      "height": 68,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 226,
+      "y": 88,
+      "width": 1428,
+      "height": 1020,
+      "tolerance": 16
+    },
+    "org.header": {
+      "x": 226,
+      "y": 88,
+      "width": 1428,
+      "height": 64,
+      "tolerance": 16
+    },
+    "org.toolbar": {
+      "x": 239,
+      "y": 181,
+      "width": 1402,
+      "height": 47,
+      "tolerance": 16
+    },
+    "org.main-grid": {
+      "x": 239,
+      "y": 240,
+      "width": 1402,
+      "height": 855,
+      "tolerance": 16
+    },
+    "org.canvas": {
+      "x": 239,
+      "y": 240,
+      "width": 1106,
+      "height": 855,
+      "tolerance": 16
+    },
+    "org.detail-panel": {
+      "x": 1361,
+      "y": 240,
+      "width": 280,
+      "height": 855,
+      "tolerance": 16
+    },
+    "org.agent-card": {
+      "x": 1362,
+      "y": 241,
+      "width": 278,
+      "height": 328,
+      "tolerance": 16
+    },
+    "org.insight-card": {
+      "x": 1361,
+      "y": 586,
+      "width": 280,
+      "height": 110,
+      "tolerance": 16
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "screenId": "49",
+  "route": "/workspaces",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5l-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/49_Workspaces_Manager.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 928,
+      "tolerance": 12
+    },
+    "workspaces.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "workspaces.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 12
+    },
+    "workspaces.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 766,
+      "tolerance": 12
+    },
+    "workspaces.list-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 970,
+      "height": 766,
+      "tolerance": 16
+    },
+    "workspaces.member-panel": {
+      "x": 1230,
+      "y": 252,
+      "width": 420,
+      "height": 766,
+      "tolerance": 16
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "screenId": "16",
+  "route": "/goals/new",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5g-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/16_Create_Goal_Wizard.png",
+    "contractSource": "sprint-5g-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 728,
+      "tolerance": 16
+    },
+    "create-goal.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "create-goal.main-grid": {
+      "x": 240,
+      "y": 178,
+      "width": 1410,
+      "height": 640,
+      "tolerance": 16
+    },
+    "create-goal.form-panel": {
+      "x": 240,
+      "y": 178,
+      "width": 970,
+      "height": 640,
+      "tolerance": 16
+    },
+    "create-goal.preview-panel": {
+      "x": 1230,
+      "y": 178,
+      "width": 420,
+      "height": 640,
+      "tolerance": 16
+    }
+  }
+}

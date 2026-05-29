@@ -1,0 +1,70 @@
+{
+  "screenId": "45",
+  "route": "/reports/new",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5k-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/45_Report_Builder.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 930,
+      "tolerance": 12
+    },
+    "report-builder.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "report-builder.steps": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 46,
+      "tolerance": 12
+    },
+    "report-builder.main-grid": {
+      "x": 240,
+      "y": 240,
+      "width": 1410,
+      "height": 780,
+      "tolerance": 12
+    },
+    "report-builder.form-panel": {
+      "x": 240,
+      "y": 240,
+      "width": 970,
+      "height": 780,
+      "tolerance": 16
+    },
+    "report-builder.preview-panel": {
+      "x": 1230,
+      "y": 240,
+      "width": 420,
+      "height": 780,
+      "tolerance": 16
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "screenId": "11",
+  "route": "/notifications",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5f-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/11_Notification_Center.png",
+    "contractSource": "sprint-5f-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 240,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 240,
+      "y": 0,
+      "width": 1432,
+      "height": 80,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 268,
+      "y": 90,
+      "width": 1376,
+      "height": 841,
+      "tolerance": 16
+    },
+    "notifications.header": {
+      "x": 268,
+      "y": 90,
+      "width": 1376,
+      "height": 80,
+      "tolerance": 16
+    },
+    "notifications.kpi-band": {
+      "x": 268,
+      "y": 198,
+      "width": 1376,
+      "height": 112,
+      "tolerance": 16
+    },
+    "notifications.main-grid": {
+      "x": 268,
+      "y": 330,
+      "width": 1376,
+      "height": 601,
+      "tolerance": 16
+    },
+    "notifications.list-panel": {
+      "x": 268,
+      "y": 330,
+      "width": 976,
+      "height": 601,
+      "tolerance": 16
+    },
+    "notifications.settings-panel": {
+      "x": 1264,
+      "y": 330,
+      "width": 380,
+      "height": 601,
+      "tolerance": 16
+    }
+  }
+}

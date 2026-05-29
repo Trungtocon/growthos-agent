@@ -1,0 +1,99 @@
+{
+  "screenId": "30",
+  "route": "/tickets",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "estimated-from-reference-png-and-real-ui-layout",
+  "source": {
+    "reference": "public/stitch_ui/30_Tickets_Board.png",
+    "contractSource": "estimated-from-reference-png-and-real-ui-layout"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 210,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 210,
+      "y": 0,
+      "width": 1462,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 234,
+      "y": 92,
+      "width": 1414,
+      "height": 849,
+      "tolerance": 12
+    },
+    "tickets.header": {
+      "x": 234,
+      "y": 92,
+      "width": 1414,
+      "height": 64,
+      "tolerance": 16
+    },
+    "tickets.kpi-band": {
+      "x": 234,
+      "y": 172,
+      "width": 1414,
+      "height": 62,
+      "tolerance": 16
+    },
+    "tickets.filters": {
+      "x": 234,
+      "y": 254,
+      "width": 1414,
+      "height": 46,
+      "tolerance": 16
+    },
+    "tickets.board": {
+      "x": 234,
+      "y": 320,
+      "width": 1414,
+      "height": 560,
+      "tolerance": 16
+    },
+    "tickets.column.todo": {
+      "x": 234,
+      "y": 320,
+      "width": 133,
+      "height": 560,
+      "tolerance": 16
+    },
+    "tickets.column.in-progress": {
+      "x": 669,
+      "y": 320,
+      "width": 133,
+      "height": 560,
+      "tolerance": 16
+    },
+    "tickets.column.review": {
+      "x": 814,
+      "y": 320,
+      "width": 133,
+      "height": 560,
+      "tolerance": 16
+    },
+    "tickets.column.done": {
+      "x": 959,
+      "y": 320,
+      "width": 133,
+      "height": 560,
+      "tolerance": 16
+    },
+    "tickets.insights": {
+      "x": 1398,
+      "y": 320,
+      "width": 250,
+      "height": 560,
+      "tolerance": 16
+    }
+  }
+}

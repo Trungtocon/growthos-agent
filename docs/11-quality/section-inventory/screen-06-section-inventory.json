@@ -1,0 +1,19 @@
+{
+  "screenId": "06",
+  "screenName": "Connect Hermes Runtime",
+  "route": "/onboarding/hermes",
+  "referencePng": "public/stitch_ui/06_Connect_Hermes_Runtime.png",
+  "generatedAt": "2026-05-29T17:13:00.904Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

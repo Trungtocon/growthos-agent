@@ -1,0 +1,71 @@
+{
+  "screenId": "14",
+  "route": "/goals",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5g-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/14_Goals_Dashboard.png",
+    "contractSource": "sprint-5g-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 947,
+      "tolerance": 16
+    },
+    "goals.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "goals.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 16
+    },
+    "goals.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 785,
+      "tolerance": 16
+    },
+    "goals.list-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 1010,
+      "height": 785,
+      "tolerance": 16
+    },
+    "goals.timeline-panel": {
+      "x": 1270,
+      "y": 252,
+      "width": 380,
+      "height": 785,
+      "tolerance": 16
+    }
+  }
+}

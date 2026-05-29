@@ -1,0 +1,70 @@
+{
+  "screenId": "41",
+  "route": "/risk-center",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5j-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/41_Risk_Center.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 466,
+      "tolerance": 12
+    },
+    "risk.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "risk.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 12
+    },
+    "risk.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 304,
+      "tolerance": 12
+    },
+    "risk.exposure-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 970,
+      "height": 304,
+      "tolerance": 16
+    },
+    "risk.controls-panel": {
+      "x": 1230,
+      "y": 252,
+      "width": 420,
+      "height": 304,
+      "tolerance": 16
+    }
+  }
+}

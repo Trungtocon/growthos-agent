@@ -1,0 +1,70 @@
+{
+  "screenId": "39",
+  "route": "/governance/policies",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5j-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/39_Governance_Policy.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 1293,
+      "tolerance": 12
+    },
+    "governance.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "governance.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 12
+    },
+    "governance.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 1131,
+      "tolerance": 12
+    },
+    "governance.policy-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 970,
+      "height": 1131,
+      "tolerance": 16
+    },
+    "governance.rules-panel": {
+      "x": 1230,
+      "y": 252,
+      "width": 420,
+      "height": 1131,
+      "tolerance": 16
+    }
+  }
+}

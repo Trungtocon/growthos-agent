@@ -1,0 +1,129 @@
+{
+  "screenId": "30",
+  "screenName": "Tickets Board",
+  "route": "/tickets",
+  "referencePng": "public/stitch_ui/30_Tickets_Board.png",
+  "generatedAt": "2026-05-29T17:13:01.029Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.header",
+      "name": "Tickets Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.header\"], [data-section-id=\"tickets.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.kpi-band",
+      "name": "Tickets Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.kpi-band\"], [data-section-id=\"tickets.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.filters",
+      "name": "Tickets Filters",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.filters\"], [data-section-id=\"tickets.filters\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.board",
+      "name": "Tickets Board",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.board\"], [data-section-id=\"tickets.board\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.column.todo",
+      "name": "Tickets Column Todo",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.column.todo\"], [data-section-id=\"tickets.column.todo\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.column.in-progress",
+      "name": "Tickets Column In Progress",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.column.in-progress\"], [data-section-id=\"tickets.column.in-progress\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.column.review",
+      "name": "Tickets Column Review",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.column.review\"], [data-section-id=\"tickets.column.review\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.column.done",
+      "name": "Tickets Column Done",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.column.done\"], [data-section-id=\"tickets.column.done\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "tickets.insights",
+      "name": "Tickets Insights",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"tickets.insights\"], [data-section-id=\"tickets.insights\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

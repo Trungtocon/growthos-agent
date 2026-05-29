@@ -1,0 +1,149 @@
+{
+  "screenId": "20",
+  "screenName": "AI Workforce Overview",
+  "route": "/workforce",
+  "referencePng": "public/stitch_ui/20_AI_Workforce_Overview.png",
+  "generatedAt": "2026-05-29T17:13:01.009Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.header",
+      "name": "Workforce Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.header\"], [data-section-id=\"workforce.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.kpi-band",
+      "name": "Workforce Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.kpi-band\"], [data-section-id=\"workforce.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.main-grid",
+      "name": "Workforce Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.main-grid\"], [data-section-id=\"workforce.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.left-panel",
+      "name": "Workforce Left Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.left-panel\"], [data-section-id=\"workforce.left-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.right-panel",
+      "name": "Workforce Right Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.right-panel\"], [data-section-id=\"workforce.right-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.health-card",
+      "name": "Workforce Health Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.health-card\"], [data-section-id=\"workforce.health-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.agent-status-card",
+      "name": "Workforce Agent Status Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.agent-status-card\"], [data-section-id=\"workforce.agent-status-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.top-agents-card",
+      "name": "Workforce Top Agents Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.top-agents-card\"], [data-section-id=\"workforce.top-agents-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.workload-card",
+      "name": "Workforce Workload Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.workload-card\"], [data-section-id=\"workforce.workload-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.cost-card",
+      "name": "Workforce Cost Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.cost-card\"], [data-section-id=\"workforce.cost-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "workforce.recommendations-card",
+      "name": "Workforce Recommendations Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"workforce.recommendations-card\"], [data-section-id=\"workforce.recommendations-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

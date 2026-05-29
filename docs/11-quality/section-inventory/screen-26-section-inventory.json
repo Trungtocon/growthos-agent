@@ -1,0 +1,129 @@
+{
+  "screenId": "26",
+  "screenName": "Agent Performance",
+  "route": "/agents/performance",
+  "referencePng": "public/stitch_ui/26_Agent_Performance.png",
+  "generatedAt": "2026-05-29T17:13:01.022Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.header",
+      "name": "Agent Performance Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.header\"], [data-section-id=\"agent-performance.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.kpi-band",
+      "name": "Agent Performance Kpi Band",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.kpi-band\"], [data-section-id=\"agent-performance.kpi-band\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.main-grid",
+      "name": "Agent Performance Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.main-grid\"], [data-section-id=\"agent-performance.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.ranking-panel",
+      "name": "Agent Performance Ranking Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.ranking-panel\"], [data-section-id=\"agent-performance.ranking-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.table-panel",
+      "name": "Agent Performance Table Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.table-panel\"], [data-section-id=\"agent-performance.table-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.analysis-panel",
+      "name": "Agent Performance Analysis Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.analysis-panel\"], [data-section-id=\"agent-performance.analysis-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.scatter-panel",
+      "name": "Agent Performance Scatter Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.scatter-panel\"], [data-section-id=\"agent-performance.scatter-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.recommendations-panel",
+      "name": "Agent Performance Recommendations Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.recommendations-panel\"], [data-section-id=\"agent-performance.recommendations-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "agent-performance.attention-panel",
+      "name": "Agent Performance Attention Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"agent-performance.attention-panel\"], [data-section-id=\"agent-performance.attention-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

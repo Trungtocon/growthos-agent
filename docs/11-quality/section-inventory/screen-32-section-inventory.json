@@ -1,0 +1,159 @@
+{
+  "screenId": "32",
+  "screenName": "Ticket Detail",
+  "route": "/tickets/demo-ticket",
+  "referencePng": "public/stitch_ui/32_Ticket_Detail.png",
+  "generatedAt": "2026-05-29T17:13:01.034Z",
+  "sections": [
+    {
+      "id": "app-shell.sidebar",
+      "name": "App Shell Sidebar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.sidebar\"], [data-section-id=\"app-shell.sidebar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.topbar",
+      "name": "App Shell Topbar",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.topbar\"], [data-section-id=\"app-shell.topbar\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "app-shell.main",
+      "name": "App Shell Main",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"app-shell.main\"], [data-section-id=\"app-shell.main\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.header",
+      "name": "Ticket Header",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.header\"], [data-section-id=\"ticket.header\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.tabs",
+      "name": "Ticket Tabs",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.tabs\"], [data-section-id=\"ticket.tabs\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.main-grid",
+      "name": "Ticket Main Grid",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.main-grid\"], [data-section-id=\"ticket.main-grid\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.left-panel",
+      "name": "Ticket Left Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.left-panel\"], [data-section-id=\"ticket.left-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.center-panel",
+      "name": "Ticket Center Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.center-panel\"], [data-section-id=\"ticket.center-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.right-panel",
+      "name": "Ticket Right Panel",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.right-panel\"], [data-section-id=\"ticket.right-panel\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.info-card",
+      "name": "Ticket Info Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.info-card\"], [data-section-id=\"ticket.info-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.criteria-card",
+      "name": "Ticket Criteria Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.criteria-card\"], [data-section-id=\"ticket.criteria-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.transcript-card",
+      "name": "Ticket Transcript Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.transcript-card\"], [data-section-id=\"ticket.transcript-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.status-card",
+      "name": "Ticket Status Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.status-card\"], [data-section-id=\"ticket.status-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.actions-card",
+      "name": "Ticket Actions Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.actions-card\"], [data-section-id=\"ticket.actions-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    },
+    {
+      "id": "ticket.artifacts-card",
+      "name": "Ticket Artifacts Card",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "[data-parity-id=\"ticket.artifacts-card\"], [data-section-id=\"ticket.artifacts-card\"]",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

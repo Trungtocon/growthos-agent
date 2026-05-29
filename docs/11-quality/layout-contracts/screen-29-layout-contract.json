@@ -1,0 +1,71 @@
+{
+  "screenId": "29",
+  "route": "/tools/permissions",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5h-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/29_Toolsets_Permissions.png",
+    "contractSource": "sprint-5h-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 1209,
+      "tolerance": 16
+    },
+    "tools.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "tools.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 16
+    },
+    "tools.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 1047,
+      "tolerance": 16
+    },
+    "tools.toolsets-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 1000,
+      "height": 1047,
+      "tolerance": 16
+    },
+    "tools.permissions-panel": {
+      "x": 1260,
+      "y": 252,
+      "width": 390,
+      "height": 1047,
+      "tolerance": 16
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "screenId": "47",
+  "route": "/integrations/demo-integration",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5l-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/47_Integration_Detail.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 1033,
+      "tolerance": 12
+    },
+    "integration-detail.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "integration-detail.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 62,
+      "tolerance": 12
+    },
+    "integration-detail.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1410,
+      "height": 871,
+      "tolerance": 12
+    },
+    "integration-detail.sync-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 970,
+      "height": 871,
+      "tolerance": 16
+    },
+    "integration-detail.audit-panel": {
+      "x": 1230,
+      "y": 252,
+      "width": 420,
+      "height": 871,
+      "tolerance": 16
+    }
+  }
+}

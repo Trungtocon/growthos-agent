@@ -1,0 +1,19 @@
+{
+  "screenId": "07",
+  "screenName": "Onboarding Complete / First Task",
+  "route": "/onboarding/complete",
+  "referencePng": "public/stitch_ui/07_Onboarding_Complete_First_Task.png",
+  "generatedAt": "2026-05-29T17:13:00.983Z",
+  "sections": [
+    {
+      "id": "page.root",
+      "name": "Page Root",
+      "required": true,
+      "visibleInReference": true,
+      "existsInImplementation": null,
+      "selector": "body",
+      "status": "PENDING_AUDIT",
+      "notes": ""
+    }
+  ]
+}

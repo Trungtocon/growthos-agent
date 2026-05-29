@@ -1,0 +1,70 @@
+{
+  "screenId": "53",
+  "route": "/settings",
+  "viewport": {
+    "width": 1440,
+    "height": 1024
+  },
+  "contractSource": "sprint-5m-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/53_System_Settings.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 1024,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1222,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 968,
+      "tolerance": 12
+    },
+    "settings.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 68,
+      "tolerance": 12
+    },
+    "settings.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1178,
+      "height": 62,
+      "tolerance": 12
+    },
+    "settings.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1178,
+      "height": 806,
+      "tolerance": 12
+    },
+    "settings.config-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 738,
+      "height": 806,
+      "tolerance": 16
+    },
+    "settings.notification-panel": {
+      "x": 998,
+      "y": 252,
+      "width": 420,
+      "height": 806,
+      "tolerance": 16
+    }
+  }
+}

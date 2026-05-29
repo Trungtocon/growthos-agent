@@ -1,0 +1,22 @@
+{
+  "screenId": "01",
+  "route": "/login",
+  "viewport": {
+    "width": 1586,
+    "height": 992
+  },
+  "contractSource": "static-or-onboarding-full-page-reference",
+  "source": {
+    "reference": "public/stitch_ui/01_Login.png",
+    "note": "Static/onboarding screens use visual parity as the primary lock; bbox fallback checks the full rendered page root."
+  },
+  "regions": {
+    "page.root": {
+      "x": 0,
+      "y": 0,
+      "width": 1586,
+      "height": 992,
+      "tolerance": 12
+    }
+  }
+}

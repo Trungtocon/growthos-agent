@@ -1,0 +1,64 @@
+{
+  "screenId": "18",
+  "route": "/projects/demo-project",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5g-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/18_Project_Detail.png",
+    "contractSource": "sprint-5g-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 785,
+      "tolerance": 16
+    },
+    "project.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "project.main-grid": {
+      "x": 240,
+      "y": 178,
+      "width": 1410,
+      "height": 697,
+      "tolerance": 16
+    },
+    "project.milestone-panel": {
+      "x": 240,
+      "y": 178,
+      "width": 990,
+      "height": 697,
+      "tolerance": 16
+    },
+    "project.detail-panel": {
+      "x": 1250,
+      "y": 178,
+      "width": 400,
+      "height": 697,
+      "tolerance": 16
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "screenId": "10",
+  "route": "/inbox",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5f-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/10_AI_Inbox.png",
+    "contractSource": "sprint-5f-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 240,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 240,
+      "y": 0,
+      "width": 1432,
+      "height": 80,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 268,
+      "y": 96,
+      "width": 1376,
+      "height": 792,
+      "tolerance": 16
+    },
+    "inbox.header": {
+      "x": 268,
+      "y": 96,
+      "width": 1376,
+      "height": 68,
+      "tolerance": 16
+    },
+    "inbox.tabs": {
+      "x": 268,
+      "y": 184,
+      "width": 1376,
+      "height": 46,
+      "tolerance": 16
+    },
+    "inbox.filters": {
+      "x": 268,
+      "y": 242,
+      "width": 1376,
+      "height": 40,
+      "tolerance": 16
+    },
+    "inbox.main-grid": {
+      "x": 268,
+      "y": 302,
+      "width": 1376,
+      "height": 586,
+      "tolerance": 16
+    },
+    "inbox.list-panel": {
+      "x": 268,
+      "y": 302,
+      "width": 585.2,
+      "height": 586,
+      "tolerance": 16
+    },
+    "inbox.detail-panel": {
+      "x": 873.2,
+      "y": 302,
+      "width": 770.8,
+      "height": 586,
+      "tolerance": 16
+    }
+  }
+}

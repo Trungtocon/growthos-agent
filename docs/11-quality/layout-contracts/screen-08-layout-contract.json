@@ -1,0 +1,113 @@
+{
+  "screenId": "08",
+  "route": "/command-center",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "existing-route-contract",
+  "source": {
+    "reference": "public/stitch_ui/08_Executive_Command_Center.png",
+    "measurement": "estimated-from-screen-08-layout-contract.md"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 851,
+      "tolerance": 12
+    },
+    "command.header": {
+      "x": 240,
+      "y": 90,
+      "width": 334,
+      "height": 64,
+      "tolerance": 12
+    },
+    "command.kpi-band": {
+      "x": 240,
+      "y": 170,
+      "width": 1400,
+      "height": 112,
+      "tolerance": 12
+    },
+    "command.main-grid": {
+      "x": 240,
+      "y": 299,
+      "width": 1400,
+      "height": 609,
+      "tolerance": 12
+    },
+    "command.main-left": {
+      "x": 240,
+      "y": 299,
+      "width": 488,
+      "height": 609,
+      "tolerance": 12
+    },
+    "command.main-right": {
+      "x": 1152,
+      "y": 299,
+      "width": 488,
+      "height": 609,
+      "tolerance": 12
+    },
+    "command.health-card": {
+      "x": 240,
+      "y": 299,
+      "width": 488,
+      "height": 324,
+      "tolerance": 12
+    },
+    "command.goals-card": {
+      "x": 744,
+      "y": 299,
+      "width": 392,
+      "height": 324,
+      "tolerance": 12
+    },
+    "command.activity-card": {
+      "x": 1152,
+      "y": 299,
+      "width": 488,
+      "height": 324,
+      "tolerance": 12
+    },
+    "command.actions-card": {
+      "x": 240,
+      "y": 639,
+      "width": 488,
+      "height": 269,
+      "tolerance": 12
+    },
+    "command.alerts-card": {
+      "x": 744,
+      "y": 639,
+      "width": 392,
+      "height": 269,
+      "tolerance": 12
+    },
+    "command.cost-card": {
+      "x": 1152,
+      "y": 639,
+      "width": 488,
+      "height": 269,
+      "tolerance": 12
+    }
+  }
+}

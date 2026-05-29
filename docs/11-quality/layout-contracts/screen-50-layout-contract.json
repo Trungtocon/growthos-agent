@@ -1,0 +1,70 @@
+{
+  "screenId": "50",
+  "route": "/secrets",
+  "viewport": {
+    "width": 1440,
+    "height": 1024
+  },
+  "contractSource": "sprint-5m-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/50_Secrets_Manager.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 1024,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1222,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 972,
+      "tolerance": 12
+    },
+    "secrets.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1178,
+      "height": 68,
+      "tolerance": 12
+    },
+    "secrets.kpi-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1178,
+      "height": 62,
+      "tolerance": 12
+    },
+    "secrets.main-grid": {
+      "x": 240,
+      "y": 252,
+      "width": 1178,
+      "height": 810,
+      "tolerance": 12
+    },
+    "secrets.vault-panel": {
+      "x": 240,
+      "y": 252,
+      "width": 829,
+      "height": 810,
+      "tolerance": 16
+    },
+    "secrets.audit-panel": {
+      "x": 1089,
+      "y": 252,
+      "width": 420,
+      "height": 810,
+      "tolerance": 16
+    }
+  }
+}

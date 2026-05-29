@@ -1,0 +1,71 @@
+{
+  "screenId": "15",
+  "route": "/goals/demo-goal",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5g-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/15_Goal_Detail.png",
+    "contractSource": "sprint-5g-current-real-ui-dom"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 712,
+      "tolerance": 16
+    },
+    "goal.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 16
+    },
+    "goal.progress-band": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 112,
+      "tolerance": 16
+    },
+    "goal.main-grid": {
+      "x": 240,
+      "y": 306,
+      "width": 1410,
+      "height": 496,
+      "tolerance": 16
+    },
+    "goal.ticket-panel": {
+      "x": 240,
+      "y": 306,
+      "width": 1010,
+      "height": 496,
+      "tolerance": 16
+    },
+    "goal.activity-panel": {
+      "x": 1270,
+      "y": 306,
+      "width": 380,
+      "height": 496,
+      "tolerance": 16
+    }
+  }
+}

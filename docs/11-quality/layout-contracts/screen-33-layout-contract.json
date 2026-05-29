@@ -1,0 +1,70 @@
+{
+  "screenId": "33",
+  "route": "/tickets/new",
+  "viewport": {
+    "width": 1672,
+    "height": 941
+  },
+  "contractSource": "sprint-5i-current-real-ui-dom",
+  "source": {
+    "reference": "public/stitch_ui/33_Create_Ticket_Wizard.png"
+  },
+  "regions": {
+    "app-shell.sidebar": {
+      "x": 0,
+      "y": 0,
+      "width": 218,
+      "height": 941,
+      "tolerance": 8
+    },
+    "app-shell.topbar": {
+      "x": 218,
+      "y": 0,
+      "width": 1454,
+      "height": 72,
+      "tolerance": 8
+    },
+    "app-shell.main": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 794,
+      "tolerance": 12
+    },
+    "ticket-create.header": {
+      "x": 240,
+      "y": 90,
+      "width": 1410,
+      "height": 68,
+      "tolerance": 12
+    },
+    "ticket-create.steps": {
+      "x": 240,
+      "y": 174,
+      "width": 1410,
+      "height": 46,
+      "tolerance": 12
+    },
+    "ticket-create.main-grid": {
+      "x": 240,
+      "y": 240,
+      "width": 1410,
+      "height": 644,
+      "tolerance": 12
+    },
+    "ticket-create.form-panel": {
+      "x": 240,
+      "y": 240,
+      "width": 970,
+      "height": 644,
+      "tolerance": 16
+    },
+    "ticket-create.preview-panel": {
+      "x": 1230,
+      "y": 240,
+      "width": 420,
+      "height": 644,
+      "tolerance": 16
+    }
+  }
+}
