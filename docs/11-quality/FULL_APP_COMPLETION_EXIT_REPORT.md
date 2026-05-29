@@ -55,6 +55,7 @@
 - Screen 17 `/projects` was further polished to 11.0748% by aligning the HR Onboarding Flow card tone with the PNG's blue planning-card treatment and reducing completed-card green border tint.
 - Screen 17 `/projects` was further polished to 11.0731% by matching the source PNG's create/import action icons in the page header.
 - Screen 17 `/projects` was further polished to 10.9848% by matching planning-card status placement and owner avatar metadata to the source PNG.
+- Screen 17 `/projects` was further polished to 10.9656% by matching the source PNG's lighter page title weight and tone while preserving the header bbox.
 - Screen 34 `/runs/demo-run` was further polished to 9.0119% by removing the empty workflow overlay from the log console and matching the PNG's dense log lines.
 - Screen 34 `/runs/demo-run` was further polished to 9.0080% by adding the PNG-matched GrowthOS workspace card and Collapse control to the route-specific AppShell sidebar bottom section.
 - Screen 25 `/agents/templates` was further polished to 10.8573% by matching the template gallery to the PNG's three-column card grid.
