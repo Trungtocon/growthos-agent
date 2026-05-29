@@ -531,7 +531,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      <aside data-parity-id="app-shell.sidebar" className={`fixed left-0 top-0 h-screen border-r px-3 ${darkSidebar ? 'border-[#0d2544] bg-[#061426]' : 'border-slate-200 bg-white'}`} style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
+      <aside data-parity-id="app-shell.sidebar" className={`fixed left-0 top-0 h-screen border-r ${darkSidebar ? 'border-[#0d2544] bg-[#061426] px-[6px]' : 'border-slate-200 bg-white px-3'}`} style={{ width: profile.sidebarWidth, paddingTop: profile.sidebarPaddingY ?? 22, paddingBottom: profile.sidebarPaddingY ?? 22 }}>
         <div className="mb-[28px] px-5">
           <Logo profile={profile} />
         </div>

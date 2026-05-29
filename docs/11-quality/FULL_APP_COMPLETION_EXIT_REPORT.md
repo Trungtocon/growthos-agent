@@ -71,6 +71,7 @@
 - Screen 26 `/agents/performance` was further polished to 10.7794% by matching the ranking panel's fifth row to the source PNG while preserving the detailed table content.
 - Screen 26 `/agents/performance` was further polished to 10.7580% by matching the source PNG's lighter header title weight, subtitle contrast, and date-range chevron.
 - Screen 26 `/agents/performance` was further polished to 10.7208% by adding the missing `AI Workforce OS` caption under the dark sidebar logo while preserving the bbox contract.
+- Screen 26 `/agents/performance` was further polished to 10.7096% by narrowing dark sidebar horizontal padding to match the source PNG's wider active navigation item while preserving the bbox contract.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
 - Screen 30 `/tickets` was further polished to 10.3084% by compacting the KPI band and surfacing Ready/Assigned ticket cards to better match the PNG density.
 - Pixel-perfect 1:1 parity still requires additional authenticated-route polish beyond structural acceptance.
