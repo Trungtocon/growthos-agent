@@ -571,13 +571,28 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
             </a>
             {profile.costValue ? (
               <div className="flex h-[56px] w-[193px] items-center justify-between rounded-lg border border-slate-200 bg-white px-4 shadow-[0_4px_14px_rgba(15,23,42,0.06)]">
+                {darkSidebar ? (
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-50 text-emerald-500">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                      <ellipse cx="9" cy="5" rx="5.5" ry="2.5" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M3.5 5v4c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5V5" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M3.5 9v4c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5V9" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                ) : null}
                 <div>
                   <div className="whitespace-nowrap text-[11px] font-semibold text-slate-500">{profile.costLabel}</div>
-                  <div className="mt-1 text-[15px] font-extrabold text-slate-950">{profile.costValue}</div>
+                  <div className={`mt-1 text-[15px] font-extrabold ${darkSidebar ? 'text-emerald-500' : 'text-slate-950'}`}>{profile.costValue}</div>
                 </div>
-                <svg width="50" height="28" viewBox="0 0 50 28" className="overflow-visible">
-                  <path d="M1 20 C10 14, 15 16, 20 18 S30 22, 36 13 S44 7, 49 1" fill="none" stroke="#0f6bff" strokeWidth="2.4" strokeLinecap="round" />
-                </svg>
+                {darkSidebar ? (
+                  <svg width="24" height="24" viewBox="0 0 24 24" className="text-[#0f6bff]" fill="none" aria-hidden="true">
+                    <path d="M8 16 16 8M10 8h6v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  <svg width="50" height="28" viewBox="0 0 50 28" className="overflow-visible">
+                    <path d="M1 20 C10 14, 15 16, 20 18 S30 22, 36 13 S44 7, 49 1" fill="none" stroke="#0f6bff" strokeWidth="2.4" strokeLinecap="round" />
+                  </svg>
+                )}
               </div>
             ) : null}
             {profile.createLabel ? <button className="h-[44px] rounded-lg bg-[#0f6bff] px-6 text-[15px] font-bold text-white shadow-[0_10px_20px_rgba(15,98,255,0.18)] hover:bg-brand-700">{profile.createLabel}</button> : null}
