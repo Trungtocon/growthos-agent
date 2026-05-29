@@ -2452,11 +2452,11 @@ function AgentPerformanceScreen() {
             <BarChart3 className="h-6 w-6" />
           </span>
           <div>
-            <h1 className="text-[26px] font-extrabold leading-tight text-slate-950">Agent Performance</h1>
-            <p className="mt-1 max-w-3xl text-sm text-slate-500">Do luong hieu suat, chat luong, chi phi va do tin cay cua doi ngu AI Agent</p>
+            <h1 className="text-[26px] font-bold leading-tight text-slate-950">Agent Performance</h1>
+            <p className="mt-1 max-w-3xl text-sm text-slate-600">Do luong hieu suat, chat luong, chi phi va do tin cay cua doi ngu AI Agent</p>
           </div>
         </div>
-        <div className="flex gap-3"><Button variant="secondary"><SlidersHorizontal className="h-4 w-4" />Compare Agents</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button variant="secondary"><CalendarDays className="h-4 w-4" />01/05/2024 - 31/05/2024</Button></div>
+        <div className="flex gap-3"><Button variant="secondary"><SlidersHorizontal className="h-4 w-4" />Compare Agents</Button><Button variant="secondary"><Download className="h-4 w-4" />Export Report</Button><Button variant="secondary"><CalendarDays className="h-4 w-4" />01/05/2024 - 31/05/2024<ChevronDown className="h-4 w-4" /></Button></div>
       </div>
       <div data-parity-id="agent-performance.kpi-band" className="mt-4 grid grid-cols-6 gap-3">
         {vm.kpis.map((item, index) => <KpiTile key={item.label} label={item.label} value={item.value} delta={item.delta} tone={item.tone} icon={kpiIcons[index] ?? CheckCircle2} />)}
