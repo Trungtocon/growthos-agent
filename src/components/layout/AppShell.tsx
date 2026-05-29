@@ -30,6 +30,7 @@ type ShellProfile = {
   sidebarWidth: number;
   headerHeight: number;
   logoSubtitle: string;
+  logoFootnote?: string;
   logoVariant: 'leaf' | 'shield';
   company: string;
   searchPlaceholder: string;
@@ -308,6 +309,7 @@ function shellProfile(currentPath: string): ShellProfile {
       sidebarWidth: 204,
       headerHeight: 60,
       logoSubtitle: 'Growth on Autopilot.',
+      logoFootnote: 'AI Workforce OS',
       logoVariant: 'leaf',
       company: 'Demo Company',
       searchPlaceholder: 'Tim kiem agents, projects, tasks...',
@@ -374,7 +376,7 @@ function Logo({ profile }: { profile: ShellProfile }) {
     );
   }
 
-  return (
+  const leafLogo = (
     <div className="flex items-center gap-[9px]">
       <div className="relative h-12 w-[37px]">
         <span className="absolute left-0 top-2 h-9 w-5 rounded-br-[18px] rounded-tl-[18px] bg-gradient-to-b from-[#00bcd4] to-[#1273e6]" />
@@ -386,6 +388,17 @@ function Logo({ profile }: { profile: ShellProfile }) {
       </div>
     </div>
   );
+
+  if (profile.logoFootnote) {
+    return (
+      <div>
+        {leafLogo}
+        <div className="mt-2 text-center text-[13px] font-medium leading-4 text-slate-200">{profile.logoFootnote}</div>
+      </div>
+    );
+  }
+
+  return leafLogo;
 }
 
 function UserAvatar() {
