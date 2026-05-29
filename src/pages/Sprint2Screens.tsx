@@ -2045,7 +2045,7 @@ function ProjectKanbanCardCompact({ project }: { project: ReturnType<typeof sele
       {!isPlanning ? (
         <>
           <div className="mt-2">
-            <div className="mb-1 flex justify-between text-[10px] font-bold text-slate-600"><span>{project.progress}%</span><span>{project.cost}</span></div>
+            <div className="mb-1 text-[10px] font-bold text-slate-600">{project.progress}%</div>
             <ProgressBar value={project.progress} tone={project.tone} height={5} label={`${project.title} progress`} />
           </div>
           {isDense ? (
