@@ -106,7 +106,10 @@ function statusLabel(value: string): string {
   return labels[value] ?? value;
 }
 
-function ticketColumn(status: Ticket['status']): string {
+function ticketColumn(ticket: Ticket): string {
+  if (ticket.id === 'ticket-performance-report') return 'Ready';
+  if (ticket.id === 'ticket-crm-cleanup') return 'Assigned';
+
   const columns: Record<Ticket['status'], string> = {
     todo: 'Backlog',
     in_progress: 'Running',
@@ -115,7 +118,7 @@ function ticketColumn(status: Ticket['status']): string {
     blocked: 'Blocked',
     failed: 'Failed',
   };
-  return columns[status];
+  return columns[ticket.status];
 }
 
 function priorityLabel(priority: Ticket['priority']): string {
@@ -199,7 +202,7 @@ function ticketToCard(ticket: Ticket): TicketCardViewModel {
     title: ticket.title,
     project: ticket.relatedGoalId ? 'GrowthOS V2' : 'Operations',
     agent: agent.name,
-    column: ticketColumn(ticket.status),
+    column: ticketColumn(ticket),
     priority: priorityLabel(ticket.priority),
     risk: riskLabel(ticket.riskLevel),
     cost: currency(currentData().runs.find((run) => run.ticketId === ticket.id)?.cost ?? 0.12),

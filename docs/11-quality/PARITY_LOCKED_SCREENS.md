@@ -33,7 +33,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 27 | `/agents/memory` | `AgentMemoryScreen` / `AppShell` | 7.8775% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_27` layout assets rendered |
 | 28 | `/skills` | `SkillsRegistryScreen` / `AppShell` | 8.9239% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_28` layout assets rendered |
 | 29 | `/tools/permissions` | `ToolsPermissionsScreen` / `AppShell` | 8.0755% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_29` layout assets rendered |
-| 30 | `/tickets` | `TicketsBoardRealPage` | 10.4584% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
+| 30 | `/tickets` | `TicketsBoardRealPage` | 10.3084% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_30` layout assets rendered |
 | 31 | `/tickets/list` | `TicketsListScreen` / `AppShell` | 7.3032% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_31` layout assets rendered |
 | 32 | `/tickets/demo-ticket` | `TicketDetailRealPage` | 7.7372% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_32` layout assets rendered |
 | 33 | `/tickets/new` | `CreateTicketScreen` / `AppShell` | 8.5822% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_33` layout assets rendered |
@@ -86,7 +86,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 27 | `/agents/memory` | Real UI | `AgentMemoryScreen + AppShell` | Pass | Pass 8/8 | 7.8775% | Real UI Structural PASS / Visual Polish Deferred |
 | 28 | `/skills` | Real UI | `SkillsRegistryScreen + AppShell` | Pass | Pass 8/8 | 8.9239% | Real UI Structural PASS / Visual Polish Deferred |
 | 29 | `/tools/permissions` | Real UI | `ToolsPermissionsScreen + AppShell` | Pass | Pass 8/8 | 8.0755% | Real UI Structural PASS / Visual Polish Deferred |
-| 30 | `/tickets` | Real UI | `TicketsBoardRealPage + AppShell` | Pass | Pass 12/12 | 10.4584% | Real UI Structural PASS / Visual Polish Deferred |
+| 30 | `/tickets` | Real UI | `TicketsBoardRealPage + AppShell` | Pass | Pass 12/12 | 10.3084% | Real UI Structural PASS / Visual Polish Deferred |
 | 31 | `/tickets/list` | Real UI | `TicketsListScreen + AppShell` | Pass | Pass 8/8 | 7.3032% | Real UI Structural PASS / Visual Polish Deferred |
 | 32 | `/tickets/demo-ticket` | Real UI | `TicketDetailRealPage + AppShell` | Pass | Pass 15/15 | 7.7372% | Real UI Structural PASS / Visual Polish Deferred |
 | 33 | `/tickets/new` | Real UI | `CreateTicketScreen + AppShell` | Pass | Pass 8/8 | 8.5822% | Real UI Structural PASS / Visual Polish Deferred |

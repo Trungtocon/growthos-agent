@@ -65,7 +65,7 @@
 - Screen 25 `/agents/templates` was further polished to 10.8721% by matching the Hermes QA card avatar tone closer to the source PNG; several text/category experiments were reverted because they worsened diff.
 - Screen 26 `/agents/performance` was further polished to 10.7794% by matching the ranking panel's fifth row to the source PNG while preserving the detailed table content.
 - Screen 21 `/org-chart` was further polished to 10.5198% by tightening org node widths while preserving the structural contract.
-- Screen 30 `/tickets` was further polished to 10.4584% by compacting ticket board cards to better match the PNG density.
+- Screen 30 `/tickets` was further polished to 10.3084% by compacting the KPI band and surfacing Ready/Assigned ticket cards to better match the PNG density.
 - Pixel-perfect 1:1 parity still requires additional authenticated-route polish beyond structural acceptance.
 - Backend integration remains mock-only by design.
 - Accessibility now has a lightweight Playwright smoke gate across 48 Real UI routes; this is not a full WCAG certification.

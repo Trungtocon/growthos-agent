@@ -53,7 +53,7 @@
 | 27 - Agent Memory View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/agents/memory` | Real UI structural pass | 92.1225% |
 | 28 - Agent Skills View | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/skills` | Real UI structural pass | 91.0761% |
 | 29 - Toolsets & Permissions | Quản lý đội ngũ AI agent, hồ sơ, kỹ năng, hiệu suất | `/tools/permissions` | Real UI structural pass | 91.9245% |
-| 30 - Tickets Board | Quản lý ticket, run console và artifact | `/tickets` | Real UI structural pass | 89.5416% |
+| 30 - Tickets Board | Quản lý ticket, run console và artifact | `/tickets` | Real UI structural pass / KPI band recalibrated toward PNG | 89.6916% |
 | 31 - Tickets List | Quản lý ticket, run console và artifact | `/tickets/list` | Real UI structural pass | 92.6968% |
 | 32 - Ticket Detail | Quản lý ticket, run console và artifact | `/tickets/demo-ticket` | Real UI structural pass | 92.2628% |
 | 33 - Create Ticket Wizard | Quản lý ticket, run console và artifact | `/tickets/new` | Real UI structural pass | 91.4178% |
