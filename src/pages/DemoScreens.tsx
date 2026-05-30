@@ -28,7 +28,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RecommendationRow, RowAction } from '../components/ui/DemoPrimitives';
+import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
 import { selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
 import { approveApproval, assignTicket, escalateTicket, pauseRun, rejectApproval, resolveTicket, resumeRun, retryRun } from '../state/command-actions';
@@ -343,8 +343,33 @@ function NextActionsCard() {
   ];
   return (
     <DashboardCard title="Gợi ý hành động tiếp theo">
-      <div className="divide-y divide-slate-100 p-3">
-        {rows.map((row) => <RecommendationRow key={row.title} {...row} />)}
+      <div className="space-y-1.5 p-2">
+        {rows.map((row) => {
+          const Icon = row.icon;
+          const toneClass = {
+            blue: 'bg-blue-50 text-brand-600',
+            cyan: 'bg-cyan-50 text-cyan-600',
+            green: 'bg-emerald-50 text-emerald-600',
+            amber: 'bg-amber-50 text-amber-600',
+            red: 'bg-red-50 text-red-600',
+            purple: 'bg-violet-50 text-violet-600',
+            slate: 'bg-slate-100 text-slate-500',
+          }[row.tone];
+
+          return (
+            <div key={row.title} className="flex h-11 items-center gap-3 rounded-lg border border-slate-200 bg-white px-2.5 shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
+              <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${toneClass}`}>
+                <Icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold leading-5 text-slate-950">{row.title}</div>
+                <div className="truncate text-xs leading-4 text-slate-500">{row.description}</div>
+              </div>
+              {row.badge ? <Badge tone={row.tone}>{row.badge}</Badge> : null}
+              <RowAction />
+            </div>
+          );
+        })}
       </div>
     </DashboardCard>
   );

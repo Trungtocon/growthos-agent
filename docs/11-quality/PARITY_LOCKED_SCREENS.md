@@ -11,7 +11,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 | 05 | `/onboarding/ai-team` | `AiTeamOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_05/*` |
 | 06 | `/onboarding/hermes` | `HermesOnboardingParityPage` | 0.0148% | Frozen | `public/stitch_ui/parity_06/*` |
 | 07 | `/onboarding/complete` | `CompleteOnboardingParityPage` | 0% | Frozen | `public/stitch_ui/parity_07/*` |
-| 08 | `/command-center` | `CommandCenter` / `AppShell` | 10.5256% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_08` layout assets rendered |
+| 08 | `/command-center` | `CommandCenter` / `AppShell` | 10.4641% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_08` layout assets rendered |
 | 09 | `/today` | `TodayScreen` / `AppShell` | 7.5771% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_09` layout assets rendered |
 | 10 | `/inbox` | `InboxScreen` / `AppShell` | 7.4725% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_10` layout assets rendered |
 | 11 | `/notifications` | `NotificationScreen` / `AppShell` | 7.0263% | Real UI Structural PASS / Visual Polish Deferred | No static `parity_11` layout assets rendered |
@@ -64,7 +64,7 @@ These screens have passed the strict visual parity gate and are frozen for futur
 
 | Screen | Route | Mode | Component | Static Guardrail | Structural Gate | Pixel Diff | Status |
 |---|---|---|---|---|---|---:|---|
-| 08 | `/command-center` | Real UI | `CommandCenter + AppShell` | Pass | Pass 14/14 | 10.5256% | Real UI Structural PASS / Visual Polish Deferred |
+| 08 | `/command-center` | Real UI | `CommandCenter + AppShell` | Pass | Pass 14/14 | 10.4641% | Real UI Structural PASS / Visual Polish Deferred |
 | 09 | `/today` | Real UI | `TodayScreen + AppShell` | Pass | Pass 8/8 | 7.5771% | Real UI Structural PASS / Visual Polish Deferred |
 | 10 | `/inbox` | Real UI | `InboxScreen + AppShell` | Pass | Pass 9/9 | 7.4725% | Real UI Structural PASS / Visual Polish Deferred |
 | 11 | `/notifications` | Real UI | `NotificationScreen + AppShell` | Pass | Pass 8/8 | 7.0263% | Real UI Structural PASS / Visual Polish Deferred |
