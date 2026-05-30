@@ -6,14 +6,16 @@ import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapPaperclipArtifactToArtifact } from './run-event-mapper';
 import { mapTicketToHermesTask } from './ticket-to-task-mapper';
 import type { RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand } from './runtime-types';
+import { resolveRuntimeConfig } from './runtime-config';
 import { getApprovalById, upsertApproval } from '../../runtime-store/approval-store';
 import { upsertArtifact } from '../../runtime-store/artifact-store';
 import { appendRuntimeEvent } from '../../runtime-store/event-store';
 import { setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 
-const hermes = createHermesAdapter('mock');
-const paperclip = createPaperclipAdapter('mock');
+const runtimeConfig = resolveRuntimeConfig();
+const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
+const paperclip = createPaperclipAdapter(runtimeConfig.paperclip.mode, runtimeConfig.paperclip);
 
 function runtimeNow() {
   return new Date().toISOString();
@@ -142,9 +144,10 @@ function runtimeApproval(existing: Approval | undefined, ticketId: string, runId
 }
 
 export function createRuntimeAdapters(mode: RuntimeMode = 'mock') {
+  const config = resolveRuntimeConfig({ VITE_RUNTIME_MODE: mode });
   return {
-    hermes: createHermesAdapter(mode),
-    paperclip: createPaperclipAdapter(mode),
+    hermes: createHermesAdapter(config.hermes.mode, config.hermes),
+    paperclip: createPaperclipAdapter(config.paperclip.mode, config.paperclip),
   };
 }
 

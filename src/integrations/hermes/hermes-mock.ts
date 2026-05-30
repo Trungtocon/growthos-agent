@@ -15,6 +15,77 @@ function shouldFail(command: string) {
 
 export function createMockHermesClient(): HermesClient {
   return {
+    async healthCheck() {
+      await delay(40);
+      return {
+        service: 'hermes',
+        mode: 'mock',
+        status: 'online',
+        message: 'Hermes mock runtime is available',
+        checkedAt: new Date().toISOString(),
+        latencyMs: 40,
+      };
+    },
+
+    async createTask(task: HermesTask): Promise<HermesTask> {
+      await delay(60);
+      return task;
+    },
+
+    async startRun(taskId: string): Promise<HermesExecution> {
+      await delay();
+      return {
+        id: `run-${taskId}`,
+        taskId,
+        ticketId: 'ticket-audit-module-3',
+        agentId: 'agent-hermes-qa',
+        status: 'running',
+        currentStep: 'Hermes mock execution accepted',
+        elapsedSeconds: 18,
+        cost: 0.038,
+        riskLevel: 'medium',
+        steps: [],
+        toolCalls: [],
+        logs: [{ id: `runtime-log-${taskId}-accepted`, level: 'info', message: `Hermes mock started run for ${taskId}` }],
+      };
+    },
+
+    async getRun(runId: string): Promise<HermesExecution> {
+      await delay(60);
+      return {
+        id: runId,
+        taskId: `task-${runId}`,
+        ticketId: 'ticket-audit-module-3',
+        agentId: 'agent-hermes-qa',
+        status: 'running',
+        currentStep: 'Hermes mock execution snapshot',
+        elapsedSeconds: 128,
+        cost: 0.041,
+        riskLevel: 'medium',
+        steps: [],
+        toolCalls: [],
+        logs: [{ id: `runtime-log-${runId}-snapshot`, level: 'info', message: `Hermes mock returned run ${runId}` }],
+      };
+    },
+
+    async cancelRun(runId: string): Promise<HermesExecution> {
+      await delay(60);
+      return {
+        id: runId,
+        taskId: `task-${runId}`,
+        ticketId: 'ticket-audit-module-3',
+        agentId: 'agent-hermes-qa',
+        status: 'failed',
+        currentStep: 'Cancelled by operator',
+        elapsedSeconds: 128,
+        cost: 0.041,
+        riskLevel: 'medium',
+        steps: [],
+        toolCalls: [],
+        logs: [{ id: `runtime-log-${runId}-cancel`, level: 'warn', message: `Hermes mock cancelled run ${runId}` }],
+      };
+    },
+
     async startTask(task: HermesTask): Promise<HermesExecution> {
       await delay();
       if (shouldFail('startAgentRun')) throw new Error('Mock Hermes rejected startAgentRun');

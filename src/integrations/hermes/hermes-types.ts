@@ -1,4 +1,5 @@
 import type { RiskLevel, RunStatus, ToolCallStatus } from '../../domain/types';
+import type { RuntimeServiceHealth } from '../growthos-runtime/runtime-types';
 
 export type HermesTaskPriority = 'low' | 'medium' | 'high' | 'critical';
 
@@ -54,6 +55,11 @@ export interface HermesExecution {
 }
 
 export interface HermesClient {
+  healthCheck(): Promise<RuntimeServiceHealth>;
+  createTask(task: HermesTask): Promise<HermesTask>;
+  startRun(taskId: string): Promise<HermesExecution>;
+  getRun(runId: string): Promise<HermesExecution>;
+  cancelRun(runId: string): Promise<HermesExecution>;
   startTask(task: HermesTask): Promise<HermesExecution>;
   sendRunCommand(runId: string, command: 'pause' | 'resume' | 'retry' | 'cancel'): Promise<HermesExecution>;
 }

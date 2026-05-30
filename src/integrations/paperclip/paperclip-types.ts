@@ -1,4 +1,5 @@
 import type { ArtifactType } from '../../domain/types';
+import type { RuntimeServiceHealth } from '../growthos-runtime/runtime-types';
 
 export interface PaperclipArtifact {
   id: string;
@@ -11,5 +12,8 @@ export interface PaperclipArtifact {
 }
 
 export interface PaperclipClient {
+  healthCheck(): Promise<RuntimeServiceHealth>;
   createArtifact(input: Omit<PaperclipArtifact, 'id' | 'createdAt' | 'source'>): Promise<PaperclipArtifact>;
+  getArtifact(artifactId: string): Promise<PaperclipArtifact>;
+  listArtifacts(runId: string): Promise<PaperclipArtifact[]>;
 }
