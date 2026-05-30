@@ -5,6 +5,10 @@ import {
   DEMO_TICKET_ID,
 } from '../data/demo-fixtures';
 import { mergeActivityTimeline } from '../services/activity-service';
+import { getApprovalById, getApprovals as getRuntimeApprovals } from '../runtime-store/approval-store';
+import { getRunArtifacts } from '../runtime-store/artifact-store';
+import { getRunEvents, getRuntimeEvents } from '../runtime-store/event-store';
+import { getRunById } from '../runtime-store/run-store';
 import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 
@@ -397,17 +401,32 @@ export function selectCreateTicketViewModel() {
 export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const ticket = findTicket(ticketId);
   const agent = findAgent(ticket.ownerAgentId);
-  const run = ticket.runId ? findRun(ticket.runId) : undefined;
-  const approval = ticket.approvalId ? currentData().approvals.find((item) => item.id === ticket.approvalId) : undefined;
-  const events = getWorkflowState().events.filter((event) => event.entityId === ticket.id || event.entityId === ticket.runId || event.entityId === ticket.approvalId);
+  const baseRun = ticket.runId ? findRun(ticket.runId) : undefined;
+  const runtimeRun = baseRun ? getRunById(baseRun.id) : undefined;
+  const runtimeArtifacts = baseRun ? getRunArtifacts(baseRun.id) : [];
+  const run = runtimeRun ? { ...runtimeRun, artifacts: runtimeArtifacts.length ? runtimeArtifacts : runtimeRun.artifacts } : baseRun;
+  const baseApproval = ticket.approvalId ? currentData().approvals.find((item) => item.id === ticket.approvalId) : undefined;
+  const approval = baseApproval ? getApprovalById(baseApproval.id) ?? baseApproval : undefined;
+  const workflowEvents = getWorkflowState().events.filter((event) => event.entityId === ticket.id || event.entityId === ticket.runId || event.entityId === ticket.approvalId);
+  const runtimeEvents = run ? getRunEvents(run.id) : [];
+  const events = [
+    ...workflowEvents,
+    ...runtimeEvents,
+  ];
   return { ticket, agent, run, approval, criteria: ticket.acceptanceCriteria, timeline: events };
 }
 
 export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
-  const run = findRun(runId);
+  const baseRun = findRun(runId);
+  const runtimeRun = getRunById(runId);
+  const runtimeArtifacts = getRunArtifacts(runId);
+  const run = runtimeRun ? { ...runtimeRun, artifacts: runtimeArtifacts.length ? runtimeArtifacts : runtimeRun.artifacts } : baseRun;
   const ticket = findTicket(run.ticketId);
   const agent = findAgent(run.agentId);
-  const events = getWorkflowState().events.filter((event) => event.entityId === run.id || event.entityId === ticket.id);
+  const events = [
+    ...getRunEvents(run.id),
+    ...getWorkflowState().events.filter((event) => event.entityId === run.id || event.entityId === ticket.id),
+  ];
   return {
     run,
     ticket,
@@ -433,12 +452,15 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
 
 export function selectApprovalCenterViewModel() {
   const data = currentData();
-  const queueRows = data.approvals.map(approvalToQueueRow);
-  const highRisk = data.approvals.filter((approval) => approval.severity === 'high').length;
-  const pending = data.approvals.filter((approval) => approval.status === 'pending').length;
+  const runtimeApprovals = getRuntimeApprovals();
+  const approvalMap = new Map([...data.approvals, ...runtimeApprovals].map((approval) => [approval.id, approval]));
+  const approvals = [...approvalMap.values()];
+  const queueRows = approvals.map(approvalToQueueRow);
+  const highRisk = approvals.filter((approval) => approval.severity === 'high').length;
+  const pending = approvals.filter((approval) => approval.status === 'pending').length;
   return {
     approvals: queueRows,
-    rawApprovals: data.approvals,
+    rawApprovals: approvals,
     selectedApproval: queueRows[0],
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
@@ -453,11 +475,15 @@ export function selectApprovalCenterViewModel() {
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
   const data = currentData();
-  const approval = data.approvals.find((item) => item.id === approvalId) ?? data.approvals[0];
+  const approval = getApprovalById(approvalId) ?? data.approvals.find((item) => item.id === approvalId) ?? data.approvals[0];
   const ticket = findTicket(approval.ticketId);
   const agent = findAgent(approval.agentId);
-  const run = approval.runId ? data.runs.find((item) => item.id === approval.runId) : undefined;
-  const events = getWorkflowState().events.filter((event) => [approval.id, approval.ticketId, approval.runId].includes(event.entityId));
+  const baseRun = approval.runId ? data.runs.find((item) => item.id === approval.runId) : undefined;
+  const run = approval.runId ? getRunById(approval.runId) ?? baseRun : undefined;
+  const events = [
+    ...getRuntimeEvents().filter((event) => [approval.id, approval.ticketId, approval.runId].includes(event.entityId)),
+    ...getWorkflowState().events.filter((event) => [approval.id, approval.ticketId, approval.runId].includes(event.entityId)),
+  ];
   return {
     approval,
     ticket,

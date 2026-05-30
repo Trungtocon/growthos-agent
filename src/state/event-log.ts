@@ -1,12 +1,16 @@
 export type WorkflowCommand =
   | 'approveApproval'
   | 'rejectApproval'
+  | 'approveRunAction'
+  | 'rejectRunAction'
+  | 'startAgentRun'
   | 'retryRun'
   | 'assignTicket'
   | 'escalateTicket'
   | 'resolveTicket'
   | 'pauseRun'
-  | 'resumeRun';
+  | 'resumeRun'
+  | 'cancelAgentRun';
 
 export type WorkflowEntityType = 'approval' | 'ticket' | 'run';
 export type WorkflowEventStatus = 'pending' | 'success' | 'failed';

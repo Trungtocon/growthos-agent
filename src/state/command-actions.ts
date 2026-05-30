@@ -1,20 +1,26 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import type { ApprovalStatus, Ticket } from '../domain/types';
-import { sendApprovalDecision, sendRunCommand, sendTicketAssignment, sendTicketCommand } from './async-actions';
+import { cancelAgentRun as createCancelAgentRunPlan, pauseAgentRun as createPauseAgentRunPlan, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan } from '../integrations/growthos-runtime/runtime-orchestrator';
+import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
 import type { WorkflowData } from './workflow-engine';
 
 function withApprovalDecision(data: WorkflowData, approvalId: string, status: ApprovalStatus): WorkflowData {
   const decidedAt = new Date().toISOString();
-  return {
-    ...data,
-    approvals: data.approvals.map((approval) => approval.id !== approvalId ? approval : {
+  const approvals = data.approvals.map((approval) => {
+    if (approval.id !== approvalId) return approval;
+    const outcome: Exclude<ApprovalStatus, 'pending'> = status === 'approved'
+      ? 'approved'
+      : status === 'rejected'
+        ? 'rejected'
+        : 'changes_requested';
+    const nextApproval = {
       ...approval,
       status,
       decision: {
         decidedAt,
         decidedBy: demoCurrentUser.id,
-        outcome: status === 'approved' ? 'approved' : 'rejected',
+        outcome,
         note: 'Optimistic demo workflow decision.',
       },
       auditTrail: [
@@ -26,7 +32,12 @@ function withApprovalDecision(data: WorkflowData, approvalId: string, status: Ap
           createdAt: decidedAt,
         },
       ],
-    }),
+    };
+    return nextApproval;
+  });
+  return {
+    ...data,
+    approvals,
   };
 }
 
@@ -59,47 +70,67 @@ export async function rejectApproval(approvalId: string) {
 }
 
 export async function retryRun(runId: string) {
+  const plan = createRetryAgentRunPlan(runId);
   return runWorkflowCommand({
     command: 'retryRun',
     entityType: 'run',
     entityId: runId,
     actorId: demoCurrentUser.id,
     title: 'Run retry requested',
-    optimistic: (data) => ({
-      ...data,
-      runs: data.runs.map((run) => run.id !== runId ? run : { ...run, status: 'running', currentStep: 'Retrying last checkpoint' }),
-    }),
+    optimistic: plan.applyOptimistic,
     mutate: () => sendRunCommand(runId, 'retryRun'),
   });
 }
 
 export async function pauseRun(runId: string) {
+  const plan = createPauseAgentRunPlan(runId);
   return runWorkflowCommand({
     command: 'pauseRun',
     entityType: 'run',
     entityId: runId,
     actorId: demoCurrentUser.id,
     title: 'Run paused',
-    optimistic: (data) => ({
-      ...data,
-      runs: data.runs.map((run) => run.id !== runId ? run : { ...run, status: 'paused', currentStep: 'Paused at checkpoint' }),
-    }),
+    optimistic: plan.applyOptimistic,
     mutate: () => sendRunCommand(runId, 'pauseRun'),
   });
 }
 
 export async function resumeRun(runId: string) {
+  const plan = createResumeAgentRunPlan(runId);
   return runWorkflowCommand({
     command: 'resumeRun',
     entityType: 'run',
     entityId: runId,
     actorId: demoCurrentUser.id,
     title: 'Run resumed',
-    optimistic: (data) => ({
-      ...data,
-      runs: data.runs.map((run) => run.id !== runId ? run : { ...run, status: 'running', currentStep: 'Continuing from checkpoint' }),
-    }),
+    optimistic: plan.applyOptimistic,
     mutate: () => sendRunCommand(runId, 'resumeRun'),
+  });
+}
+
+export async function startAgentRun(ticketId: string) {
+  const plan = createStartAgentRunPlan(ticketId);
+  return runWorkflowCommand({
+    command: 'startAgentRun',
+    entityType: 'ticket',
+    entityId: ticketId,
+    actorId: demoCurrentUser.id,
+    title: 'Hermes run started',
+    optimistic: plan.applyOptimistic,
+    mutate: () => sendStartAgentRun(ticketId),
+  });
+}
+
+export async function cancelAgentRun(runId: string) {
+  const plan = createCancelAgentRunPlan(runId);
+  return runWorkflowCommand({
+    command: 'cancelAgentRun',
+    entityType: 'run',
+    entityId: runId,
+    actorId: demoCurrentUser.id,
+    title: 'Run cancelled',
+    optimistic: plan.applyOptimistic,
+    mutate: () => sendRunCommand(runId, 'cancelAgentRun'),
   });
 }
 
@@ -156,4 +187,12 @@ export async function resolveTicket(ticketId: string) {
     }),
     mutate: () => sendTicketCommand(ticketId, 'resolveTicket'),
   });
+}
+
+export async function approveRunAction(approvalId: string) {
+  return approveApproval(approvalId);
+}
+
+export async function rejectRunAction(approvalId: string) {
+  return rejectApproval(approvalId);
 }

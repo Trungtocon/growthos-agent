@@ -14,6 +14,8 @@ import type { Activity, Agent, Approval, CostBreakdown, Goal, Run, Ticket, User,
 import { createWorkflowEvent } from './event-log';
 import type { WorkflowCommand, WorkflowEntityType, WorkflowEvent } from './event-log';
 
+const WORKFLOW_DATA_STORAGE_KEY = 'uikigai-demo-workflow-data';
+
 export interface WorkflowData {
   workspace: Workspace;
   currentUser: User;
@@ -56,8 +58,27 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
+function loadPersistedWorkflowData(fallback: WorkflowData): WorkflowData {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.sessionStorage.getItem(WORKFLOW_DATA_STORAGE_KEY);
+    return raw ? JSON.parse(raw) as WorkflowData : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function persistWorkflowData(data: WorkflowData) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(WORKFLOW_DATA_STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Demo persistence is best-effort only.
+  }
+}
+
 function createInitialData(): WorkflowData {
-  return clone({
+  const baseline = clone({
     workspace: demoWorkspace,
     currentUser: demoCurrentUser,
     agents: demoAgents,
@@ -68,6 +89,7 @@ function createInitialData(): WorkflowData {
     activities: demoActivities,
     costBreakdown: demoCostBreakdown,
   });
+  return loadPersistedWorkflowData(baseline);
 }
 
 let state: WorkflowState = {
@@ -85,6 +107,7 @@ function notify() {
 
 function updateState(updater: (current: WorkflowState) => WorkflowState) {
   state = updater(state);
+  persistWorkflowData(state.data);
   notify();
 }
 
@@ -106,6 +129,9 @@ export function useWorkflowStateSnapshot() {
 }
 
 export function resetWorkflowState() {
+  if (typeof window !== 'undefined') {
+    window.sessionStorage.removeItem(WORKFLOW_DATA_STORAGE_KEY);
+  }
   state = {
     data: createInitialData(),
     events: [],

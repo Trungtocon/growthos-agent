@@ -78,7 +78,9 @@
     "codegraph:init": "codegraph init -i",
     "codegraph:index": "codegraph index",
     "codegraph:sync": "codegraph sync",
-    "codegraph:status": "codegraph status --json"
+    "codegraph:status": "codegraph status --json",
+    "smoke:runtime-integration": "node scripts/smoke-runtime-integration.mjs",
+    "smoke:runtime-persistence": "node scripts/smoke-runtime-persistence.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
