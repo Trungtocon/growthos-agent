@@ -3270,15 +3270,30 @@ function AccessControlScreen() {
                 <b>Permission</b>
                 {vm.roles.map((role) => <b key={role.id} className="truncate">{role.id.replace('Organization', 'Org')}</b>)}
                 {vm.permissions.slice(0, 12).map((permission) => (
-                  <>
+                  <div key={permission.id} className="contents">
                     <span key={`${permission.id}-label`} className="truncate rounded-lg bg-slate-50 px-2 py-2 font-semibold">{permission.id}</span>
                     {vm.permissionMatrix.map((row) => {
                       const allowed = row.permissions.find((item) => item.permission.id === permission.id)?.allowed;
                       return <span key={`${permission.id}-${row.role.id}`} className={`rounded-lg px-2 py-2 text-center font-bold ${allowed ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-300'}`}>{allowed ? 'Yes' : '-'}</span>;
                     })}
-                  </>
+                  </div>
                 ))}
               </div>
+            </div>
+          </Panel>
+          <Panel title="Authorization Events">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.auditEvents.slice(0, 8).map((event) => (
+                <div key={event.id} className="grid grid-cols-[1fr_96px_92px] items-center gap-3 py-3 text-sm">
+                  <div className="min-w-0">
+                    <b>{event.action}</b>
+                    <p className="mt-1 truncate text-slate-500">{event.actorName} - {event.resourceType} - {event.deniedReason ?? 'Allowed'}</p>
+                  </div>
+                  <Badge tone={event.allowed ? 'green' : 'red'}>{event.allowed ? 'Allowed' : 'Denied'}</Badge>
+                  <Badge tone={event.riskLevel === 'CRITICAL' ? 'red' : event.riskLevel === 'HIGH' ? 'amber' : 'blue'}>{event.riskLevel}</Badge>
+                </div>
+              ))}
+              {!vm.auditEvents.length ? <div className="py-3 text-sm font-semibold text-slate-500">No authorization audit events recorded yet.</div> : null}
             </div>
           </Panel>
         </div>
@@ -3288,6 +3303,8 @@ function AccessControlScreen() {
               <FieldRow label="Role" value={vm.currentRole.name} />
               <FieldRow label="Rank" value={String(vm.currentRole.rank)} />
               <FieldRow label="Effective permissions" value={String(vm.effectivePermissions.length)} />
+              <FieldRow label="Audit events" value={String(vm.auditSummary.totalEvents)} />
+              <FieldRow label="High risk" value={`${vm.auditSummary.highRiskEvents} / ${vm.auditSummary.criticalEvents}`} />
               <p className="text-sm leading-6 text-slate-500">{vm.currentRole.description}</p>
             </div>
           </Panel>
@@ -3298,19 +3315,35 @@ function AccessControlScreen() {
           </Panel>
           <Panel title="Denied Actions">
             <div className="space-y-3 p-5">
-              {(vm.deniedActions.length ? vm.deniedActions : [{ id: 'none', action: 'No denied actions', reason: 'Authorization layer has no active denials.', suggestedRole: vm.currentRole.id }]).slice(0, 5).map((action) => (
+              {(vm.auditEvents.filter((event) => !event.allowed).length ? vm.auditEvents.filter((event) => !event.allowed) : [{ id: 'none', action: 'No denied actions', deniedReason: 'Authorization layer has no active denials.', riskLevel: 'LOW' }]).slice(0, 5).map((action) => (
                 <div key={action.id} className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm">
                   <b className="text-red-700">{action.action}</b>
-                  <p className="mt-1 text-red-600">{action.reason}</p>
-                  <p className="mt-1 text-xs font-semibold text-red-500">Suggested: {action.suggestedRole}</p>
+                  <p className="mt-1 text-red-600">{action.deniedReason}</p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">Risk: {action.riskLevel}</p>
                 </div>
               ))}
             </div>
           </Panel>
-          <Panel title="Authorization Events">
+          <Panel title="High Risk Events">
             <div className="divide-y divide-slate-100 p-4">
-              {vm.authorizationHistory.slice(0, 6).map((event) => <div key={event.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{event.action}</b><Badge tone={event.allowed ? 'green' : 'red'}>{event.allowed ? 'Allowed' : 'Denied'}</Badge></div><p className="mt-1 text-sm text-slate-500">{event.reason}</p></div>)}
-              {!vm.authorizationHistory.length ? <div className="py-3 text-sm font-semibold text-slate-500">No authorization events recorded yet.</div> : null}
+              {vm.highRiskEvents.slice(0, 5).map((event) => <div key={event.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{event.action}</b><Badge tone={event.riskLevel === 'CRITICAL' ? 'red' : 'amber'}>{event.riskLevel}</Badge></div><p className="mt-1 text-sm text-slate-500">{event.deniedReason ?? 'High-risk authorization attempt'}</p></div>)}
+              {!vm.highRiskEvents.length ? <div className="py-3 text-sm font-semibold text-slate-500">No high-risk authorization events.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Review Queue">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.reviewQueue.slice(0, 5).map((item) => <div key={item.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{item.action}</b><Badge tone={item.riskLevel === 'CRITICAL' ? 'red' : 'amber'}>{item.status}</Badge></div><p className="mt-1 text-sm text-slate-500">{item.reason}</p></div>)}
+              {!vm.reviewQueue.length ? <div className="py-3 text-sm font-semibold text-slate-500">No authorization reviews queued.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Breakdown">
+            <div className="grid grid-cols-3 gap-2 p-4 text-xs">
+              <b>Actor</b><b>Events</b><b>Denied</b>
+              {vm.actorBreakdown.slice(0, 4).flatMap((row) => [
+                <span key={`${row.actorId}-name`} className="truncate rounded-lg bg-slate-50 px-2 py-2">{row.actorName}</span>,
+                <b key={`${row.actorId}-events`} className="rounded-lg bg-slate-50 px-2 py-2 text-center">{row.events}</b>,
+                <b key={`${row.actorId}-denied`} className="rounded-lg bg-slate-50 px-2 py-2 text-center text-red-600">{row.denied}</b>,
+              ])}
             </div>
           </Panel>
         </div>

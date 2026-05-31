@@ -1,4 +1,5 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
+import { clearAuthorizationAudit, recordAuthorizationDecision } from './authorization-audit-store';
 import {
   authorizeRole,
   denialFromDecision,
@@ -146,6 +147,7 @@ function persistDecision(decision: AuthorizationDecision): AuthorizationDecision
     ...state,
     authorizationHistory: [decision, ...state.authorizationHistory].slice(0, 100),
   }));
+  recordAuthorizationDecision(decision);
   return decision;
 }
 
@@ -228,4 +230,5 @@ export function generateRbacArtifacts(runId: string) {
 export function clearRbac() {
   if (typeof window === 'undefined') return;
   window.sessionStorage.removeItem(RBAC_STORAGE_KEY);
+  clearAuthorizationAudit();
 }

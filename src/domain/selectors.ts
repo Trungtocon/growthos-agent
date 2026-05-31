@@ -109,6 +109,18 @@ import {
   getRbacSummary as getStoredRbacSummary,
   getRoleMatrix as getStoredRoleMatrix,
 } from '../runtime/rbac-store';
+import {
+  getAuthorizationAuditByActor as getStoredAuthorizationAuditByActor,
+  getAuthorizationAuditByTenant as getStoredAuthorizationAuditByTenant,
+  getAuthorizationAuditByWorkspace as getStoredAuthorizationAuditByWorkspace,
+  getAuthorizationAuditEvents as getStoredAuthorizationAuditEvents,
+  getAuthorizationAuditSummary as getStoredAuthorizationAuditSummary,
+  getAuthorizationDeniedActions as getStoredAuthorizationDeniedActions,
+  getAuthorizationReviewItems as getStoredAuthorizationReviewItems,
+  getAuthorizationRiskSummary as getStoredAuthorizationRiskSummary,
+  getDeniedActionSummary as getStoredDeniedActionSummary,
+  getHighRiskAuthorizationEvents as getStoredHighRiskAuthorizationEvents,
+} from '../runtime/authorization-audit-store';
 
 export interface KpiViewModel {
   label: string;
@@ -566,6 +578,38 @@ export function selectDeniedActions() {
   return getStoredDeniedActions();
 }
 
+export function selectAuthorizationAuditEvents() {
+  return getStoredAuthorizationAuditEvents();
+}
+
+export function selectDeniedActionSummary() {
+  return getStoredDeniedActionSummary();
+}
+
+export function selectAuthorizationRiskSummary() {
+  return getStoredAuthorizationRiskSummary();
+}
+
+export function selectHighRiskAuthorizationEvents() {
+  return getStoredHighRiskAuthorizationEvents();
+}
+
+export function selectAuthorizationReviewQueue() {
+  return getStoredAuthorizationReviewItems();
+}
+
+export function selectAuthorizationAuditByWorkspace(workspaceId?: string) {
+  return getStoredAuthorizationAuditByWorkspace(workspaceId);
+}
+
+export function selectAuthorizationAuditByTenant(tenantId?: string) {
+  return getStoredAuthorizationAuditByTenant(tenantId);
+}
+
+export function selectAuthorizationAuditByActor(actorId?: string) {
+  return getStoredAuthorizationAuditByActor(actorId);
+}
+
 export function selectRoleMatrix() {
   return getStoredRoleMatrix();
 }
@@ -580,10 +624,23 @@ export function selectEffectivePermissions() {
 
 export function selectAccessControlViewModel() {
   const summary = getStoredRbacSummary();
+  const auditSummary = getStoredAuthorizationAuditSummary();
+  const deniedActionSummary = selectDeniedActionSummary();
+  const riskSummary = selectAuthorizationRiskSummary();
+  const reviewQueue = selectAuthorizationReviewQueue();
   const roleMatrix = selectRoleMatrix();
   const permissionMatrix = selectPermissionMatrix();
   return {
     ...summary,
+    auditEvents: selectAuthorizationAuditEvents(),
+    auditSummary,
+    deniedActionSummary,
+    riskSummary,
+    highRiskEvents: selectHighRiskAuthorizationEvents(),
+    reviewQueue,
+    actorBreakdown: auditSummary.byActor,
+    workspaceBreakdown: auditSummary.byWorkspace,
+    tenantBreakdown: auditSummary.byTenant,
     roleMatrix,
     permissionMatrix,
     users: [
@@ -596,7 +653,9 @@ export function selectAccessControlViewModel() {
       { label: 'Roles', value: String(summary.roles.length), tone: 'blue' },
       { label: 'Permissions', value: String(summary.permissions.length), tone: 'cyan' },
       { label: 'Effective', value: String(summary.effectivePermissions.length), tone: 'green' },
-      { label: 'Denied', value: String(summary.deniedActions.length), tone: summary.deniedActions.length ? 'red' : 'green' },
+      { label: 'Audit events', value: String(auditSummary.totalEvents), tone: 'blue' },
+      { label: 'Denied', value: String(deniedActionSummary.totalDenied), tone: deniedActionSummary.totalDenied ? 'red' : 'green' },
+      { label: 'Review queue', value: String(reviewQueue.length), tone: riskSummary.criticalEvents ? 'red' : reviewQueue.length ? 'amber' : 'green' },
     ] satisfies KpiViewModel[],
   };
 }

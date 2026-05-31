@@ -38,6 +38,7 @@ import {
   canStartRun,
   generateRbacArtifacts,
 } from '../../runtime/rbac-store';
+import { generateAuthorizationAuditArtifacts } from '../../runtime/authorization-audit-store';
 import type { AuthorizationDecision } from '../../runtime/rbac';
 import {
   evaluateQuotaAfterRun,
@@ -906,6 +907,21 @@ export function exportRbacArtifacts(runId = DEMO_RUN_ID): Artifact[] {
     entityId: runId,
     actorId: DEMO_AGENT_ID,
     title: 'RBAC access report export generated',
+    status: 'success',
+  });
+  return artifacts;
+}
+
+export function exportAuthorizationAuditArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  const auth = canExportArtifact(runId);
+  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  const artifacts = generateAuthorizationAuditArtifacts(runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Authorization audit export generated',
     status: 'success',
   });
   return artifacts;

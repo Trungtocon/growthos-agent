@@ -97,7 +97,8 @@
     "smoke:cost-reconciliation": "node scripts/smoke-cost-reconciliation.mjs",
     "smoke:workspace-governance": "node scripts/smoke-workspace-governance.mjs",
     "smoke:organization-governance": "node scripts/smoke-organization-governance.mjs",
-    "smoke:rbac": "node scripts/smoke-rbac.mjs"
+    "smoke:rbac": "node scripts/smoke-rbac.mjs",
+    "smoke:authorization-audit": "node scripts/smoke-authorization-audit.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
