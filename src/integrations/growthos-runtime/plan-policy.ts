@@ -1,6 +1,7 @@
 import type { RunPlan, RunPlanStep } from './run-planner';
 import { getRunPlan } from '../../runtime-store/run-plan-store';
 import { getToolRegistry } from '../../runtime-store/tool-registry-store';
+import { evaluateBudget, type ExecutionBudgetReport, type ExecutionEstimate } from './execution-budget';
 
 export type PlanPolicySeverity = 'info' | 'warning' | 'blocking';
 export type PlanPolicyTarget = 'plan' | 'step' | 'tool' | 'artifact' | 'approval';
@@ -31,6 +32,8 @@ export interface PlanExecutionPolicyReport {
   blockingReasons: string[];
   warnings: string[];
   approvalRequiredSteps: string[];
+  budgetStatus?: ExecutionBudgetReport['status'];
+  executionEstimate?: ExecutionEstimate;
   evaluatedAt: string;
 }
 
@@ -97,6 +100,42 @@ export const DEFAULT_PLAN_POLICIES: PlanPolicy[] = [
     appliesTo: 'tool',
     condition: 'high-risk tools require step.requiresApproval',
     message: 'High-risk tool requires approval before execution.',
+  },
+  {
+    id: 'budget_limit_exceeded',
+    name: 'Budget limit exceeded',
+    description: 'A plan cannot start if estimated cost exceeds the execution budget.',
+    severity: 'blocking',
+    appliesTo: 'plan',
+    condition: 'estimate.estimatedCost <= budget.maxCost',
+    message: 'Estimated execution cost exceeds the configured budget.',
+  },
+  {
+    id: 'high_risk_execution',
+    name: 'High risk execution',
+    description: 'A plan cannot start if estimated risk exceeds the budget risk threshold.',
+    severity: 'blocking',
+    appliesTo: 'plan',
+    condition: 'estimate.riskLevel <= budget.maxRiskLevel',
+    message: 'Estimated execution risk exceeds the configured risk threshold.',
+  },
+  {
+    id: 'expensive_model_requires_approval',
+    name: 'Expensive model requires approval',
+    description: 'Expensive execution plans must be approval gated.',
+    severity: 'warning',
+    appliesTo: 'approval',
+    condition: 'estimate.estimatedCost <= budget.approvalCost || approval gate exists',
+    message: 'Estimated execution cost requires approval.',
+  },
+  {
+    id: 'deployment_requires_budget_review',
+    name: 'Deployment requires budget review',
+    description: 'Deployment workflows require budget review before execution.',
+    severity: 'warning',
+    appliesTo: 'approval',
+    condition: 'deployment workflow has budget review',
+    message: 'Deployment execution requires budget review.',
   },
 ];
 
@@ -212,7 +251,15 @@ export function evaluatePlanObjectPolicy(plan: RunPlan): PlanExecutionPolicyRepo
   ];
 
   const stepResults = plan.steps.flatMap((step) => evaluateStepPolicy(plan.id, step.id));
-  const results = [...planResults, ...stepResults];
+  const budgetReport = evaluateBudget(plan.id);
+  const budgetResults = budgetReport.results.map((item): PlanPolicyResult => ({
+    policyId: item.policyId,
+    targetId: item.targetId,
+    passed: item.passed,
+    severity: item.severity,
+    message: item.message,
+  }));
+  const results = [...planResults, ...stepResults, ...budgetResults];
   const failed = results.filter((item) => !item.passed);
   const blockingReasons = failed.filter((item) => item.severity === 'blocking').map((item) => item.message);
   const warnings = [
@@ -228,6 +275,8 @@ export function evaluatePlanObjectPolicy(plan: RunPlan): PlanExecutionPolicyRepo
     blockingReasons,
     warnings,
     approvalRequiredSteps,
+    budgetStatus: budgetReport.status,
+    executionEstimate: budgetReport.estimate,
     evaluatedAt: new Date().toISOString(),
   };
 }

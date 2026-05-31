@@ -423,6 +423,32 @@ function planPolicyApproval(plan: RunPlan, runId: string, step: RunPlanStep): Ap
   return { ...approval, planId: plan.id, stepId: step.id } as Approval;
 }
 
+function budgetPolicyApproval(plan: RunPlan, runId: string, estimateCost: number): Approval {
+  const now = runtimeNow();
+  const approval: Approval = {
+    id: `approval-budget-${plan.id}`,
+    ticketId: plan.ticketId,
+    runId,
+    agentId: DEMO_AGENT_ID,
+    title: `Budget approval: ${plan.workflowId}`,
+    description: `Estimated runtime cost $${estimateCost.toFixed(3)} requires budget review before execution continues.`,
+    status: 'pending',
+    severity: estimateCost > 0.1 ? 'high' : 'medium',
+    requestedAt: now,
+    requestedBy: DEMO_AGENT_ID,
+    policy: 'budget-execution-review',
+    auditTrail: [
+      {
+        id: `audit-budget-${plan.id}-${now}`,
+        actorId: DEMO_AGENT_ID,
+        action: 'created execution budget approval gate',
+        createdAt: now,
+      },
+    ],
+  };
+  return { ...approval, planId: plan.id } as Approval;
+}
+
 function baseRunForTicket(ticketId: string): Run | undefined {
   const ticket = demoTickets.find((item) => item.id === ticketId);
   const runId = ticket?.runId ?? (ticketId === DEMO_TICKET_ID ? DEMO_RUN_ID : undefined);
@@ -607,6 +633,8 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
   const result = await startStreamingRun(plan.ticketId);
   seedPlanToolCalls(plan, result.runId);
   const approvalSteps = getApprovalRequiredSteps(plan);
+  const budgetEstimateCost = policyReport.executionEstimate?.estimatedCost ?? 0;
+  const needsBudgetApproval = budgetEstimateCost > 0.05;
   if (approvalSteps.length) {
     approvalSteps.forEach((step) => {
       const approval = planPolicyApproval(plan, result.runId, step);
@@ -622,13 +650,26 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     });
     setRunLifecycle(result.runId, 'WAITING_APPROVAL');
   }
+  if (needsBudgetApproval) {
+    const approval = budgetPolicyApproval(plan, result.runId, budgetEstimateCost);
+    upsertApproval(approval);
+    appendRuntimeEvent({
+      command: 'approval.requested',
+      entityType: 'run',
+      entityId: result.runId,
+      actorId: DEMO_AGENT_ID,
+      title: `Budget approval requested: ${plan.workflowId}`,
+      status: 'pending',
+    });
+    setRunLifecycle(result.runId, 'WAITING_APPROVAL');
+  }
   appendRuntimeEvent({
     command: 'startRunFromPlan',
     entityType: 'run',
     entityId: result.runId,
     actorId: DEMO_AGENT_ID,
-    title: approvalSteps.length ? `Run waiting on plan policy approval: ${plan.workflowId}` : `Run started from plan: ${plan.workflowId}`,
-    status: approvalSteps.length ? 'pending' : 'success',
+    title: approvalSteps.length || needsBudgetApproval ? `Run waiting on execution governance: ${plan.workflowId}` : `Run started from plan: ${plan.workflowId}`,
+    status: approvalSteps.length || needsBudgetApproval ? 'pending' : 'success',
   });
   return result;
 }

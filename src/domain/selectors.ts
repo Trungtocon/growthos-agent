@@ -52,6 +52,11 @@ import {
   getPlanWarnings as getStoredPlanWarnings,
   getPolicyReport as getStoredPolicyReport,
 } from '../runtime-store/plan-policy-store';
+import {
+  getBudgetReport as getStoredBudgetReport,
+  getExecutionBudget as getStoredExecutionBudget,
+} from '../runtime-store/execution-budget-store';
+import { estimateRunPlanBudget } from '../integrations/growthos-runtime/execution-budget';
 
 export interface KpiViewModel {
   label: string;
@@ -254,6 +259,22 @@ export function selectPlanWarnings(planId?: string): string[] {
 
 export function selectCanStartPlan(planId?: string): boolean {
   return getStoredCanStartPlan(planId);
+}
+
+export function selectExecutionCost(planId?: string) {
+  return selectBudgetPolicy(planId)?.estimate ?? (selectRunPlan(planId) ? estimateRunPlanBudget(selectRunPlan(planId)!) : undefined);
+}
+
+export function selectExecutionRisk(planId?: string) {
+  return selectExecutionCost(planId)?.riskLevel ?? 'low';
+}
+
+export function selectExecutionBudget() {
+  return getStoredExecutionBudget();
+}
+
+export function selectBudgetPolicy(planId?: string) {
+  return getStoredBudgetReport(planId);
 }
 
 function streamProgress(runId: string): number {
@@ -697,6 +718,8 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const plans = selectPlansByTicket(ticket.id);
   const currentPlan = selectCurrentPlanForTicket(ticket.id);
   const policyReport = selectPolicyReport(currentPlan?.id);
+  const budgetPolicy = selectBudgetPolicy(currentPlan?.id);
+  const executionEstimate = selectExecutionCost(currentPlan?.id);
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -722,6 +745,9 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     planSteps: selectPlanSteps(currentPlan?.id),
     planReadiness: selectPlanReadiness(currentPlan?.id),
     policyReport,
+    budgetPolicy,
+    executionEstimate,
+    executionBudget: selectExecutionBudget(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -754,6 +780,8 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const missingCapabilities = selectMissingCapabilities();
   const currentPlan = selectCurrentPlanForTicket(ticket.id);
   const policyReport = selectPolicyReport(currentPlan?.id);
+  const budgetPolicy = selectBudgetPolicy(currentPlan?.id);
+  const executionEstimate = selectExecutionCost(currentPlan?.id);
   return {
     run,
     ticket,
@@ -771,6 +799,9 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     planSteps: selectPlanSteps(currentPlan?.id),
     planReadiness: selectPlanReadiness(currentPlan?.id),
     policyReport,
+    budgetPolicy,
+    executionEstimate,
+    executionBudget: selectExecutionBudget(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -803,6 +834,7 @@ export function selectApprovalCenterViewModel() {
   const queueRows = approvals.map(approvalToQueueRow);
   const highRisk = approvals.filter((approval) => approval.severity === 'high').length;
   const pending = approvals.filter((approval) => approval.status === 'pending').length;
+  const budgetApprovals = approvals.filter((approval) => approval.policy.includes('budget') || approval.description.toLowerCase().includes('budget')).length;
   const selectedApproval = queueRows[0];
   const selectedRawApproval = approvals.find((approval) => approval.id === selectedApproval?.id);
   const selectedRunId = selectedRawApproval?.runId;
@@ -813,12 +845,13 @@ export function selectApprovalCenterViewModel() {
     selectedApproval,
     selectedRawApproval,
     selectedArtifactPreview,
+    budgetApprovals,
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
       { label: 'Rui ro cao', value: String(highRisk), tone: 'red' },
       { label: 'Qua han', value: '3', tone: 'amber' },
       { label: 'Da duyet hom nay', value: '18', tone: 'green' },
-      { label: 'Da tu choi hom nay', value: '4', tone: 'red' },
+      { label: 'Budget reviews', value: String(budgetApprovals), tone: 'amber' },
       { label: 'Thoi gian duyet TB', value: '12m', tone: 'blue' },
     ] satisfies KpiViewModel[],
   };

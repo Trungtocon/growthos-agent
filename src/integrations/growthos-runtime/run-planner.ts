@@ -2,6 +2,7 @@ import type { HermesCapabilityId } from '../hermes/capability-registry';
 import { DEFAULT_WORKFLOW_REQUIREMENTS } from '../hermes/capability-registry';
 import { getCapabilityRegistry } from '../../runtime-store/capability-registry-store';
 import { getToolRegistry } from '../../runtime-store/tool-registry-store';
+import { estimateRunPlanBudget, type ExecutionRiskLevel } from './execution-budget';
 
 export type RunPlanStatus = 'draft' | 'ready' | 'blocked';
 export type RunPlanStepStatus = 'planned' | 'blocked';
@@ -30,6 +31,9 @@ export interface RunPlan {
   estimatedTools: number;
   estimatedArtifacts: number;
   estimatedApprovals: number;
+  estimatedCost: number;
+  estimatedDuration: number;
+  estimatedRisk: ExecutionRiskLevel;
   warnings: string[];
   createdAt: string;
   approvedAt?: string;
@@ -97,6 +101,7 @@ export function createRunPlan(ticketId: string, workflowId = 'demo-run-execution
   });
 
   const status: RunPlanStatus = missingCapabilities.length || steps.some((step) => step.status === 'blocked') ? 'blocked' : 'ready';
+  const estimate = estimateRunPlanBudget({ id: `run-plan-${slug(ticketId)}-${slug(workflowId)}`, steps });
 
   return {
     id: `run-plan-${slug(ticketId)}-${slug(workflowId)}`,
@@ -110,6 +115,9 @@ export function createRunPlan(ticketId: string, workflowId = 'demo-run-execution
     estimatedTools: steps.filter((step) => Boolean(step.toolId)).length,
     estimatedArtifacts: steps.filter((step) => step.expectedOutputType === 'artifact').length,
     estimatedApprovals: steps.filter((step) => step.requiresApproval).length,
+    estimatedCost: estimate.estimatedCost,
+    estimatedDuration: estimate.estimatedDuration,
+    estimatedRisk: estimate.riskLevel,
     warnings,
     createdAt: new Date().toISOString(),
   };
