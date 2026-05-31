@@ -2,6 +2,7 @@ import {
   selectAgentDetailViewModel,
   selectApprovalCenterViewModel,
   selectCommandCenterViewModel,
+  getArtifactPreviewModel,
   selectOrgChartViewModel,
   selectRunConsoleViewModel,
   selectTicketDetailViewModel,
@@ -50,14 +51,26 @@ export function selectTicketsBoardUiViewModel(state: UiState) {
 }
 
 export function selectTicketDetailUiViewModel(state: UiState) {
+  const data = selectTicketDetailViewModel(state.selectedTicketId);
+  const selectedPreview = state.selectedArtifactId ? getArtifactPreviewModel(state.selectedArtifactId) : undefined;
+  const selectedArtifactBelongsToRun = Boolean(selectedPreview && selectedPreview.runId === data.run?.id);
   return {
-    ...selectTicketDetailViewModel(state.selectedTicketId),
+    ...data,
+    selectedArtifactId: selectedArtifactBelongsToRun && selectedPreview ? selectedPreview.id : data.primaryArtifactPreview?.id ?? '',
+    selectedArtifactPreview: selectedArtifactBelongsToRun ? selectedPreview : data.primaryArtifactPreview,
     activeTab: state.activeTabs['/tickets/demo-ticket'] ?? 'Overview',
   };
 }
 
-export function selectRunConsoleUiViewModel(_state: UiState) {
-  return selectRunConsoleViewModel();
+export function selectRunConsoleUiViewModel(state: UiState) {
+  const data = selectRunConsoleViewModel();
+  const selectedPreview = state.selectedArtifactId ? getArtifactPreviewModel(state.selectedArtifactId) : undefined;
+  const belongsToRun = selectedPreview?.runId === data.run.id;
+  return {
+    ...data,
+    selectedArtifactId: belongsToRun ? selectedPreview.id : data.primaryArtifactPreview?.id ?? data.artifacts[0]?.id ?? '',
+    selectedArtifactPreview: belongsToRun ? selectedPreview : data.primaryArtifactPreview,
+  };
 }
 
 export function selectApprovalCenterUiViewModel(state: UiState) {
@@ -69,5 +82,8 @@ export function selectApprovalCenterUiViewModel(state: UiState) {
     return riskMatch && searchMatch;
   });
   const selectedApproval = approvals.find((approval) => approval.id === state.selectedApprovalId) ?? data.selectedApproval;
-  return { ...data, approvals, selectedApproval, filters, searchQuery: state.searchQuery };
+  const selectedRawApproval = data.rawApprovals.find((approval) => approval.id === selectedApproval.id);
+  const selectedPreview = state.selectedArtifactId ? getArtifactPreviewModel(state.selectedArtifactId) : undefined;
+  const approvalPreview = selectedPreview?.runId === selectedRawApproval?.runId ? selectedPreview : data.selectedArtifactPreview;
+  return { ...data, approvals, selectedApproval, selectedArtifactPreview: approvalPreview, filters, searchQuery: state.searchQuery };
 }

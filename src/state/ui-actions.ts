@@ -12,6 +12,10 @@ export function selectApproval(approvalId: string) {
   updateUiState((state) => ({ ...state, selectedApprovalId: approvalId }));
 }
 
+export function selectArtifact(artifactId: string) {
+  updateUiState((state) => ({ ...state, selectedArtifactId: artifactId }));
+}
+
 export function setSearchQuery(searchQuery: string) {
   updateUiState((state) => ({ ...state, searchQuery }));
 }

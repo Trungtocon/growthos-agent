@@ -15,6 +15,7 @@ export interface UiState {
   selectedTicketId: string;
   selectedAgentId: string;
   selectedApprovalId: string;
+  selectedArtifactId: string;
   searchQuery: string;
   routeFilters: Record<string, Record<string, string>>;
   activeTabs: Record<string, string>;
@@ -24,6 +25,7 @@ const defaultState: UiState = {
   selectedTicketId: DEMO_TICKET_ID,
   selectedAgentId: DEMO_AGENT_ID,
   selectedApprovalId: DEMO_APPROVAL_ID,
+  selectedArtifactId: '',
   searchQuery: '',
   routeFilters: {},
   activeTabs: {

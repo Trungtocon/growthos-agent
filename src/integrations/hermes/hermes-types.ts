@@ -41,7 +41,11 @@ export interface HermesArtifactLike {
   name: string;
   url?: string;
   contentSummary?: string;
+  contentText?: string;
+  contentJson?: unknown;
+  language?: string;
   createdAt?: string;
+  sizeBytes?: number;
   source?: 'hermes' | 'paperclip' | 'mock';
 }
 

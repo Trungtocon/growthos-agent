@@ -1,5 +1,5 @@
 import { DEMO_AGENT_ID, DEMO_APPROVAL_ID, DEMO_RUN_ID, DEMO_TICKET_ID, demoRuns, demoTickets } from '../../data/demo-fixtures';
-import type { Activity, Approval, Run, RunLog, RunStatus, ToolCall } from '../../domain/types';
+import type { Activity, Approval, Artifact, Run, RunLog, RunStatus, ToolCall } from '../../domain/types';
 import { createHermesAdapter } from '../hermes/hermes-adapter';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
@@ -40,6 +40,85 @@ function runtimeTool(id: string, toolName: string, status: ToolCall['status'], i
   };
 }
 
+function runtimeOutputArtifacts(runId: string, now = runtimeNow()): Artifact[] {
+  return [
+    {
+      id: `paperclip-${runId}-qa-packet`,
+      runId,
+      type: 'markdown',
+      name: 'Paperclip_QA_Runtime_Packet.md',
+      contentSummary: 'Evidence packet with acceptance checks, risk notes, and recommended follow-up for the Hermes run.',
+      contentText: [
+        '# Paperclip QA Runtime Packet',
+        '',
+        '## Verdict',
+        'Conditional pass. Hermes completed the runtime checklist and generated a human-readable review packet.',
+        '',
+        '## Evidence',
+        '- Ticket context mapped into Hermes task input.',
+        '- Tool calls captured with duration and cost metadata.',
+        '- Human approval gate recorded before external execution.',
+        '',
+        '## Follow-up',
+        'Review the JSON trace and patch-style action list before closing the ticket.',
+      ].join('\n'),
+      language: 'markdown',
+      createdAt: now,
+      source: 'paperclip',
+      sizeBytes: 1842,
+    },
+    {
+      id: `hermes-${runId}-tool-output-json`,
+      runId,
+      type: 'json',
+      name: 'hermes-runtime-output.json',
+      contentSummary: 'Structured Hermes tool output normalized for GrowthOS runtime inspection.',
+      contentJson: {
+        runId,
+        verdict: 'conditional_pass',
+        checksCompleted: 12,
+        approvalRequired: true,
+        estimatedRisk: 'medium',
+      },
+      language: 'json',
+      createdAt: now,
+      source: 'hermes',
+      sizeBytes: 642,
+    },
+    {
+      id: `paperclip-${runId}-follow-up-patch`,
+      runId,
+      type: 'patch',
+      name: 'follow-up-actions.patch',
+      contentSummary: 'Patch-style follow-up checklist generated from the Paperclip review packet.',
+      contentText: [
+        'diff --git a/runtime-checklist.md b/runtime-checklist.md',
+        '--- a/runtime-checklist.md',
+        '+++ b/runtime-checklist.md',
+        '@@ -1,3 +1,6 @@',
+        ' - Verify generated artifact lineage',
+        ' - Attach QA packet to ticket timeline',
+        '+- Confirm approval gate decision',
+        '+- Capture final Hermes run status',
+        '+- Archive runtime JSON output',
+      ].join('\n'),
+      language: 'diff',
+      createdAt: now,
+      source: 'paperclip',
+      sizeBytes: 512,
+    },
+  ];
+}
+
+function mergeArtifacts(primary: Artifact[], secondary: Artifact[]): Artifact[] {
+  const seen = new Set<string>();
+  return [...primary, ...secondary].filter((artifact) => {
+    if (seen.has(artifact.id)) return false;
+    seen.add(artifact.id);
+    return true;
+  });
+}
+
 function fallbackTask(ticketId: string): HermesTask {
   return {
     id: `hermes-task-${ticketId}`,
@@ -56,18 +135,7 @@ function fallbackTask(ticketId: string): HermesTask {
 
 function createRuntimeRun(existingRun: Run, task: HermesTask): Run {
   const now = runtimeNow();
-  const paperclipArtifact = mapPaperclipArtifactToArtifact({
-    id: `paperclip-${existingRun.id}-qa-packet`,
-    runId: existingRun.id,
-    type: 'report',
-    name: 'Paperclip_QA_Runtime_Packet.md',
-    createdAt: now,
-    source: 'paperclip',
-  });
-  const artifacts = [
-    paperclipArtifact,
-    ...existingRun.artifacts.filter((artifact) => artifact.id !== paperclipArtifact.id),
-  ];
+  const artifacts = mergeArtifacts(runtimeOutputArtifacts(existingRun.id, now), existingRun.artifacts);
 
   return {
     ...existingRun,
@@ -198,9 +266,12 @@ function appendExecutionEvents(run: Run) {
 async function createPaperclipRuntimeArtifact(run: Run) {
   const artifact = await paperclip.createArtifact({
     runId: run.id,
-    type: 'report',
+    type: 'markdown',
     name: 'Paperclip_QA_Runtime_Packet.md',
     contentSummary: `Runtime evidence packet for ${run.currentStep}`,
+    contentText: runtimeOutputArtifacts(run.id)[0]?.contentText,
+    language: 'markdown',
+    sizeBytes: 1842,
   });
   return mapPaperclipArtifactToArtifact(artifact);
 }
@@ -210,12 +281,10 @@ async function persistSandboxExecution(execution: HermesExecution, baseRun: Run)
   const lifecycle = mapHermesStatusToLifecycle(normalizedExecution.status);
   const mappedRun = mapHermesExecutionToRun(normalizedExecution, baseRun);
   const paperclipArtifact = await createPaperclipRuntimeArtifact(mappedRun);
+  const fallbackArtifacts = runtimeOutputArtifacts(mappedRun.id, runtimeNow());
   const nextRun = {
     ...mappedRun,
-    artifacts: [
-      paperclipArtifact,
-      ...mappedRun.artifacts.filter((artifact) => artifact.id !== paperclipArtifact.id),
-    ],
+    artifacts: mergeArtifacts([paperclipArtifact, ...fallbackArtifacts], mappedRun.artifacts),
   };
   upsertRun(nextRun, lifecycle);
   nextRun.artifacts.forEach((artifact) => upsertArtifact(artifact));

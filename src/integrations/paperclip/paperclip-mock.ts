@@ -39,9 +39,13 @@ export function createMockPaperclipClient(): PaperclipClient {
       return {
         id: artifactId,
         runId: 'run-ticket-audit-module-3',
-        type: 'report',
+        type: 'markdown',
         name: 'Paperclip_QA_Runtime_Packet.md',
+        contentSummary: 'Mock Paperclip runtime evidence packet.',
+        contentText: '# Paperclip QA Runtime Packet\n\n- Verdict: conditional pass\n- Evidence: mock connector fallback\n- Next action: review generated artifact.',
+        language: 'markdown',
         createdAt: new Date().toISOString(),
+        sizeBytes: 512,
         source: 'paperclip',
       };
     },
@@ -54,9 +58,13 @@ export function createMockPaperclipClient(): PaperclipClient {
         {
           id: `paperclip-${runId}-qa-packet`,
           runId,
-          type: 'report',
+          type: 'markdown',
           name: 'Paperclip_QA_Runtime_Packet.md',
+          contentSummary: 'Mock Paperclip runtime evidence packet.',
+          contentText: '# Paperclip QA Runtime Packet\n\n- Verdict: conditional pass\n- Evidence: mock connector fallback\n- Next action: review generated artifact.',
+          language: 'markdown',
           createdAt: new Date().toISOString(),
+          sizeBytes: 512,
           source: 'paperclip',
         },
       ];

@@ -72,7 +72,11 @@ export function mapRunToHermesExecution(run: Run): HermesExecution {
       name: artifact.name,
       url: artifact.url,
       contentSummary: artifact.contentSummary,
+      contentText: artifact.contentText,
+      contentJson: artifact.contentJson,
+      language: artifact.language,
       createdAt: artifact.createdAt,
+      sizeBytes: artifact.sizeBytes,
       source: artifact.source ?? 'mock',
     })),
   };
@@ -123,8 +127,12 @@ export function mapHermesArtifactToArtifact(artifact: HermesArtifactLike, runId:
     name: artifact.name,
     url: artifact.url,
     contentSummary: artifact.contentSummary,
+    contentText: artifact.contentText,
+    contentJson: artifact.contentJson,
+    language: artifact.language,
     source: artifact.source ?? 'hermes',
     createdAt: artifact.createdAt ?? now,
+    sizeBytes: artifact.sizeBytes,
   };
 }
 
@@ -135,7 +143,12 @@ export function mapArtifactToPaperclipArtifact(artifact: Artifact): PaperclipArt
     type: artifact.type,
     name: artifact.name,
     url: artifact.url,
+    contentSummary: artifact.contentSummary,
+    contentText: artifact.contentText,
+    contentJson: artifact.contentJson,
+    language: artifact.language,
     createdAt: artifact.createdAt,
+    sizeBytes: artifact.sizeBytes,
     source: 'paperclip',
   };
 }
@@ -148,7 +161,11 @@ export function mapPaperclipArtifactToArtifact(artifact: PaperclipArtifact): Art
     name: artifact.name,
     url: artifact.url,
     contentSummary: artifact.contentSummary,
+    contentText: artifact.contentText,
+    contentJson: artifact.contentJson,
+    language: artifact.language,
     createdAt: artifact.createdAt,
+    sizeBytes: artifact.sizeBytes,
     source: artifact.source,
   };
 }

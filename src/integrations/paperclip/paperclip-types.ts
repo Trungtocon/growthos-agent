@@ -8,6 +8,10 @@ export interface PaperclipArtifact {
   name: string;
   url?: string;
   contentSummary?: string;
+  contentText?: string;
+  contentJson?: unknown;
+  language?: string;
+  sizeBytes?: number;
   createdAt: string;
   source: 'paperclip' | 'hermes' | 'mock';
 }

@@ -11,7 +11,7 @@ export type ActivityStatus = 'success' | 'running' | 'warning' | 'failed';
 export type ActivityType = 'agent' | 'ticket' | 'run' | 'approval' | 'goal' | 'cost';
 export type MetricTone = 'blue' | 'cyan' | 'green' | 'amber' | 'red' | 'purple' | 'slate';
 export type TrendDirection = 'up' | 'down' | 'flat';
-export type ArtifactType = 'document' | 'log' | 'screenshot' | 'archive' | 'report';
+export type ArtifactType = 'document' | 'log' | 'screenshot' | 'archive' | 'report' | 'markdown' | 'code' | 'json' | 'patch' | 'link' | 'image' | 'unknown';
 export type ToolCallStatus = 'success' | 'running' | 'warning' | 'failed';
 
 export interface Workspace {
@@ -188,10 +188,14 @@ export interface Artifact {
   runId: string;
   type: ArtifactType;
   name: string;
-  url?: string;
   contentSummary?: string;
+  contentText?: string;
+  contentJson?: unknown;
+  language?: string;
+  url?: string;
   source?: 'paperclip' | 'hermes' | 'mock';
   createdAt: string;
+  sizeBytes?: number;
 }
 
 export interface ToolCall {

@@ -17,6 +17,13 @@ function arrayValue<T>(value: unknown, fallback: T[]) {
   return Array.isArray(value) ? value as T[] : fallback;
 }
 
+function artifactTypeValue(value: unknown, fallback: PaperclipArtifact['type']): PaperclipArtifact['type'] {
+  const allowed: PaperclipArtifact['type'][] = ['document', 'log', 'screenshot', 'archive', 'report', 'markdown', 'code', 'json', 'patch', 'link', 'image', 'unknown'];
+  return typeof value === 'string' && allowed.includes(value as PaperclipArtifact['type'])
+    ? value as PaperclipArtifact['type']
+    : fallback;
+}
+
 function normalizeHealth(payload: unknown, config: PaperclipConnectorConfig, startedAt: number): RuntimeServiceHealth {
   const record = isRecord(payload) ? payload : {};
   const latencyMs = Math.max(0, Math.round(performance.now() - startedAt));
@@ -39,13 +46,15 @@ function normalizeArtifact(payload: unknown, fallback: PaperclipArtifact): Paper
     ...fallback,
     id: stringValue(record.id ?? record.artifactId, fallback.id),
     runId: stringValue(record.runId, fallback.runId),
-    type: record.type === 'report' || record.type === 'log' || record.type === 'document' || record.type === 'archive' || record.type === 'screenshot'
-      ? record.type
-      : fallback.type,
+    type: artifactTypeValue(record.type, fallback.type),
     name: stringValue(record.name, fallback.name),
     url: typeof record.url === 'string' ? record.url : fallback.url,
     contentSummary: typeof record.contentSummary === 'string' ? record.contentSummary : fallback.contentSummary,
+    contentText: typeof record.contentText === 'string' ? record.contentText : fallback.contentText,
+    contentJson: record.contentJson ?? fallback.contentJson,
+    language: typeof record.language === 'string' ? record.language : fallback.language,
     createdAt: stringValue(record.createdAt, fallback.createdAt),
+    sizeBytes: typeof record.sizeBytes === 'number' ? record.sizeBytes : fallback.sizeBytes,
     source: record.source === 'hermes' || record.source === 'mock' ? record.source : 'paperclip',
   };
 }
