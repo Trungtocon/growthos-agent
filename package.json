@@ -81,7 +81,8 @@
     "codegraph:status": "codegraph status --json",
     "smoke:runtime-integration": "node scripts/smoke-runtime-integration.mjs",
     "smoke:runtime-persistence": "node scripts/smoke-runtime-persistence.mjs",
-    "smoke:sandbox-connectors": "node scripts/smoke-sandbox-connectors.mjs"
+    "smoke:sandbox-connectors": "node scripts/smoke-sandbox-connectors.mjs",
+    "smoke:real-run-lifecycle": "node scripts/smoke-real-run-lifecycle.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

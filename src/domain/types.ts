@@ -189,6 +189,8 @@ export interface Artifact {
   type: ArtifactType;
   name: string;
   url?: string;
+  contentSummary?: string;
+  source?: 'paperclip' | 'hermes' | 'mock';
   createdAt: string;
 }
 
@@ -200,4 +202,6 @@ export interface ToolCall {
   outputSummary: string;
   durationMs: number;
   cost: number;
+  startedAt?: string;
+  finishedAt?: string;
 }

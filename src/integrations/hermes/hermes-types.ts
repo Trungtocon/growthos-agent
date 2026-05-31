@@ -1,7 +1,14 @@
-import type { RiskLevel, RunStatus, ToolCallStatus } from '../../domain/types';
+import type { ArtifactType, RiskLevel, RunStatus, ToolCallStatus } from '../../domain/types';
 import type { RuntimeServiceHealth } from '../growthos-runtime/runtime-types';
 
 export type HermesTaskPriority = 'low' | 'medium' | 'high' | 'critical';
+export type HermesExecutionStatus =
+  | RunStatus
+  | 'created'
+  | 'queued'
+  | 'waiting_for_approval'
+  | 'completed'
+  | 'cancelled';
 
 export interface HermesTask {
   id: string;
@@ -23,6 +30,19 @@ export interface HermesToolCall {
   outputSummary: string;
   durationMs: number;
   cost: number;
+  startedAt?: string;
+  finishedAt?: string;
+}
+
+export interface HermesArtifactLike {
+  id: string;
+  runId?: string;
+  type?: ArtifactType;
+  name: string;
+  url?: string;
+  contentSummary?: string;
+  createdAt?: string;
+  source?: 'hermes' | 'paperclip' | 'mock';
 }
 
 export interface HermesExecutionStep {
@@ -44,7 +64,7 @@ export interface HermesExecution {
   taskId: string;
   ticketId: string;
   agentId: string;
-  status: RunStatus;
+  status: HermesExecutionStatus;
   currentStep: string;
   elapsedSeconds: number;
   cost: number;
@@ -52,6 +72,7 @@ export interface HermesExecution {
   steps: HermesExecutionStep[];
   toolCalls: HermesToolCall[];
   logs: HermesExecutionLog[];
+  artifacts?: HermesArtifactLike[];
 }
 
 export interface HermesClient {

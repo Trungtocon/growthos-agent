@@ -1,16 +1,16 @@
-import { DEMO_AGENT_ID, DEMO_APPROVAL_ID, DEMO_RUN_ID, DEMO_TICKET_ID } from '../../data/demo-fixtures';
+import { DEMO_AGENT_ID, DEMO_APPROVAL_ID, DEMO_RUN_ID, DEMO_TICKET_ID, demoRuns, demoTickets } from '../../data/demo-fixtures';
 import type { Activity, Approval, Run, RunLog, RunStatus, ToolCall } from '../../domain/types';
 import { createHermesAdapter } from '../hermes/hermes-adapter';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
-import { mapPaperclipArtifactToArtifact } from './run-event-mapper';
+import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
 import { mapTicketToHermesTask } from './ticket-to-task-mapper';
 import type { RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand } from './runtime-types';
 import { resolveRuntimeConfig } from './runtime-config';
 import { getApprovalById, upsertApproval } from '../../runtime-store/approval-store';
 import { upsertArtifact } from '../../runtime-store/artifact-store';
 import { appendRuntimeEvent } from '../../runtime-store/event-store';
-import { setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
+import { getRunById, setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 
 const runtimeConfig = resolveRuntimeConfig();
@@ -26,6 +26,7 @@ function runtimeLog(id: string, message: string, level: RunLog['level'] = 'info'
 }
 
 function runtimeTool(id: string, toolName: string, status: ToolCall['status'], inputSummary: string, outputSummary: string, cost = 0.002): ToolCall {
+  const now = runtimeNow();
   return {
     id,
     toolName,
@@ -34,6 +35,8 @@ function runtimeTool(id: string, toolName: string, status: ToolCall['status'], i
     outputSummary,
     durationMs: status === 'running' ? 900 : 2400,
     cost,
+    startedAt: now,
+    finishedAt: status === 'running' ? undefined : now,
   };
 }
 
@@ -143,12 +146,146 @@ function runtimeApproval(existing: Approval | undefined, ticketId: string, runId
   };
 }
 
+function baseRunForTicket(ticketId: string): Run | undefined {
+  const ticket = demoTickets.find((item) => item.id === ticketId);
+  const runId = ticket?.runId ?? (ticketId === DEMO_TICKET_ID ? DEMO_RUN_ID : undefined);
+  return runId ? getRunById(runId) ?? demoRuns.find((run) => run.id === runId) : undefined;
+}
+
+function baseRunById(runId: string): Run | undefined {
+  return getRunById(runId) ?? demoRuns.find((run) => run.id === runId);
+}
+
+function executionWithApprovalSignal(execution: HermesExecution): HermesExecution {
+  const indicatesApproval = execution.status === 'waiting_for_approval' || execution.currentStep.toLowerCase().includes('approval');
+  return indicatesApproval ? { ...execution, status: 'waiting_for_approval' } : execution;
+}
+
+function appendLifecycleEvent(command: Parameters<typeof appendRuntimeEvent>[0]['command'], run: Run, title: string, status: 'pending' | 'success' | 'failed' = 'success') {
+  appendRuntimeEvent({
+    command,
+    entityType: 'run',
+    entityId: run.id,
+    actorId: run.agentId,
+    title,
+    status,
+  });
+}
+
+function appendExecutionEvents(run: Run) {
+  run.toolCalls.forEach((tool) => {
+    appendRuntimeEvent({
+      command: tool.status === 'running' ? 'tool.started' : 'tool.completed',
+      entityType: 'run',
+      entityId: run.id,
+      actorId: run.agentId,
+      title: `${tool.toolName}: ${tool.outputSummary}`,
+      status: tool.status === 'failed' ? 'failed' : tool.status === 'running' ? 'pending' : 'success',
+    });
+  });
+  run.artifacts.forEach((artifact) => {
+    appendRuntimeEvent({
+      command: 'artifact.created',
+      entityType: 'run',
+      entityId: run.id,
+      actorId: run.agentId,
+      title: `Artifact created: ${artifact.name}`,
+      status: 'success',
+    });
+  });
+}
+
+async function createPaperclipRuntimeArtifact(run: Run) {
+  const artifact = await paperclip.createArtifact({
+    runId: run.id,
+    type: 'report',
+    name: 'Paperclip_QA_Runtime_Packet.md',
+    contentSummary: `Runtime evidence packet for ${run.currentStep}`,
+  });
+  return mapPaperclipArtifactToArtifact(artifact);
+}
+
+async function persistSandboxExecution(execution: HermesExecution, baseRun: Run): Promise<Run> {
+  const normalizedExecution = executionWithApprovalSignal(execution);
+  const lifecycle = mapHermesStatusToLifecycle(normalizedExecution.status);
+  const mappedRun = mapHermesExecutionToRun(normalizedExecution, baseRun);
+  const paperclipArtifact = await createPaperclipRuntimeArtifact(mappedRun);
+  const nextRun = {
+    ...mappedRun,
+    artifacts: [
+      paperclipArtifact,
+      ...mappedRun.artifacts.filter((artifact) => artifact.id !== paperclipArtifact.id),
+    ],
+  };
+  upsertRun(nextRun, lifecycle);
+  nextRun.artifacts.forEach((artifact) => upsertArtifact(artifact));
+  appendExecutionEvents(nextRun);
+
+  if (lifecycle === 'WAITING_APPROVAL') {
+    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), nextRun.ticketId, nextRun.id, nextRun.agentId);
+    upsertApproval(approval);
+    appendRuntimeEvent({
+      command: 'approval.requested',
+      entityType: 'run',
+      entityId: nextRun.id,
+      actorId: nextRun.agentId,
+      title: `Approval requested: ${approval.title}`,
+      status: 'pending',
+    });
+  }
+
+  if (lifecycle === 'COMPLETED') appendLifecycleEvent('run.completed', nextRun, 'Hermes run completed');
+  if (lifecycle === 'FAILED') appendLifecycleEvent('run.failed', nextRun, 'Hermes run failed', 'failed');
+  if (lifecycle === 'REJECTED') appendLifecycleEvent('run.cancelled', nextRun, 'Hermes run cancelled', 'failed');
+  return nextRun;
+}
+
 export function createRuntimeAdapters(mode: RuntimeMode = 'mock') {
   const config = resolveRuntimeConfig({ VITE_RUNTIME_MODE: mode });
   return {
     hermes: createHermesAdapter(config.hermes.mode, config.hermes),
     paperclip: createPaperclipAdapter(config.paperclip.mode, config.paperclip),
   };
+}
+
+export async function startSandboxRun(ticketId: string) {
+  const ticket = demoTickets.find((item) => item.id === ticketId);
+  const existingRun = baseRunForTicket(ticketId);
+  if (!ticket || !existingRun) {
+    throw new Error(`Cannot start sandbox run for missing ticket ${ticketId}`);
+  }
+  const task = mapTicketToHermesTask(ticket);
+  const createdRun = { ...existingRun, status: 'queued' as const, currentStep: 'Hermes task created and queued' };
+  upsertRun(createdRun, 'CREATED');
+  appendLifecycleEvent('run.created', createdRun, `Created Hermes task ${task.id}`, 'success');
+  setRunLifecycle(createdRun.id, 'QUEUED');
+  appendLifecycleEvent('run.queued', createdRun, 'Hermes run queued', 'pending');
+  const execution = await hermes.startTask(task);
+  const startedRun = await persistSandboxExecution(execution, createdRun);
+  appendLifecycleEvent('run.started', startedRun, 'Hermes run started');
+  return executionToRuntimeResult({ ...execution, id: startedRun.id });
+}
+
+export async function pollSandboxRun(runId: string) {
+  const existingRun = baseRunById(runId);
+  if (!existingRun) throw new Error(`Cannot poll missing run ${runId}`);
+  const execution = await hermes.getRun(runId);
+  const nextRun = await persistSandboxExecution(execution, existingRun);
+  return executionToRuntimeResult({ ...execution, id: nextRun.id });
+}
+
+export async function syncSandboxRun(runId: string) {
+  return pollSandboxRun(runId);
+}
+
+export async function cancelSandboxRun(runId: string) {
+  const existingRun = baseRunById(runId);
+  if (!existingRun) throw new Error(`Cannot cancel missing run ${runId}`);
+  const execution = await hermes.cancelRun(runId);
+  const cancelledExecution: HermesExecution = { ...execution, id: runId, status: 'cancelled', currentStep: execution.currentStep || 'Cancelled by operator' };
+  const nextRun = await persistSandboxExecution(cancelledExecution, existingRun);
+  setRunLifecycle(nextRun.id, 'REJECTED');
+  return executionToRuntimeResult(cancelledExecution);
 }
 
 export function startAgentRun(ticketId: string): RuntimeActionPlan {
@@ -319,7 +456,7 @@ function decisionAction(approvalId: string, outcome: RuntimeDecisionOutcome): Ru
 export function executionToRuntimeResult(execution: HermesExecution) {
   return {
     runId: execution.id,
-    status: execution.status,
+    status: mapHermesStatusToRunStatus(execution.status),
     message: execution.currentStep,
   };
 }

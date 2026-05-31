@@ -44,8 +44,9 @@ function normalizeArtifact(payload: unknown, fallback: PaperclipArtifact): Paper
       : fallback.type,
     name: stringValue(record.name, fallback.name),
     url: typeof record.url === 'string' ? record.url : fallback.url,
+    contentSummary: typeof record.contentSummary === 'string' ? record.contentSummary : fallback.contentSummary,
     createdAt: stringValue(record.createdAt, fallback.createdAt),
-    source: 'paperclip',
+    source: record.source === 'hermes' || record.source === 'mock' ? record.source : 'paperclip',
   };
 }
 

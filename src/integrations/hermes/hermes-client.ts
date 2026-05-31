@@ -82,7 +82,7 @@ function normalizeExecution(payload: unknown, fallback: HermesExecution): Hermes
     taskId: stringValue(record.taskId, fallback.taskId),
     ticketId: stringValue(record.ticketId, fallback.ticketId),
     agentId: stringValue(record.agentId, fallback.agentId),
-    status: record.status === 'queued' || record.status === 'running' || record.status === 'paused' || record.status === 'success' || record.status === 'failed' || record.status === 'warning'
+    status: record.status === 'created' || record.status === 'queued' || record.status === 'running' || record.status === 'waiting_for_approval' || record.status === 'completed' || record.status === 'failed' || record.status === 'cancelled' || record.status === 'paused' || record.status === 'success' || record.status === 'warning'
       ? record.status
       : fallback.status,
     currentStep: stringValue(record.currentStep, fallback.currentStep),
@@ -94,6 +94,7 @@ function normalizeExecution(payload: unknown, fallback: HermesExecution): Hermes
     steps: arrayValue(record.steps, fallback.steps),
     toolCalls: arrayValue(record.toolCalls, fallback.toolCalls),
     logs: arrayValue(record.logs, fallback.logs),
+    artifacts: arrayValue(record.artifacts, fallback.artifacts ?? []),
   };
 }
 

@@ -10,7 +10,17 @@ export type WorkflowCommand =
   | 'resolveTicket'
   | 'pauseRun'
   | 'resumeRun'
-  | 'cancelAgentRun';
+  | 'cancelAgentRun'
+  | 'run.created'
+  | 'run.queued'
+  | 'run.started'
+  | 'tool.started'
+  | 'tool.completed'
+  | 'artifact.created'
+  | 'approval.requested'
+  | 'run.completed'
+  | 'run.failed'
+  | 'run.cancelled';
 
 export type WorkflowEntityType = 'approval' | 'ticket' | 'run';
 export type WorkflowEventStatus = 'pending' | 'success' | 'failed';

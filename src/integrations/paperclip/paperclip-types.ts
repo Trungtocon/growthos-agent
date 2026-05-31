@@ -7,8 +7,9 @@ export interface PaperclipArtifact {
   type: ArtifactType;
   name: string;
   url?: string;
+  contentSummary?: string;
   createdAt: string;
-  source: 'paperclip';
+  source: 'paperclip' | 'hermes' | 'mock';
 }
 
 export interface PaperclipClient {
