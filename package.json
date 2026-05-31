@@ -87,7 +87,8 @@
     "smoke:live-run-streaming": "node scripts/smoke-live-run-streaming.mjs",
     "smoke:tool-runtime": "node scripts/smoke-tool-runtime.mjs",
     "smoke:hermes-discovery": "node scripts/smoke-hermes-discovery.mjs",
-    "smoke:tool-registry": "node scripts/smoke-tool-registry.mjs"
+    "smoke:tool-registry": "node scripts/smoke-tool-registry.mjs",
+    "smoke:capability-registry": "node scripts/smoke-capability-registry.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

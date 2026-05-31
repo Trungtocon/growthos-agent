@@ -16,6 +16,7 @@ import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, 
 import type { RuntimeToolCall } from '../integrations/growthos-runtime/runtime-types';
 import type { HermesDiscoveryResult } from '../integrations/hermes/hermes-discovery-types';
 import type { HermesToolRegistry } from '../integrations/hermes/hermes-tool-registry';
+import type { CapabilityRegistry, WorkflowReadiness } from '../integrations/hermes/capability-registry';
 import { getRuntimeReadiness } from '../integrations/growthos-runtime/runtime-orchestrator';
 import {
   getHermesCapabilities as getStoredHermesCapabilities,
@@ -31,6 +32,13 @@ import {
   getToolCompatibilityMatrix,
   getToolRegistry as getStoredToolRegistry,
 } from '../runtime-store/tool-registry-store';
+import {
+  getCapabilities as getStoredCapabilities,
+  getCapabilityRegistry as getStoredCapabilityRegistry,
+  getMissingCapabilities as getStoredMissingCapabilities,
+  getWorkflowReadiness as getStoredWorkflowReadiness,
+  getWorkflowReadinessRows as getStoredWorkflowReadinessRows,
+} from '../runtime-store/capability-registry-store';
 
 export interface KpiViewModel {
   label: string;
@@ -167,6 +175,26 @@ export function selectRegisteredHermesCapabilities() {
 
 export function selectToolCompatibilityMatrix() {
   return getToolCompatibilityMatrix();
+}
+
+export function selectCapabilityRegistry(): CapabilityRegistry {
+  return getStoredCapabilityRegistry();
+}
+
+export function selectCapabilities() {
+  return getStoredCapabilities();
+}
+
+export function selectWorkflowReadiness(workflowId = 'demo-run-execution'): WorkflowReadiness {
+  return getStoredWorkflowReadiness(workflowId);
+}
+
+export function selectWorkflowReadinessMatrix() {
+  return getStoredWorkflowReadinessRows();
+}
+
+export function selectMissingCapabilities(workflowId = 'demo-run-execution') {
+  return getStoredMissingCapabilities(workflowId);
 }
 
 function streamProgress(runId: string): number {
@@ -649,6 +677,11 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const hermesDiscovery = selectHermesDiscovery();
   const runtimeReadiness = selectRuntimeReadiness();
   const toolRegistry = selectHermesToolRegistry();
+  const capabilityRegistry = selectCapabilityRegistry();
+  const capabilities = selectCapabilities();
+  const workflowReadiness = selectWorkflowReadiness();
+  const workflowReadinessMatrix = selectWorkflowReadinessMatrix();
+  const missingCapabilities = selectMissingCapabilities();
   return {
     run,
     ticket,
@@ -657,6 +690,11 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     hermesDiscovery,
     runtimeReadiness,
     toolRegistry,
+    capabilityRegistry,
+    capabilities,
+    workflowReadiness,
+    workflowReadinessMatrix,
+    missingCapabilities,
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
     streamEvents,
     latestStreamEvent,
