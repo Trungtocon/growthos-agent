@@ -81,6 +81,7 @@ import {
   selectTeamMembersViewModel,
   selectTicketsListViewModel,
   selectToolsPermissionsViewModel,
+  selectWorkspaceGovernanceViewModel,
   selectWorkspacesManagerViewModel,
 } from '../domain/selectors';
 import type { Tone } from '../data/demoScreens';
@@ -126,6 +127,7 @@ export const sprint2Routes = new Set([
   '/integrations',
   '/integrations/demo-integration',
   '/mcp',
+  '/workspace',
   '/workspaces',
   '/secrets',
   '/team',
@@ -3152,6 +3154,117 @@ function McpServerManagerScreen() {
   );
 }
 
+function WorkspaceGovernanceScreen() {
+  const vm = selectWorkspaceGovernanceViewModel();
+  const budgetUsed = vm.budget.monthlyLimit ? Math.round((vm.budget.currentSpend / vm.budget.monthlyLimit) * 100) : 0;
+  const runQuota = vm.quota.maxRuns ? Math.round((vm.quota.currentRuns / vm.quota.maxRuns) * 100) : 0;
+  const tokenQuota = vm.quota.maxTokens ? Math.round((vm.quota.currentTokens / vm.quota.maxTokens) * 100) : 0;
+  const artifactQuota = vm.quota.maxArtifacts ? Math.round((vm.quota.currentArtifacts / vm.quota.maxArtifacts) * 100) : 0;
+  const statusTone: Tone = vm.health.overallStatus === 'OK' ? 'green' : vm.health.overallStatus === 'WARNING' ? 'amber' : 'red';
+
+  return (
+    <div>
+      <SimpleHeader
+        parityId="workspace.header"
+        title="Workspace Governance"
+        subtitle="Read-only governance layer for workspace budget, quotas, roles, teams, health, and runtime warnings."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Export report</Button><Button><ShieldCheck className="h-4 w-4" />Review policy</Button></>}
+      />
+      <MetricBand parityId="workspace.kpi-band" items={vm.kpis} />
+      <div data-parity-id="workspace.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="workspace.left-panel" className="space-y-5">
+          <Panel title="Workspace Overview">
+            <div className="grid grid-cols-[88px_1fr] gap-5 p-5">
+              <div className="grid h-20 w-20 place-items-center rounded-2xl bg-blue-50 text-3xl font-extrabold text-[#0f6bff]">UI</div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-extrabold text-slate-950">{vm.workspace.name}</h2>
+                  <Badge tone={statusTone}>{vm.health.overallStatus}</Badge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{vm.workspace.description}</p>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <FieldRow label="Status" value={vm.workspace.status} />
+                  <FieldRow label="Runs" value={`${vm.usage.runs}`} />
+                  <FieldRow label="Approvals" value={`${vm.usage.approvals}`} />
+                </div>
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Budget Governance">
+            <div className="space-y-4 p-5">
+              <div className="grid grid-cols-3 gap-3">
+                <FieldRow label="Monthly limit" value={`$${vm.budget.monthlyLimit.toLocaleString()}`} />
+                <FieldRow label="Current spend" value={`$${vm.budget.currentSpend.toFixed(2)}`} />
+                <FieldRow label="Remaining" value={`$${vm.budget.remainingBudget.toFixed(2)}`} />
+              </div>
+              <ProgressBar value={budgetUsed} tone={vm.health.budgetStatus === 'OK' ? 'green' : 'amber'} label="Workspace budget used" />
+              <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                <span className="text-sm font-semibold text-slate-600">Budget status</span>
+                <Badge tone={vm.health.budgetStatus === 'OK' ? 'green' : 'amber'}>{vm.health.budgetStatus}</Badge>
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Quota Governance">
+            <div className="grid gap-4 p-5">
+              {[
+                { label: 'Run quota', current: vm.quota.currentRuns, max: vm.quota.maxRuns, value: runQuota },
+                { label: 'Token quota', current: vm.quota.currentTokens, max: vm.quota.maxTokens, value: tokenQuota },
+                { label: 'Artifact quota', current: vm.quota.currentArtifacts, max: vm.quota.maxArtifacts, value: artifactQuota },
+              ].map(({ label, current, max, value }) => (
+                <div key={label} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900">{label}</span>
+                    <span className="text-sm font-semibold text-slate-500">{current.toLocaleString()} / {max.toLocaleString()}</span>
+                  </div>
+                  <ProgressBar value={value} tone={value > 90 ? 'amber' : 'blue'} label={`${label} usage`} />
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="workspace.right-panel" className="space-y-5">
+          <Panel title="Members">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.members.map((member) => (
+                <div key={member.id} className="flex items-center justify-between py-3">
+                  <div>
+                    <b>{member.name}</b>
+                    <div className="text-sm text-slate-500">{member.email}</div>
+                  </div>
+                  <Badge tone={member.roleId === 'ADMIN' ? 'purple' : member.roleId === 'MANAGER' ? 'blue' : 'slate'}>{member.roleId}</Badge>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Teams & Roles">
+            <div className="space-y-4 p-5">
+              {vm.teams.map((team) => <FieldRow key={team.id} label={team.name} value={`${team.memberCount} members`} />)}
+              <div className="flex flex-wrap gap-2">
+                {vm.roles.map((role) => <Badge key={role} tone={role === 'ADMIN' ? 'purple' : role === 'MANAGER' ? 'blue' : 'slate'}>{role}</Badge>)}
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Workspace Health">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Budget" value={vm.health.budgetStatus} />
+              <FieldRow label="Quota" value={vm.health.quotaStatus} />
+              <FieldRow label="Policy" value={vm.health.policyStatus} />
+              <FieldRow label="Generated" value={vm.health.generatedAt.slice(0, 10)} />
+            </div>
+          </Panel>
+          <Panel title="Warnings">
+            <div className="space-y-3 p-5">
+              {(vm.warnings.length ? vm.warnings : ['No active workspace governance warnings.']).map((warning) => (
+                <div key={warning} className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">{warning}</div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WorkspacesManagerScreen() {
   const vm = selectWorkspacesManagerViewModel();
   return (
@@ -3386,6 +3499,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations') return <IntegrationsHubScreen />;
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
+  if (route === '/workspace') return <WorkspaceGovernanceScreen />;
   if (route === '/workspaces') return <WorkspacesManagerScreen />;
   if (route === '/secrets') return <SecretsManagerScreen />;
   if (route === '/team') return <TeamMembersScreen />;

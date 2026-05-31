@@ -76,6 +76,17 @@ import {
   getReconciliationReport as getStoredReconciliationReport,
   getVarianceHistory as getStoredVarianceHistory,
 } from '../runtime/cost-reconciliation-store';
+import {
+  getCurrentWorkspace as getStoredCurrentWorkspace,
+  getWorkspaceBudget as getStoredWorkspaceBudget,
+  getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
+  getWorkspaceHealth as getStoredWorkspaceHealth,
+  getWorkspaceMembers as getStoredWorkspaceMembers,
+  getWorkspaceQuota as getStoredWorkspaceQuota,
+  getWorkspaceRoles as getStoredWorkspaceRoles,
+  getWorkspaceTeams as getStoredWorkspaceTeams,
+  getWorkspaceWarnings as getStoredWorkspaceWarnings,
+} from '../runtime/workspace-governance-store';
 
 export interface KpiViewModel {
   label: string;
@@ -424,6 +435,53 @@ export function selectEstimatedVsActual(runId?: string) {
 
 export function selectCostAlerts() {
   return getStoredCostAlerts();
+}
+
+export function selectCurrentWorkspace() {
+  return getStoredCurrentWorkspace();
+}
+
+export function selectWorkspaceBudget() {
+  return getStoredWorkspaceBudget();
+}
+
+export function selectWorkspaceQuota() {
+  return getStoredWorkspaceQuota();
+}
+
+export function selectWorkspaceUsage() {
+  const analytics = selectWorkspaceAnalytics();
+  return {
+    runs: analytics.totalRuns,
+    tokens: analytics.totalTokens,
+    artifacts: analytics.totalArtifacts,
+    approvals: analytics.totalApprovals,
+    actualCost: analytics.actualCost,
+  };
+}
+
+export function selectWorkspaceMembers() {
+  return getStoredWorkspaceMembers();
+}
+
+export function selectWorkspaceTeams() {
+  return getStoredWorkspaceTeams();
+}
+
+export function selectWorkspaceRoles() {
+  return getStoredWorkspaceRoles();
+}
+
+export function selectWorkspaceHealth() {
+  return getStoredWorkspaceHealth();
+}
+
+export function selectWorkspaceWarnings() {
+  return getStoredWorkspaceWarnings();
+}
+
+export function selectWorkspaceGovernanceSummary() {
+  return getStoredWorkspaceGovernanceSummary();
 }
 
 function streamProgress(runId: string): number {
@@ -872,6 +930,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const usageLedger = run ? selectUsageLedger(run.id) : undefined;
   const quotaWarnings = run ? selectQuotaWarnings(run.id) : [];
   const workflowAnalytics = selectWorkflowAnalytics().find((item) => item.workflowId === currentPlan?.workflowId) ?? selectTopWorkflows(1)[0];
+  const workspaceHealth = selectWorkspaceHealth();
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -905,6 +964,8 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     quotaStatus: run ? selectQuotaStatus(run.id) : selectQuotaStatus(currentPlan?.id),
     quotaWarnings,
     workflowAnalytics,
+    workspaceHealth,
+    workspaceWarnings: selectWorkspaceWarnings(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -947,6 +1008,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const topWorkflows = selectTopWorkflows(3);
   const reconciliationReport = selectReconciliationReport();
   const runReconciliation = reconciliationReport.records.find((record) => record.runId === run.id);
+  const workspaceHealth = selectWorkspaceHealth();
   return {
     run,
     ticket,
@@ -985,6 +1047,9 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     costVariance: selectCostVariance(run.id),
     varianceSeverity: selectVarianceSeverity(run.id),
     costAlerts: selectCostAlerts(),
+    workspaceGovernance: selectWorkspaceGovernanceSummary(),
+    workspaceHealth,
+    workspaceWarnings: selectWorkspaceWarnings(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -1019,6 +1084,7 @@ export function selectApprovalCenterViewModel() {
   const pending = approvals.filter((approval) => approval.status === 'pending').length;
   const budgetApprovals = approvals.filter((approval) => approval.policy.includes('budget') || approval.description.toLowerCase().includes('budget')).length;
   const quotaApprovals = approvals.filter((approval) => approval.policy.includes('quota') || approval.description.toLowerCase().includes('quota')).length;
+  const workspaceHealth = selectWorkspaceHealth();
   const approvalCost = approvals
     .flatMap((approval) => approval.runId ? selectBillingRecordsByRun(approval.runId).filter((record) => record.type === 'approval') : [])
     .reduce((sum, record) => sum + record.actualCost, 0);
@@ -1035,13 +1101,15 @@ export function selectApprovalCenterViewModel() {
     budgetApprovals,
     quotaApprovals,
     approvalCost,
+    workspaceHealth,
+    workspaceWarnings: selectWorkspaceWarnings(),
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
       { label: 'Rui ro cao', value: String(highRisk), tone: 'red' },
       { label: 'Qua han', value: '3', tone: 'amber' },
       { label: 'Da duyet hom nay', value: '18', tone: 'green' },
       { label: 'Budget / quota', value: String(budgetApprovals + quotaApprovals), tone: 'amber' },
-      { label: 'Approval cost', value: currency(approvalCost), tone: 'blue' },
+      { label: 'Workspace health', value: workspaceHealth.overallStatus, tone: workspaceHealth.overallStatus === 'OK' ? 'green' : workspaceHealth.overallStatus === 'WARNING' ? 'amber' : 'red' },
     ] satisfies KpiViewModel[],
   };
 }
@@ -1171,6 +1239,7 @@ export function selectCostDashboardViewModel() {
   const reconciliationReport = selectReconciliationReport();
   const variance = selectCostVariance();
   const costAlerts = selectCostAlerts();
+  const workspaceGovernance = selectWorkspaceGovernanceSummary();
   const budgetUsed = Math.round((data.costBreakdown.total / data.workspace.aiBudgetMonthly) * 100);
   const runSpend = data.runs.reduce((sum, run) => sum + run.cost, 0);
   const ticketSpendRows = data.tickets.map((ticket) => {
@@ -1209,6 +1278,9 @@ export function selectCostDashboardViewModel() {
     providerCost: selectProviderCost(),
     varianceSeverity: selectVarianceSeverity(),
     costAlerts,
+    workspaceGovernance,
+    workspaceHealth: workspaceGovernance.health,
+    workspaceWarnings: selectWorkspaceWarnings(),
     alerts: [
       ...costAlerts.map((alert) => ({ id: alert.id, title: alert.title, detail: alert.message, severity: alert.severity, tone: alert.severity === 'CRITICAL' ? 'red' : 'amber' })),
       { id: 'budget-velocity', title: 'Monthly budget velocity', detail: `${budgetUsed}% of monthly budget used in ${data.costBreakdown.period}.`, severity: budgetUsed > 75 ? 'High' : 'Medium', tone: budgetUsed > 75 ? 'red' : 'amber' },
@@ -1224,6 +1296,23 @@ export function selectCostDashboardViewModel() {
       { label: 'Severity', value: reconciliationReport.severity, tone: reconciliationReport.severity === 'CRITICAL' ? 'red' : reconciliationReport.severity === 'WARNING' ? 'amber' : 'green' },
       { label: 'Top Tool', value: topTool?.toolId ?? 'none', tone: 'amber' },
       { label: 'Top Workflow', value: topWorkflow?.workflowId ?? 'none', tone: 'green' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectWorkspaceGovernanceViewModel() {
+  const summary = selectWorkspaceGovernanceSummary();
+  const usage = selectWorkspaceUsage();
+  const warnings = selectWorkspaceWarnings();
+  return {
+    ...summary,
+    usage,
+    warnings,
+    kpis: [
+      { label: 'Members', value: String(summary.members.length), tone: 'blue' },
+      { label: 'Teams', value: String(summary.teams.length), tone: 'cyan' },
+      { label: 'Budget Used', value: `${Math.round((summary.budget.currentSpend / summary.budget.monthlyLimit) * 100)}%`, tone: summary.health.budgetStatus === 'OK' ? 'green' : 'amber' },
+      { label: 'Health', value: summary.health.overallStatus, tone: summary.health.overallStatus === 'OK' ? 'green' : summary.health.overallStatus === 'WARNING' ? 'amber' : 'red' },
     ] satisfies KpiViewModel[],
   };
 }
