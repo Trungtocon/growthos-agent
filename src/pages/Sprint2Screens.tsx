@@ -69,6 +69,7 @@ import {
   selectIntegrationDetailViewModel,
   selectIntegrationsHubViewModel,
   selectMcpServerManagerViewModel,
+  selectOrganizationGovernanceViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
   selectRolesPermissionsViewModel,
@@ -127,6 +128,7 @@ export const sprint2Routes = new Set([
   '/integrations',
   '/integrations/demo-integration',
   '/mcp',
+  '/organization',
   '/workspace',
   '/workspaces',
   '/secrets',
@@ -3154,6 +3156,88 @@ function McpServerManagerScreen() {
   );
 }
 
+function OrganizationGovernanceScreen() {
+  const vm = selectOrganizationGovernanceViewModel();
+  const budgetUsed = vm.totals.budget ? Math.round((vm.totals.spend / vm.totals.budget) * 100) : 0;
+  const statusTone: Tone = vm.organizationHealth.overallStatus === 'OK' ? 'green' : vm.organizationHealth.overallStatus === 'WARNING' ? 'amber' : 'red';
+  return (
+    <div>
+      <SimpleHeader
+        parityId="organization.header"
+        title="Organization Governance"
+        subtitle="Enterprise hierarchy for organization, tenants, workspaces, budget, quota, and governance health."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Export org</Button><Button><ShieldCheck className="h-4 w-4" />Review health</Button></>}
+      />
+      <MetricBand parityId="organization.kpi-band" items={vm.kpis} />
+      <div data-parity-id="organization.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="organization.left-panel" className="space-y-5">
+          <Panel title="Organization Overview">
+            <div className="grid grid-cols-[88px_1fr] gap-5 p-5">
+              <div className="grid h-20 w-20 place-items-center rounded-2xl bg-blue-50 text-3xl font-extrabold text-[#0f6bff]">GO</div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-extrabold text-slate-950">{vm.organization.name}</h2>
+                  <Badge tone={statusTone}>{vm.organizationHealth.overallStatus}</Badge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{vm.organization.description}</p>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <FieldRow label="Status" value={vm.organization.status} />
+                  <FieldRow label="Tenants" value={String(vm.organizationHealth.tenantCount)} />
+                  <FieldRow label="Workspaces" value={String(vm.organizationHealth.workspaceCount)} />
+                </div>
+              </div>
+            </div>
+          </Panel>
+          <Panel title="Tenant Registry">
+            <div className="space-y-4 p-5">
+              {vm.tenants.map((tenant) => {
+                const budget = vm.tenantBudgets.find((item) => item.tenantId === tenant.id);
+                const quota = vm.tenantQuotas.find((item) => item.tenantId === tenant.id);
+                const health = vm.tenantHealth.find((item) => item.tenantId === tenant.id);
+                return (
+                  <div key={tenant.id} className="rounded-xl border border-slate-100 p-4">
+                    <div className="flex items-center justify-between gap-3"><b>{tenant.name}</b><Badge tone={health?.overallStatus === 'OK' ? 'green' : health?.overallStatus === 'WARNING' ? 'amber' : 'red'}>{health?.overallStatus ?? 'OK'}</Badge></div>
+                    <div className="mt-3 grid grid-cols-3 gap-3">
+                      <FieldRow label="Workspaces" value={String(tenant.workspaceIds.length)} />
+                      <FieldRow label="Budget" value={budget ? `$${budget.currentSpend.toFixed(2)} / $${budget.monthlyLimit.toFixed(2)}` : 'n/a'} />
+                      <FieldRow label="Runs" value={quota ? `${quota.currentRuns}/${quota.maxRuns}` : 'n/a'} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="organization.right-panel" className="space-y-5">
+          <Panel title="Budget Overview">
+            <div className="space-y-4 p-5">
+              <FieldRow label="Total budget" value={`$${vm.totals.budget.toLocaleString()}`} />
+              <FieldRow label="Current spend" value={`$${vm.totals.spend.toFixed(2)}`} />
+              <FieldRow label="Remaining" value={`$${vm.totals.remaining.toFixed(2)}`} />
+              <ProgressBar value={budgetUsed} tone={budgetUsed > 90 ? 'amber' : 'green'} label="Organization budget used" />
+            </div>
+          </Panel>
+          <Panel title="Top Cost Tenants">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.topCostTenants.map((row) => <div key={row.tenant.id} className="flex items-center justify-between py-3"><div><b>{row.tenant.name}</b><div className="text-sm text-slate-500">{row.tenant.workspaceIds.length} workspaces</div></div><span className="font-bold text-[#0f6bff]">{row.budget ? `$${row.budget.currentSpend.toFixed(2)}` : '$0'}</span></div>)}
+            </div>
+          </Panel>
+          <Panel title="Top Usage Tenants">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.topUsageTenants.map((row) => <div key={row.tenant.id} className="flex items-center justify-between py-3"><div><b>{row.tenant.name}</b><div className="text-sm text-slate-500">{row.quota?.currentTokens.toLocaleString() ?? 0} tokens</div></div><Badge tone={row.health?.overallStatus === 'OK' ? 'green' : row.health?.overallStatus === 'WARNING' ? 'amber' : 'red'}>{row.health?.overallStatus ?? 'OK'}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Warnings">
+            <div className="space-y-3 p-5">
+              {(vm.warnings.length ? vm.warnings : ['No active organization governance warnings.']).map((warning) => <div key={warning} className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">{warning}</div>)}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WorkspaceGovernanceScreen() {
   const vm = selectWorkspaceGovernanceViewModel();
   const budgetUsed = vm.budget.monthlyLimit ? Math.round((vm.budget.currentSpend / vm.budget.monthlyLimit) * 100) : 0;
@@ -3184,6 +3268,8 @@ function WorkspaceGovernanceScreen() {
                 <p className="mt-2 text-sm leading-6 text-slate-500">{vm.workspace.description}</p>
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   <FieldRow label="Status" value={vm.workspace.status} />
+                  <FieldRow label="Organization" value={vm.parentOrganization.name} />
+                  <FieldRow label="Tenant" value={vm.tenant?.name ?? 'Operations'} />
                   <FieldRow label="Runs" value={`${vm.usage.runs}`} />
                   <FieldRow label="Approvals" value={`${vm.usage.approvals}`} />
                 </div>
@@ -3249,6 +3335,9 @@ function WorkspaceGovernanceScreen() {
               <FieldRow label="Budget" value={vm.health.budgetStatus} />
               <FieldRow label="Quota" value={vm.health.quotaStatus} />
               <FieldRow label="Policy" value={vm.health.policyStatus} />
+              <FieldRow label="Tenant Budget" value={vm.tenantBudget ? `$${vm.tenantBudget.currentSpend.toFixed(2)} / $${vm.tenantBudget.monthlyLimit.toFixed(2)}` : 'n/a'} />
+              <FieldRow label="Tenant Quota" value={vm.tenantQuota ? `${vm.tenantQuota.currentRuns}/${vm.tenantQuota.maxRuns} runs` : 'n/a'} />
+              <FieldRow label="Tenant Health" value={vm.tenantHealth?.overallStatus ?? 'OK'} />
               <FieldRow label="Generated" value={vm.health.generatedAt.slice(0, 10)} />
             </div>
           </Panel>
@@ -3499,6 +3588,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations') return <IntegrationsHubScreen />;
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
+  if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;
   if (route === '/workspaces') return <WorkspacesManagerScreen />;
   if (route === '/secrets') return <SecretsManagerScreen />;

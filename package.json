@@ -95,7 +95,8 @@
     "smoke:usage-ledger": "node scripts/smoke-usage-ledger.mjs",
     "smoke:workspace-analytics": "node scripts/smoke-workspace-analytics.mjs",
     "smoke:cost-reconciliation": "node scripts/smoke-cost-reconciliation.mjs",
-    "smoke:workspace-governance": "node scripts/smoke-workspace-governance.mjs"
+    "smoke:workspace-governance": "node scripts/smoke-workspace-governance.mjs",
+    "smoke:organization-governance": "node scripts/smoke-organization-governance.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

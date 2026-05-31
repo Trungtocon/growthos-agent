@@ -87,6 +87,18 @@ import {
   getWorkspaceTeams as getStoredWorkspaceTeams,
   getWorkspaceWarnings as getStoredWorkspaceWarnings,
 } from '../runtime/workspace-governance-store';
+import {
+  getOrganization as getStoredOrganization,
+  getOrganizationGovernanceSummary as getStoredOrganizationGovernanceSummary,
+  getOrganizationHealth as getStoredOrganizationHealth,
+  getOrganizations as getStoredOrganizations,
+  getTenant as getStoredTenant,
+  getTenantBudget as getStoredTenantBudget,
+  getTenantHealth as getStoredTenantHealth,
+  getTenantQuota as getStoredTenantQuota,
+  getTenants as getStoredTenants,
+  getWorkspaceReferences as getStoredWorkspaceReferences,
+} from '../runtime/organization-store';
 
 export interface KpiViewModel {
   label: string;
@@ -482,6 +494,50 @@ export function selectWorkspaceWarnings() {
 
 export function selectWorkspaceGovernanceSummary() {
   return getStoredWorkspaceGovernanceSummary();
+}
+
+export function selectOrganizations() {
+  return getStoredOrganizations();
+}
+
+export function selectOrganization(organizationId?: string) {
+  return getStoredOrganization(organizationId);
+}
+
+export function selectTenants() {
+  return getStoredTenants();
+}
+
+export function selectTenant(tenantId: string) {
+  return getStoredTenant(tenantId);
+}
+
+export function selectTenantBudget(tenantId: string) {
+  return getStoredTenantBudget(tenantId);
+}
+
+export function selectTenantQuota(tenantId: string) {
+  return getStoredTenantQuota(tenantId);
+}
+
+export function selectTenantHealth(tenantId: string) {
+  return getStoredTenantHealth(tenantId);
+}
+
+export function selectOrganizationHealth(organizationId?: string) {
+  return getStoredOrganizationHealth(organizationId);
+}
+
+export function selectWorkspaceCount() {
+  return getStoredWorkspaceReferences().length;
+}
+
+export function selectTenantCount() {
+  return getStoredTenants().length;
+}
+
+export function selectOrganizationSummary() {
+  return getStoredOrganizationGovernanceSummary();
 }
 
 function streamProgress(runId: string): number {
@@ -1009,6 +1065,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const reconciliationReport = selectReconciliationReport();
   const runReconciliation = reconciliationReport.records.find((record) => record.runId === run.id);
   const workspaceHealth = selectWorkspaceHealth();
+  const organizationSummary = selectOrganizationSummary();
   return {
     run,
     ticket,
@@ -1048,6 +1105,8 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     varianceSeverity: selectVarianceSeverity(run.id),
     costAlerts: selectCostAlerts(),
     workspaceGovernance: selectWorkspaceGovernanceSummary(),
+    organizationGovernance: organizationSummary,
+    organizationHealth: organizationSummary.organizationHealth,
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
@@ -1085,6 +1144,7 @@ export function selectApprovalCenterViewModel() {
   const budgetApprovals = approvals.filter((approval) => approval.policy.includes('budget') || approval.description.toLowerCase().includes('budget')).length;
   const quotaApprovals = approvals.filter((approval) => approval.policy.includes('quota') || approval.description.toLowerCase().includes('quota')).length;
   const workspaceHealth = selectWorkspaceHealth();
+  const organizationSummary = selectOrganizationSummary();
   const approvalCost = approvals
     .flatMap((approval) => approval.runId ? selectBillingRecordsByRun(approval.runId).filter((record) => record.type === 'approval') : [])
     .reduce((sum, record) => sum + record.actualCost, 0);
@@ -1101,6 +1161,8 @@ export function selectApprovalCenterViewModel() {
     budgetApprovals,
     quotaApprovals,
     approvalCost,
+    organizationGovernance: organizationSummary,
+    organizationHealth: organizationSummary.organizationHealth,
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
     kpis: [
@@ -1240,6 +1302,7 @@ export function selectCostDashboardViewModel() {
   const variance = selectCostVariance();
   const costAlerts = selectCostAlerts();
   const workspaceGovernance = selectWorkspaceGovernanceSummary();
+  const organizationSummary = selectOrganizationSummary();
   const budgetUsed = Math.round((data.costBreakdown.total / data.workspace.aiBudgetMonthly) * 100);
   const runSpend = data.runs.reduce((sum, run) => sum + run.cost, 0);
   const ticketSpendRows = data.tickets.map((ticket) => {
@@ -1279,6 +1342,8 @@ export function selectCostDashboardViewModel() {
     varianceSeverity: selectVarianceSeverity(),
     costAlerts,
     workspaceGovernance,
+    organizationGovernance: organizationSummary,
+    organizationHealth: organizationSummary.organizationHealth,
     workspaceHealth: workspaceGovernance.health,
     workspaceWarnings: selectWorkspaceWarnings(),
     alerts: [
@@ -1304,8 +1369,20 @@ export function selectWorkspaceGovernanceViewModel() {
   const summary = selectWorkspaceGovernanceSummary();
   const usage = selectWorkspaceUsage();
   const warnings = selectWorkspaceWarnings();
+  const organizationSummary = selectOrganizationSummary();
+  const workspaceReference = organizationSummary.workspaceReferences.find((reference) => reference.workspaceId === summary.workspace.id);
+  const tenant = organizationSummary.tenants.find((item) => item.id === workspaceReference?.tenantId) ?? organizationSummary.tenants[0];
+  const tenantBudget = tenant ? selectTenantBudget(tenant.id) : undefined;
+  const tenantQuota = tenant ? selectTenantQuota(tenant.id) : undefined;
+  const tenantHealth = tenant ? selectTenantHealth(tenant.id) : undefined;
   return {
     ...summary,
+    parentOrganization: organizationSummary.organization,
+    tenant,
+    tenantBudget,
+    tenantQuota,
+    tenantHealth,
+    organizationHealth: organizationSummary.organizationHealth,
     usage,
     warnings,
     kpis: [
@@ -1313,6 +1390,48 @@ export function selectWorkspaceGovernanceViewModel() {
       { label: 'Teams', value: String(summary.teams.length), tone: 'cyan' },
       { label: 'Budget Used', value: `${Math.round((summary.budget.currentSpend / summary.budget.monthlyLimit) * 100)}%`, tone: summary.health.budgetStatus === 'OK' ? 'green' : 'amber' },
       { label: 'Health', value: summary.health.overallStatus, tone: summary.health.overallStatus === 'OK' ? 'green' : summary.health.overallStatus === 'WARNING' ? 'amber' : 'red' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectOrganizationGovernanceViewModel() {
+  const summary = selectOrganizationSummary();
+  const topCostTenants = [...summary.tenants]
+    .map((tenant) => ({
+      tenant,
+      budget: summary.tenantBudgets.find((budget) => budget.tenantId === tenant.id),
+      health: summary.tenantHealth.find((health) => health.tenantId === tenant.id),
+    }))
+    .sort((a, b) => (b.budget?.currentSpend ?? 0) - (a.budget?.currentSpend ?? 0));
+  const topUsageTenants = [...summary.tenants]
+    .map((tenant) => ({
+      tenant,
+      quota: summary.tenantQuotas.find((quota) => quota.tenantId === tenant.id),
+      health: summary.tenantHealth.find((health) => health.tenantId === tenant.id),
+    }))
+    .sort((a, b) => ((b.quota?.currentRuns ?? 0) + (b.quota?.currentArtifacts ?? 0)) - ((a.quota?.currentRuns ?? 0) + (a.quota?.currentArtifacts ?? 0)));
+  const totalBudget = summary.tenantBudgets.reduce((sum, budget) => sum + budget.monthlyLimit, 0);
+  const totalSpend = summary.tenantBudgets.reduce((sum, budget) => sum + budget.currentSpend, 0);
+  const totalRuns = summary.tenantQuotas.reduce((sum, quota) => sum + quota.currentRuns, 0);
+  const totalTokens = summary.tenantQuotas.reduce((sum, quota) => sum + quota.currentTokens, 0);
+  const warnings = summary.organizationHealth.warnings;
+  return {
+    ...summary,
+    totals: {
+      budget: totalBudget,
+      spend: Number(totalSpend.toFixed(4)),
+      remaining: Number(Math.max(0, totalBudget - totalSpend).toFixed(4)),
+      runs: totalRuns,
+      tokens: totalTokens,
+    },
+    topCostTenants,
+    topUsageTenants,
+    warnings,
+    kpis: [
+      { label: 'Tenants', value: String(summary.organizationHealth.tenantCount), tone: 'blue' },
+      { label: 'Workspaces', value: String(summary.organizationHealth.workspaceCount), tone: 'cyan' },
+      { label: 'Budget Health', value: summary.organizationHealth.budgetHealth, tone: summary.organizationHealth.budgetHealth === 'OK' ? 'green' : summary.organizationHealth.budgetHealth === 'WARNING' ? 'amber' : 'red' },
+      { label: 'Org Health', value: summary.organizationHealth.overallStatus, tone: summary.organizationHealth.overallStatus === 'OK' ? 'green' : summary.organizationHealth.overallStatus === 'WARNING' ? 'amber' : 'red' },
     ] satisfies KpiViewModel[],
   };
 }

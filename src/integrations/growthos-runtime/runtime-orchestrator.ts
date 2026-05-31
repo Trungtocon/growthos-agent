@@ -30,6 +30,8 @@ import { generateCostReconciliationReport } from '../../runtime/cost-reconciliat
 import { costReconciliationArtifacts } from '../../runtime/cost-reconciliation';
 import { generateWorkspaceGovernance } from '../../runtime/workspace-governance-store';
 import { workspaceGovernanceArtifacts } from '../../runtime/workspace-governance';
+import { generateOrganizationGovernance } from '../../runtime/organization-store';
+import { organizationGovernanceArtifacts } from '../../runtime/organization-governance';
 import {
   evaluateQuotaAfterRun,
   evaluateQuotaBeforeRun,
@@ -838,6 +840,20 @@ export function exportWorkspaceGovernanceArtifacts(runId = DEMO_RUN_ID): Artifac
     actorId: DEMO_AGENT_ID,
     title: 'Workspace governance export generated',
     status: summary.health.overallStatus === 'BLOCKED' || summary.health.overallStatus === 'CRITICAL' ? 'pending' : 'success',
+  });
+  return artifacts;
+}
+
+export function exportOrganizationGovernanceArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  const summary = generateOrganizationGovernance();
+  const artifacts = organizationGovernanceArtifacts(summary, runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Organization governance export generated',
+    status: summary.organizationHealth.overallStatus === 'CRITICAL' ? 'pending' : 'success',
   });
   return artifacts;
 }
