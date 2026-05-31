@@ -17,6 +17,7 @@ import type { RuntimeToolCall } from '../integrations/growthos-runtime/runtime-t
 import type { HermesDiscoveryResult } from '../integrations/hermes/hermes-discovery-types';
 import type { HermesToolRegistry } from '../integrations/hermes/hermes-tool-registry';
 import type { CapabilityRegistry, WorkflowReadiness } from '../integrations/hermes/capability-registry';
+import type { RunPlan } from '../integrations/growthos-runtime/run-planner';
 import { getRuntimeReadiness } from '../integrations/growthos-runtime/runtime-orchestrator';
 import {
   getHermesCapabilities as getStoredHermesCapabilities,
@@ -39,6 +40,12 @@ import {
   getWorkflowReadiness as getStoredWorkflowReadiness,
   getWorkflowReadinessRows as getStoredWorkflowReadinessRows,
 } from '../runtime-store/capability-registry-store';
+import {
+  getCurrentPlanForTicket,
+  getPlanSteps as getStoredPlanSteps,
+  getPlansByTicket,
+  getRunPlan as getStoredRunPlan,
+} from '../runtime-store/run-plan-store';
 
 export interface KpiViewModel {
   label: string;
@@ -195,6 +202,32 @@ export function selectWorkflowReadinessMatrix() {
 
 export function selectMissingCapabilities(workflowId = 'demo-run-execution') {
   return getStoredMissingCapabilities(workflowId);
+}
+
+export function selectRunPlan(planId?: string): RunPlan | undefined {
+  return getStoredRunPlan(planId);
+}
+
+export function selectPlansByTicket(ticketId: string): RunPlan[] {
+  return getPlansByTicket(ticketId);
+}
+
+export function selectCurrentPlanForTicket(ticketId: string): RunPlan | undefined {
+  return getCurrentPlanForTicket(ticketId);
+}
+
+export function selectPlanSteps(planId?: string) {
+  return planId ? getStoredPlanSteps(planId) : [];
+}
+
+export function selectPlanReadiness(planId?: string) {
+  const plan = selectRunPlan(planId);
+  return {
+    ready: plan?.status === 'ready',
+    status: plan?.status ?? 'draft',
+    missingCapabilities: plan?.missingCapabilities ?? [],
+    warnings: plan?.warnings ?? [],
+  };
 }
 
 function streamProgress(runId: string): number {
@@ -635,6 +668,8 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const activeToolCall = run ? getActiveToolCall(run.id) : undefined;
   const completedToolCalls = run ? getCompletedToolCalls(run.id) : [];
   const totalToolCalls = run ? getToolCallsByRun(run.id).length || run.toolCalls.length : 0;
+  const plans = selectPlansByTicket(ticket.id);
+  const currentPlan = selectCurrentPlanForTicket(ticket.id);
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -655,6 +690,10 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     completedToolCalls,
     totalToolsExecuted: totalToolCalls,
     primaryArtifactPreview: getArtifactPreviewModel(primaryArtifact?.id),
+    plans,
+    currentPlan,
+    planSteps: selectPlanSteps(currentPlan?.id),
+    planReadiness: selectPlanReadiness(currentPlan?.id),
   };
 }
 
@@ -682,6 +721,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const workflowReadiness = selectWorkflowReadiness();
   const workflowReadinessMatrix = selectWorkflowReadinessMatrix();
   const missingCapabilities = selectMissingCapabilities();
+  const currentPlan = selectCurrentPlanForTicket(ticket.id);
   return {
     run,
     ticket,
@@ -695,6 +735,9 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     workflowReadiness,
     workflowReadinessMatrix,
     missingCapabilities,
+    currentPlan,
+    planSteps: selectPlanSteps(currentPlan?.id),
+    planReadiness: selectPlanReadiness(currentPlan?.id),
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
     streamEvents,
     latestStreamEvent,

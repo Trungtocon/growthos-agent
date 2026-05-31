@@ -3,6 +3,7 @@ import type { Activity, Approval, Artifact, Run, RunLog, RunStatus, ToolCall } f
 import { createHermesAdapter } from '../hermes/hermes-adapter';
 import { discoverHermes } from '../hermes/hermes-discovery-client';
 import { buildHermesToolRegistry, getDefaultRuntimeTools, type HermesTool } from '../hermes/hermes-tool-registry';
+import { createRunPlan, type RunPlan } from './run-planner';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
@@ -19,6 +20,7 @@ import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, mark
 import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../runtime-store/tool-call-store';
 import { getHermesDiscovery, setHermesDiscovery } from '../../runtime-store/hermes-discovery-store';
 import { getToolRegistry, setToolRegistry } from '../../runtime-store/tool-registry-store';
+import { getRunPlan, markRunPlanApproved, upsertRunPlan } from '../../runtime-store/run-plan-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
@@ -28,6 +30,32 @@ export async function refreshHermesDiscovery() {
   const discovery = setHermesDiscovery(await discoverHermes());
   setToolRegistry(buildHermesToolRegistry(discovery));
   return discovery;
+}
+
+export function createPlanForTicket(ticketId: string, workflowId = 'demo-run-execution'): RunPlan {
+  const plan = upsertRunPlan(createRunPlan(ticketId, workflowId));
+  appendRuntimeEvent({
+    command: 'createRunPlan',
+    entityType: 'ticket',
+    entityId: ticketId,
+    actorId: DEMO_AGENT_ID,
+    title: plan.status === 'blocked' ? `Run plan blocked: ${workflowId}` : `Run plan ready: ${workflowId}`,
+    status: plan.status === 'blocked' ? 'failed' : 'success',
+  });
+  return plan;
+}
+
+export function approveRunPlan(planId: string): RunPlan {
+  const plan = markRunPlanApproved(planId);
+  appendRuntimeEvent({
+    command: 'approveRunPlan',
+    entityType: 'ticket',
+    entityId: plan.ticketId,
+    actorId: DEMO_AGENT_ID,
+    title: `Run plan approved: ${plan.workflowId}`,
+    status: 'success',
+  });
+  return plan;
 }
 
 export function getRuntimeReadiness(): RuntimeReadiness {
@@ -498,6 +526,55 @@ export async function startStreamingRun(ticketId: string): Promise<RuntimeStream
   const run = updateStreamRun(queuedRun, {}, 'QUEUED');
   const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued', { ticketId });
   return streamResult(run, event);
+}
+
+function seedPlanToolCalls(plan: RunPlan, runId: string) {
+  const registry = getToolRegistry();
+  const now = runtimeNow();
+  plan.steps
+    .filter((step) => step.toolId && step.status === 'planned')
+    .forEach((step) => {
+      const tool = registry.tools.find((item) => item.id === step.toolId);
+      upsertRuntimeToolCall({
+        id: `${runId}-${step.id}`,
+        runId,
+        toolName: tool?.name ?? step.toolId ?? step.name,
+        status: 'queued',
+        startedAt: now,
+        input: `${step.name} for ${plan.workflowId}`,
+        output: undefined,
+        durationMs: 0,
+        metadata: {
+          sourcePlanId: plan.id,
+          planStepId: step.id,
+          capabilityId: step.capabilityId,
+          expectedOutputType: step.expectedOutputType,
+          requiresApproval: step.requiresApproval,
+          modelId: step.modelId,
+          cost: 0,
+          progress: 0,
+        },
+      });
+    });
+}
+
+export async function startRunFromPlan(planId: string): Promise<RuntimeStreamResult> {
+  const plan = getRunPlan(planId);
+  if (!plan) throw new Error(`Cannot start missing run plan ${planId}`);
+  if (plan.status === 'blocked') {
+    throw new Error(`Cannot start blocked run plan ${planId}: ${plan.missingCapabilities.join(', ') || 'blocked steps'}`);
+  }
+  const result = await startStreamingRun(plan.ticketId);
+  seedPlanToolCalls(plan, result.runId);
+  appendRuntimeEvent({
+    command: 'startRunFromPlan',
+    entityType: 'run',
+    entityId: result.runId,
+    actorId: DEMO_AGENT_ID,
+    title: `Run started from plan: ${plan.workflowId}`,
+    status: 'success',
+  });
+  return result;
 }
 
 export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult> {

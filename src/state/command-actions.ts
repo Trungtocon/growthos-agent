@@ -1,6 +1,6 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import type { ApprovalStatus, Ticket } from '../domain/types';
-import { cancelAgentRun as createCancelAgentRunPlan, pauseAgentRun as createPauseAgentRunPlan, refreshHermesDiscovery as refreshRuntimeHermesDiscovery, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
+import { approveRunPlan as approveRuntimeRunPlan, cancelAgentRun as createCancelAgentRunPlan, createPlanForTicket as createRuntimePlanForTicket, pauseAgentRun as createPauseAgentRunPlan, refreshHermesDiscovery as refreshRuntimeHermesDiscovery, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, startRunFromPlan as startRuntimeRunFromPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
 import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
 import type { WorkflowData } from './workflow-engine';
@@ -131,6 +131,48 @@ export async function startStreamingRun(ticketId: string) {
     optimistic: (data) => data,
     mutate: async () => {
       await startRuntimeStreamingRun(ticketId);
+    },
+  });
+}
+
+export async function createRunPlan(ticketId: string, workflowId = 'demo-run-execution') {
+  return runWorkflowCommand({
+    command: 'createRunPlan',
+    entityType: 'ticket',
+    entityId: ticketId,
+    actorId: demoCurrentUser.id,
+    title: `Run plan requested: ${workflowId}`,
+    optimistic: (data) => data,
+    mutate: async () => {
+      createRuntimePlanForTicket(ticketId, workflowId);
+    },
+  });
+}
+
+export async function approveRunPlan(planId: string) {
+  return runWorkflowCommand({
+    command: 'approveRunPlan',
+    entityType: 'run',
+    entityId: planId,
+    actorId: demoCurrentUser.id,
+    title: 'Run plan approved',
+    optimistic: (data) => data,
+    mutate: async () => {
+      approveRuntimeRunPlan(planId);
+    },
+  });
+}
+
+export async function startRunFromPlan(planId: string) {
+  return runWorkflowCommand({
+    command: 'startRunFromPlan',
+    entityType: 'run',
+    entityId: planId,
+    actorId: demoCurrentUser.id,
+    title: 'Run started from plan',
+    optimistic: (data) => data,
+    mutate: async () => {
+      await startRuntimeRunFromPlan(planId);
     },
   });
 }

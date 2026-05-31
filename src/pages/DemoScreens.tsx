@@ -33,7 +33,7 @@ import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/Ar
 import type { Tone } from '../data/demoScreens';
 import { selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
 import type { ToolCallViewModel } from '../domain/selectors';
-import { approveApproval, assignTicket, cancelAgentRun, escalateTicket, pauseRun, refreshRuntimeDiscovery, rejectApproval, resolveTicket, resumeRun, retryRun, startAgentRun, startStreamingRun } from '../state/command-actions';
+import { approveApproval, assignTicket, cancelAgentRun, createRunPlan as createRunPlanAction, escalateTicket, pauseRun, refreshRuntimeDiscovery, rejectApproval, resolveTicket, resumeRun, retryRun, startAgentRun, startRunFromPlan, startStreamingRun } from '../state/command-actions';
 import type { WorkflowEvent } from '../state/event-log';
 import { selectAgent, selectApproval, selectArtifact, selectTicket, setActiveTab, setRouteFilter, setSearchQuery } from '../state/ui-actions';
 import { useWorkflowStateSnapshot } from '../state/workflow-engine';
@@ -735,6 +735,9 @@ function TicketSide() {
   const streamProgress = data.streamProgress || progress;
   const artifacts = data.run?.artifacts ?? [];
   const artifactPreview = data.selectedArtifactPreview ?? data.primaryArtifactPreview;
+  const plan = data.currentPlan;
+  const planCoverage = plan ? `${plan.availableCapabilities.filter((capability) => plan.requiredCapabilities.includes(capability)).length}/${plan.requiredCapabilities.length}` : '0/0';
+  const planSummary = plan ? `${plan.status} · ${planCoverage} caps · ${plan.missingCapabilities.length ? plan.missingCapabilities.join(', ') : 'none missing'}` : 'No plan';
   return (
     <div className="space-y-2">
       <div data-parity-id="ticket.status-card">
@@ -744,7 +747,7 @@ function TicketSide() {
             ['Current Tool', data.activeToolCall?.toolName ?? 'Waiting'],
             ['Tool Progress', `${data.toolProgress || streamProgress}%`],
             ['Last Tool', data.lastCompletedToolCall?.toolName ?? 'None'],
-            ['Last update', '1 phÃºt trÆ°á»›c'],
+            ['Run Plan', planSummary],
           ]} />
           <div className="px-4 pb-4"><ProgressBar value={data.toolProgress || streamProgress} /></div>
         </Panel>
@@ -767,6 +770,8 @@ function TicketSide() {
             <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
               <span>{artifacts.length} linked artifacts · Tools {data.completedToolCalls.length}/{data.totalToolsExecuted || data.run?.toolCalls.length || 0} {data.latestStreamEvent ? `- ${data.latestStreamEvent.message}` : ''}</span>
               <div className="flex items-center gap-3">
+                <button data-workflow="ticket-create-plan" onClick={() => void createRunPlanAction(data.ticket.id, 'demo-run-execution')} className="font-semibold text-brand-600">Create plan</button>
+                <button data-workflow="ticket-start-plan" onClick={() => plan ? void startRunFromPlan(plan.id) : void createRunPlanAction(data.ticket.id, 'demo-run-execution')} className="font-semibold text-brand-600">Start plan</button>
                 <button data-workflow="ticket-start-stream" onClick={() => void startStreamingRun(data.ticket.id)} className="font-semibold text-brand-600">Start stream</button>
                 <a href="/runs/demo-run" onClick={() => data.selectedArtifactId ? selectArtifact(data.selectedArtifactId) : undefined} className="text-brand-600">Open run</a>
               </div>
@@ -813,7 +818,9 @@ function RunInspector({ runId }: { runId: string }) {
   const primaryTool = availableTools[0];
   const workflowReadiness = data.workflowReadiness;
   const missingCapabilities = data.missingCapabilities.length ? data.missingCapabilities.join(', ') : 'None';
-  return <div data-parity-id="run.inspector-panel" className="space-y-4"><Panel title="Run Inspector"><SideRows rows={[['Tool Registry', <span key="runtime-discovery" className="inline-flex items-baseline gap-2 leading-none"><span>{discovery.status} / {registry.tools.length} tools</span><button data-runtime-discovery-refresh onClick={() => void refreshRuntimeDiscovery()} className="align-baseline text-xs font-bold leading-none text-brand-600">Refresh</button></span>], ['Available Tools', primaryTool?.name ?? 'Mock runtime tools'], ['Capabilities', `${data.capabilities.length} mapped`], ['Workflow Readiness', workflowReadiness.ready ? 'Ready' : `Missing ${workflowReadiness.missingCapabilities.length}`], ['Missing Capabilities', missingCapabilities], ['Compatible Models', `${compatibleModels} mappings`]]} /></Panel><div data-parity-id="run.cost-card"><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', `$${data.run.cost.toFixed(3)}`], ['Budget status', 'Trong giới hạn']]} /></Panel></div><div data-parity-id="run.risk-card"><Panel title="Rủi ro"><SideRows rows={[['Risk level', workflowStatusLabel(data.run.riskLevel)], ['Policy checks', 'Passed'], ['Pending approvals', '0']]} /></Panel></div><div data-parity-id="run.artifacts-card" className="h-[216px] overflow-hidden"><Panel title={`Artifacts (${data.artifacts.length})`}><div className="p-3"><ArtifactViewer artifacts={data.artifacts} selectedArtifactId={data.selectedArtifactId} preview={data.selectedArtifactPreview ?? data.primaryArtifactPreview} onSelectArtifact={selectArtifact} compact /></div></Panel></div><div data-parity-id="run.controls-card"><Panel title="Controls"><div className="grid grid-cols-2 gap-2 p-4"><Button data-workflow="run-pause" variant="warning" onClick={() => void pauseRun(runId)}>Pause run</Button><Button data-workflow="run-resume" variant="secondary" onClick={() => void resumeRun(runId)}>Resume run</Button><Button data-workflow="run-retry" variant="secondary" onClick={() => void retryRun(runId)}>Retry run</Button><Button data-workflow="run-cancel" variant="secondary" onClick={() => void cancelAgentRun(runId)}>Cancel run</Button></div></Panel></div></div>;
+  const plan = data.currentPlan;
+  const planStatus = plan ? `${plan.status} · ${plan.steps.length} steps` : 'No plan';
+  return <div data-parity-id="run.inspector-panel" className="space-y-4"><Panel title="Run Inspector"><SideRows rows={[['Tool Registry', <span key="runtime-discovery" className="inline-flex items-baseline gap-2 leading-none"><span>{discovery.status} / {registry.tools.length} tools</span><button data-runtime-discovery-refresh onClick={() => void refreshRuntimeDiscovery()} className="align-baseline text-xs font-bold leading-none text-brand-600">Refresh</button></span>], ['Available Tools', primaryTool?.name ?? 'Mock runtime tools'], ['Capabilities', `${data.capabilities.length} mapped`], ['Workflow Readiness', workflowReadiness.ready ? 'Ready' : `Missing ${workflowReadiness.missingCapabilities.length}`], ['Missing Capabilities', plan?.missingCapabilities.join(', ') || missingCapabilities], ['Compatible Models', `${compatibleModels} mappings`]]} /></Panel><div data-parity-id="run.cost-card"><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', `$${data.run.cost.toFixed(3)}`], ['Plan Status', planStatus]]} /></Panel></div><div data-parity-id="run.risk-card"><Panel title="Rủi ro"><SideRows rows={[['Risk level', workflowStatusLabel(data.run.riskLevel)], ['Policy checks', 'Passed'], ['Pending approvals', '0']]} /></Panel></div><div data-parity-id="run.artifacts-card" className="h-[216px] overflow-hidden"><Panel title={`Artifacts (${data.artifacts.length})`}><div className="p-3"><ArtifactViewer artifacts={data.artifacts} selectedArtifactId={data.selectedArtifactId} preview={data.selectedArtifactPreview ?? data.primaryArtifactPreview} onSelectArtifact={selectArtifact} compact /></div></Panel></div><div data-parity-id="run.controls-card"><Panel title="Controls"><div className="grid grid-cols-2 gap-2 p-4"><Button data-workflow="run-pause" variant="warning" onClick={() => void pauseRun(runId)}>Pause run</Button><Button data-workflow="run-resume" variant="secondary" onClick={() => void resumeRun(runId)}>Resume run</Button><Button data-workflow="run-retry" variant="secondary" onClick={() => void retryRun(runId)}>Retry run</Button><Button data-workflow="run-cancel" variant="secondary" onClick={() => void cancelAgentRun(runId)}>Cancel run</Button></div></Panel></div></div>;
 }
 
 function ApprovalCenterRealPage() {
