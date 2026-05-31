@@ -1,5 +1,6 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import { clearAuthorizationAudit, recordAuthorizationDecision } from './authorization-audit-store';
+import { getPolicyValue } from './policy-inheritance-store';
 import {
   authorizeRole,
   denialFromDecision,
@@ -147,7 +148,9 @@ function persistDecision(decision: AuthorizationDecision): AuthorizationDecision
     ...state,
     authorizationHistory: [decision, ...state.authorizationHistory].slice(0, 100),
   }));
-  recordAuthorizationDecision(decision);
+  if (getPolicyValue('rbac', 'auditRequired', true)) {
+    recordAuthorizationDecision(decision);
+  }
   return decision;
 }
 

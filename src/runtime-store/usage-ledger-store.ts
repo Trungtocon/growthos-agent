@@ -1,4 +1,5 @@
 import type { BillingLedger, QuotaEvaluationReport, UsageQuota, UsageRecord } from '../integrations/growthos-runtime/usage-ledger';
+import { getPolicyValue } from '../runtime/policy-inheritance-store';
 
 interface UsageLedgerState {
   records: Record<string, UsageRecord>;
@@ -162,7 +163,17 @@ export function clearUsageLedger(runId: string) {
 }
 
 export function getUsageQuotas(): UsageQuota[] {
-  return Object.values(readUsageState().quotas);
+  const inheritedToolCallLimit = getPolicyValue('quota', 'maxToolCalls', defaultQuotas.find((quota) => quota.id === 'run-tool-calls-demo')?.limit ?? 8);
+  return Object.values(readUsageState().quotas).map((quota) => {
+    if (quota.id !== 'run-tool-calls-demo') return quota;
+    const limit = Math.min(quota.limit, Number(inheritedToolCallLimit));
+    return {
+      ...quota,
+      limit,
+      remaining: Math.max(0, limit - quota.used),
+      status: quota.used > limit ? 'exceeded' : quota.used > limit * 0.8 ? 'warning' : quota.status,
+    };
+  });
 }
 
 export function setUsageQuotas(quotas: UsageQuota[]): UsageQuota[] {

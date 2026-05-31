@@ -2,6 +2,7 @@ import type { RunPlan, RunPlanStep } from './run-planner';
 import { getRunPlan } from '../../runtime-store/run-plan-store';
 import { getToolRegistry } from '../../runtime-store/tool-registry-store';
 import { getExecutionBudgetRegistry, upsertBudgetReport } from '../../runtime-store/execution-budget-store';
+import { getPolicyValue } from '../../runtime/policy-inheritance-store';
 
 export type ExecutionRiskLevel = 'low' | 'medium' | 'high' | 'critical';
 export type BudgetPolicyStatus = 'allowed' | 'warning' | 'blocked';
@@ -194,7 +195,11 @@ export function evaluateBudget(planId: string): ExecutionBudgetReport {
 
   const registry = getExecutionBudgetRegistry();
   const estimate = estimateRunPlanBudget(plan);
-  const budget = registry.budget;
+  const inheritedMaxCost = getPolicyValue('budget', 'maxCost', registry.budget.maxCost);
+  const budget = {
+    ...registry.budget,
+    maxCost: Math.min(registry.budget.maxCost, Number(inheritedMaxCost)),
+  };
   const results: BudgetPolicyResult[] = [
     budgetResult(
       'budget_limit_exceeded',

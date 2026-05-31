@@ -39,6 +39,7 @@ import {
   generateRbacArtifacts,
 } from '../../runtime/rbac-store';
 import { generateAuthorizationAuditArtifacts } from '../../runtime/authorization-audit-store';
+import { generatePolicyInheritanceArtifacts } from '../../runtime/policy-inheritance-store';
 import type { AuthorizationDecision } from '../../runtime/rbac';
 import {
   evaluateQuotaAfterRun,
@@ -922,6 +923,21 @@ export function exportAuthorizationAuditArtifacts(runId = DEMO_RUN_ID): Artifact
     entityId: runId,
     actorId: DEMO_AGENT_ID,
     title: 'Authorization audit export generated',
+    status: 'success',
+  });
+  return artifacts;
+}
+
+export function exportPolicyInheritanceArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  const auth = canExportArtifact(runId);
+  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  const artifacts = generatePolicyInheritanceArtifacts(runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Policy inheritance export generated',
     status: 'success',
   });
   return artifacts;

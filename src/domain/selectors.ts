@@ -121,6 +121,17 @@ import {
   getDeniedActionSummary as getStoredDeniedActionSummary,
   getHighRiskAuthorizationEvents as getStoredHighRiskAuthorizationEvents,
 } from '../runtime/authorization-audit-store';
+import {
+  getEffectivePolicies as getStoredEffectivePolicies,
+  getEffectivePolicyByCategory as getStoredEffectivePolicyByCategory,
+  getLockedPolicies as getStoredLockedPolicies,
+  getPolicyConflicts as getStoredPolicyConflicts,
+  getPolicyInheritanceReport as getStoredPolicyInheritanceReport,
+  getPolicyInheritanceTree as getStoredPolicyInheritanceTree,
+  getPolicyOverrides as getStoredPolicyOverrides,
+  getPolicyTraceForRuntime as getStoredPolicyTraceForRuntime,
+  getPolicyWarnings as getStoredPolicyWarnings,
+} from '../runtime/policy-inheritance-store';
 
 export interface KpiViewModel {
   label: string;
@@ -610,6 +621,63 @@ export function selectAuthorizationAuditByActor(actorId?: string) {
   return getStoredAuthorizationAuditByActor(actorId);
 }
 
+export function selectPolicyInheritanceTree() {
+  return getStoredPolicyInheritanceTree();
+}
+
+export function selectEffectivePolicies() {
+  return getStoredEffectivePolicies();
+}
+
+export function selectEffectivePolicyByCategory(category: Parameters<typeof getStoredEffectivePolicyByCategory>[0]) {
+  return getStoredEffectivePolicyByCategory(category);
+}
+
+export function selectPolicyConflicts() {
+  return getStoredPolicyConflicts();
+}
+
+export function selectLockedPolicies() {
+  return getStoredLockedPolicies();
+}
+
+export function selectPolicyOverrides() {
+  return getStoredPolicyOverrides();
+}
+
+export function selectPolicyInheritanceReport() {
+  return getStoredPolicyInheritanceReport();
+}
+
+export function selectPolicyTraceForRuntime(runId?: string) {
+  return getStoredPolicyTraceForRuntime(runId);
+}
+
+export function selectPolicyWarnings() {
+  return getStoredPolicyWarnings();
+}
+
+export function selectPolicyInheritanceViewModel() {
+  const report = selectPolicyInheritanceReport();
+  const tree = selectPolicyInheritanceTree();
+  return {
+    ...report,
+    tree,
+    effectivePolicies: selectEffectivePolicies(),
+    conflicts: selectPolicyConflicts(),
+    lockedPolicies: selectLockedPolicies(),
+    overrides: selectPolicyOverrides(),
+    runtimeTrace: selectPolicyTraceForRuntime(),
+    warnings: selectPolicyWarnings(),
+    kpis: [
+      { label: 'Effective', value: String(report.summary.effectivePolicies), tone: 'blue' },
+      { label: 'Conflicts', value: String(report.summary.conflicts), tone: report.summary.conflicts ? 'red' : 'green' },
+      { label: 'Locked', value: String(report.summary.locked), tone: 'amber' },
+      { label: 'Overrides', value: String(report.summary.overrides), tone: 'cyan' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectRoleMatrix() {
   return getStoredRoleMatrix();
 }
@@ -641,6 +709,7 @@ export function selectAccessControlViewModel() {
     actorBreakdown: auditSummary.byActor,
     workspaceBreakdown: auditSummary.byWorkspace,
     tenantBreakdown: auditSummary.byTenant,
+    policyInheritance: selectPolicyInheritanceViewModel(),
     roleMatrix,
     permissionMatrix,
     users: [
@@ -1508,6 +1577,7 @@ export function selectWorkspaceGovernanceViewModel() {
     organizationHealth: organizationSummary.organizationHealth,
     usage,
     warnings,
+    policyInheritance: selectPolicyInheritanceViewModel(),
     kpis: [
       { label: 'Members', value: String(summary.members.length), tone: 'blue' },
       { label: 'Teams', value: String(summary.teams.length), tone: 'cyan' },

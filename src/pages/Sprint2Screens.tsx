@@ -71,6 +71,7 @@ import {
   selectIntegrationsHubViewModel,
   selectMcpServerManagerViewModel,
   selectOrganizationGovernanceViewModel,
+  selectPolicyInheritanceViewModel,
   selectProjectDetailViewModel,
   selectProjectsListViewModel,
   selectRolesPermissionsViewModel,
@@ -130,6 +131,7 @@ export const sprint2Routes = new Set([
   '/integrations/demo-integration',
   '/mcp',
   '/access',
+  '/policies',
   '/organization',
   '/workspace',
   '/workspaces',
@@ -3352,6 +3354,107 @@ function AccessControlScreen() {
   );
 }
 
+function PolicyInheritanceScreen() {
+  const vm = selectPolicyInheritanceViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="policies.header"
+        title="Policy Inheritance"
+        subtitle="Read-only policy cascade from organization to tenant, workspace, and runtime execution."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Export trace</Button><Button><ShieldCheck className="h-4 w-4" />Review conflicts</Button></>}
+      />
+      <MetricBand parityId="policies.kpi-band" items={vm.kpis} />
+      <div data-parity-id="policies.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="policies.left-panel" className="space-y-5">
+          <Panel title="Policy Inheritance Tree">
+            <div className="grid grid-cols-4 gap-3 p-5">
+              {[
+                ['Organization', vm.tree.organization],
+                ['Tenant', vm.tree.tenants],
+                ['Workspace', vm.tree.workspaces],
+                ['Runtime', vm.tree.runtime],
+              ].map(([label, rows]) => (
+                <div key={String(label)} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex items-center justify-between gap-2"><b>{String(label)}</b><Badge tone="blue">{(rows as unknown[]).length}</Badge></div>
+                  <div className="mt-3 space-y-2 text-xs">
+                    {(rows as Array<{ id: string; category: string; key: string; locked: boolean }>).slice(0, 5).map((policy) => (
+                      <div key={policy.id} className="rounded-lg bg-slate-50 px-2 py-2">
+                        <b>{policy.category}.{policy.key}</b>
+                        <span className="ml-2 text-slate-500">{policy.locked ? 'locked' : 'open'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Effective Policies">
+            <div className="grid grid-cols-[1.4fr_110px_1fr_80px] gap-2 p-5 text-sm">
+              <b>Policy</b><b>Scope</b><b>Value</b><b>Locked</b>
+              {vm.effectivePolicies.map((policy) => (
+                <div key={policy.id} className="contents">
+                  <span className="rounded-lg bg-slate-50 px-3 py-2 font-semibold">{policy.category}.{policy.key}</span>
+                  <Badge tone={policy.scope === 'RUNTIME' ? 'amber' : policy.scope === 'WORKSPACE' ? 'blue' : 'slate'}>{policy.scope}</Badge>
+                  <span className="rounded-lg bg-slate-50 px-3 py-2">{String(policy.value)}</span>
+                  <Badge tone={policy.locked ? 'red' : 'green'}>{policy.locked ? 'Yes' : 'No'}</Badge>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Overrides">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.overrides.slice(0, 8).map((override) => (
+                <div key={override.id} className="grid grid-cols-[1fr_80px] gap-3 py-3 text-sm">
+                  <div><b>{override.childPolicyId}</b><p className="mt-1 text-slate-500">{override.reason}</p></div>
+                  <Badge tone={override.allowed ? 'green' : 'red'}>{override.allowed ? 'Allowed' : 'Blocked'}</Badge>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="policies.right-panel" className="space-y-5">
+          <Panel title="Conflicts">
+            <div className="space-y-3 p-5">
+              {(vm.conflicts.length ? vm.conflicts : [{ id: 'none', category: 'policy', key: 'none', reason: 'No active policy conflicts.', severity: 'warning' }]).slice(0, 6).map((conflict) => (
+                <div key={conflict.id} className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm">
+                  <b className="text-red-700">{conflict.category}.{conflict.key}</b>
+                  <p className="mt-1 text-red-600">{conflict.reason}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Locked Policies">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.lockedPolicies.slice(0, 8).map((policy) => (
+                <div key={policy.id} className="flex items-center justify-between gap-3 py-3 text-sm">
+                  <div><b>{policy.category}.{policy.key}</b><p className="mt-1 text-slate-500">{policy.scope}</p></div>
+                  <Badge tone="red">Locked</Badge>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Runtime Trace">
+            <div className="space-y-3 p-5 text-sm">
+              {vm.runtimeTrace.map((policy) => (
+                <div key={policy.id} className="rounded-xl border border-slate-100 p-3">
+                  <b>{policy.category}.{policy.key}</b>
+                  <p className="mt-1 text-slate-500">{policy.scope} {'->'} {String(policy.value)}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Warnings">
+            <div className="space-y-2 p-5 text-sm text-slate-600">
+              {(vm.warnings.length ? vm.warnings : ['Policy inheritance is currently healthy.']).slice(0, 6).map((warning) => <div key={warning} className="rounded-lg bg-amber-50 px-3 py-2 text-amber-700">{warning}</div>)}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WorkspaceGovernanceScreen() {
   const vm = selectWorkspaceGovernanceViewModel();
   const budgetUsed = vm.budget.monthlyLimit ? Math.round((vm.budget.currentSpend / vm.budget.monthlyLimit) * 100) : 0;
@@ -3703,6 +3806,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
   if (route === '/access') return <AccessControlScreen />;
+  if (route === '/policies') return <PolicyInheritanceScreen />;
   if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;
   if (route === '/workspaces') return <WorkspacesManagerScreen />;

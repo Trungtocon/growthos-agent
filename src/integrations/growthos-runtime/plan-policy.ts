@@ -2,6 +2,7 @@ import type { RunPlan, RunPlanStep } from './run-planner';
 import { getRunPlan } from '../../runtime-store/run-plan-store';
 import { getToolRegistry } from '../../runtime-store/tool-registry-store';
 import { evaluateBudget, type ExecutionBudgetReport, type ExecutionEstimate } from './execution-budget';
+import { getPolicyValue } from '../../runtime/policy-inheritance-store';
 
 export type PlanPolicySeverity = 'info' | 'warning' | 'blocking';
 export type PlanPolicyTarget = 'plan' | 'step' | 'tool' | 'artifact' | 'approval';
@@ -169,7 +170,8 @@ function stepCompatibilitySupported(step: RunPlanStep): boolean {
 }
 
 export function getApprovalRequiredSteps(plan: RunPlan): RunPlanStep[] {
-  return plan.steps.filter((step) => step.requiresApproval || isArtifactStep(step) || isExternalStep(step) || stepToolRisk(step));
+  const artifactRequiresApproval = getPolicyValue('approval', 'artifactRequiresApproval', true);
+  return plan.steps.filter((step) => step.requiresApproval || (artifactRequiresApproval && isArtifactStep(step)) || isExternalStep(step) || stepToolRisk(step));
 }
 
 export function evaluateStepPolicy(planId: string, stepId: string): PlanPolicyResult[] {
