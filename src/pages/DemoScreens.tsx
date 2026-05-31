@@ -33,7 +33,7 @@ import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/Ar
 import type { Tone } from '../data/demoScreens';
 import { selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
 import type { ToolCallViewModel } from '../domain/selectors';
-import { approveApproval, assignTicket, cancelAgentRun, escalateTicket, pauseRun, rejectApproval, resolveTicket, resumeRun, retryRun, startAgentRun } from '../state/command-actions';
+import { approveApproval, assignTicket, cancelAgentRun, escalateTicket, pauseRun, rejectApproval, resolveTicket, resumeRun, retryRun, startAgentRun, startStreamingRun } from '../state/command-actions';
 import type { WorkflowEvent } from '../state/event-log';
 import { selectAgent, selectApproval, selectArtifact, selectTicket, setActiveTab, setRouteFilter, setSearchQuery } from '../state/ui-actions';
 import { useWorkflowStateSnapshot } from '../state/workflow-engine';
@@ -731,9 +731,52 @@ function ToolCallList({ rows }: { rows?: ToolCallViewModel[] }) {
 function TicketSide() {
   const { data } = useTicketDetailData();
   const progress = data.ticket.status === 'done' ? 100 : 68;
+  const streamProgress = data.streamProgress || progress;
   const artifacts = data.run?.artifacts ?? [];
   const artifactPreview = data.selectedArtifactPreview ?? data.primaryArtifactPreview;
-  return <div className="space-y-4"><div data-parity-id="ticket.status-card"><Panel title="Trạng thái thực thi"><SideRows rows={[['Status', <WorkflowEntityStatus key="ticket-status" entityId={data.ticket.id} status={data.ticket.status} />], ['Elapsed time', '8m 24s'], ['Progress', `${progress}%`], ['Current step', data.run?.currentStep ?? 'Waiting'], ['Last update', '1 phút trước']]} /><div className="px-4 pb-4"><ProgressBar value={progress} /></div></Panel></div><Panel title="Chi phí"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', `$${(data.run?.cost ?? 0.029).toFixed(3)}`], ['Budget status', 'Trong giới hạn']]} /></Panel><Panel title="Rủi ro"><SideRows rows={[['Risk level', workflowStatusLabel(data.ticket.riskLevel)], ['Policy checks', 'Passed'], ['Pending approvals', data.approval?.status === 'pending' ? '1' : '0']]} /></Panel><div data-parity-id="ticket.actions-card"><Panel title="Workflow"><div className="grid grid-cols-2 gap-3 p-4"><Button data-workflow="ticket-assign" onClick={() => void assignTicket(data.ticket.id)}>Assign Research</Button><Button data-workflow="ticket-escalate" variant="warning" onClick={() => void escalateTicket(data.ticket.id)}>Escalate</Button><Button data-workflow="ticket-resolve" variant="success" onClick={() => void resolveTicket(data.ticket.id)}>Resolve</Button><Button data-workflow="ticket-start-run" variant="secondary" onClick={() => void startAgentRun(data.ticket.id)}>Start Hermes</Button></div></Panel></div><div data-parity-id="ticket.artifacts-card" className="h-[192px] overflow-hidden"><Panel title="Kết quả đầu ra"><div className="space-y-3 p-4"><div className="flex items-center justify-between text-xs font-semibold text-slate-500"><span>{artifacts.length} linked artifacts</span><a href="/runs/demo-run" onClick={() => data.selectedArtifactId ? selectArtifact(data.selectedArtifactId) : undefined} className="text-brand-600">Open run</a></div>{artifactPreview ? <div className="truncate text-sm font-bold text-slate-950">{artifactPreview.name}</div> : null}<ArtifactPreviewPanel preview={artifactPreview} compact /></div></Panel></div></div>;
+  return (
+    <div className="space-y-2">
+      <div data-parity-id="ticket.status-card">
+        <Panel title="Tráº¡ng thÃ¡i thá»±c thi">
+          <SideRows rows={[
+            ['Status', <WorkflowEntityStatus key="ticket-status" entityId={data.ticket.id} status={data.ticket.status} />],
+            ['Elapsed time', '8m 24s'],
+            ['Progress', `${progress}%`],
+            ['Current step', data.run?.currentStep ?? 'Waiting'],
+            ['Last update', '1 phÃºt trÆ°á»›c'],
+          ]} />
+          <div className="px-4 pb-4"><ProgressBar value={progress} /></div>
+        </Panel>
+      </div>
+      <Panel title="Chi phÃ­"><SideRows rows={[['Estimated cost', '$0.08'], ['Actual cost', `$${(data.run?.cost ?? 0.029).toFixed(3)}`], ['Budget status', 'Trong giá»›i háº¡n']]} /></Panel>
+      <Panel title="Rá»§i ro"><SideRows rows={[['Risk level', workflowStatusLabel(data.ticket.riskLevel)], ['Policy checks', 'Passed'], ['Pending approvals', data.approval?.status === 'pending' ? '1' : '0']]} /></Panel>
+      <div data-parity-id="ticket.actions-card">
+        <Panel title="Workflow">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            <Button data-workflow="ticket-assign" onClick={() => void assignTicket(data.ticket.id)}>Assign Research</Button>
+            <Button data-workflow="ticket-escalate" variant="warning" onClick={() => void escalateTicket(data.ticket.id)}>Escalate</Button>
+            <Button data-workflow="ticket-resolve" variant="success" onClick={() => void resolveTicket(data.ticket.id)}>Resolve</Button>
+            <Button data-workflow="ticket-start-run" variant="secondary" onClick={() => void startAgentRun(data.ticket.id)}>Start Hermes</Button>
+          </div>
+        </Panel>
+      </div>
+      <div data-parity-id="ticket.artifacts-card" className="h-[192px] overflow-hidden">
+        <Panel title="Káº¿t quáº£ Ä‘áº§u ra">
+          <div className="space-y-3 p-4">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <span>{artifacts.length} linked artifacts {data.latestStreamEvent ? `- ${data.latestStreamEvent.message}` : ''}</span>
+              <div className="flex items-center gap-3">
+                <button data-workflow="ticket-start-stream" onClick={() => void startStreamingRun(data.ticket.id)} className="font-semibold text-brand-600">Start stream</button>
+                <a href="/runs/demo-run" onClick={() => data.selectedArtifactId ? selectArtifact(data.selectedArtifactId) : undefined} className="text-brand-600">Open run</a>
+              </div>
+            </div>
+            {artifactPreview ? <div className="truncate text-sm font-bold text-slate-950">{artifactPreview.name}</div> : null}
+            <ArtifactPreviewPanel preview={artifactPreview} compact />
+          </div>
+        </Panel>
+      </div>
+    </div>
+  );
 }
 
 function SideRows({ rows }: { rows: Array<[string, React.ReactNode]> }) {
@@ -749,7 +792,7 @@ function RunConsoleRealPage() {
       </div>
       <div data-parity-id="run.status-band" className="h-[230px] overflow-hidden">
         <Panel className="mb-5"><div className="grid grid-cols-[130px_1.4fr_1.2fr_1fr_1fr_1fr_1.5fr] divide-x divide-slate-100 p-4 text-sm"><InfoCell label="Run ID" value="run_2381" /><InfoCell label="Ticket" value="Audit Module 3 - Landing & Lead Capture" /><InfoCell label="Agent" value="Hermes QA Agent" /><InfoCell label="Project" value="GrowthOS V2" /><InfoCell label="Status" value={<WorkflowEntityStatus entityId={data.run.id} status={data.run.status} />} /><InfoCell label="Elapsed" value="8m 24s" /><InfoCell label="Current step" value={data.run.currentStep} /></div></Panel>
-        {kpiGrid([{ label: 'Progress', value: '68%', tone: 'blue', icon: Gauge }, { label: 'Elapsed Time', value: '8m 24s', tone: 'blue', icon: Clock3 }, { label: 'Estimated Remaining', value: '4m', tone: 'cyan', icon: Timer }, { label: 'Actual Cost', value: '$0.029', tone: 'green', icon: DollarSign }, { label: 'Tool Calls', value: '12', tone: 'blue', icon: Wrench }, { label: 'Risk Level', value: 'Medium', tone: 'amber', icon: ShieldCheck }], true)}
+        {kpiGrid([{ label: 'Progress', value: `${data.streamProgress || 68}%`, tone: 'blue', icon: Gauge }, { label: 'Elapsed Time', value: '8m 24s', tone: 'blue', icon: Clock3 }, { label: 'Estimated Remaining', value: data.streamComplete ? 'Done' : '4m', tone: 'cyan', icon: Timer }, { label: 'Actual Cost', value: `$${data.run.cost.toFixed(3)}`, tone: 'green', icon: DollarSign }, { label: 'Tool Calls', value: String(data.toolCallRows.length), tone: 'blue', icon: Wrench }, { label: 'Risk Level', value: workflowStatusLabel(data.run.riskLevel), tone: 'amber', icon: ShieldCheck }], true)}
       </div>
       <div data-parity-id="run.main-grid" className="mt-5 grid grid-cols-[1.05fr_1fr_360px] gap-4"><div data-parity-id="run.timeline-panel" className="min-w-0"><div data-parity-id="run.timeline-card"><Panel title="Live Timeline"><div className="space-y-3 p-4">{data.timelineRows.map((step, index) => <div key={step.name} className="grid grid-cols-[24px_1fr_80px_70px_70px_20px] items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm"><span className="grid h-6 w-6 place-items-center rounded-full bg-blue-50 text-xs font-bold text-brand-600">{index + 1}</span><b>{step.name}</b><Badge tone={statusTone(step.status)}>{step.status}</Badge><span>{step.time}</span><span>{step.duration}</span><span>{step.cost}</span></div>)}</div></Panel></div></div><div data-parity-id="run.logs-panel" className="min-w-0 space-y-4"><div data-parity-id="run.tool-calls-card" className="h-[270px] overflow-hidden"><Panel title="Tool Calls" className="h-full overflow-hidden"><div className="p-4"><ToolCallList rows={data.toolCallRows} /></div></Panel></div><div data-parity-id="run.logs-card"><Panel title="Logs"><div className="relative"><pre className="m-4 h-72 overflow-hidden rounded-xl bg-slate-950 p-5 font-mono text-xs leading-6 text-slate-200">{data.run.logs.map((log, index) => `${String(index + 1).padStart(4, '0')} [${log.timestamp.slice(11, 19)}] ${log.level.toUpperCase()} ${log.message}`).join('\n')}</pre></div></Panel></div></div><RunInspector runId={data.run.id} /></div>
     </div>

@@ -5,6 +5,16 @@ export type RuntimeMode = 'mock' | 'sandbox';
 export type RuntimeRunCommand = 'pause' | 'resume' | 'retry' | 'cancel';
 export type RuntimeDecisionOutcome = Extract<ApprovalStatus, 'approved' | 'rejected'>;
 export type RuntimeIntegrationStatus = 'online' | 'offline' | 'degraded';
+export type RunStreamEventType =
+  | 'run.queued'
+  | 'run.started'
+  | 'tool.started'
+  | 'tool.progress'
+  | 'tool.completed'
+  | 'artifact.created'
+  | 'approval.requested'
+  | 'run.completed'
+  | 'run.failed';
 
 export interface HumanApprovalGate {
   id: string;
@@ -28,6 +38,24 @@ export interface RuntimeCommandResult {
   runId: string;
   status: RunStatus;
   message: string;
+}
+
+export interface RunStreamEvent {
+  id: string;
+  runId: string;
+  sequence: number;
+  type: RunStreamEventType;
+  message: string;
+  timestamp: string;
+  payload?: Record<string, unknown>;
+}
+
+export interface RuntimeStreamResult {
+  runId: string;
+  status: RunStatus;
+  message: string;
+  event: RunStreamEvent;
+  complete: boolean;
 }
 
 export interface RuntimeServiceHealth {

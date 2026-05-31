@@ -5,13 +5,14 @@ import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
 import { mapTicketToHermesTask } from './ticket-to-task-mapper';
-import type { RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand } from './runtime-types';
+import type { RunStreamEvent, RunStreamEventType, RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand, RuntimeStreamResult } from './runtime-types';
 import { resolveRuntimeConfig } from './runtime-config';
 import { getApprovalById, upsertApproval } from '../../runtime-store/approval-store';
 import { upsertArtifact } from '../../runtime-store/artifact-store';
 import { appendRuntimeEvent } from '../../runtime-store/event-store';
 import { getRunById, setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
+import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, markStreamComplete } from '../../runtime-store/stream-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
@@ -240,6 +241,19 @@ function appendLifecycleEvent(command: Parameters<typeof appendRuntimeEvent>[0][
   });
 }
 
+function appendStreamLifecycleEvent(run: Run, type: RunStreamEventType, message: string, payload?: Record<string, unknown>): RunStreamEvent {
+  const event = appendStreamEvent(run.id, { type, message, payload });
+  appendRuntimeEvent({
+    command: type,
+    entityType: 'run',
+    entityId: run.id,
+    actorId: run.agentId,
+    title: message,
+    status: type === 'run.failed' ? 'failed' : ['run.queued', 'tool.started', 'tool.progress', 'approval.requested'].includes(type) ? 'pending' : 'success',
+  });
+  return event;
+}
+
 function appendExecutionEvents(run: Run) {
   run.toolCalls.forEach((tool) => {
     appendRuntimeEvent({
@@ -261,6 +275,209 @@ function appendExecutionEvents(run: Run) {
       status: 'success',
     });
   });
+}
+
+function streamStep(runId: string, name: string, status: Run['steps'][number]['status'], durationSeconds = 1, cost = 0): Run['steps'][number] {
+  return { id: `stream-step-${runId}-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name, status, startedAt: runtimeNow(), durationSeconds, cost };
+}
+
+function upsertStep(steps: Run['steps'], next: Run['steps'][number]): Run['steps'] {
+  return upsertById(steps, next);
+}
+
+function upsertTool(tools: ToolCall[], next: ToolCall): ToolCall[] {
+  return upsertById(tools, next);
+}
+
+function updateStreamRun(run: Run, patch: Partial<Run>, lifecycle: RuntimeLifecycle): Run {
+  const nextRun = {
+    ...run,
+    ...patch,
+    logs: patch.logs ?? run.logs,
+    steps: patch.steps ?? run.steps,
+    toolCalls: patch.toolCalls ?? run.toolCalls,
+    artifacts: patch.artifacts ?? run.artifacts,
+  };
+  upsertRun(nextRun, lifecycle);
+  nextRun.artifacts.forEach((artifact) => upsertArtifact(artifact));
+  return nextRun;
+}
+
+function streamResult(run: Run, event: RunStreamEvent, complete = false): RuntimeStreamResult {
+  return {
+    runId: run.id,
+    status: run.status,
+    message: event.message,
+    event,
+    complete,
+  };
+}
+
+function currentStreamSequence(runId: string): number {
+  return getStreamEvents(runId).length;
+}
+
+function createQueuedStreamRun(ticketId: string): Run {
+  const ticket = demoTickets.find((item) => item.id === ticketId);
+  const existingRun = baseRunForTicket(ticketId);
+  if (!ticket || !existingRun) {
+    throw new Error(`Cannot start streaming run for missing ticket ${ticketId}`);
+  }
+  const task = mapTicketToHermesTask(ticket);
+  return {
+    ...existingRun,
+    ticketId: ticket.id,
+    agentId: task.agentId,
+    status: 'queued',
+    currentStep: 'Live stream queued',
+    elapsedSeconds: 0,
+    logs: [
+      runtimeLog(`stream-log-queued-${ticket.id}`, 'Streaming Hermes run queued'),
+      ...existingRun.logs.filter((log) => !log.id.startsWith('stream-log-')),
+    ],
+    steps: [
+      streamStep(existingRun.id, 'Streaming run queued', 'running', 0, 0),
+      ...existingRun.steps.filter((step) => !step.id.startsWith('stream-step-')),
+    ],
+  };
+}
+
+export async function startStreamingRun(ticketId: string): Promise<RuntimeStreamResult> {
+  const queuedRun = createQueuedStreamRun(ticketId);
+  clearStream(queuedRun.id);
+  const run = updateStreamRun(queuedRun, {}, 'QUEUED');
+  const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued', { ticketId });
+  return streamResult(run, event);
+}
+
+export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult> {
+  const run = baseRunById(runId);
+  if (!run) throw new Error(`Cannot advance missing stream run ${runId}`);
+  if (isStreamComplete(runId)) {
+    const events = getStreamEvents(runId);
+    const lastEvent = events[events.length - 1] ?? appendStreamLifecycleEvent(run, 'run.completed', 'Stream already completed');
+    return streamResult(run, lastEvent, true);
+  }
+
+  const nextSequence = currentStreamSequence(runId) + 1;
+  if (nextSequence <= 1) {
+    const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued');
+    return streamResult(updateStreamRun(run, { status: 'queued', currentStep: 'Live stream queued' }, 'QUEUED'), event);
+  }
+
+  if (nextSequence === 2) {
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Hermes live stream started',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 4),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Hermes live stream started', 'running', 1, 0.001)),
+      logs: [runtimeLog(`stream-log-started-${run.id}`, 'Hermes streaming channel opened'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'run.started', 'Hermes live stream started');
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 3) {
+    const tool = runtimeTool('stream-tool-context', 'Context Analyzer', 'running', 'ticket acceptance criteria', 'Analyzing ticket context', 0.002);
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Running context analyzer',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 18),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Context analyzer running', 'running', 3, 0.002)),
+      toolCalls: upsertTool(run.toolCalls, tool),
+      logs: [runtimeLog(`stream-log-tool-start-${run.id}`, 'Context Analyzer tool started'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'Context Analyzer started', { toolCallId: tool.id });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 4) {
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Context analyzer 60% complete',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 36),
+      logs: [runtimeLog(`stream-log-progress-${run.id}`, 'Context Analyzer progress 60%'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'Context Analyzer progress 60%', { progress: 60, toolCallId: 'stream-tool-context' });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 5) {
+    const tool = runtimeTool('stream-tool-context', 'Context Analyzer', 'success', 'ticket acceptance criteria', 'Context pack generated', 0.004);
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Context analyzer completed',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 48),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Context analyzer completed', 'success', 8, 0.004)),
+      toolCalls: upsertTool(run.toolCalls, tool),
+      logs: [runtimeLog(`stream-log-tool-complete-${run.id}`, 'Context Analyzer completed'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'Context Analyzer completed', { toolCallId: tool.id });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 6) {
+    const artifact = runtimeOutputArtifacts(run.id, runtimeNow())[0];
+    const artifacts = mergeArtifacts([artifact], run.artifacts);
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Paperclip artifact generated',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 62),
+      artifacts,
+      steps: upsertStep(run.steps, streamStep(run.id, 'Paperclip artifact generated', 'success', 2, 0.001)),
+      logs: [runtimeLog(`stream-log-artifact-${run.id}`, `Artifact created: ${artifact.name}`), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'artifact.created', `Artifact created: ${artifact.name}`, { artifactId: artifact.id });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 7) {
+    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId);
+    upsertApproval(approval);
+    const nextRun = updateStreamRun(run, {
+      status: 'warning',
+      currentStep: 'Waiting for human approval gate',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 78),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Human approval requested', 'warning', 1, 0)),
+      logs: [runtimeLog(`stream-log-approval-${run.id}`, 'Human approval requested by Hermes stream', 'warn'), ...run.logs],
+    }, 'WAITING_APPROVAL');
+    const event = appendStreamLifecycleEvent(nextRun, 'approval.requested', `Approval requested: ${approval.title}`, { approvalId: approval.id });
+    return streamResult(nextRun, event);
+  }
+
+  const nextRun = updateStreamRun(run, {
+    status: 'success',
+    currentStep: 'Streaming run completed',
+    finishedAt: runtimeNow(),
+    elapsedSeconds: Math.max(run.elapsedSeconds, 96),
+    steps: upsertStep(run.steps, streamStep(run.id, 'Streaming run completed', 'success', 1, 0.001)),
+    logs: [runtimeLog(`stream-log-completed-${run.id}`, 'Hermes live stream completed'), ...run.logs],
+  }, 'COMPLETED');
+  const event = appendStreamLifecycleEvent(nextRun, 'run.completed', 'Hermes live stream completed');
+  markStreamComplete(run.id);
+  return streamResult(nextRun, event, true);
+}
+
+export async function completeStreamingRun(runId: string): Promise<RuntimeStreamResult> {
+  let result = await nextStreamTick(runId);
+  for (let guard = 0; guard < 10 && !result.complete; guard += 1) {
+    result = await nextStreamTick(runId);
+  }
+  return result;
+}
+
+export async function failStreamingRun(runId: string): Promise<RuntimeStreamResult> {
+  const run = baseRunById(runId);
+  if (!run) throw new Error(`Cannot fail missing stream run ${runId}`);
+  const nextRun = updateStreamRun(run, {
+    status: 'failed',
+    currentStep: 'Streaming run failed',
+    finishedAt: runtimeNow(),
+    logs: [runtimeLog(`stream-log-failed-${run.id}`, 'Hermes live stream failed', 'error'), ...run.logs],
+  }, 'FAILED');
+  const event = appendStreamLifecycleEvent(nextRun, 'run.failed', 'Hermes live stream failed');
+  markStreamComplete(run.id);
+  return streamResult(nextRun, event, true);
 }
 
 async function createPaperclipRuntimeArtifact(run: Run) {

@@ -9,6 +9,7 @@ import { getApprovalById, getApprovals as getRuntimeApprovals } from '../runtime
 import { getArtifactById as getRuntimeArtifactById, getRunArtifacts, getRuntimeArtifacts } from '../runtime-store/artifact-store';
 import { getRunEvents, getRuntimeEvents } from '../runtime-store/event-store';
 import { getRunById } from '../runtime-store/run-store';
+import { getStreamEvents, isStreamComplete } from '../runtime-store/stream-store';
 import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 
@@ -99,6 +100,12 @@ export interface ArtifactPreviewViewModel {
   createdAt: string;
   createdLabel: string;
   sizeLabel: string;
+}
+
+function streamProgress(runId: string): number {
+  const events = getStreamEvents(runId);
+  if (isStreamComplete(runId)) return 100;
+  return Math.min(88, Math.round((events.length / 8) * 100));
 }
 
 function currency(value: number): string {
@@ -484,11 +491,23 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const approval = baseApproval ? getApprovalById(baseApproval.id) ?? baseApproval : undefined;
   const workflowEvents = getWorkflowState().events.filter((event) => event.entityId === ticket.id || event.entityId === ticket.runId || event.entityId === ticket.approvalId);
   const runtimeEvents = run ? getRunEvents(run.id) : [];
+  const streamEvents = run ? getStreamEvents(run.id) : [];
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
   ];
-  return { ticket, agent, run, approval, criteria: ticket.acceptanceCriteria, timeline: events, primaryArtifactPreview: getArtifactPreviewModel(primaryArtifact?.id) };
+  return {
+    ticket,
+    agent,
+    run,
+    approval,
+    criteria: ticket.acceptanceCriteria,
+    timeline: events,
+    streamEvents,
+    latestStreamEvent: streamEvents[streamEvents.length - 1],
+    streamProgress: run ? streamProgress(run.id) : 0,
+    primaryArtifactPreview: getArtifactPreviewModel(primaryArtifact?.id),
+  };
 }
 
 export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
@@ -502,12 +521,18 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     ...getRunEvents(run.id),
     ...getWorkflowState().events.filter((event) => event.entityId === run.id || event.entityId === ticket.id),
   ];
+  const streamEvents = getStreamEvents(run.id);
+  const latestStreamEvent = streamEvents[streamEvents.length - 1];
   return {
     run,
     ticket,
     agent,
     artifacts: run.artifacts,
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
+    streamEvents,
+    latestStreamEvent,
+    streamProgress: streamProgress(run.id),
+    streamComplete: isStreamComplete(run.id),
     timelineRows: run.steps.map((step): RunStepViewModel => ({
       name: step.name,
       status: statusLabel(step.status),

@@ -1,4 +1,5 @@
 import type { Approval, Artifact, Run } from '../domain/types';
+import type { RunStreamEvent } from '../integrations/growthos-runtime/runtime-types';
 import type { WorkflowEvent } from '../state/event-log';
 
 export type RuntimeLifecycle =
@@ -21,6 +22,8 @@ export interface RuntimeState {
   approvals: Record<string, Approval>;
   artifacts: Record<string, Artifact>;
   events: WorkflowEvent[];
+  streamEvents: Record<string, RunStreamEvent[]>;
+  completedStreams: Record<string, boolean>;
 }
 
 const RUNTIME_STORAGE_KEY = 'uikigai-runtime-store-v1';
@@ -30,6 +33,8 @@ const emptyRuntimeState: RuntimeState = {
   approvals: {},
   artifacts: {},
   events: [],
+  streamEvents: {},
+  completedStreams: {},
 };
 
 function clone<T>(value: T): T {
@@ -50,7 +55,16 @@ export function readRuntimeState(): RuntimeState {
   if (typeof window === 'undefined') return clone(emptyRuntimeState);
   try {
     const raw = window.sessionStorage.getItem(RUNTIME_STORAGE_KEY);
-    return raw ? JSON.parse(raw) as RuntimeState : clone(emptyRuntimeState);
+    if (!raw) return clone(emptyRuntimeState);
+    const parsed = JSON.parse(raw) as Partial<RuntimeState>;
+    return {
+      runs: parsed.runs ?? {},
+      approvals: parsed.approvals ?? {},
+      artifacts: parsed.artifacts ?? {},
+      events: parsed.events ?? [],
+      streamEvents: parsed.streamEvents ?? {},
+      completedStreams: parsed.completedStreams ?? {},
+    };
   } catch {
     return clone(emptyRuntimeState);
   }
