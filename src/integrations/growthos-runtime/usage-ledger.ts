@@ -84,7 +84,7 @@ export function createUsageRecord(input: Omit<UsageRecord, 'id' | 'currency' | '
   };
 }
 
-export function recordRunStartUsage(runId: string, estimatedCost = 0): UsageRecord {
+export function recordRunStartUsage(runId: string, estimatedCost = 0, metadata: Record<string, unknown> = {}): UsageRecord {
   return addUsageRecord(createUsageRecord({
     id: `usage-${runId}-runtime-start`,
     runId,
@@ -93,7 +93,7 @@ export function recordRunStartUsage(runId: string, estimatedCost = 0): UsageReco
     unit: 'seconds',
     estimatedCost,
     actualCost: 0,
-    metadata: { lifecycle: 'started' },
+    metadata: { lifecycle: 'started', ...metadata },
   }));
 }
 

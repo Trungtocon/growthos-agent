@@ -128,6 +128,15 @@ export function getUsageByTool(toolId: string): UsageRecord[] {
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
+export function getAllUsageRecords(): UsageRecord[] {
+  return Object.values(readUsageState().records)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
+export function getBillingLedgers(): BillingLedger[] {
+  return Object.values(readUsageState().ledgers);
+}
+
 export function getBillingLedger(runId: string): BillingLedger {
   const state = readUsageState();
   return state.ledgers[runId] ?? ledgerFor(runId);

@@ -64,6 +64,12 @@ import {
   getUsageByRun,
 } from '../runtime-store/usage-ledger-store';
 import { summarizeEstimatedVsActual } from '../integrations/growthos-runtime/usage-ledger';
+import {
+  getModelAnalytics as getStoredModelAnalytics,
+  getToolAnalytics as getStoredToolAnalytics,
+  getWorkflowAnalytics as getStoredWorkflowAnalytics,
+  getWorkspaceAnalytics as getStoredWorkspaceAnalytics,
+} from '../runtime-store/workspace-analytics-store';
 
 export interface KpiViewModel {
   label: string;
@@ -311,6 +317,59 @@ export function selectQuotaWarnings(runId?: string): string[] {
 
 export function selectBillingRecordsByRun(runId: string) {
   return getUsageByRun(runId);
+}
+
+export function selectWorkspaceAnalytics() {
+  return getStoredWorkspaceAnalytics();
+}
+
+export function selectToolAnalytics() {
+  return getStoredToolAnalytics();
+}
+
+export function selectModelAnalytics() {
+  return getStoredModelAnalytics();
+}
+
+export function selectWorkflowAnalytics() {
+  return getStoredWorkflowAnalytics();
+}
+
+export function selectTopCostTools(limit = 5) {
+  return selectToolAnalytics().slice().sort((a, b) => b.totalCost - a.totalCost).slice(0, limit);
+}
+
+export function selectTopCostModels(limit = 5) {
+  return selectModelAnalytics().slice().sort((a, b) => b.totalCost - a.totalCost).slice(0, limit);
+}
+
+export function selectTopWorkflows(limit = 5) {
+  return selectWorkflowAnalytics().slice().sort((a, b) => b.totalCost - a.totalCost).slice(0, limit);
+}
+
+export function selectWorkspaceCostSummary() {
+  const analytics = selectWorkspaceAnalytics();
+  return {
+    estimatedCost: analytics.estimatedCost,
+    actualCost: analytics.actualCost,
+    varianceCost: analytics.varianceCost,
+  };
+}
+
+export function selectWorkspaceTokenSummary() {
+  const analytics = selectWorkspaceAnalytics();
+  return {
+    totalTokens: analytics.totalTokens,
+    averageTokensPerRun: analytics.totalRuns ? Math.round(analytics.totalTokens / analytics.totalRuns) : 0,
+  };
+}
+
+export function selectWorkspaceRuntimeSummary() {
+  const analytics = selectWorkspaceAnalytics();
+  return {
+    totalRuntimeMinutes: analytics.totalRuntimeMinutes,
+    averageRuntimeMinutes: analytics.totalRuns ? Number((analytics.totalRuntimeMinutes / analytics.totalRuns).toFixed(2)) : 0,
+  };
 }
 
 function streamProgress(runId: string): number {
@@ -758,6 +817,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const executionEstimate = selectExecutionCost(currentPlan?.id);
   const usageLedger = run ? selectUsageLedger(run.id) : undefined;
   const quotaWarnings = run ? selectQuotaWarnings(run.id) : [];
+  const workflowAnalytics = selectWorkflowAnalytics().find((item) => item.workflowId === currentPlan?.workflowId) ?? selectTopWorkflows(1)[0];
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -790,6 +850,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     estimatedVsActualCost: run ? selectEstimatedVsActualCost(run.id) : undefined,
     quotaStatus: run ? selectQuotaStatus(run.id) : selectQuotaStatus(currentPlan?.id),
     quotaWarnings,
+    workflowAnalytics,
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -826,6 +887,10 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const executionEstimate = selectExecutionCost(currentPlan?.id);
   const usageLedger = selectUsageLedger(run.id);
   const quotaWarnings = selectQuotaWarnings(run.id);
+  const workspaceAnalytics = selectWorkspaceAnalytics();
+  const topTools = selectTopCostTools(3);
+  const topModels = selectTopCostModels(3);
+  const topWorkflows = selectTopWorkflows(3);
   return {
     run,
     ticket,
@@ -851,6 +916,13 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     quotaStatus: selectQuotaStatus(run.id),
     quotaWarnings,
     billingRecords: selectBillingRecordsByRun(run.id),
+    workspaceAnalytics,
+    topTools,
+    topModels,
+    topWorkflows,
+    workspaceCostSummary: selectWorkspaceCostSummary(),
+    workspaceTokenSummary: selectWorkspaceTokenSummary(),
+    workspaceRuntimeSummary: selectWorkspaceRuntimeSummary(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -885,6 +957,9 @@ export function selectApprovalCenterViewModel() {
   const pending = approvals.filter((approval) => approval.status === 'pending').length;
   const budgetApprovals = approvals.filter((approval) => approval.policy.includes('budget') || approval.description.toLowerCase().includes('budget')).length;
   const quotaApprovals = approvals.filter((approval) => approval.policy.includes('quota') || approval.description.toLowerCase().includes('quota')).length;
+  const approvalCost = approvals
+    .flatMap((approval) => approval.runId ? selectBillingRecordsByRun(approval.runId).filter((record) => record.type === 'approval') : [])
+    .reduce((sum, record) => sum + record.actualCost, 0);
   const selectedApproval = queueRows[0];
   const selectedRawApproval = approvals.find((approval) => approval.id === selectedApproval?.id);
   const selectedRunId = selectedRawApproval?.runId;
@@ -897,13 +972,14 @@ export function selectApprovalCenterViewModel() {
     selectedArtifactPreview,
     budgetApprovals,
     quotaApprovals,
+    approvalCost,
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
       { label: 'Rui ro cao', value: String(highRisk), tone: 'red' },
       { label: 'Qua han', value: '3', tone: 'amber' },
       { label: 'Da duyet hom nay', value: '18', tone: 'green' },
       { label: 'Budget / quota', value: String(budgetApprovals + quotaApprovals), tone: 'amber' },
-      { label: 'Thoi gian duyet TB', value: '12m', tone: 'blue' },
+      { label: 'Approval cost', value: currency(approvalCost), tone: 'blue' },
     ] satisfies KpiViewModel[],
   };
 }
@@ -1026,6 +1102,10 @@ export function selectRiskCenterViewModel() {
 
 export function selectCostDashboardViewModel() {
   const data = currentData();
+  const analytics = selectWorkspaceAnalytics();
+  const topTool = selectTopCostTools(1)[0];
+  const topModel = selectTopCostModels(1)[0];
+  const topWorkflow = selectTopWorkflows(1)[0];
   const budgetUsed = Math.round((data.costBreakdown.total / data.workspace.aiBudgetMonthly) * 100);
   const runSpend = data.runs.reduce((sum, run) => sum + run.cost, 0);
   const ticketSpendRows = data.tickets.map((ticket) => {
@@ -1054,16 +1134,24 @@ export function selectCostDashboardViewModel() {
       tone: item.percent > 28 ? 'amber' : item.percent > 18 ? 'blue' : 'green',
     })),
     toolSpend: data.costBreakdown.byTool,
+    analytics,
+    topTool,
+    topModel,
+    topWorkflow,
     alerts: [
       { id: 'budget-velocity', title: 'Monthly budget velocity', detail: `${budgetUsed}% of monthly budget used in ${data.costBreakdown.period}.`, severity: budgetUsed > 75 ? 'High' : 'Medium', tone: budgetUsed > 75 ? 'red' : 'amber' },
       { id: 'research-spike', title: 'Research spend concentration', detail: 'Research and QA runs account for the largest variable spend this period.', severity: 'Medium', tone: 'amber' },
       { id: 'approval-threshold', title: 'Approval threshold active', detail: 'Budget changes above $25 still require reviewer approval.', severity: 'Low', tone: 'green' },
     ],
     kpis: [
-      { label: 'MTD spend', value: currency(data.costBreakdown.total), tone: 'blue' },
-      { label: 'Budget used', value: `${budgetUsed}%`, tone: budgetUsed > 75 ? 'amber' : 'green' },
-      { label: 'Run spend', value: currency(runSpend), tone: 'cyan' },
-      { label: 'Remaining', value: currency(Math.max(0, data.workspace.aiBudgetMonthly - data.costBreakdown.total)), tone: 'purple' },
+      { label: 'Total Cost', value: currency(analytics.actualCost || data.costBreakdown.total), tone: 'blue' },
+      { label: 'Total Tokens', value: String(analytics.totalTokens), tone: 'cyan' },
+      { label: 'Total Runs', value: String(analytics.totalRuns), tone: 'green' },
+      { label: 'Total Runtime', value: `${analytics.totalRuntimeMinutes}m`, tone: 'purple' },
+      { label: 'Top Tool', value: topTool?.toolId ?? 'none', tone: 'amber' },
+      { label: 'Top Model', value: topModel?.modelId ?? 'none', tone: 'blue' },
+      { label: 'Top Workflow', value: topWorkflow?.workflowId ?? 'none', tone: 'green' },
+      { label: 'Variance', value: currency(analytics.varianceCost), tone: analytics.varianceCost > 0 ? 'amber' : 'green' },
     ] satisfies KpiViewModel[],
   };
 }

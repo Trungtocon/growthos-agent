@@ -24,6 +24,8 @@ import { getToolRegistry, setToolRegistry } from '../../runtime-store/tool-regis
 import { getRunPlan, markRunPlanApproved, upsertRunPlan } from '../../runtime-store/run-plan-store';
 import { upsertPolicyReport } from '../../runtime-store/plan-policy-store';
 import { clearUsageLedger, finalizeBillingLedger } from '../../runtime-store/usage-ledger-store';
+import { generateWorkspaceAnalytics } from '../../runtime-store/workspace-analytics-store';
+import { workspaceAnalyticsArtifacts } from './workspace-analytics';
 import {
   evaluateQuotaAfterRun,
   evaluateQuotaBeforeRun,
@@ -137,6 +139,7 @@ function runtimeTool(id: string, toolName: string, status: ToolCall['status'], i
 interface StreamToolConfig {
   id: string;
   name: string;
+  modelId?: string;
   input: string;
   progress: string;
   output: string;
@@ -149,6 +152,7 @@ function toStreamToolConfig(tool: HermesTool, index: number): StreamToolConfig {
   return {
     id: tool.id,
     name: tool.name,
+    modelId: tool.supportedModels[0],
     input: `${tool.description} Runtime input from ticket context and current run state.`,
     progress: `${tool.name} execution ${index === 0 ? 65 : index === 1 ? 70 : 80}% complete`,
     output: `Completed successfully. ${tool.description}`,
@@ -200,6 +204,7 @@ function runtimeToolCall(toolId: string, runId: string, status: RuntimeToolCallS
     metadata: {
       ...existing?.metadata,
       cost: config.cost,
+      modelId: config.modelId,
       progress: status === 'completed' ? 100 : status === 'running' ? 55 : 0,
       ...metadata,
     },
@@ -734,7 +739,9 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     });
     throw new Error(`Cannot start blocked run plan ${planId}: ${policyReport.blockingReasons.join(', ') || plan.missingCapabilities.join(', ') || 'blocked steps'}`);
   }
+  const budgetEstimateCost = policyReport.executionEstimate?.estimatedCost ?? 0;
   const result = await startStreamingRun(plan.ticketId);
+  recordRunStartUsage(result.runId, budgetEstimateCost, { planId: plan.id, workflowId: plan.workflowId });
   if (quotaReport.status === 'warning') {
     appendRuntimeEvent({
       command: 'quota.warning',
@@ -747,7 +754,6 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
   }
   seedPlanToolCalls(plan, result.runId);
   const approvalSteps = getApprovalRequiredSteps(plan);
-  const budgetEstimateCost = policyReport.executionEstimate?.estimatedCost ?? 0;
   const needsBudgetApproval = budgetEstimateCost > 0.05;
   if (approvalSteps.length) {
     approvalSteps.forEach((step) => {
@@ -788,6 +794,20 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     status: approvalSteps.length || needsBudgetApproval ? 'pending' : 'success',
   });
   return result;
+}
+
+export function exportWorkspaceAnalyticsArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  const bundle = generateWorkspaceAnalytics();
+  const artifacts = workspaceAnalyticsArtifacts(bundle, runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Workspace analytics export generated',
+    status: 'success',
+  });
+  return artifacts;
 }
 
 export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult> {
