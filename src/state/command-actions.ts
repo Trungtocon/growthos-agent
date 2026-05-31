@@ -1,6 +1,6 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import type { ApprovalStatus, Ticket } from '../domain/types';
-import { cancelAgentRun as createCancelAgentRunPlan, pauseAgentRun as createPauseAgentRunPlan, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
+import { cancelAgentRun as createCancelAgentRunPlan, pauseAgentRun as createPauseAgentRunPlan, refreshHermesDiscovery as refreshRuntimeHermesDiscovery, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
 import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
 import type { WorkflowData } from './workflow-engine';
@@ -159,6 +159,20 @@ export async function completeStreamingRun(runId: string) {
     optimistic: (data) => data,
     mutate: async () => {
       await completeRuntimeStreamingRun(runId);
+    },
+  });
+}
+
+export async function refreshRuntimeDiscovery() {
+  return runWorkflowCommand({
+    command: 'refreshHermesDiscovery',
+    entityType: 'run',
+    entityId: 'runtime-discovery',
+    actorId: demoCurrentUser.id,
+    title: 'Hermes discovery refreshed',
+    optimistic: (data) => data,
+    mutate: async () => {
+      await refreshRuntimeHermesDiscovery();
     },
   });
 }

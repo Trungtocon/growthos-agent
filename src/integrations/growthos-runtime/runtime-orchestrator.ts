@@ -1,12 +1,14 @@
 import { DEMO_AGENT_ID, DEMO_APPROVAL_ID, DEMO_RUN_ID, DEMO_TICKET_ID, demoRuns, demoTickets } from '../../data/demo-fixtures';
 import type { Activity, Approval, Artifact, Run, RunLog, RunStatus, ToolCall } from '../../domain/types';
 import { createHermesAdapter } from '../hermes/hermes-adapter';
+import { discoverHermes } from '../hermes/hermes-discovery-client';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
 import { mapTicketToHermesTask } from './ticket-to-task-mapper';
-import type { RunStreamEvent, RunStreamEventType, RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand, RuntimeStreamResult, RuntimeToolCall, RuntimeToolCallStatus } from './runtime-types';
+import type { RunStreamEvent, RunStreamEventType, RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeReadiness, RuntimeRunCommand, RuntimeStreamResult, RuntimeToolCall, RuntimeToolCallStatus } from './runtime-types';
 import { resolveRuntimeConfig } from './runtime-config';
+import { checkRuntimeHealth } from './runtime-health';
 import { getApprovalById, upsertApproval } from '../../runtime-store/approval-store';
 import { upsertArtifact } from '../../runtime-store/artifact-store';
 import { appendRuntimeEvent } from '../../runtime-store/event-store';
@@ -14,6 +16,7 @@ import { getRunById, setRunLifecycle, upsertRun } from '../../runtime-store/run-
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, markStreamComplete } from '../../runtime-store/stream-store';
 import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../runtime-store/tool-call-store';
+import { getHermesDiscovery, setHermesDiscovery } from '../../runtime-store/hermes-discovery-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
@@ -47,6 +50,48 @@ const STREAM_TOOLS = [
 ] as const;
 
 const STREAM_ARTIFACT_TOOL_ID = STREAM_TOOLS[2].id;
+
+export async function refreshHermesDiscovery() {
+  return setHermesDiscovery(await discoverHermes());
+}
+
+export function getRuntimeReadiness(): RuntimeReadiness {
+  const config = resolveRuntimeConfig();
+  const discovery = getHermesDiscovery();
+  const canStartRealRun = discovery.status === 'online' || discovery.status === 'degraded';
+  const paperclipStatus = config.paperclip.status;
+  return {
+    mode: config.mode,
+    requestedMode: config.requestedMode,
+    hermesStatus: discovery.status,
+    paperclipStatus,
+    canStartRealRun,
+    canStartMockRun: true,
+    warnings: [
+      ...discovery.warnings,
+      ...(config.paperclip.reason === 'missing-config' ? ['Paperclip sandbox config missing; mock fallback remains available.'] : []),
+    ],
+    checkedAt: discovery.checkedAt,
+  };
+}
+
+export async function discoverRuntime(): Promise<RuntimeReadiness> {
+  const [discovery, health] = await Promise.all([
+    refreshHermesDiscovery(),
+    checkRuntimeHealth().catch(() => undefined),
+  ]);
+  const readiness = getRuntimeReadiness();
+  return {
+    ...readiness,
+    hermesStatus: discovery.status,
+    paperclipStatus: health?.paperclip.status ?? readiness.paperclipStatus,
+    warnings: [
+      ...discovery.warnings,
+      ...(health?.paperclip.status === 'offline' ? [health.paperclip.message] : []),
+    ],
+    checkedAt: discovery.checkedAt,
+  };
+}
 
 function runtimeNow() {
   return new Date().toISOString();

@@ -14,6 +14,15 @@ import { getActiveToolCall, getCompletedToolCalls, getToolCallById, getToolCalls
 import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 import type { RuntimeToolCall } from '../integrations/growthos-runtime/runtime-types';
+import type { HermesDiscoveryResult } from '../integrations/hermes/hermes-discovery-types';
+import { getRuntimeReadiness } from '../integrations/growthos-runtime/runtime-orchestrator';
+import {
+  getHermesCapabilities as getStoredHermesCapabilities,
+  getHermesDiscovery as getStoredHermesDiscovery,
+  getHermesDiscoveryStatus as getStoredHermesDiscoveryStatus,
+  getHermesModels as getStoredHermesModels,
+  getHermesTools as getStoredHermesTools,
+} from '../runtime-store/hermes-discovery-store';
 
 export interface KpiViewModel {
   label: string;
@@ -106,6 +115,30 @@ export interface ArtifactPreviewViewModel {
   createdLabel: string;
   sizeLabel: string;
   generatedByToolName?: string;
+}
+
+export function selectHermesDiscovery(): HermesDiscoveryResult {
+  return getStoredHermesDiscovery();
+}
+
+export function selectHermesStatus() {
+  return getStoredHermesDiscoveryStatus();
+}
+
+export function selectHermesTools() {
+  return getStoredHermesTools();
+}
+
+export function selectHermesModels() {
+  return getStoredHermesModels();
+}
+
+export function selectHermesCapabilities() {
+  return getStoredHermesCapabilities();
+}
+
+export function selectRuntimeReadiness() {
+  return getRuntimeReadiness();
 }
 
 function streamProgress(runId: string): number {
@@ -585,11 +618,15 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const activeToolCall = getActiveToolCall(run.id);
   const completedToolCalls = getCompletedToolCalls(run.id);
   const runtimeToolRows = runToolRows(run);
+  const hermesDiscovery = selectHermesDiscovery();
+  const runtimeReadiness = selectRuntimeReadiness();
   return {
     run,
     ticket,
     agent,
     artifacts: run.artifacts,
+    hermesDiscovery,
+    runtimeReadiness,
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
     streamEvents,
     latestStreamEvent,
@@ -1382,7 +1419,21 @@ export function selectArtifactDetailViewModel(artifactId?: string) {
 
 export function selectIntegrationsHubViewModel() {
   const data = currentData();
+  const discovery = selectHermesDiscovery();
+  const readiness = selectRuntimeReadiness();
   const integrationRows = [
+    {
+      id: 'hermes',
+      name: 'Hermes Runtime',
+      category: `${discovery.models.length} models / ${discovery.tools.length} tools`,
+      status: discovery.status === 'online' ? 'Connected' : discovery.status === 'missing_config' ? 'Missing config' : statusLabel(discovery.status),
+      health: discovery.status === 'online' ? 98 : discovery.status === 'degraded' ? 76 : discovery.status === 'missing_config' ? 58 : 42,
+      owner: 'Hermes QA Agent',
+      lastSync: discovery.checkedAt.slice(0, 16).replace('T', ' '),
+      events: discovery.capabilities.length + discovery.tools.length,
+      risk: readiness.canStartRealRun ? 'Low' : 'Medium',
+      tone: discovery.status === 'online' ? 'green' : discovery.status === 'degraded' ? 'amber' : 'blue',
+    },
     { id: 'github', name: 'GitHub', category: 'Code repository', status: 'Connected', health: 96, owner: data.currentUser.name, lastSync: '12 minutes ago', events: 128, risk: 'Low', tone: 'green' },
     { id: 'slack', name: 'Slack', category: 'Team notifications', status: 'Connected', health: 92, owner: 'Operations Lead', lastSync: '18 minutes ago', events: 84, risk: 'Low', tone: 'green' },
     { id: 'notion', name: 'Notion', category: 'Knowledge base', status: 'Connected', health: 88, owner: 'Research Agent', lastSync: '41 minutes ago', events: 45, risk: 'Medium', tone: 'blue' },

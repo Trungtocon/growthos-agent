@@ -85,7 +85,8 @@
     "smoke:real-run-lifecycle": "node scripts/smoke-real-run-lifecycle.mjs",
     "smoke:artifact-viewer": "node scripts/smoke-artifact-viewer.mjs",
     "smoke:live-run-streaming": "node scripts/smoke-live-run-streaming.mjs",
-    "smoke:tool-runtime": "node scripts/smoke-tool-runtime.mjs"
+    "smoke:tool-runtime": "node scripts/smoke-tool-runtime.mjs",
+    "smoke:hermes-discovery": "node scripts/smoke-hermes-discovery.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

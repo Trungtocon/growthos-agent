@@ -80,3 +80,14 @@ export interface RuntimeServiceHealth {
   checkedAt: string;
   latencyMs?: number;
 }
+
+export interface RuntimeReadiness {
+  mode: RuntimeMode;
+  requestedMode: RuntimeMode;
+  hermesStatus: 'unknown' | 'missing_config' | 'offline' | 'degraded' | 'online';
+  paperclipStatus: RuntimeIntegrationStatus;
+  canStartRealRun: boolean;
+  canStartMockRun: boolean;
+  warnings: string[];
+  checkedAt: string;
+}

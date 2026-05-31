@@ -5,6 +5,7 @@ export type WorkflowCommand =
   | 'rejectRunAction'
   | 'startAgentRun'
   | 'startStreamingRun'
+  | 'refreshHermesDiscovery'
   | 'retryRun'
   | 'assignTicket'
   | 'escalateTicket'
