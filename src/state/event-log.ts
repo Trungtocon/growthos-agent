@@ -24,6 +24,8 @@ export type WorkflowCommand =
   | 'tool.completed'
   | 'artifact.created'
   | 'approval.requested'
+  | 'quota.warning'
+  | 'quota.exceeded'
   | 'run.completed'
   | 'run.failed'
   | 'run.cancelled';

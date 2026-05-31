@@ -57,6 +57,13 @@ import {
   getExecutionBudget as getStoredExecutionBudget,
 } from '../runtime-store/execution-budget-store';
 import { estimateRunPlanBudget } from '../integrations/growthos-runtime/execution-budget';
+import {
+  getBillingLedger,
+  getQuotaReport as getStoredQuotaReport,
+  getQuotaReports,
+  getUsageByRun,
+} from '../runtime-store/usage-ledger-store';
+import { summarizeEstimatedVsActual } from '../integrations/growthos-runtime/usage-ledger';
 
 export interface KpiViewModel {
   label: string;
@@ -275,6 +282,35 @@ export function selectExecutionBudget() {
 
 export function selectBudgetPolicy(planId?: string) {
   return getStoredBudgetReport(planId);
+}
+
+export function selectUsageLedger(runId: string) {
+  return getBillingLedger(runId);
+}
+
+export function selectActualRunCost(runId: string) {
+  return selectUsageLedger(runId).actualTotal;
+}
+
+export function selectEstimatedVsActualCost(runId: string) {
+  return summarizeEstimatedVsActual(runId);
+}
+
+export function selectQuotaStatus(targetId?: string) {
+  if (targetId) return getStoredQuotaReport(targetId)?.status ?? 'ok';
+  const reports = getQuotaReports();
+  if (reports.some((report) => report.status === 'exceeded')) return 'exceeded';
+  if (reports.some((report) => report.status === 'warning')) return 'warning';
+  return 'ok';
+}
+
+export function selectQuotaWarnings(runId?: string): string[] {
+  const report = getStoredQuotaReport(runId);
+  return report ? [...report.warnings, ...report.blockingReasons] : [];
+}
+
+export function selectBillingRecordsByRun(runId: string) {
+  return getUsageByRun(runId);
 }
 
 function streamProgress(runId: string): number {
@@ -720,6 +756,8 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const policyReport = selectPolicyReport(currentPlan?.id);
   const budgetPolicy = selectBudgetPolicy(currentPlan?.id);
   const executionEstimate = selectExecutionCost(currentPlan?.id);
+  const usageLedger = run ? selectUsageLedger(run.id) : undefined;
+  const quotaWarnings = run ? selectQuotaWarnings(run.id) : [];
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -748,6 +786,10 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     budgetPolicy,
     executionEstimate,
     executionBudget: selectExecutionBudget(),
+    usageLedger,
+    estimatedVsActualCost: run ? selectEstimatedVsActualCost(run.id) : undefined,
+    quotaStatus: run ? selectQuotaStatus(run.id) : selectQuotaStatus(currentPlan?.id),
+    quotaWarnings,
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -782,6 +824,8 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const policyReport = selectPolicyReport(currentPlan?.id);
   const budgetPolicy = selectBudgetPolicy(currentPlan?.id);
   const executionEstimate = selectExecutionCost(currentPlan?.id);
+  const usageLedger = selectUsageLedger(run.id);
+  const quotaWarnings = selectQuotaWarnings(run.id);
   return {
     run,
     ticket,
@@ -802,6 +846,11 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     budgetPolicy,
     executionEstimate,
     executionBudget: selectExecutionBudget(),
+    usageLedger,
+    estimatedVsActualCost: selectEstimatedVsActualCost(run.id),
+    quotaStatus: selectQuotaStatus(run.id),
+    quotaWarnings,
+    billingRecords: selectBillingRecordsByRun(run.id),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -835,6 +884,7 @@ export function selectApprovalCenterViewModel() {
   const highRisk = approvals.filter((approval) => approval.severity === 'high').length;
   const pending = approvals.filter((approval) => approval.status === 'pending').length;
   const budgetApprovals = approvals.filter((approval) => approval.policy.includes('budget') || approval.description.toLowerCase().includes('budget')).length;
+  const quotaApprovals = approvals.filter((approval) => approval.policy.includes('quota') || approval.description.toLowerCase().includes('quota')).length;
   const selectedApproval = queueRows[0];
   const selectedRawApproval = approvals.find((approval) => approval.id === selectedApproval?.id);
   const selectedRunId = selectedRawApproval?.runId;
@@ -846,12 +896,13 @@ export function selectApprovalCenterViewModel() {
     selectedRawApproval,
     selectedArtifactPreview,
     budgetApprovals,
+    quotaApprovals,
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },
       { label: 'Rui ro cao', value: String(highRisk), tone: 'red' },
       { label: 'Qua han', value: '3', tone: 'amber' },
       { label: 'Da duyet hom nay', value: '18', tone: 'green' },
-      { label: 'Budget reviews', value: String(budgetApprovals), tone: 'amber' },
+      { label: 'Budget / quota', value: String(budgetApprovals + quotaApprovals), tone: 'amber' },
       { label: 'Thoi gian duyet TB', value: '12m', tone: 'blue' },
     ] satisfies KpiViewModel[],
   };

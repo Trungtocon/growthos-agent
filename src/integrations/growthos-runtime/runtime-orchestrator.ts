@@ -23,6 +23,17 @@ import { getHermesDiscovery, setHermesDiscovery } from '../../runtime-store/herm
 import { getToolRegistry, setToolRegistry } from '../../runtime-store/tool-registry-store';
 import { getRunPlan, markRunPlanApproved, upsertRunPlan } from '../../runtime-store/run-plan-store';
 import { upsertPolicyReport } from '../../runtime-store/plan-policy-store';
+import { clearUsageLedger, finalizeBillingLedger } from '../../runtime-store/usage-ledger-store';
+import {
+  evaluateQuotaAfterRun,
+  evaluateQuotaBeforeRun,
+  evaluateQuotaDuringRun,
+  recordApprovalUsage,
+  recordArtifactUsage,
+  recordRunStartUsage,
+  recordToolCompletionUsage,
+  recordToolStartUsage,
+} from './usage-ledger';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
@@ -212,6 +223,21 @@ function runtimeToolCallToDomain(toolCall: RuntimeToolCall): ToolCall {
 
 function persistStreamTool(run: Run, toolId: string, status: RuntimeToolCallStatus, metadata?: Record<string, unknown>) {
   const toolCall = upsertRuntimeToolCall(runtimeToolCall(toolId, run.id, status, metadata));
+  const cost = typeof toolCall.metadata?.cost === 'number' ? toolCall.metadata.cost : 0.002;
+  if (status === 'running' && metadata?.phase === 'started') {
+    recordToolStartUsage(run.id, toolCall.id, toolCall.toolName, cost);
+  }
+  if (status === 'completed' || status === 'failed') {
+    recordToolCompletionUsage({
+      runId: run.id,
+      toolId: toolCall.id,
+      toolName: toolCall.toolName,
+      modelId: typeof toolCall.metadata?.modelId === 'string' ? toolCall.metadata.modelId : undefined,
+      durationMs: toolCall.durationMs,
+      estimatedCost: cost,
+      actualCost: status === 'failed' ? cost * 0.65 : cost * 1.08,
+    });
+  }
   return {
     toolCall,
     toolCalls: upsertTool(run.toolCalls, runtimeToolCallToDomain(toolCall)),
@@ -449,6 +475,31 @@ function budgetPolicyApproval(plan: RunPlan, runId: string, estimateCost: number
   return { ...approval, planId: plan.id } as Approval;
 }
 
+function quotaPolicyApproval(run: Run, reason: string): Approval {
+  const now = runtimeNow();
+  return {
+    id: `approval-quota-${run.id}`,
+    ticketId: run.ticketId,
+    runId: run.id,
+    agentId: run.agentId,
+    title: 'Runtime quota review required',
+    description: `Runtime usage quota requires human review before continuing: ${reason}`,
+    status: 'pending',
+    severity: 'high',
+    requestedAt: now,
+    requestedBy: run.agentId,
+    policy: 'usage-quota-review',
+    auditTrail: [
+      {
+        id: `audit-quota-${run.id}`,
+        actorId: run.agentId,
+        action: 'created runtime quota approval gate',
+        createdAt: now,
+      },
+    ],
+  };
+}
+
 function baseRunForTicket(ticketId: string): Run | undefined {
   const ticket = demoTickets.find((item) => item.id === ticketId);
   const runId = ticket?.runId ?? (ticketId === DEMO_TICKET_ID ? DEMO_RUN_ID : undefined);
@@ -490,6 +541,18 @@ function appendStreamLifecycleEvent(run: Run, type: RunStreamEventType, message:
 
 function appendExecutionEvents(run: Run) {
   run.toolCalls.forEach((tool) => {
+    if (tool.status === 'running') {
+      recordToolStartUsage(run.id, tool.id, tool.toolName, tool.cost);
+    } else {
+      recordToolCompletionUsage({
+        runId: run.id,
+        toolId: tool.id,
+        toolName: tool.toolName,
+        durationMs: tool.durationMs,
+        estimatedCost: tool.cost,
+        actualCost: tool.status === 'failed' ? tool.cost * 0.65 : tool.cost * 1.08,
+      });
+    }
     appendRuntimeEvent({
       command: tool.status === 'running' ? 'tool.started' : 'tool.completed',
       entityType: 'run',
@@ -500,6 +563,7 @@ function appendExecutionEvents(run: Run) {
     });
   });
   run.artifacts.forEach((artifact) => {
+    recordArtifactUsage(run.id, artifact.id, artifact.toolId);
     appendRuntimeEvent({
       command: 'artifact.created',
       entityType: 'run',
@@ -533,7 +597,33 @@ function updateStreamRun(run: Run, patch: Partial<Run>, lifecycle: RuntimeLifecy
     artifacts: patch.artifacts ?? run.artifacts,
   };
   upsertRun(nextRun, lifecycle);
-  nextRun.artifacts.forEach((artifact) => upsertArtifact(artifact));
+  nextRun.artifacts.forEach((artifact) => {
+    upsertArtifact(artifact);
+    recordArtifactUsage(nextRun.id, artifact.id, artifact.toolId);
+  });
+  const quotaReport = evaluateQuotaDuringRun(nextRun.id);
+  if (quotaReport.status === 'exceeded' && lifecycle === 'RUNNING') {
+    const reason = quotaReport.blockingReasons[0] ?? 'Runtime quota exceeded';
+    const pausedRun = {
+      ...nextRun,
+      status: 'paused' as const,
+      currentStep: 'Paused for runtime quota review',
+      logs: [runtimeLog(`usage-quota-paused-${nextRun.id}`, reason, 'warn'), ...nextRun.logs],
+    };
+    const approval = quotaPolicyApproval(pausedRun, reason);
+    upsertApproval(approval);
+    recordApprovalUsage(pausedRun.id, approval.id, approval.toolId);
+    upsertRun(pausedRun, 'WAITING_APPROVAL');
+    appendRuntimeEvent({
+      command: 'quota.exceeded',
+      entityType: 'run',
+      entityId: pausedRun.id,
+      actorId: pausedRun.agentId,
+      title: reason,
+      status: 'pending',
+    });
+    return pausedRun;
+  }
   return nextRun;
 }
 
@@ -580,6 +670,8 @@ export async function startStreamingRun(ticketId: string): Promise<RuntimeStream
   const queuedRun = createQueuedStreamRun(ticketId);
   clearStream(queuedRun.id);
   clearToolCalls(queuedRun.id);
+  clearUsageLedger(queuedRun.id);
+  recordRunStartUsage(queuedRun.id);
   const run = updateStreamRun(queuedRun, {}, 'QUEUED');
   const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued', { ticketId });
   return streamResult(run, event);
@@ -619,6 +711,18 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
   const plan = getRunPlan(planId);
   if (!plan) throw new Error(`Cannot start missing run plan ${planId}`);
   const policyReport: PlanExecutionPolicyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
+  const quotaReport = evaluateQuotaBeforeRun(plan.id);
+  if (quotaReport.status === 'exceeded') {
+    appendRuntimeEvent({
+      command: 'startRunFromPlan',
+      entityType: 'run',
+      entityId: plan.id,
+      actorId: DEMO_AGENT_ID,
+      title: `Run plan blocked by quota: ${quotaReport.blockingReasons.join(', ')}`,
+      status: 'failed',
+    });
+    throw new Error(`Cannot start quota-blocked run plan ${planId}: ${quotaReport.blockingReasons.join(', ')}`);
+  }
   if (plan.status === 'blocked' || policyReport.status === 'blocked') {
     appendRuntimeEvent({
       command: 'startRunFromPlan',
@@ -631,6 +735,16 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     throw new Error(`Cannot start blocked run plan ${planId}: ${policyReport.blockingReasons.join(', ') || plan.missingCapabilities.join(', ') || 'blocked steps'}`);
   }
   const result = await startStreamingRun(plan.ticketId);
+  if (quotaReport.status === 'warning') {
+    appendRuntimeEvent({
+      command: 'quota.warning',
+      entityType: 'run',
+      entityId: result.runId,
+      actorId: DEMO_AGENT_ID,
+      title: `Runtime quota warning: ${quotaReport.warnings.join(', ')}`,
+      status: 'pending',
+    });
+  }
   seedPlanToolCalls(plan, result.runId);
   const approvalSteps = getApprovalRequiredSteps(plan);
   const budgetEstimateCost = policyReport.executionEstimate?.estimatedCost ?? 0;
@@ -647,6 +761,7 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
         title: `Plan policy approval requested: ${step.name}`,
         status: 'pending',
       });
+      recordApprovalUsage(result.runId, approval.id, approval.toolId);
     });
     setRunLifecycle(result.runId, 'WAITING_APPROVAL');
   }
@@ -661,6 +776,7 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
       title: `Budget approval requested: ${plan.workflowId}`,
       status: 'pending',
     });
+    recordApprovalUsage(result.runId, approval.id, approval.toolId);
     setRunLifecycle(result.runId, 'WAITING_APPROVAL');
   }
   appendRuntimeEvent({
@@ -842,6 +958,7 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
   if (nextSequence === 13) {
     const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId, streamArtifactToolId());
     upsertApproval(approval);
+    recordApprovalUsage(run.id, approval.id, approval.toolId);
     const nextRun = updateStreamRun(run, {
       status: 'warning',
       currentStep: 'Waiting for human approval gate',
@@ -863,6 +980,7 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
   }, 'COMPLETED');
   const event = appendStreamLifecycleEvent(nextRun, 'run.completed', 'Hermes live stream completed');
   markStreamComplete(run.id);
+  evaluateQuotaAfterRun(run.id);
   return streamResult(nextRun, event, true);
 }
 
@@ -885,6 +1003,8 @@ export async function failStreamingRun(runId: string): Promise<RuntimeStreamResu
   }, 'FAILED');
   const event = appendStreamLifecycleEvent(nextRun, 'run.failed', 'Hermes live stream failed');
   markStreamComplete(run.id);
+  finalizeBillingLedger(run.id);
+  evaluateQuotaAfterRun(run.id);
   return streamResult(nextRun, event, true);
 }
 
@@ -918,6 +1038,7 @@ async function persistSandboxExecution(execution: HermesExecution, baseRun: Run)
   if (lifecycle === 'WAITING_APPROVAL') {
     const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), nextRun.ticketId, nextRun.id, nextRun.agentId);
     upsertApproval(approval);
+    recordApprovalUsage(nextRun.id, approval.id, approval.toolId);
     appendRuntimeEvent({
       command: 'approval.requested',
       entityType: 'run',
@@ -931,6 +1052,7 @@ async function persistSandboxExecution(execution: HermesExecution, baseRun: Run)
   if (lifecycle === 'COMPLETED') appendLifecycleEvent('run.completed', nextRun, 'Hermes run completed');
   if (lifecycle === 'FAILED') appendLifecycleEvent('run.failed', nextRun, 'Hermes run failed', 'failed');
   if (lifecycle === 'REJECTED') appendLifecycleEvent('run.cancelled', nextRun, 'Hermes run cancelled', 'failed');
+  if (['COMPLETED', 'FAILED', 'REJECTED'].includes(lifecycle)) evaluateQuotaAfterRun(nextRun.id);
   return nextRun;
 }
 
@@ -951,6 +1073,8 @@ export async function startSandboxRun(ticketId: string) {
   const task = mapTicketToHermesTask(ticket);
   const createdRun = { ...existingRun, status: 'queued' as const, currentStep: 'Hermes task created and queued' };
   upsertRun(createdRun, 'CREATED');
+  clearUsageLedger(createdRun.id);
+  recordRunStartUsage(createdRun.id);
   appendLifecycleEvent('run.created', createdRun, `Created Hermes task ${task.id}`, 'success');
   setRunLifecycle(createdRun.id, 'QUEUED');
   appendLifecycleEvent('run.queued', createdRun, 'Hermes run queued', 'pending');

@@ -91,7 +91,8 @@
     "smoke:capability-registry": "node scripts/smoke-capability-registry.mjs",
     "smoke:run-planner": "node scripts/smoke-run-planner.mjs",
     "smoke:plan-policy": "node scripts/smoke-plan-policy.mjs",
-    "smoke:execution-budget": "node scripts/smoke-execution-budget.mjs"
+    "smoke:execution-budget": "node scripts/smoke-execution-budget.mjs",
+    "smoke:usage-ledger": "node scripts/smoke-usage-ledger.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
