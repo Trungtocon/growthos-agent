@@ -3,7 +3,8 @@ import type { Activity, Approval, Artifact, Run, RunLog, RunStatus, ToolCall } f
 import { createHermesAdapter } from '../hermes/hermes-adapter';
 import { discoverHermes } from '../hermes/hermes-discovery-client';
 import { buildHermesToolRegistry, getDefaultRuntimeTools, type HermesTool } from '../hermes/hermes-tool-registry';
-import { createRunPlan, type RunPlan } from './run-planner';
+import { createRunPlan, type RunPlan, type RunPlanStep } from './run-planner';
+import { evaluatePlanPolicy, getApprovalRequiredSteps, type PlanExecutionPolicyReport } from './plan-policy';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
@@ -21,6 +22,7 @@ import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../ru
 import { getHermesDiscovery, setHermesDiscovery } from '../../runtime-store/hermes-discovery-store';
 import { getToolRegistry, setToolRegistry } from '../../runtime-store/tool-registry-store';
 import { getRunPlan, markRunPlanApproved, upsertRunPlan } from '../../runtime-store/run-plan-store';
+import { upsertPolicyReport } from '../../runtime-store/plan-policy-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
@@ -34,19 +36,21 @@ export async function refreshHermesDiscovery() {
 
 export function createPlanForTicket(ticketId: string, workflowId = 'demo-run-execution'): RunPlan {
   const plan = upsertRunPlan(createRunPlan(ticketId, workflowId));
+  const policyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
   appendRuntimeEvent({
     command: 'createRunPlan',
     entityType: 'ticket',
     entityId: ticketId,
     actorId: DEMO_AGENT_ID,
-    title: plan.status === 'blocked' ? `Run plan blocked: ${workflowId}` : `Run plan ready: ${workflowId}`,
-    status: plan.status === 'blocked' ? 'failed' : 'success',
+    title: policyReport.status === 'blocked' ? `Run plan blocked: ${workflowId}` : `Run plan policy ${policyReport.status}: ${workflowId}`,
+    status: policyReport.status === 'blocked' ? 'failed' : policyReport.status === 'warning' ? 'pending' : 'success',
   });
   return plan;
 }
 
 export function approveRunPlan(planId: string): RunPlan {
   const plan = markRunPlanApproved(planId);
+  upsertPolicyReport(evaluatePlanPolicy(plan.id));
   appendRuntimeEvent({
     command: 'approveRunPlan',
     entityType: 'ticket',
@@ -392,6 +396,33 @@ function runtimeApproval(existing: Approval | undefined, ticketId: string, runId
   };
 }
 
+function planPolicyApproval(plan: RunPlan, runId: string, step: RunPlanStep): Approval {
+  const now = runtimeNow();
+  const approval: Approval = {
+    id: `approval-policy-${plan.id}-${step.id}`,
+    ticketId: plan.ticketId,
+    runId,
+    toolId: step.toolId,
+    agentId: DEMO_AGENT_ID,
+    title: `Plan policy approval: ${step.name}`,
+    description: `Run plan ${plan.workflowId} requires human approval before executing ${step.name}.`,
+    status: 'pending',
+    severity: step.capabilityId === 'deployment' ? 'high' : 'medium',
+    requestedAt: now,
+    requestedBy: DEMO_AGENT_ID,
+    policy: 'plan-execution-policy',
+    auditTrail: [
+      {
+        id: `audit-policy-${plan.id}-${step.id}`,
+        actorId: DEMO_AGENT_ID,
+        action: 'created plan execution policy approval gate',
+        createdAt: now,
+      },
+    ],
+  };
+  return { ...approval, planId: plan.id, stepId: step.id } as Approval;
+}
+
 function baseRunForTicket(ticketId: string): Run | undefined {
   const ticket = demoTickets.find((item) => item.id === ticketId);
   const runId = ticket?.runId ?? (ticketId === DEMO_TICKET_ID ? DEMO_RUN_ID : undefined);
@@ -561,18 +592,43 @@ function seedPlanToolCalls(plan: RunPlan, runId: string) {
 export async function startRunFromPlan(planId: string): Promise<RuntimeStreamResult> {
   const plan = getRunPlan(planId);
   if (!plan) throw new Error(`Cannot start missing run plan ${planId}`);
-  if (plan.status === 'blocked') {
-    throw new Error(`Cannot start blocked run plan ${planId}: ${plan.missingCapabilities.join(', ') || 'blocked steps'}`);
+  const policyReport: PlanExecutionPolicyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
+  if (plan.status === 'blocked' || policyReport.status === 'blocked') {
+    appendRuntimeEvent({
+      command: 'startRunFromPlan',
+      entityType: 'run',
+      entityId: plan.id,
+      actorId: DEMO_AGENT_ID,
+      title: `Run plan blocked by policy: ${policyReport.blockingReasons.join(', ') || plan.missingCapabilities.join(', ') || 'blocked steps'}`,
+      status: 'failed',
+    });
+    throw new Error(`Cannot start blocked run plan ${planId}: ${policyReport.blockingReasons.join(', ') || plan.missingCapabilities.join(', ') || 'blocked steps'}`);
   }
   const result = await startStreamingRun(plan.ticketId);
   seedPlanToolCalls(plan, result.runId);
+  const approvalSteps = getApprovalRequiredSteps(plan);
+  if (approvalSteps.length) {
+    approvalSteps.forEach((step) => {
+      const approval = planPolicyApproval(plan, result.runId, step);
+      upsertApproval(approval);
+      appendRuntimeEvent({
+        command: 'approval.requested',
+        entityType: 'run',
+        entityId: result.runId,
+        actorId: DEMO_AGENT_ID,
+        title: `Plan policy approval requested: ${step.name}`,
+        status: 'pending',
+      });
+    });
+    setRunLifecycle(result.runId, 'WAITING_APPROVAL');
+  }
   appendRuntimeEvent({
     command: 'startRunFromPlan',
     entityType: 'run',
     entityId: result.runId,
     actorId: DEMO_AGENT_ID,
-    title: `Run started from plan: ${plan.workflowId}`,
-    status: 'success',
+    title: approvalSteps.length ? `Run waiting on plan policy approval: ${plan.workflowId}` : `Run started from plan: ${plan.workflowId}`,
+    status: approvalSteps.length ? 'pending' : 'success',
   });
   return result;
 }

@@ -46,6 +46,12 @@ import {
   getPlansByTicket,
   getRunPlan as getStoredRunPlan,
 } from '../runtime-store/run-plan-store';
+import {
+  getBlockingReasons as getStoredBlockingReasons,
+  getCanStartPlan as getStoredCanStartPlan,
+  getPlanWarnings as getStoredPlanWarnings,
+  getPolicyReport as getStoredPolicyReport,
+} from '../runtime-store/plan-policy-store';
 
 export interface KpiViewModel {
   label: string;
@@ -222,12 +228,32 @@ export function selectPlanSteps(planId?: string) {
 
 export function selectPlanReadiness(planId?: string) {
   const plan = selectRunPlan(planId);
+  const policyReport = selectPolicyReport(planId);
   return {
-    ready: plan?.status === 'ready',
+    ready: plan?.status === 'ready' && (policyReport ? policyReport.status !== 'blocked' : true),
     status: plan?.status ?? 'draft',
     missingCapabilities: plan?.missingCapabilities ?? [],
-    warnings: plan?.warnings ?? [],
+    warnings: [...(plan?.warnings ?? []), ...(policyReport?.warnings ?? [])],
+    policyStatus: policyReport?.status ?? 'allowed',
+    blockingReasons: policyReport?.blockingReasons ?? [],
+    canStart: policyReport ? policyReport.status !== 'blocked' : plan?.status === 'ready',
   };
+}
+
+export function selectPolicyReport(planId?: string) {
+  return getStoredPolicyReport(planId);
+}
+
+export function selectBlockingReasons(planId?: string): string[] {
+  return getStoredBlockingReasons(planId);
+}
+
+export function selectPlanWarnings(planId?: string): string[] {
+  return getStoredPlanWarnings(planId);
+}
+
+export function selectCanStartPlan(planId?: string): boolean {
+  return getStoredCanStartPlan(planId);
 }
 
 function streamProgress(runId: string): number {
@@ -670,6 +696,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const totalToolCalls = run ? getToolCallsByRun(run.id).length || run.toolCalls.length : 0;
   const plans = selectPlansByTicket(ticket.id);
   const currentPlan = selectCurrentPlanForTicket(ticket.id);
+  const policyReport = selectPolicyReport(currentPlan?.id);
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -694,6 +721,10 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     currentPlan,
     planSteps: selectPlanSteps(currentPlan?.id),
     planReadiness: selectPlanReadiness(currentPlan?.id),
+    policyReport,
+    blockingReasons: selectBlockingReasons(currentPlan?.id),
+    planWarnings: selectPlanWarnings(currentPlan?.id),
+    canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
   };
 }
 
@@ -722,6 +753,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const workflowReadinessMatrix = selectWorkflowReadinessMatrix();
   const missingCapabilities = selectMissingCapabilities();
   const currentPlan = selectCurrentPlanForTicket(ticket.id);
+  const policyReport = selectPolicyReport(currentPlan?.id);
   return {
     run,
     ticket,
@@ -738,6 +770,10 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     currentPlan,
     planSteps: selectPlanSteps(currentPlan?.id),
     planReadiness: selectPlanReadiness(currentPlan?.id),
+    policyReport,
+    blockingReasons: selectBlockingReasons(currentPlan?.id),
+    planWarnings: selectPlanWarnings(currentPlan?.id),
+    canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
     streamEvents,
     latestStreamEvent,
@@ -775,6 +811,7 @@ export function selectApprovalCenterViewModel() {
     approvals: queueRows,
     rawApprovals: approvals,
     selectedApproval,
+    selectedRawApproval,
     selectedArtifactPreview,
     kpis: [
       { label: 'Cho phe duyet', value: String(pending), tone: 'blue' },

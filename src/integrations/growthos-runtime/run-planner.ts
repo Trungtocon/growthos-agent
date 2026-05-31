@@ -92,7 +92,7 @@ export function createRunPlan(ticketId: string, workflowId = 'demo-run-execution
       modelId: compatibleModel,
       status: blocked ? 'blocked' : 'planned',
       expectedOutputType: expectedOutputFor(String(capabilityId)),
-      requiresApproval: capabilityId === 'approval-handling',
+      requiresApproval: ['approval-handling', 'artifact-generation', 'execution', 'deployment'].includes(String(capabilityId)),
     };
   });
 

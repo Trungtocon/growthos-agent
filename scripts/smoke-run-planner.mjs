@@ -155,7 +155,7 @@ try {
       return { runId: started.runId, runStatus: started.status, lifecycle: run?.lifecycle };
     });
     assert(result.runId === 'run-demo-module-3', `unexpected run id ${result.runId}`);
-    assert(result.lifecycle === 'QUEUED', `unexpected lifecycle ${result.lifecycle}`);
+    assert(['QUEUED', 'WAITING_APPROVAL'].includes(result.lifecycle), `unexpected lifecycle ${result.lifecycle}`);
     return result;
   });
 

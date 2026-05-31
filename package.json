@@ -89,7 +89,8 @@
     "smoke:hermes-discovery": "node scripts/smoke-hermes-discovery.mjs",
     "smoke:tool-registry": "node scripts/smoke-tool-registry.mjs",
     "smoke:capability-registry": "node scripts/smoke-capability-registry.mjs",
-    "smoke:run-planner": "node scripts/smoke-run-planner.mjs"
+    "smoke:run-planner": "node scripts/smoke-run-planner.mjs",
+    "smoke:plan-policy": "node scripts/smoke-plan-policy.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
