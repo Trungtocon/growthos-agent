@@ -15,6 +15,7 @@ import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
 import type { RuntimeToolCall } from '../integrations/growthos-runtime/runtime-types';
 import type { HermesDiscoveryResult } from '../integrations/hermes/hermes-discovery-types';
+import type { HermesToolRegistry } from '../integrations/hermes/hermes-tool-registry';
 import { getRuntimeReadiness } from '../integrations/growthos-runtime/runtime-orchestrator';
 import {
   getHermesCapabilities as getStoredHermesCapabilities,
@@ -23,6 +24,13 @@ import {
   getHermesModels as getStoredHermesModels,
   getHermesTools as getStoredHermesTools,
 } from '../runtime-store/hermes-discovery-store';
+import {
+  getRegisteredCapabilities,
+  getRegisteredModels,
+  getRegisteredTools,
+  getToolCompatibilityMatrix,
+  getToolRegistry as getStoredToolRegistry,
+} from '../runtime-store/tool-registry-store';
 
 export interface KpiViewModel {
   label: string;
@@ -139,6 +147,26 @@ export function selectHermesCapabilities() {
 
 export function selectRuntimeReadiness() {
   return getRuntimeReadiness();
+}
+
+export function selectHermesToolRegistry(): HermesToolRegistry {
+  return getStoredToolRegistry();
+}
+
+export function selectRegisteredHermesTools() {
+  return getRegisteredTools();
+}
+
+export function selectRegisteredHermesModels() {
+  return getRegisteredModels();
+}
+
+export function selectRegisteredHermesCapabilities() {
+  return getRegisteredCapabilities();
+}
+
+export function selectToolCompatibilityMatrix() {
+  return getToolCompatibilityMatrix();
 }
 
 function streamProgress(runId: string): number {
@@ -620,6 +648,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const runtimeToolRows = runToolRows(run);
   const hermesDiscovery = selectHermesDiscovery();
   const runtimeReadiness = selectRuntimeReadiness();
+  const toolRegistry = selectHermesToolRegistry();
   return {
     run,
     ticket,
@@ -627,6 +656,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     artifacts: run.artifacts,
     hermesDiscovery,
     runtimeReadiness,
+    toolRegistry,
     primaryArtifactPreview: getArtifactPreviewModel(getPrimaryArtifactForRun(run.id)?.id),
     streamEvents,
     latestStreamEvent,

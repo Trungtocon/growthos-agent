@@ -2,6 +2,7 @@ import { DEMO_AGENT_ID, DEMO_APPROVAL_ID, DEMO_RUN_ID, DEMO_TICKET_ID, demoRuns,
 import type { Activity, Approval, Artifact, Run, RunLog, RunStatus, ToolCall } from '../../domain/types';
 import { createHermesAdapter } from '../hermes/hermes-adapter';
 import { discoverHermes } from '../hermes/hermes-discovery-client';
+import { buildHermesToolRegistry, getDefaultRuntimeTools, type HermesTool } from '../hermes/hermes-tool-registry';
 import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
@@ -17,42 +18,16 @@ import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, markStreamComplete } from '../../runtime-store/stream-store';
 import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../runtime-store/tool-call-store';
 import { getHermesDiscovery, setHermesDiscovery } from '../../runtime-store/hermes-discovery-store';
+import { getToolRegistry, setToolRegistry } from '../../runtime-store/tool-registry-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
 const paperclip = createPaperclipAdapter(runtimeConfig.paperclip.mode, runtimeConfig.paperclip);
 
-const STREAM_TOOLS = [
-  {
-    id: 'stream-tool-search-knowledge-base',
-    name: 'SearchKnowledgeBase',
-    input: 'Ticket acceptance criteria, linked run context, previous approval history',
-    progress: 'Knowledge base search 65% complete',
-    output: 'Relevant QA policy, prior runtime evidence, and ticket dependencies found',
-    cost: 0.003,
-  },
-  {
-    id: 'stream-tool-generate-plan',
-    name: 'GeneratePlan',
-    input: 'Knowledge pack and ticket execution goal',
-    progress: 'Execution plan draft 70% complete',
-    output: 'Step-by-step Hermes execution plan generated',
-    cost: 0.004,
-  },
-  {
-    id: 'stream-tool-produce-artifact',
-    name: 'ProduceArtifact',
-    input: 'Execution plan, tool trace, approval policy, artifact template',
-    progress: 'Paperclip artifact render 80% complete',
-    output: 'Paperclip QA packet and runtime trace artifacts produced',
-    cost: 0.006,
-  },
-] as const;
-
-const STREAM_ARTIFACT_TOOL_ID = STREAM_TOOLS[2].id;
-
 export async function refreshHermesDiscovery() {
-  return setHermesDiscovery(await discoverHermes());
+  const discovery = setHermesDiscovery(await discoverHermes());
+  setToolRegistry(buildHermesToolRegistry(discovery));
+  return discovery;
 }
 
 export function getRuntimeReadiness(): RuntimeReadiness {
@@ -116,8 +91,47 @@ function runtimeTool(id: string, toolName: string, status: ToolCall['status'], i
   };
 }
 
-function streamToolConfig(toolId: string): (typeof STREAM_TOOLS)[number] {
-  return STREAM_TOOLS.find((tool) => tool.id === toolId) ?? STREAM_TOOLS[0];
+interface StreamToolConfig {
+  id: string;
+  name: string;
+  input: string;
+  progress: string;
+  output: string;
+  cost: number;
+  supportsArtifacts: boolean;
+  supportsApproval: boolean;
+}
+
+function toStreamToolConfig(tool: HermesTool, index: number): StreamToolConfig {
+  return {
+    id: tool.id,
+    name: tool.name,
+    input: `${tool.description} Runtime input from ticket context and current run state.`,
+    progress: `${tool.name} execution ${index === 0 ? 65 : index === 1 ? 70 : 80}% complete`,
+    output: `Completed successfully. ${tool.description}`,
+    cost: 0.003 + index * 0.001,
+    supportsArtifacts: tool.supportsArtifacts,
+    supportsApproval: tool.supportsApproval,
+  };
+}
+
+function streamToolConfigs(): StreamToolConfig[] {
+  return getDefaultRuntimeTools(getToolRegistry(), 3).map(toStreamToolConfig);
+}
+
+function streamToolAt(index: number): StreamToolConfig {
+  const tools = streamToolConfigs();
+  return tools[index] ?? tools[0];
+}
+
+function streamArtifactToolId(): string {
+  const tools = streamToolConfigs();
+  return tools.find((tool) => tool.supportsArtifacts)?.id ?? streamToolAt(2).id;
+}
+
+function streamToolConfig(toolId: string): StreamToolConfig {
+  const tools = streamToolConfigs();
+  return tools.find((tool) => tool.id === toolId) ?? tools[0];
 }
 
 function runtimeToolStatusToDomain(status: RuntimeToolCallStatus): ToolCall['status'] {
@@ -514,130 +528,130 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
   }
 
   if (nextSequence === 3) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'running', { phase: 'started' });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(0).id, 'running', { phase: 'started' });
     const nextRun = updateStreamRun(run, {
       status: 'running',
       currentStep: 'Searching knowledge base',
       elapsedSeconds: Math.max(run.elapsedSeconds, 18),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Search knowledge base running', 'running', 3, 0.003)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} running`, 'running', 3, 0.003)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-tool-start-${run.id}`, 'SearchKnowledgeBase tool started'), ...run.logs],
+      logs: [runtimeLog(`stream-log-tool-start-${run.id}`, `${toolCall.toolName} tool started`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'SearchKnowledgeBase started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', `${toolCall.toolName} started`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 4) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'running', { phase: 'progress', progress: 65 });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(0).id, 'running', { phase: 'progress', progress: 65 });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'SearchKnowledgeBase 65% complete',
+      currentStep: `${toolCall.toolName} 65% complete`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 36),
       toolCalls,
-      logs: [runtimeLog(`stream-log-progress-${run.id}`, 'SearchKnowledgeBase progress 65%'), ...run.logs],
+      logs: [runtimeLog(`stream-log-progress-${run.id}`, `${toolCall.toolName} progress 65%`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'SearchKnowledgeBase progress 65%', { progress: 65, toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', `${toolCall.toolName} progress 65%`, { progress: 65, toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 5) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'completed');
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(0).id, 'completed');
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'SearchKnowledgeBase completed',
+      currentStep: `${toolCall.toolName} completed`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 48),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Search knowledge base completed', 'success', 8, 0.003)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} completed`, 'success', 8, 0.003)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-tool-complete-${run.id}`, 'SearchKnowledgeBase completed'), ...run.logs],
+      logs: [runtimeLog(`stream-log-tool-complete-${run.id}`, `${toolCall.toolName} completed`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'SearchKnowledgeBase completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', `${toolCall.toolName} completed`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 6) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'running', { phase: 'started' });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(1).id, 'running', { phase: 'started' });
     const nextRun = updateStreamRun(run, {
       status: 'running',
       currentStep: 'Generating execution plan',
       elapsedSeconds: Math.max(run.elapsedSeconds, 56),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Generate execution plan running', 'running', 4, 0.004)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} running`, 'running', 4, 0.004)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-plan-start-${run.id}`, 'GeneratePlan tool started'), ...run.logs],
+      logs: [runtimeLog(`stream-log-plan-start-${run.id}`, `${toolCall.toolName} tool started`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'GeneratePlan started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', `${toolCall.toolName} started`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 7) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'running', { phase: 'progress', progress: 70 });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(1).id, 'running', { phase: 'progress', progress: 70 });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'GeneratePlan 70% complete',
+      currentStep: `${toolCall.toolName} 70% complete`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 64),
       toolCalls,
-      logs: [runtimeLog(`stream-log-plan-progress-${run.id}`, 'GeneratePlan progress 70%'), ...run.logs],
+      logs: [runtimeLog(`stream-log-plan-progress-${run.id}`, `${toolCall.toolName} progress 70%`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'GeneratePlan progress 70%', { progress: 70, toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', `${toolCall.toolName} progress 70%`, { progress: 70, toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 8) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'completed');
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(1).id, 'completed');
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'GeneratePlan completed',
+      currentStep: `${toolCall.toolName} completed`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 72),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Generate execution plan completed', 'success', 7, 0.004)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} completed`, 'success', 7, 0.004)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-plan-complete-${run.id}`, 'GeneratePlan completed'), ...run.logs],
+      logs: [runtimeLog(`stream-log-plan-complete-${run.id}`, `${toolCall.toolName} completed`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'GeneratePlan completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', `${toolCall.toolName} completed`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 9) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'running', { phase: 'started' });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(2).id, 'running', { phase: 'started' });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'Producing Paperclip artifact',
+      currentStep: `${toolCall.toolName} running`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 80),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Produce artifact running', 'running', 5, 0.006)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} running`, 'running', 5, 0.006)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-artifact-tool-start-${run.id}`, 'ProduceArtifact tool started'), ...run.logs],
+      logs: [runtimeLog(`stream-log-artifact-tool-start-${run.id}`, `${toolCall.toolName} tool started`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'ProduceArtifact started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', `${toolCall.toolName} started`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 10) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'running', { phase: 'progress', progress: 80 });
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(2).id, 'running', { phase: 'progress', progress: 80 });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'ProduceArtifact 80% complete',
+      currentStep: `${toolCall.toolName} 80% complete`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 88),
       toolCalls,
-      logs: [runtimeLog(`stream-log-artifact-tool-progress-${run.id}`, 'ProduceArtifact progress 80%'), ...run.logs],
+      logs: [runtimeLog(`stream-log-artifact-tool-progress-${run.id}`, `${toolCall.toolName} progress 80%`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'ProduceArtifact progress 80%', { progress: 80, toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', `${toolCall.toolName} progress 80%`, { progress: 80, toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 11) {
-    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'completed');
+    const { toolCall, toolCalls } = persistStreamTool(run, streamToolAt(2).id, 'completed');
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'ProduceArtifact completed',
+      currentStep: `${toolCall.toolName} completed`,
       elapsedSeconds: Math.max(run.elapsedSeconds, 96),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Produce artifact completed', 'success', 7, 0.006)),
+      steps: upsertStep(run.steps, streamStep(run.id, `${toolCall.toolName} completed`, 'success', 7, 0.006)),
       toolCalls,
-      logs: [runtimeLog(`stream-log-artifact-tool-complete-${run.id}`, 'ProduceArtifact completed'), ...run.logs],
+      logs: [runtimeLog(`stream-log-artifact-tool-complete-${run.id}`, `${toolCall.toolName} completed`), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'ProduceArtifact completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', `${toolCall.toolName} completed`, { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 12) {
-    const artifact = runtimeOutputArtifacts(run.id, runtimeNow(), STREAM_ARTIFACT_TOOL_ID)[0];
+    const artifact = runtimeOutputArtifacts(run.id, runtimeNow(), streamArtifactToolId())[0];
     const artifacts = mergeArtifacts([artifact], run.artifacts);
     const nextRun = updateStreamRun(run, {
       status: 'running',
@@ -652,7 +666,7 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
   }
 
   if (nextSequence === 13) {
-    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId, STREAM_ARTIFACT_TOOL_ID);
+    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId, streamArtifactToolId());
     upsertApproval(approval);
     const nextRun = updateStreamRun(run, {
       status: 'warning',
