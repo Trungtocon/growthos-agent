@@ -1,6 +1,7 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import type { ApprovalStatus, Ticket } from '../domain/types';
 import { approveRunPlan as approveRuntimeRunPlan, cancelAgentRun as createCancelAgentRunPlan, createPlanForTicket as createRuntimePlanForTicket, pauseAgentRun as createPauseAgentRunPlan, refreshHermesDiscovery as refreshRuntimeHermesDiscovery, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, startRunFromPlan as startRuntimeRunFromPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
+import { canApprovePlan, canCancelRun, canStartRun } from '../runtime/rbac-store';
 import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
 import type { WorkflowData } from './workflow-engine';
@@ -45,6 +46,10 @@ function ticketWithStatus(ticket: Ticket, patch: Partial<Ticket>): Ticket {
   return { ...ticket, ...patch, updatedAt: new Date().toISOString() };
 }
 
+function assertAllowed(decision: { allowed: boolean; reason: string }) {
+  if (!decision.allowed) throw new Error(`Authorization denied: ${decision.reason}`);
+}
+
 export async function approveApproval(approvalId: string) {
   return runWorkflowCommand({
     command: 'approveApproval',
@@ -53,7 +58,10 @@ export async function approveApproval(approvalId: string) {
     actorId: demoCurrentUser.id,
     title: 'Approval approved',
     optimistic: (data) => withApprovalDecision(data, approvalId, 'approved'),
-    mutate: () => sendApprovalDecision(approvalId, 'approved'),
+    mutate: () => {
+      assertAllowed(canApprovePlan(approvalId));
+      return sendApprovalDecision(approvalId, 'approved');
+    },
   });
 }
 
@@ -65,7 +73,10 @@ export async function rejectApproval(approvalId: string) {
     actorId: demoCurrentUser.id,
     title: 'Approval rejected',
     optimistic: (data) => withApprovalDecision(data, approvalId, 'rejected'),
-    mutate: () => sendApprovalDecision(approvalId, 'rejected'),
+    mutate: () => {
+      assertAllowed(canApprovePlan(approvalId));
+      return sendApprovalDecision(approvalId, 'rejected');
+    },
   });
 }
 
@@ -117,7 +128,10 @@ export async function startAgentRun(ticketId: string) {
     actorId: demoCurrentUser.id,
     title: 'Hermes run started',
     optimistic: plan.applyOptimistic,
-    mutate: () => sendStartAgentRun(ticketId),
+    mutate: () => {
+      assertAllowed(canStartRun(ticketId));
+      return sendStartAgentRun(ticketId);
+    },
   });
 }
 
@@ -130,6 +144,7 @@ export async function startStreamingRun(ticketId: string) {
     title: 'Live Hermes stream started',
     optimistic: (data) => data,
     mutate: async () => {
+      assertAllowed(canStartRun(ticketId));
       await startRuntimeStreamingRun(ticketId);
     },
   });
@@ -228,7 +243,10 @@ export async function cancelAgentRun(runId: string) {
     actorId: demoCurrentUser.id,
     title: 'Run cancelled',
     optimistic: plan.applyOptimistic,
-    mutate: () => sendRunCommand(runId, 'cancelAgentRun'),
+    mutate: () => {
+      assertAllowed(canCancelRun(runId));
+      return sendRunCommand(runId, 'cancelAgentRun');
+    },
   });
 }
 

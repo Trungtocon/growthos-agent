@@ -99,6 +99,16 @@ import {
   getTenants as getStoredTenants,
   getWorkspaceReferences as getStoredWorkspaceReferences,
 } from '../runtime/organization-store';
+import {
+  getAuthorizationHistory as getStoredAuthorizationHistory,
+  getCurrentRole as getStoredCurrentRole,
+  getDeniedActions as getStoredDeniedActions,
+  getEffectivePermissions as getStoredEffectivePermissions,
+  getPermissionMatrix as getStoredPermissionMatrix,
+  getPermissions as getStoredPermissions,
+  getRbacSummary as getStoredRbacSummary,
+  getRoleMatrix as getStoredRoleMatrix,
+} from '../runtime/rbac-store';
 
 export interface KpiViewModel {
   label: string;
@@ -538,6 +548,57 @@ export function selectTenantCount() {
 
 export function selectOrganizationSummary() {
   return getStoredOrganizationGovernanceSummary();
+}
+
+export function selectCurrentRole() {
+  return getStoredCurrentRole();
+}
+
+export function selectPermissions() {
+  return getStoredPermissions();
+}
+
+export function selectAuthorizationHistory() {
+  return getStoredAuthorizationHistory();
+}
+
+export function selectDeniedActions() {
+  return getStoredDeniedActions();
+}
+
+export function selectRoleMatrix() {
+  return getStoredRoleMatrix();
+}
+
+export function selectPermissionMatrix() {
+  return getStoredPermissionMatrix();
+}
+
+export function selectEffectivePermissions() {
+  return getStoredEffectivePermissions();
+}
+
+export function selectAccessControlViewModel() {
+  const summary = getStoredRbacSummary();
+  const roleMatrix = selectRoleMatrix();
+  const permissionMatrix = selectPermissionMatrix();
+  return {
+    ...summary,
+    roleMatrix,
+    permissionMatrix,
+    users: [
+      { id: 'member-admin', name: 'Linh Nguyen', email: 'linh@uikigai.test', roleId: 'WorkspaceAdmin' },
+      { id: 'member-manager', name: 'Minh Tran', email: 'minh@uikigai.test', roleId: 'Operator' },
+      { id: 'member-growth', name: 'Hoa Le', email: 'hoa@uikigai.test', roleId: 'Reviewer' },
+      { id: 'member-viewer', name: 'Tuan Vo', email: 'tuan@uikigai.test', roleId: 'Viewer' },
+    ],
+    kpis: [
+      { label: 'Roles', value: String(summary.roles.length), tone: 'blue' },
+      { label: 'Permissions', value: String(summary.permissions.length), tone: 'cyan' },
+      { label: 'Effective', value: String(summary.effectivePermissions.length), tone: 'green' },
+      { label: 'Denied', value: String(summary.deniedActions.length), tone: summary.deniedActions.length ? 'red' : 'green' },
+    ] satisfies KpiViewModel[],
+  };
 }
 
 function streamProgress(runId: string): number {
@@ -1022,6 +1083,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     workflowAnalytics,
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
+    authorization: selectAccessControlViewModel(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -1107,6 +1169,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     workspaceGovernance: selectWorkspaceGovernanceSummary(),
     organizationGovernance: organizationSummary,
     organizationHealth: organizationSummary.organizationHealth,
+    authorization: selectAccessControlViewModel(),
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
@@ -1163,6 +1226,7 @@ export function selectApprovalCenterViewModel() {
     approvalCost,
     organizationGovernance: organizationSummary,
     organizationHealth: organizationSummary.organizationHealth,
+    authorization: selectAccessControlViewModel(),
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
     kpis: [

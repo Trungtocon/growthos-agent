@@ -49,6 +49,7 @@ import {
   selectAgentPerformanceViewModel,
   selectAgentTemplatesViewModel,
   selectAgentsListViewModel,
+  selectAccessControlViewModel,
   selectCompanyOverviewViewModel,
   selectCompanySettingsViewModel,
   selectCreateAgentViewModel,
@@ -128,6 +129,7 @@ export const sprint2Routes = new Set([
   '/integrations',
   '/integrations/demo-integration',
   '/mcp',
+  '/access',
   '/organization',
   '/workspace',
   '/workspaces',
@@ -3238,6 +3240,85 @@ function OrganizationGovernanceScreen() {
   );
 }
 
+function AccessControlScreen() {
+  const vm = selectAccessControlViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="access.header"
+        title="Access Control"
+        subtitle="Read-only RBAC dashboard for roles, permissions, effective access, denied actions, and authorization events."
+        actions={<><Button variant="secondary"><Lock className="h-4 w-4" />Access report</Button><Button><ShieldCheck className="h-4 w-4" />Review matrix</Button></>}
+      />
+      <MetricBand parityId="access.kpi-band" items={vm.kpis} />
+      <div data-parity-id="access.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="access.left-panel" className="space-y-5">
+          <Panel title="Role Matrix">
+            <div className="grid grid-cols-2 gap-4 p-5">
+              {vm.roleMatrix.map((role) => (
+                <div key={role.id} className="rounded-xl border border-slate-100 p-4">
+                  <div className="flex items-center justify-between gap-3"><b>{role.name}</b><Badge tone={role.id === vm.currentRole.id ? 'blue' : 'slate'}>{role.permissionCount}</Badge></div>
+                  <p className="mt-2 text-sm leading-6 text-slate-500">{role.description}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">{role.permissions.slice(0, 6).map((permission) => <Badge key={permission} tone="green">{permission}</Badge>)}</div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Permission Matrix">
+            <div className="overflow-hidden p-5">
+              <div className="grid grid-cols-[170px_repeat(7,minmax(72px,1fr))] gap-2 text-xs">
+                <b>Permission</b>
+                {vm.roles.map((role) => <b key={role.id} className="truncate">{role.id.replace('Organization', 'Org')}</b>)}
+                {vm.permissions.slice(0, 12).map((permission) => (
+                  <>
+                    <span key={`${permission.id}-label`} className="truncate rounded-lg bg-slate-50 px-2 py-2 font-semibold">{permission.id}</span>
+                    {vm.permissionMatrix.map((row) => {
+                      const allowed = row.permissions.find((item) => item.permission.id === permission.id)?.allowed;
+                      return <span key={`${permission.id}-${row.role.id}`} className={`rounded-lg px-2 py-2 text-center font-bold ${allowed ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-50 text-slate-300'}`}>{allowed ? 'Yes' : '-'}</span>;
+                    })}
+                  </>
+                ))}
+              </div>
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="access.right-panel" className="space-y-5">
+          <Panel title="Current Role">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Role" value={vm.currentRole.name} />
+              <FieldRow label="Rank" value={String(vm.currentRole.rank)} />
+              <FieldRow label="Effective permissions" value={String(vm.effectivePermissions.length)} />
+              <p className="text-sm leading-6 text-slate-500">{vm.currentRole.description}</p>
+            </div>
+          </Panel>
+          <Panel title="Users">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.users.map((user) => <div key={user.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{user.name}</b><p className="mt-1 text-sm text-slate-500">{user.email}</p></div><Badge tone={user.roleId === 'Viewer' ? 'slate' : user.roleId === 'Reviewer' ? 'amber' : 'blue'}>{user.roleId}</Badge></div>)}
+            </div>
+          </Panel>
+          <Panel title="Denied Actions">
+            <div className="space-y-3 p-5">
+              {(vm.deniedActions.length ? vm.deniedActions : [{ id: 'none', action: 'No denied actions', reason: 'Authorization layer has no active denials.', suggestedRole: vm.currentRole.id }]).slice(0, 5).map((action) => (
+                <div key={action.id} className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm">
+                  <b className="text-red-700">{action.action}</b>
+                  <p className="mt-1 text-red-600">{action.reason}</p>
+                  <p className="mt-1 text-xs font-semibold text-red-500">Suggested: {action.suggestedRole}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Authorization Events">
+            <div className="divide-y divide-slate-100 p-4">
+              {vm.authorizationHistory.slice(0, 6).map((event) => <div key={event.id} className="py-3"><div className="flex items-center justify-between"><b className="text-sm">{event.action}</b><Badge tone={event.allowed ? 'green' : 'red'}>{event.allowed ? 'Allowed' : 'Denied'}</Badge></div><p className="mt-1 text-sm text-slate-500">{event.reason}</p></div>)}
+              {!vm.authorizationHistory.length ? <div className="py-3 text-sm font-semibold text-slate-500">No authorization events recorded yet.</div> : null}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function WorkspaceGovernanceScreen() {
   const vm = selectWorkspaceGovernanceViewModel();
   const budgetUsed = vm.budget.monthlyLimit ? Math.round((vm.budget.currentSpend / vm.budget.monthlyLimit) * 100) : 0;
@@ -3588,6 +3669,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations') return <IntegrationsHubScreen />;
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
+  if (route === '/access') return <AccessControlScreen />;
   if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;
   if (route === '/workspaces') return <WorkspacesManagerScreen />;
