@@ -16,6 +16,7 @@ import { getApprovalById, upsertApproval } from '../../runtime-store/approval-st
 import { upsertArtifact } from '../../runtime-store/artifact-store';
 import { appendRuntimeEvent } from '../../runtime-store/event-store';
 import { getRunById, setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
+import type { WorkflowCommand } from '../../state/event-log';
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, markStreamComplete } from '../../runtime-store/stream-store';
 import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../runtime-store/tool-call-store';
@@ -44,12 +45,15 @@ import {
   evaluateArtifactExport,
   evaluateBudgetOverride,
   evaluateDeploymentRequest,
+  evaluateGovernanceDecision,
   evaluatePlanApproval,
   evaluatePlanExecution,
   evaluateRunRequest,
   type GovernanceDecisionReport,
 } from '../../runtime/governance-decision-engine';
 import { generateGovernanceDecisionArtifacts, recordGovernanceDecision } from '../../runtime/governance-decision-store';
+import { enforceGovernanceDecision, type EnforcementResult } from '../../runtime/governance-enforcement';
+import { generateGovernanceEnforcementArtifacts, recordGovernanceEnforcement } from '../../runtime/governance-enforcement-store';
 import type { AuthorizationDecision } from '../../runtime/rbac';
 import {
   evaluateQuotaAfterRun,
@@ -88,7 +92,11 @@ export function createPlanForTicket(ticketId: string, workflowId = 'demo-run-exe
 
 export function approveRunPlan(planId: string): RunPlan {
   const auth = canApprovePlan(planId);
-  recordGovernanceDecision(evaluatePlanApproval(planId, { authorizationDecision: auth }));
+  const { enforcement } = recordGovernanceDecisionAndEnforcement(
+    evaluatePlanApproval(planId, { authorizationDecision: auth }),
+    'approveRunPlan',
+  );
+  assertGovernanceEnforcement(enforcement, 'approveRunPlan', 'run', planId);
   assertRuntimeAuthorized(auth, 'approveRunPlan', 'run', planId);
   const plan = markRunPlanApproved(planId);
   upsertPolicyReport(evaluatePlanPolicy(plan.id));
@@ -122,11 +130,62 @@ function assertRuntimeAuthorized(
   throw new Error(`Authorization denied for ${decision.action}: ${decision.reason}`);
 }
 
+function recordGovernanceDecisionAndEnforcement(
+  report: GovernanceDecisionReport,
+  runtimeAction: string,
+  options: { forceTerminate?: boolean } = {},
+): { governanceReport: GovernanceDecisionReport; enforcement: EnforcementResult } {
+  const governanceReport = recordGovernanceDecision(report);
+  const enforcement = recordGovernanceEnforcement(enforceGovernanceDecision(governanceReport, {
+    runtimeAction,
+    forceTerminate: options.forceTerminate,
+  }));
+  return { governanceReport, enforcement };
+}
+
+function assertGovernanceEnforcement(
+  enforcement: EnforcementResult,
+  command: WorkflowCommand,
+  entityType: 'run' | 'ticket',
+  entityId: string,
+  options: { allowApprovalHold?: boolean; terminateOnBlock?: boolean } = {},
+) {
+  if (enforcement.allowed) return;
+  if (enforcement.approvalRequired && options.allowApprovalHold) {
+    appendRuntimeEvent({
+      command,
+      entityType,
+      entityId,
+      actorId: DEMO_AGENT_ID,
+      title: `Governance approval hold: ${enforcement.decisionReasons.join(', ')}`,
+      status: 'pending',
+    });
+    return;
+  }
+  if (options.terminateOnBlock && entityType === 'run') {
+    setRunLifecycle(entityId, 'REJECTED');
+  }
+  appendRuntimeEvent({
+    command,
+    entityType,
+    entityId,
+    actorId: DEMO_AGENT_ID,
+    title: `Governance enforcement ${enforcement.enforcementAction}: ${enforcement.decisionReasons.join(', ')}`,
+    status: 'failed',
+    error: enforcement.decisionReasons.join(', '),
+  });
+  throw new Error(`Governance enforcement ${enforcement.enforcementAction} for ${enforcement.runtimeAction}: ${enforcement.decisionReasons.join(', ')}`);
+}
+
 function assertArtifactExportGovernance(runId: string): GovernanceDecisionReport {
   const auth = canExportArtifact(runId);
-  const report = recordGovernanceDecision(evaluateArtifactExport(runId, { authorizationDecision: auth }));
+  const { governanceReport, enforcement } = recordGovernanceDecisionAndEnforcement(
+    evaluateArtifactExport(runId, { authorizationDecision: auth }),
+    'exportArtifact',
+  );
+  assertGovernanceEnforcement(enforcement, 'artifact.created', 'run', runId);
   assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
-  return report;
+  return governanceReport;
 }
 
 export function getRuntimeReadiness(): RuntimeReadiness {
@@ -726,10 +785,8 @@ function createQueuedStreamRun(ticketId: string): Run {
 }
 
 export async function startStreamingRun(ticketId: string): Promise<RuntimeStreamResult> {
-  const governanceReport = recordGovernanceDecision(evaluateRunRequest(ticketId));
-  if (governanceReport.finalDecision === 'BLOCKED_BY_RBAC' || governanceReport.finalDecision === 'DENY') {
-    throw new Error(`Governance denied runtime execution: ${governanceReport.decisionReasons.join(', ')}`);
-  }
+  const { enforcement } = recordGovernanceDecisionAndEnforcement(evaluateRunRequest(ticketId), 'runtime execution');
+  assertGovernanceEnforcement(enforcement, 'startStreamingRun', 'ticket', ticketId);
   const queuedRun = createQueuedStreamRun(ticketId);
   clearStream(queuedRun.id);
   clearToolCalls(queuedRun.id);
@@ -741,11 +798,51 @@ export async function startStreamingRun(ticketId: string): Promise<RuntimeStream
 }
 
 export function evaluateDeploymentGovernance(targetId: string): GovernanceDecisionReport {
-  return recordGovernanceDecision(evaluateDeploymentRequest(targetId));
+  return recordGovernanceDecisionAndEnforcement(evaluateDeploymentRequest(targetId), 'deployArtifact').governanceReport;
 }
 
 export function evaluateBudgetOverrideGovernance(targetId: string): GovernanceDecisionReport {
-  return recordGovernanceDecision(evaluateBudgetOverride(targetId));
+  return recordGovernanceDecisionAndEnforcement(evaluateBudgetOverride(targetId), 'budget override').governanceReport;
+}
+
+export function evaluateQuotaOverrideGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId,
+    targetType: 'runtime',
+    action: 'quotaOverride',
+    approvalRequired: true,
+    approvalReason: 'Quota override requires governance approval.',
+  }), 'quota override').governanceReport;
+}
+
+export function evaluateOrganizationOverrideGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId,
+    targetType: 'runtime',
+    action: 'organizationOverride',
+    approvalRequired: true,
+    approvalReason: 'Organization override requires governance approval.',
+  }), 'organization override').governanceReport;
+}
+
+export function evaluateTenantOverrideGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId,
+    targetType: 'runtime',
+    action: 'tenantOverride',
+    approvalRequired: true,
+    approvalReason: 'Tenant override requires governance approval.',
+  }), 'tenant override').governanceReport;
+}
+
+export function evaluateWorkspaceOverrideGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId,
+    targetType: 'runtime',
+    action: 'workspaceOverride',
+    approvalRequired: true,
+    approvalReason: 'Workspace override requires governance approval.',
+  }), 'workspace override').governanceReport;
 }
 
 function seedPlanToolCalls(plan: RunPlan, runId: string) {
@@ -784,11 +881,16 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
   const auth = canStartRun(planId);
   const policyReport: PlanExecutionPolicyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
   const quotaReport = evaluateQuotaBeforeRun(plan.id);
-  const governanceReport = recordGovernanceDecision(evaluatePlanExecution(plan.id, {
+  const { governanceReport, enforcement } = recordGovernanceDecisionAndEnforcement(evaluatePlanExecution(plan.id, {
     authorizationDecision: auth,
     policyReport,
     quotaReport,
-  }));
+  }), 'workflow execution');
+  if (governanceReport.finalDecision === 'DENY' || governanceReport.finalDecision === 'BLOCKED_BY_RBAC') {
+    assertGovernanceEnforcement(enforcement, 'startRunFromPlan', 'run', planId);
+  } else if (enforcement.approvalRequired) {
+    assertGovernanceEnforcement(enforcement, 'startRunFromPlan', 'run', planId, { allowApprovalHold: true });
+  }
   assertRuntimeAuthorized(auth, 'startRunFromPlan', 'run', planId);
   if (quotaReport.status === 'exceeded') {
     appendRuntimeEvent({
@@ -985,9 +1087,45 @@ export function exportGovernanceDecisionArtifacts(runId = DEMO_RUN_ID): Artifact
   return artifacts;
 }
 
+export function exportGovernanceEnforcementArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  assertArtifactExportGovernance(runId);
+  const artifacts = generateGovernanceEnforcementArtifacts(runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Governance enforcement export generated',
+    status: 'success',
+  });
+  return artifacts;
+}
+
+export function terminateRunByGovernance(runId = DEMO_RUN_ID, reason = 'Runtime terminated by governance enforcement.'): EnforcementResult {
+  const { enforcement } = recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId: runId,
+    targetType: 'run',
+    action: 'terminateRun',
+    deniedReason: reason,
+  }), 'runtime termination', { forceTerminate: true });
+  setRunLifecycle(runId, 'REJECTED');
+  appendRuntimeEvent({
+    command: 'run.failed',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: `Runtime terminated by governance: ${reason}`,
+    status: 'failed',
+    error: reason,
+  });
+  return enforcement;
+}
+
 export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult> {
   const run = baseRunById(runId);
   if (!run) throw new Error(`Cannot advance missing stream run ${runId}`);
+  const { enforcement } = recordGovernanceDecisionAndEnforcement(evaluateRunRequest(run.ticketId), 'tool execution');
+  assertGovernanceEnforcement(enforcement, 'tool.started', 'run', runId, { terminateOnBlock: true });
   if (isStreamComplete(runId)) {
     const events = getStreamEvents(runId);
     const lastEvent = events[events.length - 1] ?? appendStreamLifecycleEvent(run, 'run.completed', 'Stream already completed');

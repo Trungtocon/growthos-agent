@@ -141,6 +141,14 @@ import {
   getGovernanceViolations as getStoredGovernanceViolations,
   getGovernanceWarnings as getStoredGovernanceWarnings,
 } from '../runtime/governance-decision-store';
+import {
+  getApprovalHolds as getStoredApprovalHolds,
+  getBlockedRuns as getStoredBlockedRuns,
+  getEnforcementEvents as getStoredEnforcementEvents,
+  getGovernanceEnforcementSummary as getStoredGovernanceEnforcementSummary,
+  getRejectedExecutions as getStoredRejectedExecutions,
+  getTerminatedRuns as getStoredTerminatedRuns,
+} from '../runtime/governance-enforcement-store';
 
 export interface KpiViewModel {
   label: string;
@@ -733,6 +741,57 @@ export function selectGovernanceDecisionViewModel() {
   };
 }
 
+export function selectBlockedRuns() {
+  return getStoredBlockedRuns();
+}
+
+export function selectApprovalQueue() {
+  return getStoredApprovalHolds();
+}
+
+export function selectEnforcementEvents() {
+  return getStoredEnforcementEvents();
+}
+
+export function selectRejectedExecutions() {
+  return getStoredRejectedExecutions();
+}
+
+export function selectTerminatedRuns() {
+  return getStoredTerminatedRuns();
+}
+
+export function selectGovernanceEnforcementSummary() {
+  return getStoredGovernanceEnforcementSummary();
+}
+
+export function selectGovernanceEnforcementViewModel() {
+  const summary = selectGovernanceEnforcementSummary();
+  const blockedRuns = selectBlockedRuns();
+  const approvalHolds = selectApprovalQueue();
+  const rejectedExecutions = selectRejectedExecutions();
+  const terminatedRuns = selectTerminatedRuns();
+  const events = selectEnforcementEvents();
+  const violations = events.flatMap((event) => event.violations);
+  return {
+    summary,
+    blockedRuns,
+    approvalHolds,
+    rejectedExecutions,
+    terminatedRuns,
+    events,
+    violations,
+    latestEvent: events[0],
+    kpis: [
+      { label: 'Events', value: String(summary.total), tone: 'blue' },
+      { label: 'Executed', value: String(summary.executed), tone: 'green' },
+      { label: 'Approval holds', value: String(summary.approvalHolds), tone: summary.approvalHolds ? 'amber' : 'slate' },
+      { label: 'Rejected', value: String(summary.rejected), tone: summary.rejected ? 'red' : 'green' },
+      { label: 'Terminated', value: String(summary.terminated), tone: summary.terminated ? 'red' : 'slate' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectRoleMatrix() {
   return getStoredRoleMatrix();
 }
@@ -766,6 +825,7 @@ export function selectAccessControlViewModel() {
     tenantBreakdown: auditSummary.byTenant,
     policyInheritance: selectPolicyInheritanceViewModel(),
     governanceDecision: selectGovernanceDecisionViewModel(),
+    governanceEnforcement: selectGovernanceEnforcementViewModel(),
     roleMatrix,
     permissionMatrix,
     users: [

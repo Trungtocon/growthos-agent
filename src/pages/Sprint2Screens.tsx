@@ -67,6 +67,7 @@ import {
   selectGoalsDashboardViewModel,
   selectGovernancePoliciesViewModel,
   selectGovernanceDecisionViewModel,
+  selectGovernanceEnforcementViewModel,
   selectHelpTemplateCenterViewModel,
   selectIntegrationDetailViewModel,
   selectIntegrationsHubViewModel,
@@ -123,6 +124,7 @@ export const sprint2Routes = new Set([
   '/approvals/demo-approval',
   '/governance/policies',
   '/governance',
+  '/enforcement',
   '/audit-log',
   '/risk-center',
   '/cost',
@@ -3317,6 +3319,8 @@ function AccessControlScreen() {
               <FieldRow label="Latest decision" value={vm.governanceDecision.summary.latestDecision} />
               <FieldRow label="Blocked" value={String(vm.governanceDecision.blocked.length)} />
               <FieldRow label="Warnings" value={String(vm.governanceDecision.warnings.length)} />
+              <FieldRow label="Enforcement" value={vm.governanceEnforcement.summary.latestAction} />
+              <FieldRow label="Approval holds" value={String(vm.governanceEnforcement.summary.approvalHolds)} />
             </div>
           </Panel>
           <Panel title="Users">
@@ -3371,6 +3375,7 @@ function governanceTone(decision: string): Tone {
 
 function GovernanceDecisionScreen() {
   const vm = selectGovernanceDecisionViewModel();
+  const enforcement = selectGovernanceEnforcementViewModel();
   const latest = vm.latestReport;
   return (
     <div>
@@ -3434,6 +3439,14 @@ function GovernanceDecisionScreen() {
               <FieldRow label="RBAC blocked" value={String(vm.summary.blockedByRbac)} />
             </div>
           </Panel>
+          <Panel title="Enforcement Status">
+            <div className="space-y-3 p-5 text-sm">
+              <FieldRow label="Latest action" value={enforcement.summary.latestAction} />
+              <FieldRow label="Approval holds" value={String(enforcement.summary.approvalHolds)} />
+              <FieldRow label="Rejected" value={String(enforcement.summary.rejected)} />
+              <FieldRow label="Terminated" value={String(enforcement.summary.terminated)} />
+            </div>
+          </Panel>
           <Panel title="Policy Violations">
             <div className="space-y-3 p-5">
               {(vm.violations.length ? vm.violations : [{ id: 'none', category: 'policy', reason: 'No active governance violations.', severity: 'warning' }]).slice(0, 6).map((violation) => (
@@ -3461,9 +3474,108 @@ function GovernanceDecisionScreen() {
   );
 }
 
+function GovernanceEnforcementScreen() {
+  const vm = selectGovernanceEnforcementViewModel();
+  return (
+    <div>
+      <SimpleHeader
+        parityId="enforcement.header"
+        title="Governance Enforcement"
+        subtitle="Mandatory interception between governance decisions and runtime execution."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Enforcement report</Button><Button><ShieldCheck className="h-4 w-4" />Review holds</Button></>}
+      />
+      <MetricBand parityId="enforcement.kpi-band" items={vm.kpis} />
+      <div data-parity-id="enforcement.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="enforcement.left-panel" className="space-y-5">
+          <Panel title="Enforcement Timeline">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.events.length ? vm.events : []).slice(0, 10).map((event) => (
+                <div key={event.id} className="grid grid-cols-[1fr_150px_120px] items-center gap-3 py-3 text-sm">
+                  <div className="min-w-0">
+                    <b>{event.runtimeAction}</b>
+                    <p className="mt-1 truncate text-slate-500">{event.targetType} / {event.targetId}</p>
+                  </div>
+                  <Badge tone={event.enforcementAction === 'EXECUTE' ? 'green' : event.enforcementAction === 'REQUIRE_APPROVAL' ? 'amber' : 'red'}>{event.enforcementAction}</Badge>
+                  <span className="text-xs font-semibold text-slate-500">{event.createdAt.slice(11, 19)}</span>
+                </div>
+              ))}
+              {!vm.events.length ? <div className="py-6 text-sm font-semibold text-slate-500">No enforcement events recorded yet.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Blocked Runs">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.blockedRuns.length ? vm.blockedRuns : []).slice(0, 8).map((block) => (
+                <div key={block.id} className="py-3 text-sm">
+                  <div className="flex items-center justify-between gap-3"><b>{block.runtimeAction}</b><Badge tone="red">{block.decision}</Badge></div>
+                  <p className="mt-1 text-slate-500">{block.reasons.join('; ')}</p>
+                </div>
+              ))}
+              {!vm.blockedRuns.length ? <div className="py-3 text-sm font-semibold text-slate-500">No blocked runs recorded.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Governance Violations">
+            <div className="space-y-3 p-5">
+              {(vm.violations.length ? vm.violations : [{ id: 'none', runtimeAction: 'No violation', reason: 'No active enforcement violations.', severity: 'warning' }]).slice(0, 8).map((violation) => (
+                <div key={violation.id} className={`rounded-xl border px-4 py-3 text-sm ${violation.severity === 'blocking' ? 'border-red-100 bg-red-50 text-red-700' : 'border-amber-100 bg-amber-50 text-amber-700'}`}>
+                  <b>{violation.runtimeAction}</b>
+                  <p className="mt-1">{violation.reason}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="enforcement.right-panel" className="space-y-5">
+          <Panel title="Execution Decisions">
+            <div className="space-y-3 p-5 text-sm">
+              <FieldRow label="Latest action" value={vm.summary.latestAction} />
+              <FieldRow label="Executed" value={String(vm.summary.executed)} />
+              <FieldRow label="Rejected" value={String(vm.summary.rejected)} />
+              <FieldRow label="Blocked runs" value={String(vm.summary.blockedRuns)} />
+            </div>
+          </Panel>
+          <Panel title="Approval Holds">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.approvalHolds.length ? vm.approvalHolds : []).slice(0, 6).map((hold) => (
+                <div key={hold.id} className="py-3 text-sm">
+                  <div className="flex items-center justify-between gap-3"><b>{hold.runtimeAction}</b><Badge tone="amber">HOLD</Badge></div>
+                  <p className="mt-1 text-slate-500">{hold.reasons.join('; ')}</p>
+                </div>
+              ))}
+              {!vm.approvalHolds.length ? <div className="py-3 text-sm font-semibold text-slate-500">No approval holds recorded.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Rejected Actions">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.rejectedExecutions.length ? vm.rejectedExecutions : []).slice(0, 6).map((event) => (
+                <div key={event.id} className="py-3 text-sm">
+                  <div className="flex items-center justify-between gap-3"><b>{event.runtimeAction}</b><Badge tone="red">{event.decision}</Badge></div>
+                  <p className="mt-1 text-slate-500">{event.decisionReasons.join('; ')}</p>
+                </div>
+              ))}
+              {!vm.rejectedExecutions.length ? <div className="py-3 text-sm font-semibold text-slate-500">No rejected actions recorded.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Terminated Runs">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.terminatedRuns.length ? vm.terminatedRuns : []).slice(0, 6).map((run) => (
+                <div key={run.id} className="py-3 text-sm">
+                  <div className="flex items-center justify-between gap-3"><b>{run.targetId}</b><Badge tone="red">TERMINATED</Badge></div>
+                  <p className="mt-1 text-slate-500">{run.reasons.join('; ')}</p>
+                </div>
+              ))}
+              {!vm.terminatedRuns.length ? <div className="py-3 text-sm font-semibold text-slate-500">No terminated runs recorded.</div> : null}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PolicyInheritanceScreen() {
   const vm = selectPolicyInheritanceViewModel();
   const governance = selectGovernanceDecisionViewModel();
+  const enforcement = selectGovernanceEnforcementViewModel();
   return (
     <div>
       <SimpleHeader
@@ -3526,6 +3638,14 @@ function PolicyInheritanceScreen() {
               <FieldRow label="Allowed" value={String(governance.summary.allowed)} />
               <FieldRow label="Approval" value={String(governance.summary.approvalRequired)} />
               <FieldRow label="Blocked" value={String(governance.blocked.length)} />
+            </div>
+          </Panel>
+          <Panel title="Enforcement Summary">
+            <div className="grid grid-cols-4 gap-3 p-5 text-sm">
+              <FieldRow label="Latest" value={enforcement.summary.latestAction} />
+              <FieldRow label="Executed" value={String(enforcement.summary.executed)} />
+              <FieldRow label="Holds" value={String(enforcement.summary.approvalHolds)} />
+              <FieldRow label="Rejected" value={String(enforcement.summary.rejected)} />
             </div>
           </Panel>
         </div>
@@ -3923,6 +4043,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/mcp') return <McpServerManagerScreen />;
   if (route === '/access') return <AccessControlScreen />;
   if (route === '/governance') return <GovernanceDecisionScreen />;
+  if (route === '/enforcement') return <GovernanceEnforcementScreen />;
   if (route === '/policies') return <PolicyInheritanceScreen />;
   if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;
