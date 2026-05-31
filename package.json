@@ -99,7 +99,8 @@
     "smoke:organization-governance": "node scripts/smoke-organization-governance.mjs",
     "smoke:rbac": "node scripts/smoke-rbac.mjs",
     "smoke:authorization-audit": "node scripts/smoke-authorization-audit.mjs",
-    "smoke:policy-inheritance": "node scripts/smoke-policy-inheritance.mjs"
+    "smoke:policy-inheritance": "node scripts/smoke-policy-inheritance.mjs",
+    "smoke:governance-decision": "node scripts/smoke-governance-decision.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

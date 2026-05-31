@@ -40,6 +40,16 @@ import {
 } from '../../runtime/rbac-store';
 import { generateAuthorizationAuditArtifacts } from '../../runtime/authorization-audit-store';
 import { generatePolicyInheritanceArtifacts } from '../../runtime/policy-inheritance-store';
+import {
+  evaluateArtifactExport,
+  evaluateBudgetOverride,
+  evaluateDeploymentRequest,
+  evaluatePlanApproval,
+  evaluatePlanExecution,
+  evaluateRunRequest,
+  type GovernanceDecisionReport,
+} from '../../runtime/governance-decision-engine';
+import { generateGovernanceDecisionArtifacts, recordGovernanceDecision } from '../../runtime/governance-decision-store';
 import type { AuthorizationDecision } from '../../runtime/rbac';
 import {
   evaluateQuotaAfterRun,
@@ -78,6 +88,7 @@ export function createPlanForTicket(ticketId: string, workflowId = 'demo-run-exe
 
 export function approveRunPlan(planId: string): RunPlan {
   const auth = canApprovePlan(planId);
+  recordGovernanceDecision(evaluatePlanApproval(planId, { authorizationDecision: auth }));
   assertRuntimeAuthorized(auth, 'approveRunPlan', 'run', planId);
   const plan = markRunPlanApproved(planId);
   upsertPolicyReport(evaluatePlanPolicy(plan.id));
@@ -109,6 +120,13 @@ function assertRuntimeAuthorized(
     error: decision.reason,
   });
   throw new Error(`Authorization denied for ${decision.action}: ${decision.reason}`);
+}
+
+function assertArtifactExportGovernance(runId: string): GovernanceDecisionReport {
+  const auth = canExportArtifact(runId);
+  const report = recordGovernanceDecision(evaluateArtifactExport(runId, { authorizationDecision: auth }));
+  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  return report;
 }
 
 export function getRuntimeReadiness(): RuntimeReadiness {
@@ -708,6 +726,10 @@ function createQueuedStreamRun(ticketId: string): Run {
 }
 
 export async function startStreamingRun(ticketId: string): Promise<RuntimeStreamResult> {
+  const governanceReport = recordGovernanceDecision(evaluateRunRequest(ticketId));
+  if (governanceReport.finalDecision === 'BLOCKED_BY_RBAC' || governanceReport.finalDecision === 'DENY') {
+    throw new Error(`Governance denied runtime execution: ${governanceReport.decisionReasons.join(', ')}`);
+  }
   const queuedRun = createQueuedStreamRun(ticketId);
   clearStream(queuedRun.id);
   clearToolCalls(queuedRun.id);
@@ -716,6 +738,14 @@ export async function startStreamingRun(ticketId: string): Promise<RuntimeStream
   const run = updateStreamRun(queuedRun, {}, 'QUEUED');
   const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued', { ticketId });
   return streamResult(run, event);
+}
+
+export function evaluateDeploymentGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecision(evaluateDeploymentRequest(targetId));
+}
+
+export function evaluateBudgetOverrideGovernance(targetId: string): GovernanceDecisionReport {
+  return recordGovernanceDecision(evaluateBudgetOverride(targetId));
 }
 
 function seedPlanToolCalls(plan: RunPlan, runId: string) {
@@ -752,16 +782,21 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
   const plan = getRunPlan(planId);
   if (!plan) throw new Error(`Cannot start missing run plan ${planId}`);
   const auth = canStartRun(planId);
-  assertRuntimeAuthorized(auth, 'startRunFromPlan', 'run', planId);
   const policyReport: PlanExecutionPolicyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
   const quotaReport = evaluateQuotaBeforeRun(plan.id);
+  const governanceReport = recordGovernanceDecision(evaluatePlanExecution(plan.id, {
+    authorizationDecision: auth,
+    policyReport,
+    quotaReport,
+  }));
+  assertRuntimeAuthorized(auth, 'startRunFromPlan', 'run', planId);
   if (quotaReport.status === 'exceeded') {
     appendRuntimeEvent({
       command: 'startRunFromPlan',
       entityType: 'run',
       entityId: plan.id,
       actorId: DEMO_AGENT_ID,
-      title: `Run plan blocked by quota: ${quotaReport.blockingReasons.join(', ')}`,
+      title: `Run plan blocked by governance: ${governanceReport.finalDecision} - ${quotaReport.blockingReasons.join(', ')}`,
       status: 'failed',
     });
     throw new Error(`Cannot start quota-blocked run plan ${planId}: ${quotaReport.blockingReasons.join(', ')}`);
@@ -835,8 +870,7 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
 }
 
 export function exportWorkspaceAnalyticsArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const bundle = generateWorkspaceAnalytics();
   const artifacts = workspaceAnalyticsArtifacts(bundle, runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
@@ -851,8 +885,7 @@ export function exportWorkspaceAnalyticsArtifacts(runId = DEMO_RUN_ID): Artifact
 }
 
 export function exportCostReconciliationArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const report = generateCostReconciliationReport();
   const artifacts = costReconciliationArtifacts(report, runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
@@ -867,8 +900,7 @@ export function exportCostReconciliationArtifacts(runId = DEMO_RUN_ID): Artifact
 }
 
 export function exportWorkspaceGovernanceArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const summary = generateWorkspaceGovernance();
   const artifacts = workspaceGovernanceArtifacts(summary, runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
@@ -883,8 +915,7 @@ export function exportWorkspaceGovernanceArtifacts(runId = DEMO_RUN_ID): Artifac
 }
 
 export function exportOrganizationGovernanceArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const summary = generateOrganizationGovernance();
   const artifacts = organizationGovernanceArtifacts(summary, runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
@@ -899,8 +930,7 @@ export function exportOrganizationGovernanceArtifacts(runId = DEMO_RUN_ID): Arti
 }
 
 export function exportRbacArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const artifacts = generateRbacArtifacts(runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
     command: 'artifact.created',
@@ -914,8 +944,7 @@ export function exportRbacArtifacts(runId = DEMO_RUN_ID): Artifact[] {
 }
 
 export function exportAuthorizationAuditArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const artifacts = generateAuthorizationAuditArtifacts(runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
     command: 'artifact.created',
@@ -929,8 +958,7 @@ export function exportAuthorizationAuditArtifacts(runId = DEMO_RUN_ID): Artifact
 }
 
 export function exportPolicyInheritanceArtifacts(runId = DEMO_RUN_ID): Artifact[] {
-  const auth = canExportArtifact(runId);
-  assertRuntimeAuthorized(auth, 'artifact.created', 'run', runId);
+  assertArtifactExportGovernance(runId);
   const artifacts = generatePolicyInheritanceArtifacts(runId).map((artifact) => upsertArtifact(artifact));
   appendRuntimeEvent({
     command: 'artifact.created',
@@ -938,6 +966,20 @@ export function exportPolicyInheritanceArtifacts(runId = DEMO_RUN_ID): Artifact[
     entityId: runId,
     actorId: DEMO_AGENT_ID,
     title: 'Policy inheritance export generated',
+    status: 'success',
+  });
+  return artifacts;
+}
+
+export function exportGovernanceDecisionArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  assertArtifactExportGovernance(runId);
+  const artifacts = generateGovernanceDecisionArtifacts(runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Governance decision export generated',
     status: 'success',
   });
   return artifacts;

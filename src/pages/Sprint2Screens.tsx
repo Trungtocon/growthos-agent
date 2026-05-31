@@ -66,6 +66,7 @@ import {
   selectGoalDetailViewModel,
   selectGoalsDashboardViewModel,
   selectGovernancePoliciesViewModel,
+  selectGovernanceDecisionViewModel,
   selectHelpTemplateCenterViewModel,
   selectIntegrationDetailViewModel,
   selectIntegrationsHubViewModel,
@@ -121,6 +122,7 @@ export const sprint2Routes = new Set([
   '/artifacts/demo-artifact',
   '/approvals/demo-approval',
   '/governance/policies',
+  '/governance',
   '/audit-log',
   '/risk-center',
   '/cost',
@@ -3310,6 +3312,13 @@ function AccessControlScreen() {
               <p className="text-sm leading-6 text-slate-500">{vm.currentRole.description}</p>
             </div>
           </Panel>
+          <Panel title="Governance Status">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Latest decision" value={vm.governanceDecision.summary.latestDecision} />
+              <FieldRow label="Blocked" value={String(vm.governanceDecision.blocked.length)} />
+              <FieldRow label="Warnings" value={String(vm.governanceDecision.warnings.length)} />
+            </div>
+          </Panel>
           <Panel title="Users">
             <div className="divide-y divide-slate-100 p-4">
               {vm.users.map((user) => <div key={user.id} className="flex items-center justify-between py-3"><div><b className="text-sm">{user.name}</b><p className="mt-1 text-sm text-slate-500">{user.email}</p></div><Badge tone={user.roleId === 'Viewer' ? 'slate' : user.roleId === 'Reviewer' ? 'amber' : 'blue'}>{user.roleId}</Badge></div>)}
@@ -3354,8 +3363,107 @@ function AccessControlScreen() {
   );
 }
 
+function governanceTone(decision: string): Tone {
+  if (decision === 'ALLOW') return 'green';
+  if (decision === 'REQUIRE_APPROVAL') return 'amber';
+  return 'red';
+}
+
+function GovernanceDecisionScreen() {
+  const vm = selectGovernanceDecisionViewModel();
+  const latest = vm.latestReport;
+  return (
+    <div>
+      <SimpleHeader
+        parityId="governance.header"
+        title="Governance Decision Engine"
+        subtitle="Unified execution decision across policy, budget, quota, RBAC, approval, and authorization audit gates."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Decision report</Button><Button><ShieldCheck className="h-4 w-4" />Review gates</Button></>}
+      />
+      <MetricBand parityId="governance.kpi-band" items={vm.kpis} />
+      <div data-parity-id="governance.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="governance.left-panel" className="space-y-5">
+          <Panel title="Decision History">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.history.length ? vm.history : []).slice(0, 8).map((report) => (
+                <div key={report.id} className="grid grid-cols-[1fr_160px_140px] items-center gap-3 py-3 text-sm">
+                  <div className="min-w-0">
+                    <b>{report.action}</b>
+                    <p className="mt-1 truncate text-slate-500">{report.targetType} / {report.targetId}</p>
+                  </div>
+                  <Badge tone={governanceTone(report.finalDecision)}>{report.finalDecision}</Badge>
+                  <span className="text-xs font-semibold text-slate-500">{report.evaluatedAt.slice(11, 19)}</span>
+                </div>
+              ))}
+              {!vm.history.length ? <div className="py-6 text-sm font-semibold text-slate-500">No governance decisions recorded yet.</div> : null}
+            </div>
+          </Panel>
+          <Panel title="Gate Results">
+            <div className="grid grid-cols-[1fr_120px_1.4fr] gap-2 p-5 text-sm">
+              <b>Gate</b><b>Status</b><b>Reason</b>
+              {(latest?.gates ?? []).map((gate) => (
+                <div key={gate.id} className="contents">
+                  <span className="rounded-lg bg-slate-50 px-3 py-2 font-semibold">{gate.name}</span>
+                  <Badge tone={gate.failed ? 'red' : gate.warning ? 'amber' : 'green'}>{gate.status}</Badge>
+                  <span className="rounded-lg bg-slate-50 px-3 py-2 text-slate-600">{gate.reason}</span>
+                </div>
+              ))}
+              {!latest ? <span className="col-span-3 rounded-lg bg-slate-50 px-3 py-4 text-slate-500">Run a governed action to populate gate results.</span> : null}
+            </div>
+          </Panel>
+          <Panel title="Blocked Executions">
+            <div className="divide-y divide-slate-100 p-4">
+              {(vm.blocked.length ? vm.blocked : []).slice(0, 6).map((report) => (
+                <div key={report.id} className="py-3 text-sm">
+                  <div className="flex items-center justify-between"><b>{report.action}</b><Badge tone="red">{report.finalDecision}</Badge></div>
+                  <p className="mt-1 text-slate-500">{report.decisionReasons.join('; ') || 'Governance blocked this execution.'}</p>
+                </div>
+              ))}
+              {!vm.blocked.length ? <div className="py-3 text-sm font-semibold text-slate-500">No blocked executions recorded.</div> : null}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="governance.right-panel" className="space-y-5">
+          <Panel title="Governance Summary">
+            <div className="space-y-3 p-5 text-sm">
+              <FieldRow label="Latest decision" value={vm.summary.latestDecision} />
+              <FieldRow label="Approval required" value={String(vm.summary.approvalRequired)} />
+              <FieldRow label="Policy blocked" value={String(vm.summary.blockedByPolicy)} />
+              <FieldRow label="Budget blocked" value={String(vm.summary.blockedByBudget)} />
+              <FieldRow label="Quota blocked" value={String(vm.summary.blockedByQuota)} />
+              <FieldRow label="RBAC blocked" value={String(vm.summary.blockedByRbac)} />
+            </div>
+          </Panel>
+          <Panel title="Policy Violations">
+            <div className="space-y-3 p-5">
+              {(vm.violations.length ? vm.violations : [{ id: 'none', category: 'policy', reason: 'No active governance violations.', severity: 'warning' }]).slice(0, 6).map((violation) => (
+                <div key={violation.id} className={`rounded-xl border px-4 py-3 text-sm ${violation.severity === 'blocking' ? 'border-red-100 bg-red-50 text-red-700' : 'border-amber-100 bg-amber-50 text-amber-700'}`}>
+                  <b>{violation.category}</b>
+                  <p className="mt-1">{violation.reason}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Warnings">
+            <div className="space-y-2 p-5 text-sm">
+              {(vm.warnings.length ? vm.warnings : ['Governance engine has no active warnings.']).slice(0, 8).map((warning) => <div key={warning} className="rounded-lg bg-amber-50 px-3 py-2 text-amber-700">{warning}</div>)}
+            </div>
+          </Panel>
+          <Panel title="Approval Required">
+            <div className="space-y-2 p-5 text-sm">
+              {vm.history.filter((report) => report.finalDecision === 'REQUIRE_APPROVAL').slice(0, 5).map((report) => <div key={report.id} className="rounded-lg bg-blue-50 px-3 py-2 text-brand-700">{report.action} / {report.targetId}</div>)}
+              {!vm.history.some((report) => report.finalDecision === 'REQUIRE_APPROVAL') ? <div className="rounded-lg bg-slate-50 px-3 py-2 text-slate-500">No approval-required decisions recorded.</div> : null}
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PolicyInheritanceScreen() {
   const vm = selectPolicyInheritanceViewModel();
+  const governance = selectGovernanceDecisionViewModel();
   return (
     <div>
       <SimpleHeader
@@ -3410,6 +3518,14 @@ function PolicyInheritanceScreen() {
                   <Badge tone={override.allowed ? 'green' : 'red'}>{override.allowed ? 'Allowed' : 'Blocked'}</Badge>
                 </div>
               ))}
+            </div>
+          </Panel>
+          <Panel title="Governance Decision Summary">
+            <div className="grid grid-cols-4 gap-3 p-5 text-sm">
+              <FieldRow label="Latest" value={governance.summary.latestDecision} />
+              <FieldRow label="Allowed" value={String(governance.summary.allowed)} />
+              <FieldRow label="Approval" value={String(governance.summary.approvalRequired)} />
+              <FieldRow label="Blocked" value={String(governance.blocked.length)} />
             </div>
           </Panel>
         </div>
@@ -3806,6 +3922,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/integrations/demo-integration') return <IntegrationDetailScreen />;
   if (route === '/mcp') return <McpServerManagerScreen />;
   if (route === '/access') return <AccessControlScreen />;
+  if (route === '/governance') return <GovernanceDecisionScreen />;
   if (route === '/policies') return <PolicyInheritanceScreen />;
   if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;

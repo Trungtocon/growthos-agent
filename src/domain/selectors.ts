@@ -132,6 +132,15 @@ import {
   getPolicyTraceForRuntime as getStoredPolicyTraceForRuntime,
   getPolicyWarnings as getStoredPolicyWarnings,
 } from '../runtime/policy-inheritance-store';
+import {
+  getBlockedExecutions as getStoredBlockedExecutions,
+  getDecisionReport as getStoredDecisionReport,
+  getGateFailures as getStoredGateFailures,
+  getGovernanceDecisionHistory as getStoredGovernanceDecisionHistory,
+  getGovernanceSummary as getStoredGovernanceSummary,
+  getGovernanceViolations as getStoredGovernanceViolations,
+  getGovernanceWarnings as getStoredGovernanceWarnings,
+} from '../runtime/governance-decision-store';
 
 export interface KpiViewModel {
   label: string;
@@ -678,6 +687,52 @@ export function selectPolicyInheritanceViewModel() {
   };
 }
 
+export function selectGovernanceDecisionHistory() {
+  return getStoredGovernanceDecisionHistory();
+}
+
+export function selectBlockedExecutions() {
+  return getStoredBlockedExecutions();
+}
+
+export function selectGovernanceWarnings() {
+  return getStoredGovernanceWarnings();
+}
+
+export function selectGovernanceSummary() {
+  return getStoredGovernanceSummary();
+}
+
+export function selectDecisionReport(reportIdOrTargetId?: string) {
+  return getStoredDecisionReport(reportIdOrTargetId);
+}
+
+export function selectGateFailures(reportIdOrTargetId?: string) {
+  return getStoredGateFailures(reportIdOrTargetId);
+}
+
+export function selectGovernanceDecisionViewModel() {
+  const summary = selectGovernanceSummary();
+  const history = selectGovernanceDecisionHistory();
+  const blocked = selectBlockedExecutions();
+  const warnings = selectGovernanceWarnings();
+  const violations = getStoredGovernanceViolations();
+  return {
+    summary,
+    history,
+    blocked,
+    warnings,
+    violations,
+    latestReport: history[0],
+    kpis: [
+      { label: 'Decisions', value: String(summary.total), tone: 'blue' },
+      { label: 'Allowed', value: String(summary.allowed), tone: 'green' },
+      { label: 'Approvals', value: String(summary.approvalRequired), tone: 'amber' },
+      { label: 'Blocked', value: String(blocked.length), tone: blocked.length ? 'red' : 'slate' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectRoleMatrix() {
   return getStoredRoleMatrix();
 }
@@ -710,6 +765,7 @@ export function selectAccessControlViewModel() {
     workspaceBreakdown: auditSummary.byWorkspace,
     tenantBreakdown: auditSummary.byTenant,
     policyInheritance: selectPolicyInheritanceViewModel(),
+    governanceDecision: selectGovernanceDecisionViewModel(),
     roleMatrix,
     permissionMatrix,
     users: [
