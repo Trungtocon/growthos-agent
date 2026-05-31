@@ -5,7 +5,7 @@ import type { HermesExecution, HermesTask } from '../hermes/hermes-types';
 import { createPaperclipAdapter } from '../paperclip/paperclip-adapter';
 import { mapHermesExecutionToRun, mapHermesStatusToLifecycle, mapHermesStatusToRunStatus, mapPaperclipArtifactToArtifact } from './run-event-mapper';
 import { mapTicketToHermesTask } from './ticket-to-task-mapper';
-import type { RunStreamEvent, RunStreamEventType, RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand, RuntimeStreamResult } from './runtime-types';
+import type { RunStreamEvent, RunStreamEventType, RuntimeActionPlan, RuntimeDecisionOutcome, RuntimeMode, RuntimeRunCommand, RuntimeStreamResult, RuntimeToolCall, RuntimeToolCallStatus } from './runtime-types';
 import { resolveRuntimeConfig } from './runtime-config';
 import { getApprovalById, upsertApproval } from '../../runtime-store/approval-store';
 import { upsertArtifact } from '../../runtime-store/artifact-store';
@@ -13,10 +13,40 @@ import { appendRuntimeEvent } from '../../runtime-store/event-store';
 import { getRunById, setRunLifecycle, upsertRun } from '../../runtime-store/run-store';
 import type { RuntimeLifecycle } from '../../runtime-store/runtime-persistence';
 import { appendStreamEvent, clearStream, getStreamEvents, isStreamComplete, markStreamComplete } from '../../runtime-store/stream-store';
+import { clearToolCalls, getToolCallById, upsertRuntimeToolCall } from '../../runtime-store/tool-call-store';
 
 const runtimeConfig = resolveRuntimeConfig();
 const hermes = createHermesAdapter(runtimeConfig.hermes.mode, runtimeConfig.hermes);
 const paperclip = createPaperclipAdapter(runtimeConfig.paperclip.mode, runtimeConfig.paperclip);
+
+const STREAM_TOOLS = [
+  {
+    id: 'stream-tool-search-knowledge-base',
+    name: 'SearchKnowledgeBase',
+    input: 'Ticket acceptance criteria, linked run context, previous approval history',
+    progress: 'Knowledge base search 65% complete',
+    output: 'Relevant QA policy, prior runtime evidence, and ticket dependencies found',
+    cost: 0.003,
+  },
+  {
+    id: 'stream-tool-generate-plan',
+    name: 'GeneratePlan',
+    input: 'Knowledge pack and ticket execution goal',
+    progress: 'Execution plan draft 70% complete',
+    output: 'Step-by-step Hermes execution plan generated',
+    cost: 0.004,
+  },
+  {
+    id: 'stream-tool-produce-artifact',
+    name: 'ProduceArtifact',
+    input: 'Execution plan, tool trace, approval policy, artifact template',
+    progress: 'Paperclip artifact render 80% complete',
+    output: 'Paperclip QA packet and runtime trace artifacts produced',
+    cost: 0.006,
+  },
+] as const;
+
+const STREAM_ARTIFACT_TOOL_ID = STREAM_TOOLS[2].id;
 
 function runtimeNow() {
   return new Date().toISOString();
@@ -41,11 +71,68 @@ function runtimeTool(id: string, toolName: string, status: ToolCall['status'], i
   };
 }
 
-function runtimeOutputArtifacts(runId: string, now = runtimeNow()): Artifact[] {
+function streamToolConfig(toolId: string): (typeof STREAM_TOOLS)[number] {
+  return STREAM_TOOLS.find((tool) => tool.id === toolId) ?? STREAM_TOOLS[0];
+}
+
+function runtimeToolStatusToDomain(status: RuntimeToolCallStatus): ToolCall['status'] {
+  if (status === 'completed') return 'success';
+  if (status === 'failed') return 'failed';
+  return 'running';
+}
+
+function runtimeToolCall(toolId: string, runId: string, status: RuntimeToolCallStatus, metadata: Record<string, unknown> = {}): RuntimeToolCall {
+  const config = streamToolConfig(toolId);
+  const existing = getToolCallById(toolId);
+  const now = runtimeNow();
+  return {
+    id: toolId,
+    runId,
+    toolName: config.name,
+    status,
+    startedAt: existing?.startedAt ?? now,
+    finishedAt: status === 'completed' || status === 'failed' ? now : existing?.finishedAt,
+    input: config.input,
+    output: status === 'completed' ? config.output : existing?.output,
+    durationMs: status === 'completed' || status === 'failed' ? Math.max(1200, new Date(now).getTime() - new Date(existing?.startedAt ?? now).getTime()) : existing?.durationMs,
+    metadata: {
+      ...existing?.metadata,
+      cost: config.cost,
+      progress: status === 'completed' ? 100 : status === 'running' ? 55 : 0,
+      ...metadata,
+    },
+  };
+}
+
+function runtimeToolCallToDomain(toolCall: RuntimeToolCall): ToolCall {
+  const cost = typeof toolCall.metadata?.cost === 'number' ? toolCall.metadata.cost : 0.002;
+  return {
+    id: toolCall.id,
+    toolName: toolCall.toolName,
+    status: runtimeToolStatusToDomain(toolCall.status),
+    inputSummary: toolCall.input,
+    outputSummary: toolCall.output ?? (toolCall.status === 'running' ? 'Tool execution in progress' : 'Queued for execution'),
+    durationMs: toolCall.durationMs ?? 0,
+    cost,
+    startedAt: toolCall.startedAt,
+    finishedAt: toolCall.finishedAt,
+  };
+}
+
+function persistStreamTool(run: Run, toolId: string, status: RuntimeToolCallStatus, metadata?: Record<string, unknown>) {
+  const toolCall = upsertRuntimeToolCall(runtimeToolCall(toolId, run.id, status, metadata));
+  return {
+    toolCall,
+    toolCalls: upsertTool(run.toolCalls, runtimeToolCallToDomain(toolCall)),
+  };
+}
+
+function runtimeOutputArtifacts(runId: string, now = runtimeNow(), toolId?: string): Artifact[] {
   return [
     {
       id: `paperclip-${runId}-qa-packet`,
       runId,
+      toolId,
       type: 'markdown',
       name: 'Paperclip_QA_Runtime_Packet.md',
       contentSummary: 'Evidence packet with acceptance checks, risk notes, and recommended follow-up for the Hermes run.',
@@ -71,6 +158,7 @@ function runtimeOutputArtifacts(runId: string, now = runtimeNow()): Artifact[] {
     {
       id: `hermes-${runId}-tool-output-json`,
       runId,
+      toolId,
       type: 'json',
       name: 'hermes-runtime-output.json',
       contentSummary: 'Structured Hermes tool output normalized for GrowthOS runtime inspection.',
@@ -89,6 +177,7 @@ function runtimeOutputArtifacts(runId: string, now = runtimeNow()): Artifact[] {
     {
       id: `paperclip-${runId}-follow-up-patch`,
       runId,
+      toolId,
       type: 'patch',
       name: 'follow-up-actions.patch',
       contentSummary: 'Patch-style follow-up checklist generated from the Paperclip review packet.',
@@ -194,12 +283,13 @@ function activity(id: string, title: string, description: string, relatedTicketI
   };
 }
 
-function runtimeApproval(existing: Approval | undefined, ticketId: string, runId: string, agentId: string): Approval {
+function runtimeApproval(existing: Approval | undefined, ticketId: string, runId: string, agentId: string, toolId?: string): Approval {
   const now = runtimeNow();
   return {
     id: existing?.id ?? DEMO_APPROVAL_ID,
     ticketId,
     runId,
+    toolId,
     agentId,
     title: 'Hermes runtime approval required',
     description: 'Paperclip captured a runtime evidence packet. Hermes needs human approval before external command execution.',
@@ -345,6 +435,7 @@ function createQueuedStreamRun(ticketId: string): Run {
 export async function startStreamingRun(ticketId: string): Promise<RuntimeStreamResult> {
   const queuedRun = createQueuedStreamRun(ticketId);
   clearStream(queuedRun.id);
+  clearToolCalls(queuedRun.id);
   const run = updateStreamRun(queuedRun, {}, 'QUEUED');
   const event = appendStreamLifecycleEvent(run, 'run.queued', 'Hermes live stream queued', { ticketId });
   return streamResult(run, event);
@@ -378,70 +469,154 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
   }
 
   if (nextSequence === 3) {
-    const tool = runtimeTool('stream-tool-context', 'Context Analyzer', 'running', 'ticket acceptance criteria', 'Analyzing ticket context', 0.002);
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'running', { phase: 'started' });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'Running context analyzer',
+      currentStep: 'Searching knowledge base',
       elapsedSeconds: Math.max(run.elapsedSeconds, 18),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Context analyzer running', 'running', 3, 0.002)),
-      toolCalls: upsertTool(run.toolCalls, tool),
-      logs: [runtimeLog(`stream-log-tool-start-${run.id}`, 'Context Analyzer tool started'), ...run.logs],
+      steps: upsertStep(run.steps, streamStep(run.id, 'Search knowledge base running', 'running', 3, 0.003)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-tool-start-${run.id}`, 'SearchKnowledgeBase tool started'), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'Context Analyzer started', { toolCallId: tool.id });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'SearchKnowledgeBase started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 4) {
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'running', { phase: 'progress', progress: 65 });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'Context analyzer 60% complete',
+      currentStep: 'SearchKnowledgeBase 65% complete',
       elapsedSeconds: Math.max(run.elapsedSeconds, 36),
-      logs: [runtimeLog(`stream-log-progress-${run.id}`, 'Context Analyzer progress 60%'), ...run.logs],
+      toolCalls,
+      logs: [runtimeLog(`stream-log-progress-${run.id}`, 'SearchKnowledgeBase progress 65%'), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'Context Analyzer progress 60%', { progress: 60, toolCallId: 'stream-tool-context' });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'SearchKnowledgeBase progress 65%', { progress: 65, toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 5) {
-    const tool = runtimeTool('stream-tool-context', 'Context Analyzer', 'success', 'ticket acceptance criteria', 'Context pack generated', 0.004);
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[0].id, 'completed');
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'Context analyzer completed',
+      currentStep: 'SearchKnowledgeBase completed',
       elapsedSeconds: Math.max(run.elapsedSeconds, 48),
-      steps: upsertStep(run.steps, streamStep(run.id, 'Context analyzer completed', 'success', 8, 0.004)),
-      toolCalls: upsertTool(run.toolCalls, tool),
-      logs: [runtimeLog(`stream-log-tool-complete-${run.id}`, 'Context Analyzer completed'), ...run.logs],
+      steps: upsertStep(run.steps, streamStep(run.id, 'Search knowledge base completed', 'success', 8, 0.003)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-tool-complete-${run.id}`, 'SearchKnowledgeBase completed'), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'Context Analyzer completed', { toolCallId: tool.id });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'SearchKnowledgeBase completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 6) {
-    const artifact = runtimeOutputArtifacts(run.id, runtimeNow())[0];
-    const artifacts = mergeArtifacts([artifact], run.artifacts);
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'running', { phase: 'started' });
     const nextRun = updateStreamRun(run, {
       status: 'running',
-      currentStep: 'Paperclip artifact generated',
-      elapsedSeconds: Math.max(run.elapsedSeconds, 62),
-      artifacts,
-      steps: upsertStep(run.steps, streamStep(run.id, 'Paperclip artifact generated', 'success', 2, 0.001)),
-      logs: [runtimeLog(`stream-log-artifact-${run.id}`, `Artifact created: ${artifact.name}`), ...run.logs],
+      currentStep: 'Generating execution plan',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 56),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Generate execution plan running', 'running', 4, 0.004)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-plan-start-${run.id}`, 'GeneratePlan tool started'), ...run.logs],
     }, 'RUNNING');
-    const event = appendStreamLifecycleEvent(nextRun, 'artifact.created', `Artifact created: ${artifact.name}`, { artifactId: artifact.id });
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'GeneratePlan started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
     return streamResult(nextRun, event);
   }
 
   if (nextSequence === 7) {
-    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId);
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'running', { phase: 'progress', progress: 70 });
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'GeneratePlan 70% complete',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 64),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-plan-progress-${run.id}`, 'GeneratePlan progress 70%'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'GeneratePlan progress 70%', { progress: 70, toolCallId: toolCall.id, toolName: toolCall.toolName });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 8) {
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[1].id, 'completed');
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'GeneratePlan completed',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 72),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Generate execution plan completed', 'success', 7, 0.004)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-plan-complete-${run.id}`, 'GeneratePlan completed'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'GeneratePlan completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 9) {
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'running', { phase: 'started' });
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Producing Paperclip artifact',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 80),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Produce artifact running', 'running', 5, 0.006)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-artifact-tool-start-${run.id}`, 'ProduceArtifact tool started'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.started', 'ProduceArtifact started', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 10) {
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'running', { phase: 'progress', progress: 80 });
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'ProduceArtifact 80% complete',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 88),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-artifact-tool-progress-${run.id}`, 'ProduceArtifact progress 80%'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.progress', 'ProduceArtifact progress 80%', { progress: 80, toolCallId: toolCall.id, toolName: toolCall.toolName });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 11) {
+    const { toolCall, toolCalls } = persistStreamTool(run, STREAM_TOOLS[2].id, 'completed');
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'ProduceArtifact completed',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 96),
+      steps: upsertStep(run.steps, streamStep(run.id, 'Produce artifact completed', 'success', 7, 0.006)),
+      toolCalls,
+      logs: [runtimeLog(`stream-log-artifact-tool-complete-${run.id}`, 'ProduceArtifact completed'), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'tool.completed', 'ProduceArtifact completed', { toolCallId: toolCall.id, toolName: toolCall.toolName });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 12) {
+    const artifact = runtimeOutputArtifacts(run.id, runtimeNow(), STREAM_ARTIFACT_TOOL_ID)[0];
+    const artifacts = mergeArtifacts([artifact], run.artifacts);
+    const nextRun = updateStreamRun(run, {
+      status: 'running',
+      currentStep: 'Paperclip artifact generated',
+      elapsedSeconds: Math.max(run.elapsedSeconds, 108),
+      artifacts,
+      steps: upsertStep(run.steps, streamStep(run.id, 'Paperclip artifact generated', 'success', 2, 0.001)),
+      logs: [runtimeLog(`stream-log-artifact-${run.id}`, `Artifact created: ${artifact.name}`), ...run.logs],
+    }, 'RUNNING');
+    const event = appendStreamLifecycleEvent(nextRun, 'artifact.created', `Artifact created: ${artifact.name}`, { artifactId: artifact.id, toolCallId: artifact.toolId });
+    return streamResult(nextRun, event);
+  }
+
+  if (nextSequence === 13) {
+    const approval = runtimeApproval(getApprovalById(DEMO_APPROVAL_ID), run.ticketId, run.id, run.agentId, STREAM_ARTIFACT_TOOL_ID);
     upsertApproval(approval);
     const nextRun = updateStreamRun(run, {
       status: 'warning',
       currentStep: 'Waiting for human approval gate',
-      elapsedSeconds: Math.max(run.elapsedSeconds, 78),
+      elapsedSeconds: Math.max(run.elapsedSeconds, 118),
       steps: upsertStep(run.steps, streamStep(run.id, 'Human approval requested', 'warning', 1, 0)),
       logs: [runtimeLog(`stream-log-approval-${run.id}`, 'Human approval requested by Hermes stream', 'warn'), ...run.logs],
     }, 'WAITING_APPROVAL');
-    const event = appendStreamLifecycleEvent(nextRun, 'approval.requested', `Approval requested: ${approval.title}`, { approvalId: approval.id });
+    const event = appendStreamLifecycleEvent(nextRun, 'approval.requested', `Approval requested: ${approval.title}`, { approvalId: approval.id, toolCallId: approval.toolId });
     return streamResult(nextRun, event);
   }
 
@@ -449,7 +624,7 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
     status: 'success',
     currentStep: 'Streaming run completed',
     finishedAt: runtimeNow(),
-    elapsedSeconds: Math.max(run.elapsedSeconds, 96),
+    elapsedSeconds: Math.max(run.elapsedSeconds, 132),
     steps: upsertStep(run.steps, streamStep(run.id, 'Streaming run completed', 'success', 1, 0.001)),
     logs: [runtimeLog(`stream-log-completed-${run.id}`, 'Hermes live stream completed'), ...run.logs],
   }, 'COMPLETED');
@@ -460,7 +635,7 @@ export async function nextStreamTick(runId: string): Promise<RuntimeStreamResult
 
 export async function completeStreamingRun(runId: string): Promise<RuntimeStreamResult> {
   let result = await nextStreamTick(runId);
-  for (let guard = 0; guard < 10 && !result.complete; guard += 1) {
+  for (let guard = 0; guard < 20 && !result.complete; guard += 1) {
     result = await nextStreamTick(runId);
   }
   return result;

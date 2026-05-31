@@ -5,6 +5,7 @@ export type RuntimeMode = 'mock' | 'sandbox';
 export type RuntimeRunCommand = 'pause' | 'resume' | 'retry' | 'cancel';
 export type RuntimeDecisionOutcome = Extract<ApprovalStatus, 'approved' | 'rejected'>;
 export type RuntimeIntegrationStatus = 'online' | 'offline' | 'degraded';
+export type RuntimeToolCallStatus = 'queued' | 'running' | 'completed' | 'failed';
 export type RunStreamEventType =
   | 'run.queued'
   | 'run.started'
@@ -56,6 +57,19 @@ export interface RuntimeStreamResult {
   message: string;
   event: RunStreamEvent;
   complete: boolean;
+}
+
+export interface RuntimeToolCall {
+  id: string;
+  runId: string;
+  toolName: string;
+  status: RuntimeToolCallStatus;
+  startedAt?: string;
+  finishedAt?: string;
+  input: string;
+  output?: string;
+  durationMs?: number;
+  metadata?: Record<string, unknown>;
 }
 
 export interface RuntimeServiceHealth {

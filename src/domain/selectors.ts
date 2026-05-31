@@ -10,8 +10,10 @@ import { getArtifactById as getRuntimeArtifactById, getRunArtifacts, getRuntimeA
 import { getRunEvents, getRuntimeEvents } from '../runtime-store/event-store';
 import { getRunById } from '../runtime-store/run-store';
 import { getStreamEvents, isStreamComplete } from '../runtime-store/stream-store';
+import { getActiveToolCall, getCompletedToolCalls, getToolCallById, getToolCallsByRun } from '../runtime-store/tool-call-store';
 import { getWorkflowData, getWorkflowState } from '../state/workflow-engine';
 import type { Activity, Agent, Approval, Artifact, CostBreakdown, Goal, Metric, Run, Ticket } from './types';
+import type { RuntimeToolCall } from '../integrations/growthos-runtime/runtime-types';
 
 export interface KpiViewModel {
   label: string;
@@ -53,6 +55,7 @@ export interface ApprovalQueueViewModel {
   risk: string;
   impact: string;
   requested: string;
+  originatingTool?: string;
   tone: Metric['tone'];
 }
 
@@ -70,6 +73,8 @@ export interface ToolCallViewModel {
   status: string;
   duration: string;
   cost: string;
+  inputPreview?: string;
+  outputPreview?: string;
 }
 
 export interface ArtifactRowViewModel {
@@ -100,12 +105,13 @@ export interface ArtifactPreviewViewModel {
   createdAt: string;
   createdLabel: string;
   sizeLabel: string;
+  generatedByToolName?: string;
 }
 
 function streamProgress(runId: string): number {
   const events = getStreamEvents(runId);
   if (isStreamComplete(runId)) return 100;
-  return Math.min(88, Math.round((events.length / 8) * 100));
+  return Math.min(88, Math.round((events.length / 14) * 100));
 }
 
 function currency(value: number): string {
@@ -217,6 +223,47 @@ function mergeArtifactsById(primary: Artifact[], secondary: Artifact[]): Artifac
   });
 }
 
+function toolCallCost(toolCall: RuntimeToolCall): number {
+  return typeof toolCall.metadata?.cost === 'number' ? toolCall.metadata.cost : 0;
+}
+
+function runtimeToolToViewModel(toolCall: RuntimeToolCall): ToolCallViewModel {
+  return {
+    name: toolCall.toolName,
+    target: toolCall.input,
+    status: statusLabel(toolCall.status),
+    duration: toolCall.durationMs ? formatDuration(Math.round(toolCall.durationMs / 1000)) : toolCall.status === 'running' ? 'running' : '-',
+    cost: toolCallCost(toolCall) === 0 ? '-' : `$${toolCallCost(toolCall).toFixed(3)}`,
+    inputPreview: toolCall.input,
+    outputPreview: toolCall.output ?? (toolCall.status === 'running' ? 'Running...' : 'Queued'),
+  };
+}
+
+function domainToolToViewModel(tool: Run['toolCalls'][number]): ToolCallViewModel {
+  return {
+    name: tool.toolName,
+    target: tool.inputSummary,
+    status: statusLabel(tool.status),
+    duration: tool.durationMs ? formatDuration(Math.round(tool.durationMs / 1000)) : '-',
+    cost: tool.cost === 0 ? '-' : `$${tool.cost.toFixed(3)}`,
+    inputPreview: tool.inputSummary,
+    outputPreview: tool.outputSummary,
+  };
+}
+
+function runToolRows(run: Run): ToolCallViewModel[] {
+  const runtimeTools = getToolCallsByRun(run.id);
+  return runtimeTools.length ? runtimeTools.map(runtimeToolToViewModel) : run.toolCalls.map(domainToolToViewModel);
+}
+
+function toolProgress(runId: string): number {
+  const activeTool = getActiveToolCall(runId);
+  if (activeTool && typeof activeTool.metadata?.progress === 'number') return activeTool.metadata.progress;
+  const toolCalls = getToolCallsByRun(runId);
+  if (toolCalls.length === 0) return 0;
+  return Math.round((getCompletedToolCalls(runId).length / Math.max(1, toolCalls.length)) * 100);
+}
+
 export function getArtifactsForRun(runId: string): Artifact[] {
   const baseRun = currentData().runs.find((run) => run.id === runId);
   const runtimeArtifacts = getRunArtifacts(runId);
@@ -238,6 +285,7 @@ export function getArtifactPreviewModel(artifactId?: string): ArtifactPreviewVie
   if (!artifactId) return undefined;
   const artifact = getArtifactById(artifactId);
   if (!artifact) return undefined;
+  const sourceTool = getToolCallById(artifact.toolId);
   return {
     id: artifact.id,
     runId: artifact.runId,
@@ -252,6 +300,7 @@ export function getArtifactPreviewModel(artifactId?: string): ArtifactPreviewVie
     createdAt: artifact.createdAt,
     createdLabel: artifact.createdAt.slice(0, 16).replace('T', ' '),
     sizeLabel: formatArtifactSize(artifact),
+    generatedByToolName: sourceTool?.toolName,
   };
 }
 
@@ -310,6 +359,7 @@ function agentToCard(agent: Agent): AgentCardViewModel {
 function approvalToQueueRow(approval: Approval): ApprovalQueueViewModel {
   const ticket = findTicket(approval.ticketId);
   const agent = findAgent(approval.agentId);
+  const tool = getToolCallById(approval.toolId);
   return {
     id: approval.id,
     title: approval.title,
@@ -320,6 +370,7 @@ function approvalToQueueRow(approval: Approval): ApprovalQueueViewModel {
     risk: riskLabel(approval.severity),
     impact: approval.severity === 'high' ? 'Source code' : 'Local workspace',
     requested: approval.id === DEMO_APPROVAL_ID ? '8 phut truoc' : '18 phut truoc',
+    originatingTool: tool?.toolName,
     tone: approval.severity === 'high' ? 'purple' : approval.severity === 'medium' ? 'blue' : 'green',
   };
 }
@@ -492,6 +543,9 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
   const workflowEvents = getWorkflowState().events.filter((event) => event.entityId === ticket.id || event.entityId === ticket.runId || event.entityId === ticket.approvalId);
   const runtimeEvents = run ? getRunEvents(run.id) : [];
   const streamEvents = run ? getStreamEvents(run.id) : [];
+  const activeToolCall = run ? getActiveToolCall(run.id) : undefined;
+  const completedToolCalls = run ? getCompletedToolCalls(run.id) : [];
+  const totalToolCalls = run ? getToolCallsByRun(run.id).length || run.toolCalls.length : 0;
   const events = [
     ...workflowEvents,
     ...runtimeEvents,
@@ -506,6 +560,11 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     streamEvents,
     latestStreamEvent: streamEvents[streamEvents.length - 1],
     streamProgress: run ? streamProgress(run.id) : 0,
+    toolProgress: run ? toolProgress(run.id) : 0,
+    activeToolCall,
+    lastCompletedToolCall: completedToolCalls[completedToolCalls.length - 1],
+    completedToolCalls,
+    totalToolsExecuted: totalToolCalls,
     primaryArtifactPreview: getArtifactPreviewModel(primaryArtifact?.id),
   };
 }
@@ -523,6 +582,9 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   ];
   const streamEvents = getStreamEvents(run.id);
   const latestStreamEvent = streamEvents[streamEvents.length - 1];
+  const activeToolCall = getActiveToolCall(run.id);
+  const completedToolCalls = getCompletedToolCalls(run.id);
+  const runtimeToolRows = runToolRows(run);
   return {
     run,
     ticket,
@@ -533,6 +595,10 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     latestStreamEvent,
     streamProgress: streamProgress(run.id),
     streamComplete: isStreamComplete(run.id),
+    toolProgress: toolProgress(run.id),
+    activeToolCall,
+    lastCompletedToolCall: completedToolCalls[completedToolCalls.length - 1],
+    completedToolCalls,
     timelineRows: run.steps.map((step): RunStepViewModel => ({
       name: step.name,
       status: statusLabel(step.status),
@@ -540,13 +606,7 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
       duration: formatDuration(step.durationSeconds),
       cost: step.cost === 0 ? '$0.000' : `$${step.cost.toFixed(3)}`,
     })),
-    toolCallRows: run.toolCalls.map((tool): ToolCallViewModel => ({
-      name: tool.toolName,
-      target: tool.inputSummary,
-      status: statusLabel(tool.status),
-      duration: tool.durationMs ? formatDuration(Math.round(tool.durationMs / 1000)) : '-',
-      cost: tool.cost === 0 ? '-' : `$${tool.cost.toFixed(3)}`,
-    })),
+    toolCallRows: runtimeToolRows,
     workflowTimeline: events,
   };
 }

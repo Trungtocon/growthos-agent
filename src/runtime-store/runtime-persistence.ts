@@ -1,5 +1,5 @@
 import type { Approval, Artifact, Run } from '../domain/types';
-import type { RunStreamEvent } from '../integrations/growthos-runtime/runtime-types';
+import type { RunStreamEvent, RuntimeToolCall } from '../integrations/growthos-runtime/runtime-types';
 import type { WorkflowEvent } from '../state/event-log';
 
 export type RuntimeLifecycle =
@@ -21,6 +21,7 @@ export interface RuntimeState {
   runs: Record<string, PersistentRuntimeRun>;
   approvals: Record<string, Approval>;
   artifacts: Record<string, Artifact>;
+  toolCalls: Record<string, RuntimeToolCall>;
   events: WorkflowEvent[];
   streamEvents: Record<string, RunStreamEvent[]>;
   completedStreams: Record<string, boolean>;
@@ -32,6 +33,7 @@ const emptyRuntimeState: RuntimeState = {
   runs: {},
   approvals: {},
   artifacts: {},
+  toolCalls: {},
   events: [],
   streamEvents: {},
   completedStreams: {},
@@ -61,6 +63,7 @@ export function readRuntimeState(): RuntimeState {
       runs: parsed.runs ?? {},
       approvals: parsed.approvals ?? {},
       artifacts: parsed.artifacts ?? {},
+      toolCalls: parsed.toolCalls ?? {},
       events: parsed.events ?? [],
       streamEvents: parsed.streamEvents ?? {},
       completedStreams: parsed.completedStreams ?? {},

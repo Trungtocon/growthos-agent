@@ -121,6 +121,7 @@ export interface Approval {
   id: string;
   ticketId: string;
   runId?: string;
+  toolId?: string;
   agentId: string;
   title: string;
   description: string;
@@ -186,6 +187,7 @@ export interface CostBreakdown {
 export interface Artifact {
   id: string;
   runId: string;
+  toolId?: string;
   type: ArtifactType;
   name: string;
   contentSummary?: string;

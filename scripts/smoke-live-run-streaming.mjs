@@ -149,9 +149,12 @@ try {
   await expectStep(rows, 'artifact.created creates artifact', async () => {
     const result = await page.evaluate(async () => {
       const { nextStreamTick } = await import('/src/integrations/growthos-runtime/runtime-orchestrator.ts');
-      await nextStreamTick('run-demo-module-3');
       const { getRunArtifacts } = await import('/src/runtime-store/artifact-store.ts');
       const { getStreamEvents } = await import('/src/runtime-store/stream-store.ts');
+      for (let guard = 0; guard < 20; guard += 1) {
+        if (getStreamEvents('run-demo-module-3').some((event) => event.type === 'artifact.created')) break;
+        await nextStreamTick('run-demo-module-3');
+      }
       return {
         events: getStreamEvents('run-demo-module-3').map((event) => event.type),
         artifacts: getRunArtifacts('run-demo-module-3'),
@@ -165,9 +168,12 @@ try {
   await expectStep(rows, 'approval.requested creates approval', async () => {
     const result = await page.evaluate(async () => {
       const { nextStreamTick } = await import('/src/integrations/growthos-runtime/runtime-orchestrator.ts');
-      await nextStreamTick('run-demo-module-3');
       const { getPendingApprovals } = await import('/src/runtime-store/approval-store.ts');
       const { getStreamEvents } = await import('/src/runtime-store/stream-store.ts');
+      for (let guard = 0; guard < 20; guard += 1) {
+        if (getStreamEvents('run-demo-module-3').some((event) => event.type === 'approval.requested')) break;
+        await nextStreamTick('run-demo-module-3');
+      }
       return {
         events: getStreamEvents('run-demo-module-3').map((event) => event.type),
         approvals: getPendingApprovals(),
@@ -183,9 +189,12 @@ try {
   await expectStep(rows, 'run.completed finalizes stream', async () => {
     const result = await page.evaluate(async () => {
       const { nextStreamTick } = await import('/src/integrations/growthos-runtime/runtime-orchestrator.ts');
-      const commandResult = await nextStreamTick('run-demo-module-3');
       const { readRuntimeState } = await import('/src/runtime-store/runtime-persistence.ts');
       const { isStreamComplete, getStreamEvents } = await import('/src/runtime-store/stream-store.ts');
+      let commandResult = await nextStreamTick('run-demo-module-3');
+      for (let guard = 0; guard < 20 && !isStreamComplete('run-demo-module-3'); guard += 1) {
+        commandResult = await nextStreamTick('run-demo-module-3');
+      }
       return {
         commandResult,
         state: readRuntimeState(),
@@ -211,7 +220,7 @@ try {
         complete: isStreamComplete('run-demo-module-3'),
       };
     });
-    assert(result.events >= 8, `expected persisted stream events, got ${result.events}`);
+    assert(result.events >= 14, `expected persisted stream events, got ${result.events}`);
     assert(result.complete, 'persisted stream complete flag missing');
     return result;
   });

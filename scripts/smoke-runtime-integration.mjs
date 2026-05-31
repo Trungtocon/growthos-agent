@@ -107,8 +107,11 @@ try {
     await page.locator('[data-workflow="ticket-start-run"]').click();
     await waitForWorkflowState(page, 'ticket-audit-module-3', 'Running');
     await page.getByText('Paperclip_QA_Runtime_Packet.md').waitFor({ timeout: 10000 });
-    const currentStep = await page.getByText('Waiting for human approval gate').count();
-    assert(currentStep > 0, 'Hermes approval-gate step did not render');
+    const runtimeApproval = await page.evaluate(async () => {
+      const { readRuntimeState } = await import('/src/runtime-store/runtime-persistence.ts');
+      return readRuntimeState().approvals['approval-hermes-terminal'];
+    });
+    assert(runtimeApproval?.status === 'pending', 'Hermes approval gate was not persisted');
     return { route: '/tickets/demo-ticket', artifact: 'Paperclip_QA_Runtime_Packet.md' };
   });
 
