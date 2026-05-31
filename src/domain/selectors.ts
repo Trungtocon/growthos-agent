@@ -70,6 +70,12 @@ import {
   getWorkflowAnalytics as getStoredWorkflowAnalytics,
   getWorkspaceAnalytics as getStoredWorkspaceAnalytics,
 } from '../runtime-store/workspace-analytics-store';
+import {
+  getCostAlerts as getStoredCostAlerts,
+  getProviderCost as getStoredProviderCost,
+  getReconciliationReport as getStoredReconciliationReport,
+  getVarianceHistory as getStoredVarianceHistory,
+} from '../runtime/cost-reconciliation-store';
 
 export interface KpiViewModel {
   label: string;
@@ -370,6 +376,54 @@ export function selectWorkspaceRuntimeSummary() {
     totalRuntimeMinutes: analytics.totalRuntimeMinutes,
     averageRuntimeMinutes: analytics.totalRuns ? Number((analytics.totalRuntimeMinutes / analytics.totalRuns).toFixed(2)) : 0,
   };
+}
+
+export function selectReconciliationReport() {
+  return getStoredReconciliationReport();
+}
+
+export function selectVarianceHistory() {
+  return getStoredVarianceHistory();
+}
+
+export function selectCostVariance(runId?: string) {
+  const report = selectReconciliationReport();
+  if (!runId) {
+    return {
+      variance: report.variance,
+      variancePercent: report.variancePercent,
+    };
+  }
+  const record = report.records.find((item) => item.runId === runId);
+  return {
+    variance: record?.variance ?? 0,
+    variancePercent: record?.variancePercent ?? 0,
+  };
+}
+
+export function selectVarianceSeverity(runId?: string) {
+  const report = selectReconciliationReport();
+  if (!runId) return report.severity;
+  return report.records.find((item) => item.runId === runId)?.severity ?? 'NORMAL';
+}
+
+export function selectProviderCost(runId?: string) {
+  return getStoredProviderCost(runId);
+}
+
+export function selectEstimatedVsActual(runId?: string) {
+  if (runId) return selectEstimatedVsActualCost(runId);
+  const report = selectReconciliationReport();
+  return {
+    estimatedTotal: report.estimatedCost,
+    actualTotal: report.actualCost,
+    variance: Number((report.actualCost - report.estimatedCost).toFixed(4)),
+    variancePercent: report.estimatedCost ? Number(((Math.abs(report.actualCost - report.estimatedCost) / report.estimatedCost) * 100).toFixed(2)) : 0,
+  };
+}
+
+export function selectCostAlerts() {
+  return getStoredCostAlerts();
 }
 
 function streamProgress(runId: string): number {
@@ -891,6 +945,8 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
   const topTools = selectTopCostTools(3);
   const topModels = selectTopCostModels(3);
   const topWorkflows = selectTopWorkflows(3);
+  const reconciliationReport = selectReconciliationReport();
+  const runReconciliation = reconciliationReport.records.find((record) => record.runId === run.id);
   return {
     run,
     ticket,
@@ -923,6 +979,12 @@ export function selectRunConsoleViewModel(runId = DEMO_RUN_ID) {
     workspaceCostSummary: selectWorkspaceCostSummary(),
     workspaceTokenSummary: selectWorkspaceTokenSummary(),
     workspaceRuntimeSummary: selectWorkspaceRuntimeSummary(),
+    reconciliationReport,
+    runReconciliation,
+    providerCost: selectProviderCost(run.id),
+    costVariance: selectCostVariance(run.id),
+    varianceSeverity: selectVarianceSeverity(run.id),
+    costAlerts: selectCostAlerts(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
     canStartPlan: currentPlan ? selectCanStartPlan(currentPlan.id) : false,
@@ -1106,6 +1168,9 @@ export function selectCostDashboardViewModel() {
   const topTool = selectTopCostTools(1)[0];
   const topModel = selectTopCostModels(1)[0];
   const topWorkflow = selectTopWorkflows(1)[0];
+  const reconciliationReport = selectReconciliationReport();
+  const variance = selectCostVariance();
+  const costAlerts = selectCostAlerts();
   const budgetUsed = Math.round((data.costBreakdown.total / data.workspace.aiBudgetMonthly) * 100);
   const runSpend = data.runs.reduce((sum, run) => sum + run.cost, 0);
   const ticketSpendRows = data.tickets.map((ticket) => {
@@ -1138,20 +1203,27 @@ export function selectCostDashboardViewModel() {
     topTool,
     topModel,
     topWorkflow,
+    reconciliationReport,
+    variance,
+    varianceHistory: selectVarianceHistory(),
+    providerCost: selectProviderCost(),
+    varianceSeverity: selectVarianceSeverity(),
+    costAlerts,
     alerts: [
+      ...costAlerts.map((alert) => ({ id: alert.id, title: alert.title, detail: alert.message, severity: alert.severity, tone: alert.severity === 'CRITICAL' ? 'red' : 'amber' })),
       { id: 'budget-velocity', title: 'Monthly budget velocity', detail: `${budgetUsed}% of monthly budget used in ${data.costBreakdown.period}.`, severity: budgetUsed > 75 ? 'High' : 'Medium', tone: budgetUsed > 75 ? 'red' : 'amber' },
       { id: 'research-spike', title: 'Research spend concentration', detail: 'Research and QA runs account for the largest variable spend this period.', severity: 'Medium', tone: 'amber' },
       { id: 'approval-threshold', title: 'Approval threshold active', detail: 'Budget changes above $25 still require reviewer approval.', severity: 'Low', tone: 'green' },
     ],
     kpis: [
-      { label: 'Total Cost', value: currency(analytics.actualCost || data.costBreakdown.total), tone: 'blue' },
-      { label: 'Total Tokens', value: String(analytics.totalTokens), tone: 'cyan' },
-      { label: 'Total Runs', value: String(analytics.totalRuns), tone: 'green' },
-      { label: 'Total Runtime', value: `${analytics.totalRuntimeMinutes}m`, tone: 'purple' },
+      { label: 'Estimated Cost', value: currency(reconciliationReport.estimatedCost || analytics.estimatedCost), tone: 'blue' },
+      { label: 'Actual Cost', value: currency(reconciliationReport.actualCost || analytics.actualCost || data.costBreakdown.total), tone: 'cyan' },
+      { label: 'Provider Cost', value: currency(reconciliationReport.providerCost), tone: 'purple' },
+      { label: 'Variance', value: currency(reconciliationReport.variance), tone: reconciliationReport.severity === 'CRITICAL' ? 'red' : reconciliationReport.severity === 'WARNING' ? 'amber' : 'green' },
+      { label: 'Variance %', value: `${reconciliationReport.variancePercent}%`, tone: reconciliationReport.severity === 'CRITICAL' ? 'red' : reconciliationReport.severity === 'WARNING' ? 'amber' : 'green' },
+      { label: 'Severity', value: reconciliationReport.severity, tone: reconciliationReport.severity === 'CRITICAL' ? 'red' : reconciliationReport.severity === 'WARNING' ? 'amber' : 'green' },
       { label: 'Top Tool', value: topTool?.toolId ?? 'none', tone: 'amber' },
-      { label: 'Top Model', value: topModel?.modelId ?? 'none', tone: 'blue' },
       { label: 'Top Workflow', value: topWorkflow?.workflowId ?? 'none', tone: 'green' },
-      { label: 'Variance', value: currency(analytics.varianceCost), tone: analytics.varianceCost > 0 ? 'amber' : 'green' },
     ] satisfies KpiViewModel[],
   };
 }

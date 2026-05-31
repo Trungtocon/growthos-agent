@@ -26,6 +26,8 @@ import { upsertPolicyReport } from '../../runtime-store/plan-policy-store';
 import { clearUsageLedger, finalizeBillingLedger } from '../../runtime-store/usage-ledger-store';
 import { generateWorkspaceAnalytics } from '../../runtime-store/workspace-analytics-store';
 import { workspaceAnalyticsArtifacts } from './workspace-analytics';
+import { generateCostReconciliationReport } from '../../runtime/cost-reconciliation-store';
+import { costReconciliationArtifacts } from '../../runtime/cost-reconciliation';
 import {
   evaluateQuotaAfterRun,
   evaluateQuotaBeforeRun,
@@ -806,6 +808,20 @@ export function exportWorkspaceAnalyticsArtifacts(runId = DEMO_RUN_ID): Artifact
     actorId: DEMO_AGENT_ID,
     title: 'Workspace analytics export generated',
     status: 'success',
+  });
+  return artifacts;
+}
+
+export function exportCostReconciliationArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  const report = generateCostReconciliationReport();
+  const artifacts = costReconciliationArtifacts(report, runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Cost reconciliation export generated',
+    status: report.severity === 'CRITICAL' ? 'pending' : 'success',
   });
   return artifacts;
 }

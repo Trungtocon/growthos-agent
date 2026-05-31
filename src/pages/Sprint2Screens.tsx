@@ -2906,10 +2906,10 @@ function CostDashboardScreen() {
               ))}
             </div>
           </Panel>
-          <Panel title="Ticket spend register">
+          <Panel title="Top cost runs">
             <div className="p-4">
-              <div className="grid grid-cols-[110px_1fr_160px_90px_90px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Ticket</span><span>Scope</span><span>Agent</span><span>Risk</span><span>Cost</span></div>
-              {vm.ticketSpendRows.slice(0, 7).map((row) => <div key={row.id} className="grid grid-cols-[110px_1fr_160px_90px_90px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.code}</b><span>{row.title}</span><span className="text-slate-500">{row.agent}</span><Badge tone={row.risk === 'High' ? 'red' : row.risk === 'Medium' ? 'amber' : 'green'}>{row.risk}</Badge><b>{currencyDisplay(row.cost)}</b></div>)}
+              <div className="grid grid-cols-[150px_1fr_110px_90px_90px] gap-3 border-b border-slate-100 pb-3 text-xs font-bold uppercase text-slate-400"><span>Run</span><span>Est / Actual</span><span>Provider</span><span>Severity</span><span>Variance</span></div>
+              {vm.reconciliationReport.topCostRuns.slice(0, 7).map((row) => <div key={row.runId} className="grid grid-cols-[150px_1fr_110px_90px_90px] items-center gap-3 border-b border-slate-100 py-3 text-sm"><b>{row.runId}</b><span>{currencyDisplay(row.estimatedCost)} / {currencyDisplay(row.actualCost)}</span><span className="text-slate-500">{currencyDisplay(row.providerCost)}</span><Badge tone={row.severity === 'CRITICAL' ? 'red' : row.severity === 'WARNING' ? 'amber' : 'green'}>{row.severity}</Badge><b>{row.variancePercent}%</b></div>)}
             </div>
           </Panel>
         </div>
@@ -2918,10 +2918,14 @@ function CostDashboardScreen() {
             <div className="p-5">
               <div className="flex items-end justify-between"><div><div className="text-sm font-semibold text-slate-500">{vm.workspace.name}</div><b className="text-3xl text-slate-950">{vm.budgetUsed}%</b></div><Badge tone={vm.budgetUsed > 75 ? 'amber' : 'green'}>{vm.costBreakdown.period}</Badge></div>
               <div className="mt-4"><ProgressBar value={vm.budgetUsed} tone={vm.budgetUsed > 75 ? 'amber' : 'green'} label="Monthly budget used" height={10} /></div>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm"><div><span className="text-slate-500">Provider</span><b className="mt-1 block">{currencyDisplay(vm.providerCost)}</b></div><div><span className="text-slate-500">Variance</span><b className="mt-1 block">{currencyDisplay(vm.variance.variance)} · {vm.variance.variancePercent}%</b></div></div>
             </div>
           </Panel>
           <Panel title="Tool spend">
             <div className="space-y-4 p-5">{vm.toolSpend.map((item) => <div key={item.id}><div className="mb-2 flex justify-between text-sm"><b>{item.label}</b><span>{currencyDisplay(item.value)}</span></div><ProgressBar value={item.percent} tone={item.percent > 35 ? 'amber' : 'blue'} label={`${item.label} tool spend`} /></div>)}</div>
+          </Panel>
+          <Panel title="Variance trend">
+            <div className="divide-y divide-slate-100 p-4">{vm.varianceHistory.slice(0, 4).map((row) => <div key={row.runId} className="flex items-center justify-between py-2 text-sm"><span className="font-semibold">{row.runId}</span><span className="text-slate-500">{currencyDisplay(row.variance)} · {row.variancePercent}%</span><Badge tone={row.severity === 'CRITICAL' ? 'red' : row.severity === 'WARNING' ? 'amber' : 'green'}>{row.severity}</Badge></div>)}</div>
           </Panel>
           <Panel title="Cost alerts">
             <div className="divide-y divide-slate-100 p-4">{vm.alerts.map((alert) => <div key={alert.id} className="py-3"><div className="flex items-center justify-between gap-3"><b className="text-sm">{alert.title}</b><Badge tone={alert.tone as Tone}>{alert.severity}</Badge></div><p className="mt-1 text-sm leading-6 text-slate-500">{alert.detail}</p></div>)}</div>
