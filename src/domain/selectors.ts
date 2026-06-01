@@ -155,6 +155,16 @@ import {
   generateActionExecutionTimeline as getStoredActionExecutionTimeline,
 } from '../runtime/action-plan-execution-store';
 import {
+  getImprovedOutcomes as getStoredImprovedOutcomes,
+  getImprovementOutcomeByAction as getStoredImprovementOutcomeByAction,
+  getInconclusiveOutcomes as getStoredInconclusiveOutcomes,
+  getMetricDeltas as getStoredMetricDeltas,
+  getOutcomeEvidence as getStoredOutcomeEvidence,
+  getOutcomesByRun as getStoredOutcomesByRun,
+  getRegressedOutcomes as getStoredRegressedOutcomes,
+  generateWorkspaceImprovementOutcomeSummary as getStoredWorkspaceOutcomeSummary,
+} from '../runtime/improvement-outcome-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1915,6 +1925,38 @@ export function selectActionCompletionEvidence(planId?: string, runId = DEMO_RUN
 
 export function selectWorkspaceImprovementProgress(workspaceId?: string) {
   return getStoredWorkspaceImprovementProgress(workspaceId);
+}
+
+export function selectImprovementOutcomeByAction(actionExecutionId: string) {
+  return getStoredImprovementOutcomeByAction(actionExecutionId);
+}
+
+export function selectOutcomesByRun(runId = DEMO_RUN_ID) {
+  return getStoredOutcomesByRun(runId);
+}
+
+export function selectWorkspaceOutcomeSummary(workspaceId?: string) {
+  return getStoredWorkspaceOutcomeSummary(workspaceId);
+}
+
+export function selectImprovedOutcomes(runId = DEMO_RUN_ID) {
+  return getStoredImprovedOutcomes(runId);
+}
+
+export function selectRegressedOutcomes(runId = DEMO_RUN_ID) {
+  return getStoredRegressedOutcomes(runId);
+}
+
+export function selectInconclusiveOutcomes(runId = DEMO_RUN_ID) {
+  return getStoredInconclusiveOutcomes(runId);
+}
+
+export function selectMetricDeltas(actionExecutionId: string) {
+  return getStoredMetricDeltas(actionExecutionId);
+}
+
+export function selectOutcomeEvidence(actionExecutionId: string) {
+  return getStoredOutcomeEvidence(actionExecutionId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

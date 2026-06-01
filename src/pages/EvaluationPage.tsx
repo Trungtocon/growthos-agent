@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, ListChecks, Play, RotateCcw, ShieldCheck, Sparkles, Wrench, XCircle } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, ListChecks, Play, RotateCcw, Scale, ShieldCheck, Sparkles, TrendingUp, Wrench, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
@@ -20,6 +20,13 @@ import {
   selectFeedbackActionPlan,
   selectReadyActionTasks,
   selectWorkspaceImprovementProgress,
+  selectImprovedOutcomes,
+  selectInconclusiveOutcomes,
+  selectMetricDeltas,
+  selectOutcomeEvidence,
+  selectOutcomesByRun,
+  selectRegressedOutcomes,
+  selectWorkspaceOutcomeSummary,
   selectWorkspaceActionPlanSummary,
   selectTopImprovementSuggestions,
   selectWorkspaceFeedbackSummary,
@@ -34,9 +41,11 @@ import {
   startActionPlanExecution,
   startActionTask,
 } from '../runtime/action-plan-execution-store';
+import { createOutcomeVerification, registerImprovementOutcomeExports } from '../runtime/improvement-outcome-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
+import type { OutcomeVerificationStatus } from '../runtime/improvement-outcome';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
@@ -68,6 +77,14 @@ function actionExecutionStatusTone(status: ActionTaskLifecycleStatus): Tone {
   if (status === 'in_progress' || status === 'review') return 'blue';
   if (status === 'blocked' || status === 'cancelled') return 'red';
   if (status === 'ready') return 'amber';
+  return 'slate';
+}
+
+function outcomeStatusTone(status: OutcomeVerificationStatus): Tone {
+  if (status === 'improved') return 'green';
+  if (status === 'regressed') return 'red';
+  if (status === 'inconclusive') return 'amber';
+  if (status === 'unchanged') return 'blue';
   return 'slate';
 }
 
@@ -123,6 +140,15 @@ export function ActionPlanExecutionCompactWidget({ runId = DEMO_RUN_ID, surface 
   );
 }
 
+export function ImprovementOutcomeCompactWidget({ runId = DEMO_RUN_ID, surface }: { runId?: string; surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' }) {
+  const outcomes = selectOutcomesByRun(runId);
+  return (
+    <span data-improvement-outcome-widget={surface} data-improvement-outcomes={outcomes.length} data-improvement-status={outcomes[0]?.status ?? 'unverified'} className="sr-only">
+      Improvement outcomes {surface} {runId}: {outcomes.length} outcomes, first status {outcomes[0]?.status ?? 'unverified'}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -145,6 +171,14 @@ export function EvaluationPage() {
   const completedActionExecutions = selectCompletedActionExecutions(actionPlan.id, DEMO_RUN_ID);
   const actionCompletionEvidence = selectActionCompletionEvidence(actionPlan.id, DEMO_RUN_ID);
   const workspaceImprovementProgress = selectWorkspaceImprovementProgress();
+  const outcomes = selectOutcomesByRun(DEMO_RUN_ID);
+  const primaryOutcome = outcomes[0];
+  const outcomeSummary = selectWorkspaceOutcomeSummary();
+  const improvedOutcomes = selectImprovedOutcomes(DEMO_RUN_ID);
+  const regressedOutcomes = selectRegressedOutcomes(DEMO_RUN_ID);
+  const inconclusiveOutcomes = selectInconclusiveOutcomes(DEMO_RUN_ID);
+  const metricDeltas = primaryOutcome ? selectMetricDeltas(primaryOutcome.actionExecutionId) : [];
+  const outcomeEvidence = primaryOutcome ? selectOutcomeEvidence(primaryOutcome.actionExecutionId) : [];
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -156,8 +190,9 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); createOutcomeVerification(actionExecution.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
+      <ImprovementOutcomeCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -343,6 +378,61 @@ export function EvaluationPage() {
                 <div className="flex items-start justify-between gap-3"><b>{event.type}</b><Badge tone={actionExecutionStatusTone(event.status)}>{event.status}</Badge></div>
                 <p className="mt-2 text-slate-500">{event.message}</p>
                 <div className="mt-3 flex items-center gap-2 text-xs font-bold uppercase text-slate-400"><Activity className="h-3 w-3" />{event.timestamp.slice(11, 19)}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-improvement-outcome-panel>
+        <Panel title="Outcome Verification">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Status</span><Badge tone={outcomeStatusTone(primaryOutcome?.status ?? 'unverified')}>{primaryOutcome?.status ?? 'unverified'}</Badge></div>
+            <div className="flex items-center justify-between"><span>Improved / regressed</span><b>{improvedOutcomes.length}/{regressedOutcomes.length}</b></div>
+            <div className="flex items-center justify-between"><span>Inconclusive</span><b>{inconclusiveOutcomes.length}</b></div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-slate-50 p-3"><div className="text-xs font-bold uppercase text-slate-400">Outcomes</div><div className="text-xl font-extrabold">{outcomeSummary.outcomeCount}</div></div>
+              <div className="rounded-xl bg-slate-50 p-3"><div className="text-xs font-bold uppercase text-slate-400">Evidence</div><div className="text-xl font-extrabold">{outcomeSummary.evidenceCount}</div></div>
+            </div>
+            <Button variant="secondary" onClick={() => { createOutcomeVerification(actionExecution.id); window.location.reload(); }}><Scale className="h-4 w-4" />Verify outcome</Button>
+          </div>
+        </Panel>
+        <Panel title="Before / After Score Comparison">
+          <div className="grid grid-cols-4 gap-3 p-4">
+            {metricDeltas.slice(0, 8).map((delta) => (
+              <div key={delta.dimension} data-outcome-metric-delta={delta.dimension} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-400">{delta.dimension.replace(/_/g, ' ')}</div>
+                <div className="mt-2 flex items-end justify-between gap-3"><b className="text-xl">{delta.before} {'->'} {delta.after}</b><Badge tone={delta.delta > 0 ? 'green' : delta.delta < 0 ? 'red' : 'blue'}>{delta.delta > 0 ? '+' : ''}{delta.delta}</Badge></div>
+                <ProgressBar value={delta.after} tone={delta.delta > 0 ? 'green' : delta.delta < 0 ? 'red' : 'blue'} label={`${delta.dimension} after score`} />
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Regression Findings">
+          <div className="space-y-3 p-4 text-sm">
+            {primaryOutcome?.regressions.length ? primaryOutcome.regressions.map((finding) => (
+              <div key={finding.id} data-outcome-regression className="rounded-xl border border-red-100 bg-red-50/50 p-3">
+                <div className="flex items-center justify-between"><b>{finding.dimension.replace(/_/g, ' ')}</b><Badge tone="red">{finding.severity}</Badge></div>
+                <p className="mt-2 text-slate-600">{finding.description}</p>
+              </div>
+            )) : <p className="text-slate-500">No regression findings for verified outcome.</p>}
+          </div>
+        </Panel>
+        <Panel title="Outcome Evidence">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {outcomeEvidence.length ? outcomeEvidence.map((evidence) => (
+              <div key={evidence.id} data-outcome-evidence={evidence.type} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{evidence.title}</b><Badge tone="blue">{evidence.type}</Badge></div>
+                <p className="mt-2 text-slate-500">{evidence.description}</p>
+              </div>
+            )) : <p className="text-sm text-slate-500">Outcome evidence appears after verification runs.</p>}
+          </div>
+        </Panel>
+        <Panel title="Outcome History">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            {outcomes.map((outcome) => (
+              <div key={outcome.id} data-improvement-outcome={outcome.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{outcome.id.replace('improvement-outcome-', '')}</b><Badge tone={outcomeStatusTone(outcome.status)}>{outcome.status}</Badge></div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400"><span>{outcome.targetDimensions.join(', ')}</span><span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{outcome.comparison?.overallDelta ?? 0}</span></div>
               </div>
             ))}
           </div>
