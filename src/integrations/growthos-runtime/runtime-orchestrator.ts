@@ -41,6 +41,8 @@ import {
 } from '../../runtime/rbac-store';
 import { generateAuthorizationAuditArtifacts } from '../../runtime/authorization-audit-store';
 import { generatePolicyInheritanceArtifacts } from '../../runtime/policy-inheritance-store';
+import { runGovernanceExitGate } from '../../runtime/governance-readiness-store';
+import type { GovernanceReadinessReport } from '../../runtime/governance-readiness';
 import {
   evaluateArtifactExport,
   evaluateBudgetOverride,
@@ -202,11 +204,43 @@ function assertArtifactExportGovernance(runId: string): GovernanceDecisionReport
   return governanceReport;
 }
 
+export function assertEnterpriseGovernancePreflight(
+  runtimeAction = 'startHermesSandboxRun',
+  targetId = DEMO_RUN_ID,
+  reportOverride?: Pick<GovernanceReadinessReport, 'status' | 'blockedReasons' | 'warnings'>,
+): Pick<GovernanceReadinessReport, 'status' | 'blockedReasons' | 'warnings'> {
+  const report = reportOverride ?? runGovernanceExitGate(targetId).report;
+  if (!report.blockedReasons.length) return report;
+  const reason = `Enterprise governance exit gate blocked: ${report.blockedReasons.join(', ')}`;
+  const { enforcement } = recordGovernanceDecisionAndEnforcement(evaluateGovernanceDecision({
+    targetId,
+    targetType: 'runtime',
+    action: runtimeAction,
+    deniedReason: reason,
+  }), runtimeAction);
+  appendRuntimeEvent({
+    command: 'startAgentRun',
+    entityType: 'run',
+    entityId: targetId,
+    actorId: DEMO_AGENT_ID,
+    title: reason,
+    status: 'failed',
+    error: reason,
+  });
+  assertGovernanceEnforcement(enforcement, 'startAgentRun', 'run', targetId, { terminateOnBlock: true });
+  return report;
+}
+
 export function getRuntimeReadiness(): RuntimeReadiness {
   const config = resolveRuntimeConfig();
   const discovery = getHermesDiscovery();
-  const canStartRealRun = discovery.status === 'online' || discovery.status === 'degraded';
+  const canStartRealRun = config.hermes.mode === 'sandbox' && (discovery.status === 'online' || discovery.status === 'degraded');
   const paperclipStatus = config.paperclip.status;
+  const fallbackReason = config.hermes.reason === 'missing-config'
+    ? 'Hermes sandbox config missing; using mock fallback.'
+    : config.hermes.reason === 'mock-mode'
+      ? 'Runtime configured for mock mode.'
+      : undefined;
   return {
     mode: config.mode,
     requestedMode: config.requestedMode,
@@ -216,9 +250,15 @@ export function getRuntimeReadiness(): RuntimeReadiness {
     canStartMockRun: true,
     warnings: [
       ...discovery.warnings,
+      ...(fallbackReason && config.hermes.reason !== 'mock-mode' ? [fallbackReason] : []),
       ...(config.paperclip.reason === 'missing-config' ? ['Paperclip sandbox config missing; mock fallback remains available.'] : []),
     ],
     checkedAt: discovery.checkedAt,
+    hermesMode: config.hermes.mode,
+    hermesMessage: canStartRealRun ? 'Hermes sandbox runtime is reachable.' : fallbackReason ?? 'Hermes sandbox runtime is not reachable.',
+    lastSandboxSync: discovery.checkedAt,
+    fallbackReason,
+    currentRunSource: config.hermes.mode === 'sandbox' ? 'hermes' : 'mock',
   };
 }
 
@@ -930,7 +970,10 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     throw new Error(`Cannot start blocked run plan ${planId}: ${policyReport.blockingReasons.join(', ') || plan.missingCapabilities.join(', ') || 'blocked steps'}`);
   }
   const budgetEstimateCost = policyReport.executionEstimate?.estimatedCost ?? 0;
-  const result = await startStreamingRun(plan.ticketId);
+  const approvalSteps = getApprovalRequiredSteps(plan);
+  const needsBudgetApproval = budgetEstimateCost > 0.05;
+  const mustHoldBeforeSandbox = approvalSteps.length > 0 || needsBudgetApproval || enforcement.approvalRequired;
+  const result = mustHoldBeforeSandbox ? await startStreamingRun(plan.ticketId) : await startSandboxRun(plan.ticketId);
   recordRunStartUsage(result.runId, budgetEstimateCost, { planId: plan.id, workflowId: plan.workflowId });
   if (quotaReport.status === 'warning') {
     appendRuntimeEvent({
@@ -943,8 +986,6 @@ export async function startRunFromPlan(planId: string): Promise<RuntimeStreamRes
     });
   }
   seedPlanToolCalls(plan, result.runId);
-  const approvalSteps = getApprovalRequiredSteps(plan);
-  const needsBudgetApproval = budgetEstimateCost > 0.05;
   if (approvalSteps.length) {
     approvalSteps.forEach((step) => {
       const approval = planPolicyApproval(plan, result.runId, step);
@@ -1497,7 +1538,7 @@ async function persistSandboxExecution(execution: HermesExecution, baseRun: Run)
 }
 
 export function createRuntimeAdapters(mode: RuntimeMode = 'mock') {
-  const config = resolveRuntimeConfig({ VITE_RUNTIME_MODE: mode });
+  const config = resolveRuntimeConfig({ HERMES_RUNTIME_MODE: mode, VITE_RUNTIME_MODE: mode });
   return {
     hermes: createHermesAdapter(config.hermes.mode, config.hermes),
     paperclip: createPaperclipAdapter(config.paperclip.mode, config.paperclip),
@@ -1510,24 +1551,40 @@ export async function startSandboxRun(ticketId: string) {
   if (!ticket || !existingRun) {
     throw new Error(`Cannot start sandbox run for missing ticket ${ticketId}`);
   }
+  const config = resolveRuntimeConfig();
+  const activeHermes = createHermesAdapter(config.hermes.mode, config.hermes);
+  const source = config.hermes.mode === 'sandbox' ? 'hermes' : 'mock';
+  if (source === 'hermes') {
+    assertEnterpriseGovernancePreflight('startHermesSandboxRun', existingRun.id);
+  }
   const task = mapTicketToHermesTask(ticket);
-  const createdRun = { ...existingRun, status: 'queued' as const, currentStep: 'Hermes task created and queued' };
+  const createdRun = { ...existingRun, status: 'queued' as const, currentStep: `${source === 'hermes' ? 'Hermes sandbox' : 'Mock Hermes'} task created and queued` };
   upsertRun(createdRun, 'CREATED');
   clearUsageLedger(createdRun.id);
   recordRunStartUsage(createdRun.id);
   appendLifecycleEvent('run.created', createdRun, `Created Hermes task ${task.id}`, 'success');
   setRunLifecycle(createdRun.id, 'QUEUED');
-  appendLifecycleEvent('run.queued', createdRun, 'Hermes run queued', 'pending');
-  const execution = await hermes.startTask(task);
+  appendLifecycleEvent('run.queued', createdRun, `${source === 'hermes' ? 'Hermes sandbox' : 'Mock Hermes'} run queued`, 'pending');
+  appendRuntimeEvent({
+    command: 'run.started',
+    entityType: 'run',
+    entityId: createdRun.id,
+    actorId: task.agentId,
+    title: `Runtime source: ${source}${config.hermes.reason === 'missing-config' ? ' fallback due missing sandbox config' : ''}`,
+    status: 'pending',
+  });
+  const execution = await activeHermes.startTask(task);
   const startedRun = await persistSandboxExecution(execution, createdRun);
-  appendLifecycleEvent('run.started', startedRun, 'Hermes run started');
+  appendLifecycleEvent('run.started', startedRun, `${source === 'hermes' ? 'Hermes sandbox' : 'Mock Hermes'} run started`);
   return executionToRuntimeResult({ ...execution, id: startedRun.id });
 }
 
 export async function pollSandboxRun(runId: string) {
   const existingRun = baseRunById(runId);
   if (!existingRun) throw new Error(`Cannot poll missing run ${runId}`);
-  const execution = await hermes.getRun(runId);
+  const config = resolveRuntimeConfig();
+  const activeHermes = createHermesAdapter(config.hermes.mode, config.hermes);
+  const execution = await activeHermes.getRun(runId);
   const nextRun = await persistSandboxExecution(execution, existingRun);
   return executionToRuntimeResult({ ...execution, id: nextRun.id });
 }
@@ -1539,7 +1596,9 @@ export async function syncSandboxRun(runId: string) {
 export async function cancelSandboxRun(runId: string) {
   const existingRun = baseRunById(runId);
   if (!existingRun) throw new Error(`Cannot cancel missing run ${runId}`);
-  const execution = await hermes.cancelRun(runId);
+  const config = resolveRuntimeConfig();
+  const activeHermes = createHermesAdapter(config.hermes.mode, config.hermes);
+  const execution = await activeHermes.cancelRun(runId);
   const cancelledExecution: HermesExecution = { ...execution, id: runId, status: 'cancelled', currentStep: execution.currentStep || 'Cancelled by operator' };
   const nextRun = await persistSandboxExecution(cancelledExecution, existingRun);
   setRunLifecycle(nextRun.id, 'REJECTED');
@@ -1711,10 +1770,22 @@ function decisionAction(approvalId: string, outcome: RuntimeDecisionOutcome): Ru
   };
 }
 
-export function executionToRuntimeResult(execution: HermesExecution) {
+export function executionToRuntimeResult(execution: HermesExecution): RuntimeStreamResult {
+  const status = mapHermesStatusToRunStatus(execution.status);
+  const complete = status === 'success' || status === 'failed';
   return {
     runId: execution.id,
-    status: mapHermesStatusToRunStatus(execution.status),
+    status,
     message: execution.currentStep,
+    event: {
+      id: `sandbox-result-${execution.id}-${Date.now()}`,
+      runId: execution.id,
+      sequence: 1,
+      type: complete ? status === 'failed' ? 'run.failed' : 'run.completed' : 'run.started',
+      message: execution.currentStep,
+      timestamp: runtimeNow(),
+      payload: { source: 'hermes-sandbox', hermesStatus: execution.status },
+    },
+    complete,
   };
 }

@@ -5,6 +5,11 @@ export interface HermesEnv {
   VITE_HERMES_BASE_URL?: string;
   VITE_HERMES_API_KEY?: string;
   VITE_RUNTIME_TIMEOUT_MS?: string;
+  HERMES_RUNTIME_MODE?: string;
+  HERMES_SANDBOX_BASE_URL?: string;
+  HERMES_SANDBOX_API_KEY?: string;
+  HERMES_SANDBOX_WORKSPACE_ID?: string;
+  HERMES_SANDBOX_TIMEOUT_MS?: string;
 }
 
 export interface HermesConnectorConfig {
@@ -14,6 +19,7 @@ export interface HermesConnectorConfig {
   status: RuntimeIntegrationStatus;
   baseUrl?: string;
   apiKey?: string;
+  workspaceId?: string;
   timeoutMs: number;
   reason: 'mock-mode' | 'sandbox-configured' | 'missing-config';
 }
@@ -34,8 +40,8 @@ function normalizeTimeout(value?: string) {
 }
 
 export function resolveHermesConfig(env: HermesEnv = currentEnv(), mode?: RuntimeMode): HermesConnectorConfig {
-  const requestedMode = mode ?? normalizeMode(env.VITE_RUNTIME_MODE);
-  const timeoutMs = normalizeTimeout(env.VITE_RUNTIME_TIMEOUT_MS);
+  const requestedMode = mode ?? normalizeMode(env.HERMES_RUNTIME_MODE ?? env.VITE_RUNTIME_MODE);
+  const timeoutMs = normalizeTimeout(env.HERMES_SANDBOX_TIMEOUT_MS ?? env.VITE_RUNTIME_TIMEOUT_MS);
 
   if (requestedMode === 'mock') {
     return {
@@ -48,10 +54,12 @@ export function resolveHermesConfig(env: HermesEnv = currentEnv(), mode?: Runtim
     };
   }
 
-  const baseUrl = env.VITE_HERMES_BASE_URL?.trim();
-  const apiKey = env.VITE_HERMES_API_KEY?.trim();
+  const baseUrl = (env.HERMES_SANDBOX_BASE_URL ?? env.VITE_HERMES_BASE_URL)?.trim();
+  const apiKey = (env.HERMES_SANDBOX_API_KEY ?? env.VITE_HERMES_API_KEY)?.trim();
+  const workspaceId = env.HERMES_SANDBOX_WORKSPACE_ID?.trim();
+  const usesHermesSandboxEnv = Boolean(env.HERMES_RUNTIME_MODE || env.HERMES_SANDBOX_BASE_URL || env.HERMES_SANDBOX_API_KEY);
 
-  if (!baseUrl || !apiKey) {
+  if (!baseUrl || !apiKey || (usesHermesSandboxEnv && !workspaceId)) {
     return {
       service: 'hermes',
       requestedMode,
@@ -69,6 +77,7 @@ export function resolveHermesConfig(env: HermesEnv = currentEnv(), mode?: Runtim
     status: 'online',
     baseUrl: baseUrl.replace(/\/+$/, ''),
     apiKey,
+    workspaceId,
     timeoutMs,
     reason: 'sandbox-configured',
   };

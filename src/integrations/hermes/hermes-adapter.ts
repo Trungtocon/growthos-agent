@@ -1,6 +1,14 @@
 import { createHermesHttpClient } from './hermes-client';
 import { resolveHermesConfig, type HermesConnectorConfig } from './hermes-config';
 import { createMockHermesClient } from './hermes-mock';
+import {
+  cancelHermesSandboxRun,
+  checkHermesHealth,
+  discoverHermesRuntime,
+  pollHermesSandboxRun,
+  startHermesSandboxRun,
+  streamHermesSandboxEvents,
+} from './hermes-sandbox-client';
 import type { HermesClient, HermesTask } from './hermes-types';
 import type { RuntimeMode } from '../growthos-runtime/runtime-types';
 
@@ -12,6 +20,8 @@ export interface HermesAdapter {
   cancelRun: HermesClient['cancelRun'];
   startTask(task: HermesTask): ReturnType<HermesClient['startTask']>;
   sendRunCommand(runId: string, command: 'pause' | 'resume' | 'retry' | 'cancel'): ReturnType<HermesClient['sendRunCommand']>;
+  discoverRuntime: typeof discoverHermesRuntime;
+  streamRunEvents: typeof streamHermesSandboxEvents;
 }
 
 export function createHermesAdapter(mode: RuntimeMode = 'mock', config: HermesConnectorConfig = resolveHermesConfig(undefined, mode)): HermesAdapter {
@@ -25,12 +35,14 @@ export function createHermesAdapter(mode: RuntimeMode = 'mock', config: HermesCo
   });
 
   return {
-    healthCheck: config.reason === 'missing-config' ? fallbackHealth : () => client.healthCheck(),
+    healthCheck: config.reason === 'missing-config' ? fallbackHealth : () => checkHermesHealth(config),
     createTask: (task) => client.createTask(task),
     startRun: (taskId) => client.startRun(taskId),
-    getRun: (runId) => client.getRun(runId),
-    cancelRun: (runId) => client.cancelRun(runId),
-    startTask: (task) => client.startTask(task),
+    getRun: (runId) => config.reason === 'sandbox-configured' ? pollHermesSandboxRun(runId, config) : client.getRun(runId),
+    cancelRun: (runId) => config.reason === 'sandbox-configured' ? cancelHermesSandboxRun(runId, config) : client.cancelRun(runId),
+    startTask: (task) => config.reason === 'sandbox-configured' ? startHermesSandboxRun(task, config) : client.startTask(task),
     sendRunCommand: (runId, command) => client.sendRunCommand(runId, command),
+    discoverRuntime: () => discoverHermesRuntime(config),
+    streamRunEvents: (runId) => streamHermesSandboxEvents(runId, config),
   };
 }

@@ -20,7 +20,7 @@ function normalizeMode(value?: string): RuntimeMode {
 }
 
 export function resolveRuntimeConfig(env: RuntimeEnv = currentEnv()): RuntimeConnectorConfig {
-  const requestedMode = normalizeMode(env.VITE_RUNTIME_MODE);
+  const requestedMode = normalizeMode(env.HERMES_RUNTIME_MODE ?? env.VITE_RUNTIME_MODE);
   const hermes = resolveHermesConfig(env, requestedMode);
   const paperclip = resolvePaperclipConfig(env, requestedMode);
   const mode = requestedMode === 'sandbox' && hermes.mode === 'sandbox' && paperclip.mode === 'sandbox' ? 'sandbox' : 'mock';

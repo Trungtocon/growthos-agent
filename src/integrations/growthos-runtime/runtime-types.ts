@@ -90,4 +90,9 @@ export interface RuntimeReadiness {
   canStartMockRun: boolean;
   warnings: string[];
   checkedAt: string;
+  hermesMode?: RuntimeMode;
+  hermesMessage?: string;
+  lastSandboxSync?: string;
+  fallbackReason?: string;
+  currentRunSource?: 'mock' | 'hermes';
 }

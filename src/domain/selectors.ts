@@ -1452,6 +1452,7 @@ export function selectTicketDetailViewModel(ticketId = DEMO_TICKET_ID) {
     workflowAnalytics,
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
+    runtimeReadiness: selectRuntimeReadiness(),
     authorization: selectAccessControlViewModel(),
     blockingReasons: selectBlockingReasons(currentPlan?.id),
     planWarnings: selectPlanWarnings(currentPlan?.id),
@@ -1584,6 +1585,7 @@ export function selectApprovalCenterViewModel() {
   const selectedRawApproval = approvals.find((approval) => approval.id === selectedApproval?.id);
   const selectedRunId = selectedRawApproval?.runId;
   const selectedArtifactPreview = selectedRunId ? getArtifactPreviewModel(getPrimaryArtifactForRun(selectedRunId)?.id) : undefined;
+  const runtimeReadiness = selectRuntimeReadiness();
   const approvalExecution = selectApprovalExecutionViewModel();
   return {
     approvals: queueRows,
@@ -1597,6 +1599,7 @@ export function selectApprovalCenterViewModel() {
     organizationGovernance: organizationSummary,
     organizationHealth: organizationSummary.organizationHealth,
     approvalExecution,
+    runtimeReadiness,
     authorization: selectAccessControlViewModel(),
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
