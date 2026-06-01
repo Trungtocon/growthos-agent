@@ -8,6 +8,8 @@ import {
   selectExecutionGraphSummary,
   selectExecutionTraceByRun,
   selectExecutionTimelineByRun,
+  selectReplayControlState,
+  selectCurrentReplayFrame,
 } from '../domain/selectors';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import { registerExecutionGraphExports } from '../runtime/agent-execution-graph-store';
@@ -42,6 +44,8 @@ export function ExecutionGraphPage() {
   const artifactLineage = selectArtifactLineage(DEMO_RUN_ID);
   const approvalLineage = selectApprovalLineage(DEMO_RUN_ID);
   const timeline = selectExecutionTimelineByRun(DEMO_RUN_ID);
+  const replayControl = selectReplayControlState(DEMO_RUN_ID);
+  const replayFrame = selectCurrentReplayFrame(DEMO_RUN_ID);
 
   return (
     <div data-route="/execution-graph" data-execution-graph-route>
@@ -72,6 +76,9 @@ export function ExecutionGraphPage() {
       </div>
       <span data-execution-timeline-widget="execution-graph" data-execution-timeline-events={timeline.events.length} data-execution-replay-frames={timeline.replayFrames.length} className="sr-only">
         Execution timeline for graph route: {timeline.events.length} events and {timeline.replayFrames.length} frames.
+      </span>
+      <span data-execution-replay-widget="execution-graph" data-replay-status={replayControl.status} data-replay-frame={replayControl.selectedFrameIndex} data-replay-event={replayControl.selectedEventId ?? ''} className="sr-only">
+        Execution replay for graph route: frame {replayControl.selectedFrameIndex + 1}, status {replayControl.status}, event {replayFrame?.eventId ?? 'none'}.
       </span>
       <div className="mt-5 grid grid-cols-2 gap-5">
         <Panel title="Node List"><div className="max-h-[320px] space-y-2 overflow-hidden p-4 text-sm">{graph.nodes.map((node) => <div key={node.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2"><span className="font-semibold">{node.label}</span><Badge tone={node.type === 'ERROR' ? 'red' : node.type === 'ARTIFACT' ? 'green' : 'blue'}>{node.type}</Badge></div>)}</div></Panel>

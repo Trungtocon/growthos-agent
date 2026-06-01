@@ -104,6 +104,16 @@ import {
 } from '../runtime/execution-timeline-store';
 import type { ExecutionTimelineSeverity, ExecutionTimelineSource } from '../runtime/execution-timeline';
 import {
+  canStepReplayBackward as getStoredReplayCanStepBackward,
+  canStepReplayForward as getStoredReplayCanStepForward,
+  getCurrentReplayFrame as getStoredCurrentReplayFrame,
+  getNextReplayFrame as getStoredNextReplayFrame,
+  getPreviousReplayFrame as getStoredPreviousReplayFrame,
+  getReplayControlState as getStoredReplayControlState,
+  getReplayDebugSnapshot as getStoredReplayDebugSnapshot,
+  getSelectedTimelineEvent as getStoredSelectedTimelineEvent,
+} from '../runtime/execution-replay-control-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1701,6 +1711,38 @@ export function selectReplayFramesByRun(runId = DEMO_RUN_ID) {
 
 export function selectReplayState(runId = DEMO_RUN_ID, frameIndex?: number) {
   return getStoredReplayState(runId, frameIndex);
+}
+
+export function selectReplayControlState(runId = DEMO_RUN_ID) {
+  return getStoredReplayControlState(runId);
+}
+
+export function selectCurrentReplayFrame(runId = DEMO_RUN_ID) {
+  return getStoredCurrentReplayFrame(runId);
+}
+
+export function selectNextReplayFrame(runId = DEMO_RUN_ID) {
+  return getStoredNextReplayFrame(runId);
+}
+
+export function selectPreviousReplayFrame(runId = DEMO_RUN_ID) {
+  return getStoredPreviousReplayFrame(runId);
+}
+
+export function selectSelectedTimelineEvent(runId = DEMO_RUN_ID) {
+  return getStoredSelectedTimelineEvent(runId);
+}
+
+export function selectReplayDebugSnapshot(runId = DEMO_RUN_ID) {
+  return getStoredReplayDebugSnapshot(runId);
+}
+
+export function selectReplayCanStepForward(runId = DEMO_RUN_ID) {
+  return getStoredReplayCanStepForward(runId);
+}
+
+export function selectReplayCanStepBackward(runId = DEMO_RUN_ID) {
+  return getStoredReplayCanStepBackward(runId);
 }
 
 export function selectTimelineSummary(workspaceId?: string) {

@@ -107,7 +107,8 @@
     "smoke:hermes-sandbox-runtime": "node scripts/smoke-hermes-sandbox-runtime.mjs",
     "smoke:artifact-registry": "node scripts/smoke-artifact-registry.mjs",
     "smoke:agent-execution-graph": "node scripts/smoke-agent-execution-graph.mjs",
-    "smoke:execution-timeline": "node scripts/smoke-execution-timeline.mjs"
+    "smoke:execution-timeline": "node scripts/smoke-execution-timeline.mjs",
+    "smoke:execution-replay-control": "node scripts/smoke-execution-replay-control.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

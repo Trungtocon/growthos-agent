@@ -31,7 +31,7 @@ import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/ArtifactViewer';
 import type { Tone } from '../data/demoScreens';
-import { selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
+import { selectCurrentReplayFrame, selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectReplayControlState, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
 import type { ToolCallViewModel } from '../domain/selectors';
 import { approveApproval, approveApprovalExecution, assignTicket, cancelAgentRun, createRunPlan as createRunPlanAction, escalateApprovalExecution, escalateTicket, pauseRun, refreshRuntimeDiscovery, rejectApproval, requestApprovalExecutionChanges, resolveTicket, resumeRun, retryRun, startAgentRun, startRunFromPlan, startStreamingRun } from '../state/command-actions';
 import type { WorkflowEvent } from '../state/event-log';
@@ -97,6 +97,16 @@ function ExecutionTimelineCompactWidget({ type, id }: { type: 'agent' | 'ticket'
   return (
     <span data-execution-timeline-widget={type} data-execution-timeline-events={timeline.events.length} data-execution-replay-frames={timeline.replayFrames.length} className="sr-only">
       Execution timeline {type} {id}: {timeline.events.length} events and {timeline.replayFrames.length} replay frames.
+    </span>
+  );
+}
+
+function ExecutionReplayCompactWidget({ runId, surface }: { runId: string; surface: 'run' | 'execution-graph' }) {
+  const control = selectReplayControlState(runId);
+  const frame = selectCurrentReplayFrame(runId);
+  return (
+    <span data-execution-replay-widget={surface} data-replay-status={control.status} data-replay-frame={control.selectedFrameIndex} data-replay-event={control.selectedEventId ?? ''} className="sr-only">
+      Execution replay {surface} {runId}: frame {control.selectedFrameIndex + 1}, status {control.status}, event {frame?.eventId ?? 'none'}.
     </span>
   );
 }
@@ -824,6 +834,7 @@ function RunConsoleRealPage() {
     <div data-demo-source={data.run.id}>
       <ExecutionGraphCompactWidget type="run" id={data.run.id} />
       <ExecutionTimelineCompactWidget type="run" id={data.run.id} />
+      <ExecutionReplayCompactWidget runId={data.run.id} surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>
