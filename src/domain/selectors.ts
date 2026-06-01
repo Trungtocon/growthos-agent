@@ -165,6 +165,16 @@ import {
   generateWorkspaceImprovementOutcomeSummary as getStoredWorkspaceOutcomeSummary,
 } from '../runtime/improvement-outcome-store';
 import {
+  calculateRecommendationConfidence as getStoredRecommendationConfidence,
+  getLearningMemorySummary as getStoredLearningMemorySummary,
+  getLearningSignals as getStoredLearningSignals,
+  getRecommendations as getStoredRecommendations,
+  getRecommendationsForAgent as getStoredRecommendationsForAgent,
+  getRecommendationsForRun as getStoredRecommendationsForRun,
+  getRecommendationsForWorkflow as getStoredRecommendationsForWorkflow,
+  getTopRecommendations as getStoredTopRecommendations,
+} from '../runtime/learning-memory-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1957,6 +1967,46 @@ export function selectMetricDeltas(actionExecutionId: string) {
 
 export function selectOutcomeEvidence(actionExecutionId: string) {
   return getStoredOutcomeEvidence(actionExecutionId);
+}
+
+export function selectLearningSignals() {
+  return getStoredLearningSignals();
+}
+
+export function selectRecommendations() {
+  return getStoredRecommendations();
+}
+
+export function selectRecommendationsByRun(runId = DEMO_RUN_ID) {
+  return getStoredRecommendationsForRun(runId);
+}
+
+export function selectRecommendationsByAgent(agentId = DEMO_AGENT_ID) {
+  return getStoredRecommendationsForAgent(agentId);
+}
+
+export function selectRecommendationsByWorkflow(workflowId = 'demo-run-execution') {
+  return getStoredRecommendationsForWorkflow(workflowId);
+}
+
+export function selectTopRecommendations(limit = 5) {
+  return getStoredTopRecommendations(limit);
+}
+
+export function selectAcceptedRecommendations() {
+  return getStoredRecommendations('accepted');
+}
+
+export function selectRejectedRecommendations() {
+  return getStoredRecommendations('rejected');
+}
+
+export function selectRecommendationConfidence(recommendationId: string) {
+  return getStoredRecommendationConfidence(recommendationId);
+}
+
+export function selectLearningMemorySummary(workspaceId?: string) {
+  return getStoredLearningMemorySummary(workspaceId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

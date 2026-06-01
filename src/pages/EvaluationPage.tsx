@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, ListChecks, Play, RotateCcw, Scale, ShieldCheck, Sparkles, TrendingUp, Wrench, XCircle } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, Lightbulb, ListChecks, Play, RotateCcw, Scale, ShieldCheck, Sparkles, TrendingUp, Wrench, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
@@ -25,6 +25,14 @@ import {
   selectMetricDeltas,
   selectOutcomeEvidence,
   selectOutcomesByRun,
+  selectAcceptedRecommendations,
+  selectLearningMemorySummary,
+  selectLearningSignals,
+  selectRecommendationConfidence,
+  selectRecommendations,
+  selectRecommendationsByRun,
+  selectRejectedRecommendations,
+  selectTopRecommendations,
   selectRegressedOutcomes,
   selectWorkspaceOutcomeSummary,
   selectWorkspaceActionPlanSummary,
@@ -42,10 +50,18 @@ import {
   startActionTask,
 } from '../runtime/action-plan-execution-store';
 import { createOutcomeVerification, registerImprovementOutcomeExports } from '../runtime/improvement-outcome-store';
+import {
+  createLearningSignalFromOutcome,
+  generateRecommendationFromSignal,
+  markRecommendationAccepted,
+  markRecommendationRejected,
+  registerLearningMemoryExports,
+} from '../runtime/learning-memory-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
 import type { OutcomeVerificationStatus } from '../runtime/improvement-outcome';
+import type { RecommendationPriority } from '../runtime/learning-memory';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
@@ -58,6 +74,13 @@ function scoreTone(score: number): Tone {
 }
 
 function priorityTone(priority: FeedbackPriority): Tone {
+  if (priority === 'critical') return 'red';
+  if (priority === 'high') return 'amber';
+  if (priority === 'medium') return 'blue';
+  return 'slate';
+}
+
+function recommendationPriorityTone(priority: RecommendationPriority): Tone {
   if (priority === 'critical') return 'red';
   if (priority === 'high') return 'amber';
   if (priority === 'medium') return 'blue';
@@ -149,6 +172,16 @@ export function ImprovementOutcomeCompactWidget({ runId = DEMO_RUN_ID, surface }
   );
 }
 
+export function LearningRecommendationCompactWidget({ runId = DEMO_RUN_ID, surface }: { runId?: string; surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const recommendations = selectRecommendationsByRun(runId);
+  const topRecommendation = recommendations[0];
+  return (
+    <span data-learning-recommendation-widget={surface} data-learning-recommendations={recommendations.length} data-learning-confidence={topRecommendation?.confidence ?? 0} className="sr-only">
+      Learning recommendations {surface} {runId}: {recommendations.length} recommendations, top confidence {topRecommendation?.confidence ?? 0}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -179,6 +212,12 @@ export function EvaluationPage() {
   const inconclusiveOutcomes = selectInconclusiveOutcomes(DEMO_RUN_ID);
   const metricDeltas = primaryOutcome ? selectMetricDeltas(primaryOutcome.actionExecutionId) : [];
   const outcomeEvidence = primaryOutcome ? selectOutcomeEvidence(primaryOutcome.actionExecutionId) : [];
+  const learningSignals = selectLearningSignals();
+  const learningRecommendations = selectRecommendations();
+  const topLearningRecommendations = selectTopRecommendations(5);
+  const acceptedRecommendations = selectAcceptedRecommendations();
+  const rejectedRecommendations = selectRejectedRecommendations();
+  const learningSummary = selectLearningMemorySummary();
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -190,9 +229,10 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); createOutcomeVerification(actionExecution.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); registerLearningMemoryExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); const outcome = createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <ImprovementOutcomeCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
+      <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -433,6 +473,71 @@ export function EvaluationPage() {
               <div key={outcome.id} data-improvement-outcome={outcome.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
                 <div className="flex items-start justify-between gap-3"><b>{outcome.id.replace('improvement-outcome-', '')}</b><Badge tone={outcomeStatusTone(outcome.status)}>{outcome.status}</Badge></div>
                 <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400"><span>{outcome.targetDimensions.join(', ')}</span><span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{outcome.comparison?.overallDelta ?? 0}</span></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-learning-memory-panel>
+        <Panel title="Learning Memory">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Signals</span><b>{learningSummary.signalCount}</b></div>
+            <div className="flex items-center justify-between"><span>Recommendations</span><b>{learningSummary.recommendationCount}</b></div>
+            <div className="flex items-center justify-between"><span>Accepted / rejected</span><b>{learningSummary.accepted}/{learningSummary.rejected}</b></div>
+            <div className="flex items-center justify-between"><span>Confidence</span><Badge tone={learningSummary.averageConfidence >= 75 ? 'green' : learningSummary.averageConfidence >= 55 ? 'blue' : 'amber'}>{learningSummary.averageConfidence}%</Badge></div>
+            <Button variant="secondary" onClick={() => { const outcome = primaryOutcome ?? createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><Lightbulb className="h-4 w-4" />Generate recommendation</Button>
+          </div>
+        </Panel>
+        <Panel title="Top Recommendations">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {topLearningRecommendations.length ? topLearningRecommendations.map((recommendation) => (
+              <div key={recommendation.id} data-learning-recommendation={recommendation.type} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{recommendation.title}</b><Badge tone={recommendationPriorityTone(recommendation.impact.priority)}>{recommendation.impact.priority}</Badge></div>
+                <p className="mt-2 text-slate-500">{recommendation.description}</p>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400">
+                  <span>{recommendation.type.replace(/_/g, ' ')}</span>
+                  <span>{recommendation.confidence}%</span>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { markRecommendationAccepted(recommendation.id); window.location.reload(); }}>Accept</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { markRecommendationRejected(recommendation.id, 'Rejected during demo review.'); window.location.reload(); }}>Reject</button>
+                </div>
+              </div>
+            )) : <p className="text-sm text-slate-500">Learning recommendations appear after an outcome is converted into a signal.</p>}
+          </div>
+        </Panel>
+        <Panel title="Recommendation Evidence">
+          <div className="space-y-3 p-4 text-sm">
+            {topLearningRecommendations.flatMap((recommendation) => recommendation.evidence.slice(0, 2).map((evidence) => (
+              <div key={evidence.id} data-recommendation-evidence className="rounded-xl border border-slate-100 bg-white p-3">
+                <div className="flex items-start justify-between gap-3"><b>{evidence.title}</b><Badge tone="blue">{selectRecommendationConfidence(recommendation.id)}%</Badge></div>
+                <p className="mt-2 text-slate-500">{evidence.description}</p>
+              </div>
+            ))).slice(0, 5)}
+            {!topLearningRecommendations.length ? <p className="text-slate-500">Evidence cards are generated from learning signals and verified outcomes.</p> : null}
+          </div>
+        </Panel>
+        <Panel title="Signal History">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            {learningSignals.map((signal) => (
+              <div key={signal.id} data-learning-signal={signal.type} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{signal.type.replace(/_/g, ' ')}</b><Badge tone={outcomeStatusTone(signal.sourceStatus)}>{signal.sourceStatus}</Badge></div>
+                <p className="mt-2 text-slate-500">{signal.targetDimensions.join(', ') || 'overall'} from {signal.outcomeId}</p>
+                <div className="mt-3 text-xs font-bold uppercase text-slate-400">Strength {signal.strength}</div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Recommendation Status">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {[
+              { label: 'Proposed', value: learningRecommendations.filter((recommendation) => recommendation.status === 'proposed').length, tone: 'blue' as Tone },
+              { label: 'Accepted', value: acceptedRecommendations.length, tone: 'green' as Tone },
+              { label: 'Rejected', value: rejectedRecommendations.length, tone: 'red' as Tone },
+            ].map((item) => (
+              <div key={item.label} className="rounded-xl border border-slate-100 bg-white p-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-slate-400">{item.label}</div>
+                <div className="mt-2 flex items-end justify-between"><b className="text-2xl">{item.value}</b><Badge tone={item.tone}>{item.label}</Badge></div>
               </div>
             ))}
           </div>
