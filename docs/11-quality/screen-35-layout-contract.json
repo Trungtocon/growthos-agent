@@ -3,16 +3,16 @@
     "width": 1672,
     "height": 941
   },
-  "contractSource": "sprint-5i-current-real-ui-dom",
+  "contractSource": "sprint-8c1-current-real-ui-dom",
   "reference": "public/stitch_ui/35_Artifacts_Library.png",
   "regions": {
-    "app-shell.sidebar": { "x": 0, "y": 0, "width": 218, "height": 941, "tolerance": 8 },
-    "app-shell.topbar": { "x": 218, "y": 0, "width": 1454, "height": 72, "tolerance": 8 },
-    "app-shell.main": { "x": 240, "y": 90, "width": 1410, "height": 792, "tolerance": 12 },
-    "artifacts.header": { "x": 240, "y": 90, "width": 1410, "height": 68, "tolerance": 12 },
-    "artifacts.kpi-band": { "x": 240, "y": 174, "width": 1410, "height": 62, "tolerance": 12 },
-    "artifacts.main-grid": { "x": 240, "y": 252, "width": 1410, "height": 630, "tolerance": 12 },
-    "artifacts.library-panel": { "x": 240, "y": 252, "width": 1000, "height": 630, "tolerance": 16 },
-    "artifacts.inspector-panel": { "x": 1260, "y": 252, "width": 390, "height": 630, "tolerance": 16 }
+    "app-shell.sidebar": { "x": 0, "y": 0, "width": 190, "height": 941, "tolerance": 8 },
+    "app-shell.topbar": { "x": 190, "y": 0, "width": 1482, "height": 60, "tolerance": 8 },
+    "app-shell.main": { "x": 214, "y": 67, "width": 1434, "height": 792, "tolerance": 12 },
+    "artifacts.header": { "x": 214, "y": 67, "width": 1434, "height": 68, "tolerance": 12 },
+    "artifacts.kpi-band": { "x": 214, "y": 151, "width": 1434, "height": 62, "tolerance": 12 },
+    "artifacts.main-grid": { "x": 214, "y": 229, "width": 1434, "height": 630, "tolerance": 12 },
+    "artifacts.library-panel": { "x": 214, "y": 229, "width": 1024, "height": 630, "tolerance": 16 },
+    "artifacts.inspector-panel": { "x": 1258, "y": 229, "width": 390, "height": 630, "tolerance": 16 }
   }
 }
