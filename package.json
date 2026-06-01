@@ -114,7 +114,8 @@
     "smoke:feedback-action-planner": "node scripts/smoke-feedback-action-planner.mjs",
     "smoke:action-plan-execution": "node scripts/smoke-action-plan-execution.mjs",
     "smoke:improvement-outcome": "node scripts/smoke-improvement-outcome.mjs",
-    "smoke:learning-memory": "node scripts/smoke-learning-memory.mjs"
+    "smoke:learning-memory": "node scripts/smoke-learning-memory.mjs",
+    "smoke:recommendation-execution": "node scripts/smoke-recommendation-execution.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

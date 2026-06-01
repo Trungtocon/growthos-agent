@@ -29,9 +29,13 @@ import {
   selectLearningMemorySummary,
   selectLearningSignals,
   selectRecommendationConfidence,
+  selectRecommendationExecutionSummary,
+  selectRecommendationExecutions,
+  selectCompletedRecommendationExecutions,
   selectRecommendations,
   selectRecommendationsByRun,
   selectRejectedRecommendations,
+  selectVerifiedRecommendationExecutions,
   selectTopRecommendations,
   selectRegressedOutcomes,
   selectWorkspaceOutcomeSummary,
@@ -57,11 +61,20 @@ import {
   markRecommendationRejected,
   registerLearningMemoryExports,
 } from '../runtime/learning-memory-store';
+import {
+  cancelRecommendationExecution,
+  completeRecommendationExecution,
+  createExecutionFromRecommendation,
+  generateRecommendationExecutionArtifacts,
+  startRecommendationExecution,
+  verifyRecommendationImpact,
+} from '../runtime/recommendation-execution-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
 import type { OutcomeVerificationStatus } from '../runtime/improvement-outcome';
 import type { RecommendationPriority } from '../runtime/learning-memory';
+import type { RecommendationExecutionStatus } from '../runtime/recommendation-execution';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
@@ -109,6 +122,14 @@ function outcomeStatusTone(status: OutcomeVerificationStatus): Tone {
   if (status === 'inconclusive') return 'amber';
   if (status === 'unchanged') return 'blue';
   return 'slate';
+}
+
+function recommendationExecutionTone(status: RecommendationExecutionStatus): Tone {
+  if (status === 'verified' || status === 'completed') return 'green';
+  if (status === 'in_progress') return 'blue';
+  if (status === 'blocked' || status === 'failed') return 'red';
+  if (status === 'cancelled') return 'slate';
+  return 'amber';
 }
 
 function ScoreCard({ score }: { score: RunEvaluationScore }) {
@@ -182,6 +203,15 @@ export function LearningRecommendationCompactWidget({ runId = DEMO_RUN_ID, surfa
   );
 }
 
+export function RecommendationExecutionCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const summary = selectRecommendationExecutionSummary();
+  return (
+    <span data-recommendation-execution-widget={surface} data-recommendation-executions={summary.total} data-recommendation-verified={summary.verified} className="sr-only">
+      Recommendation execution {surface}: {summary.total} executions, {summary.verified} verified, {summary.completed} completed.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -218,6 +248,11 @@ export function EvaluationPage() {
   const acceptedRecommendations = selectAcceptedRecommendations();
   const rejectedRecommendations = selectRejectedRecommendations();
   const learningSummary = selectLearningMemorySummary();
+  const recommendationExecutions = selectRecommendationExecutions();
+  const recommendationExecutionSummary = selectRecommendationExecutionSummary();
+  const completedRecommendationExecutions = selectCompletedRecommendationExecutions();
+  const verifiedRecommendationExecutions = selectVerifiedRecommendationExecutions();
+  const activeRecommendationExecution = recommendationExecutions[0];
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -229,10 +264,11 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); registerLearningMemoryExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); const outcome = createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); registerLearningMemoryExports(DEMO_RUN_ID); generateRecommendationExecutionArtifacts(); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); const outcome = createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <ImprovementOutcomeCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
+      <RecommendationExecutionCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -538,6 +574,77 @@ export function EvaluationPage() {
               <div key={item.label} className="rounded-xl border border-slate-100 bg-white p-4">
                 <div className="text-xs font-bold uppercase tracking-wide text-slate-400">{item.label}</div>
                 <div className="mt-2 flex items-end justify-between"><b className="text-2xl">{item.value}</b><Badge tone={item.tone}>{item.label}</Badge></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-recommendation-execution-panel>
+        <Panel title="Recommendation Execution">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Total</span><b>{recommendationExecutionSummary.total}</b></div>
+            <div className="flex items-center justify-between"><span>Completed / verified</span><b>{recommendationExecutionSummary.completed}/{recommendationExecutionSummary.verified}</b></div>
+            <div className="flex items-center justify-between"><span>In progress</span><Badge tone={recommendationExecutionSummary.inProgress ? 'blue' : 'slate'}>{recommendationExecutionSummary.inProgress}</Badge></div>
+            <div className="flex items-center justify-between"><span>Confidence after</span><Badge tone={recommendationExecutionSummary.averageConfidenceAfter >= 75 ? 'green' : 'amber'}>{recommendationExecutionSummary.averageConfidenceAfter}%</Badge></div>
+            <Button variant="secondary" onClick={() => { const recommendation = acceptedRecommendations[0] ?? (topLearningRecommendations[0] ? markRecommendationAccepted(topLearningRecommendations[0].id) : undefined); if (recommendation) createExecutionFromRecommendation(recommendation.id); window.location.reload(); }}><Play className="h-4 w-4" />Create execution</Button>
+          </div>
+        </Panel>
+        <Panel title="Execution Lifecycle Board">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {recommendationExecutions.length ? recommendationExecutions.map((execution) => (
+              <div key={execution.id} data-recommendation-execution={execution.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{execution.recommendationType.replace(/_/g, ' ')}</b><Badge tone={recommendationExecutionTone(execution.status)}>{execution.status}</Badge></div>
+                <p className="mt-2 text-slate-500">Recommendation {execution.recommendationId.replace('recommendation-', '').slice(0, 52)}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { startRecommendationExecution(execution.id); window.location.reload(); }}>Start</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeRecommendationExecution(execution.id, { type: 'note', title: 'Execution evidence', description: 'Recommendation execution completed with demo evidence.', createdBy: 'GrowthOS demo' }); window.location.reload(); }}>Complete</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { verifyRecommendationImpact(execution.id); window.location.reload(); }}>Verify</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelRecommendationExecution(execution.id); window.location.reload(); }}>Cancel</button>
+                </div>
+              </div>
+            )) : <p className="text-sm text-slate-500">Accept a recommendation, then create an execution to track impact.</p>}
+          </div>
+        </Panel>
+        <Panel title="Impact Result">
+          <div className="space-y-3 p-4 text-sm">
+            {activeRecommendationExecution?.impactResult ? (
+              <>
+                <div className="flex items-center justify-between"><span>Status</span><Badge tone={activeRecommendationExecution.impactResult.status === 'improved' ? 'green' : activeRecommendationExecution.impactResult.status === 'regressed' ? 'red' : 'amber'}>{activeRecommendationExecution.impactResult.status}</Badge></div>
+                <div className="flex items-center justify-between"><span>Score delta</span><b>{activeRecommendationExecution.impactResult.scoreDelta}</b></div>
+                <div className="flex items-center justify-between"><span>Confidence</span><b>{activeRecommendationExecution.impactResult.confidenceBefore} {'->'} {activeRecommendationExecution.impactResult.confidenceAfter}</b></div>
+                <div className="rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">Outcome {activeRecommendationExecution.impactResult.outcomeId ?? 'pending'} linked to recommendation execution.</div>
+              </>
+            ) : <p className="text-slate-500">Impact result appears after a completed recommendation execution is verified.</p>}
+          </div>
+        </Panel>
+        <Panel title="Linked Action Plan">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {recommendationExecutions.slice(0, 6).map((execution) => (
+              <div key={execution.id} data-recommendation-linked-plan className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{execution.linkedActionPlanId ?? actionPlan.id}</b><Badge tone={recommendationExecutionTone(execution.status)}>{execution.status}</Badge></div>
+                <p className="mt-2 text-slate-500">Recommendation execution shares action-plan evidence and impact verification.</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Verification Evidence">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {recommendationExecutions.flatMap((execution) => execution.evidence.map((evidence) => (
+              <div key={evidence.id} data-recommendation-execution-evidence={evidence.type} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{evidence.title}</b><Badge tone="green">{evidence.type}</Badge></div>
+                <p className="mt-2 text-slate-500">{evidence.description}</p>
+                <div className="mt-3 text-xs font-bold uppercase text-slate-400">{evidence.createdBy}</div>
+              </div>
+            )))}
+            {!recommendationExecutions.some((execution) => execution.evidence.length) ? <p className="text-sm text-slate-500">Evidence appears after execution completion.</p> : null}
+          </div>
+        </Panel>
+        <Panel title="Verified Executions">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {[...completedRecommendationExecutions, ...verifiedRecommendationExecutions].slice(0, 6).map((execution) => (
+              <div key={execution.id} data-recommendation-execution-result className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{execution.id.replace('recommendation-execution-', '').slice(0, 42)}</b><Badge tone={recommendationExecutionTone(execution.status)}>{execution.status}</Badge></div>
+                <p className="mt-2 text-slate-500">Confidence after verification: {execution.impactResult?.confidenceAfter ?? 'pending'}.</p>
               </div>
             ))}
           </div>

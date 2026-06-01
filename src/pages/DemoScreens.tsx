@@ -30,7 +30,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/ArtifactViewer';
-import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
+import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import { selectCurrentReplayFrame, selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectReplayControlState, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
@@ -625,6 +625,7 @@ function AgentDetailRealPage() {
       <ExecutionGraphCompactWidget type="agent" id={data.agent.id} />
       <ExecutionTimelineCompactWidget type="agent" id={data.agent.id} />
       <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="agent" />
+      <RecommendationExecutionCompactWidget surface="agent" />
       <div data-parity-id="agent.header">
         <PageHeader dense title="Agent Detail" subtitle="Ho so nang luc, cong viec, ky nang, cong cu va hieu suat cua AI Agent" />
         <Panel className="mb-3">
@@ -844,6 +845,7 @@ function RunConsoleRealPage() {
       <ActionPlanExecutionCompactWidget runId={data.run.id} surface="run" />
       <ImprovementOutcomeCompactWidget runId={data.run.id} surface="run" />
       <LearningRecommendationCompactWidget runId={data.run.id} surface="run" />
+      <RecommendationExecutionCompactWidget surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>

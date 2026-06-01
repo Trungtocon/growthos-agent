@@ -175,6 +175,15 @@ import {
   getTopRecommendations as getStoredTopRecommendations,
 } from '../runtime/learning-memory-store';
 import {
+  getCompletedRecommendationExecutions as getStoredCompletedRecommendationExecutions,
+  getExecutionByRecommendation as getStoredExecutionByRecommendation,
+  getPendingRecommendationExecutions as getStoredPendingRecommendationExecutions,
+  getRecommendationExecutionSummary as getStoredRecommendationExecutionSummary,
+  getRecommendationExecutions as getStoredRecommendationExecutions,
+  getRecommendationImpactResult as getStoredRecommendationImpactResult,
+  getVerifiedRecommendationExecutions as getStoredVerifiedRecommendationExecutions,
+} from '../runtime/recommendation-execution-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2007,6 +2016,34 @@ export function selectRecommendationConfidence(recommendationId: string) {
 
 export function selectLearningMemorySummary(workspaceId?: string) {
   return getStoredLearningMemorySummary(workspaceId);
+}
+
+export function selectRecommendationExecutions() {
+  return getStoredRecommendationExecutions();
+}
+
+export function selectExecutionByRecommendation(recommendationId: string) {
+  return getStoredExecutionByRecommendation(recommendationId);
+}
+
+export function selectPendingRecommendationExecutions() {
+  return getStoredPendingRecommendationExecutions();
+}
+
+export function selectCompletedRecommendationExecutions() {
+  return getStoredCompletedRecommendationExecutions();
+}
+
+export function selectVerifiedRecommendationExecutions() {
+  return getStoredVerifiedRecommendationExecutions();
+}
+
+export function selectRecommendationImpactResult(executionId: string) {
+  return getStoredRecommendationImpactResult(executionId);
+}
+
+export function selectRecommendationExecutionSummary() {
+  return getStoredRecommendationExecutionSummary();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

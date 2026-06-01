@@ -233,6 +233,25 @@ export function markRecommendationRejected(recommendationId: string, reason: str
   return clone(updated);
 }
 
+export function updateRecommendationConfidence(recommendationId: string, delta: number): Recommendation {
+  const state = readState();
+  const existing = state.recommendations[recommendationId];
+  if (!existing) throw new Error(`Cannot update missing recommendation: ${recommendationId}`);
+  const confidence = Math.max(0, Math.min(99, existing.confidence + delta));
+  const updated: Recommendation = {
+    ...existing,
+    confidence,
+    impact: { ...existing.impact, confidence },
+    updatedAt: nowIso(),
+  };
+  writeState({
+    ...state,
+    recommendations: { ...state.recommendations, [recommendationId]: updated },
+    updatedAt: nowIso(),
+  });
+  return clone(updated);
+}
+
 export function calculateRecommendationConfidence(recommendationId: string): number {
   const state = readState();
   const recommendation = state.recommendations[recommendationId];
