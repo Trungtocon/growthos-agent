@@ -1,4 +1,5 @@
 import type { Artifact } from '../domain/types';
+import { registerArtifact } from '../runtime/artifact-registry-store';
 import { readRuntimeState, updateRuntimeState } from './runtime-persistence';
 
 export function upsertArtifact(artifact: Artifact): Artifact {
@@ -6,6 +7,7 @@ export function upsertArtifact(artifact: Artifact): Artifact {
     ...state,
     artifacts: { ...state.artifacts, [artifact.id]: artifact },
   }));
+  registerArtifact(artifact);
   return artifact;
 }
 

@@ -104,7 +104,8 @@
     "smoke:governance-enforcement": "node scripts/smoke-governance-enforcement.mjs",
     "smoke:approval-execution": "node scripts/smoke-approval-execution.mjs",
     "smoke:enterprise-governance-exit": "node scripts/smoke-enterprise-governance-exit.mjs",
-    "smoke:hermes-sandbox-runtime": "node scripts/smoke-hermes-sandbox-runtime.mjs"
+    "smoke:hermes-sandbox-runtime": "node scripts/smoke-hermes-sandbox-runtime.mjs",
+    "smoke:artifact-registry": "node scripts/smoke-artifact-registry.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

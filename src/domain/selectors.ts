@@ -6,7 +6,7 @@ import {
 } from '../data/demo-fixtures';
 import { mergeActivityTimeline } from '../services/activity-service';
 import { getApprovalById, getApprovals as getRuntimeApprovals } from '../runtime-store/approval-store';
-import { getArtifactById as getRuntimeArtifactById, getRunArtifacts, getRuntimeArtifacts } from '../runtime-store/artifact-store';
+import { getArtifactById as getRuntimeArtifactById, getRunArtifacts } from '../runtime-store/artifact-store';
 import { getRunEvents, getRuntimeEvents } from '../runtime-store/event-store';
 import { getRunById } from '../runtime-store/run-store';
 import { getStreamEvents, isStreamComplete } from '../runtime-store/stream-store';
@@ -76,6 +76,12 @@ import {
   getReconciliationReport as getStoredReconciliationReport,
   getVarianceHistory as getStoredVarianceHistory,
 } from '../runtime/cost-reconciliation-store';
+import {
+  ensureArtifactsRegistered,
+  searchArtifacts as searchArtifactRegistry,
+  selectArtifactVersions,
+} from '../runtime/artifact-registry-store';
+import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
@@ -234,11 +240,15 @@ export interface ArtifactRowViewModel {
   id: string;
   name: string;
   type: Artifact['type'];
+  registryType?: ArtifactRecordType;
+  workspaceId?: string;
   runId: string;
   ticketCode: string;
   ticketTitle: string;
   agentName: string;
   status: string;
+  lifecycle?: string;
+  version?: number;
   risk: string;
   createdAt: string;
   size: string;
@@ -1166,28 +1176,34 @@ export function getArtifactPreviewModel(artifactId?: string): ArtifactPreviewVie
   };
 }
 
-function artifactRows(): ArtifactRowViewModel[] {
+function artifactRows(filters: ArtifactSearchFilters = {}): ArtifactRowViewModel[] {
   const data = currentData();
-  const runtimeByRun = getRuntimeArtifacts().reduce<Record<string, Artifact[]>>((acc, artifact) => {
-    acc[artifact.runId] = [...(acc[artifact.runId] ?? []), artifact];
-    return acc;
-  }, {});
-  return data.runs.flatMap((run, runIndex) => {
-    const ticket = findTicket(run.ticketId);
-    const agent = findAgent(run.agentId);
-    return mergeArtifactsById(runtimeByRun[run.id] ?? [], run.artifacts).map((artifact, artifactIndex) => ({
-      id: artifact.id,
-      name: artifact.name,
-      type: artifact.type,
-      runId: run.id,
+  const artifactsById = new Map<string, Artifact>();
+  const seedArtifacts = data.runs.flatMap((run) => mergeArtifactsById(getRunArtifacts(run.id), run.artifacts));
+  seedArtifacts.forEach((artifact) => artifactsById.set(artifact.id, artifact));
+  ensureArtifactsRegistered(seedArtifacts, data.workspace.id);
+  return searchArtifactRegistry({ workspaceId: data.workspace.id, ...filters }).map((record, artifactIndex) => {
+    const artifact = artifactsById.get(record.id);
+    const run = data.runs.find((item) => item.id === record.runId) ?? data.runs[0];
+    const ticket = data.tickets.find((item) => item.id === run.ticketId) ?? data.tickets[0];
+    const agent = data.agents.find((item) => item.id === run.agentId) ?? data.agents[0];
+    return {
+      id: record.id,
+      name: record.name,
+      type: (artifact?.type ?? record.metadata.sourceType ?? 'unknown') as Artifact['type'],
+      registryType: record.type,
+      workspaceId: record.workspaceId,
+      runId: record.runId ?? run.id,
       ticketCode: ticket.code,
       ticketTitle: ticket.title,
       agentName: agent.name,
       status: statusLabel(run.status),
+      lifecycle: record.lifecycle,
+      version: record.version,
       risk: riskLabel(run.riskLevel),
-      createdAt: artifact.createdAt,
-      size: formatArtifactSize(artifact, runIndex + artifactIndex),
-    }));
+      createdAt: record.createdAt,
+      size: artifact ? formatArtifactSize(artifact, artifactIndex) : formatArtifactSize({ id: record.id, runId: record.runId ?? run.id, type: 'unknown', name: record.name, createdAt: record.createdAt, sizeBytes: record.metadata.sizeBytes }),
+    };
   });
 }
 
@@ -2421,17 +2437,23 @@ export function selectToolsPermissionsViewModel() {
   };
 }
 
-export function selectArtifactsLibraryViewModel() {
-  const artifacts = artifactRows();
+export function selectArtifactsLibraryViewModel(filters: ArtifactSearchFilters = {}) {
+  const artifacts = artifactRows(filters);
   const data = currentData();
+  const allArtifacts = artifactRows();
   return {
     artifacts,
     runs: data.runs,
+    filters,
+    registryTypes: ['ALL', 'REPORT', 'FILE', 'EXPORT', 'PLAN', 'POLICY', 'APPROVAL', 'AUDIT', 'RUNTIME_OUTPUT'] as const,
+    lifecycleOptions: ['ALL', 'CREATED', 'INDEXED', 'AVAILABLE', 'ARCHIVED', 'DELETED'] as const,
+    sortOptions: ['createdAt', 'updatedAt', 'name', 'type', 'lifecycle', 'version'] as const,
+    totalArtifacts: allArtifacts.length,
     kpis: [
-      { label: 'Artifacts', value: String(artifacts.length), tone: 'blue' },
-      { label: 'Reports', value: String(artifacts.filter((artifact) => artifact.type === 'report').length), tone: 'green' },
-      { label: 'Logs', value: String(artifacts.filter((artifact) => artifact.type === 'log').length), tone: 'cyan' },
-      { label: 'Linked runs', value: String(new Set(artifacts.map((artifact) => artifact.runId)).size), tone: 'purple' },
+      { label: 'Artifacts', value: String(allArtifacts.length), tone: 'blue' },
+      { label: 'Reports', value: String(allArtifacts.filter((artifact) => artifact.registryType === 'REPORT').length), tone: 'green' },
+      { label: 'Runtime outputs', value: String(allArtifacts.filter((artifact) => artifact.registryType === 'RUNTIME_OUTPUT').length), tone: 'cyan' },
+      { label: 'Linked runs', value: String(new Set(allArtifacts.map((artifact) => artifact.runId)).size), tone: 'purple' },
     ] satisfies KpiViewModel[],
   };
 }
@@ -2444,6 +2466,7 @@ export function selectArtifactDetailViewModel(artifactId?: string) {
   const agent = findAgent(run.agentId);
   return {
     artifact,
+    versions: selectArtifactVersions(artifact.id),
     run,
     ticket,
     agent,

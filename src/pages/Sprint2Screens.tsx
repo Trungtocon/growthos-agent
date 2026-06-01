@@ -43,6 +43,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import type { ArtifactLifecycle, ArtifactRecordType } from '../runtime/artifact-registry';
 import { Badge, Button, KpiTile, MoreButton, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import {
   selectAgentMemoryViewModel,
@@ -2717,20 +2718,55 @@ function CreateTicketScreen() {
 }
 
 function ArtifactsLibraryScreen() {
-  const vm = selectArtifactsLibraryViewModel();
+  const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
+  const selectedType = (params.get('type') ?? 'ALL') as ArtifactRecordType | 'ALL';
+  const selectedLifecycle = (params.get('status') ?? 'ALL') as ArtifactLifecycle | 'ALL';
+  const selectedSort = (params.get('sort') ?? 'createdAt') as 'createdAt' | 'updatedAt' | 'name' | 'type' | 'lifecycle' | 'version';
+  const selectedDirection = (params.get('direction') ?? 'desc') as 'asc' | 'desc';
+  const vm = selectArtifactsLibraryViewModel({
+    query: params.get('q') ?? undefined,
+    type: selectedType,
+    lifecycle: selectedLifecycle,
+    sortBy: selectedSort,
+    sortDirection: selectedDirection,
+  });
   return (
     <div>
-      <SimpleHeader parityId="artifacts.header" title="Artifacts Library" subtitle="Tap trung toan bo artifact duoc tao tu run: report, log, screenshot va archive evidence." actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Upload</Button><Button><Folder className="h-4 w-4" />New folder</Button></>} />
+      <SimpleHeader parityId="artifacts.header" title="Artifacts Library" subtitle="Single source of truth cho runtime output, report, export, approval artifact va governance evidence." actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Upload</Button><Button><Folder className="h-4 w-4" />New folder</Button></>} />
       <MetricBand parityId="artifacts.kpi-band" items={vm.kpis} />
-      <div data-parity-id="artifacts.main-grid" className="mt-4 grid grid-cols-[1fr_390px] gap-5">
-        <div data-parity-id="artifacts.library-panel">
+      <div data-parity-id="artifacts.main-grid" className="mt-4 grid h-[630px] grid-cols-[1fr_390px] gap-5 overflow-hidden">
+        <div data-parity-id="artifacts.library-panel" className="h-[630px] overflow-hidden">
           <Panel title="Artifact register">
-            <div className="grid grid-cols-3 gap-4 p-5">{vm.artifacts.map((artifact) => <div key={artifact.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={FileText} tone={artifact.type === 'report' ? 'green' : artifact.type === 'log' ? 'cyan' : 'purple'} /><Badge tone={artifact.risk === 'High' ? 'red' : 'green'}>{artifact.type}</Badge></div><b className="mt-4 block">{artifact.name}</b><p className="mt-1 text-sm text-slate-500">{artifact.ticketCode} · {artifact.agentName}</p><div className="mt-3 flex justify-between text-sm font-semibold text-slate-500"><span>{artifact.size}</span><span>{artifact.createdAt.slice(0, 10)}</span></div></div>)}</div>
+            <form className="grid grid-cols-[1fr_150px_150px_130px] gap-3 border-b border-slate-100 p-4" method="get" data-artifact-registry-controls>
+              <label className="sr-only" htmlFor="artifact-search">Search artifacts</label>
+              <input id="artifact-search" name="q" defaultValue={params.get('q') ?? ''} placeholder="Search artifact, run, workspace..." className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold outline-none focus:border-blue-400" />
+              <label className="sr-only" htmlFor="artifact-type">Artifact type</label>
+              <select id="artifact-type" name="type" defaultValue={selectedType} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold">
+                {vm.registryTypes.map((type) => <option key={type} value={type}>{type}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="artifact-status">Artifact status</label>
+              <select id="artifact-status" name="status" defaultValue={selectedLifecycle} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold">
+                {vm.lifecycleOptions.map((status) => <option key={status} value={status}>{status}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="artifact-sort">Artifact sort</label>
+              <select id="artifact-sort" name="sort" defaultValue={selectedSort} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold">
+                {vm.sortOptions.map((sort) => <option key={sort} value={sort}>{sort}</option>)}
+              </select>
+            </form>
+            <div className="grid max-h-[494px] grid-cols-3 gap-4 overflow-hidden p-5">{vm.artifacts.map((artifact) => <div key={artifact.id} data-artifact-registry-id={artifact.id} className="rounded-xl border border-slate-100 p-4"><div className="flex items-center justify-between"><IconBubble icon={FileText} tone={artifact.registryType === 'REPORT' ? 'green' : artifact.registryType === 'RUNTIME_OUTPUT' ? 'cyan' : artifact.registryType === 'AUDIT' ? 'amber' : 'purple'} /><Badge tone={artifact.lifecycle === 'DELETED' ? 'red' : artifact.lifecycle === 'ARCHIVED' ? 'amber' : 'green'}>{artifact.registryType}</Badge></div><b className="mt-4 block">{artifact.name}</b><p className="mt-1 text-sm text-slate-500">{artifact.ticketCode} · {artifact.agentName}</p><div className="mt-3 flex justify-between text-sm font-semibold text-slate-500"><span>{artifact.size}</span><span>{artifact.createdAt.slice(0, 10)}</span></div><div className="mt-2 flex justify-between text-xs font-bold uppercase tracking-wide text-slate-400"><span>{artifact.lifecycle}</span><span>v{artifact.version}</span></div></div>)}</div>
+            <div className="border-t border-slate-100 px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-400">Registry fields: Artifact ID · Type · Workspace · Run · Created · Status · Version</div>
           </Panel>
         </div>
-        <div data-parity-id="artifacts.inspector-panel" className="space-y-5">
+        <div data-parity-id="artifacts.inspector-panel" className="h-[630px] space-y-5 overflow-hidden">
+          <Panel title="Registry health">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Workspace" value={vm.artifacts[0]?.workspaceId ?? 'workspace-uikigai-demo'} />
+              <FieldRow label="Filtered artifacts" value={`${vm.artifacts.length} / ${vm.totalArtifacts}`} />
+              <FieldRow label="Sort" value={`${selectedSort} ${selectedDirection}`} />
+            </div>
+          </Panel>
           <Panel title="Run links">
-            <div className="divide-y divide-slate-100 p-4">{vm.runs.map((run) => <div key={run.id} className="py-3"><b className="text-sm">{run.id}</b><p className="mt-1 text-sm text-slate-500">{run.currentStep} · {run.artifacts.length} artifacts</p></div>)}</div>
+            <div className="divide-y divide-slate-100 p-4">{vm.runs.map((run) => <div key={run.id} className="py-3"><b className="text-sm">{run.id}</b><p className="mt-1 text-sm text-slate-500">{run.currentStep} · {vm.artifacts.filter((artifact) => artifact.runId === run.id).length} registered</p></div>)}</div>
           </Panel>
           <Panel title="Retention policy">
             <div className="space-y-3 p-5">{['Keep QA evidence for 180 days', 'Attach artifacts to ticket timeline', 'Restrict archive downloads', 'Log every review action'].map((item) => <div key={item} className="rounded-xl border border-slate-100 px-4 py-3 text-sm font-semibold">{item}</div>)}</div>
