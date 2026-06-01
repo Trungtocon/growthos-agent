@@ -495,6 +495,14 @@ export const screens: ScreenSpec[] = [
     "route": "/enforcement",
     "file": "39_Governance_Policy.png",
     "assetPath": "/stitch_ui/39_Governance_Policy.png"
+  },
+  {
+    "id": 62,
+    "wave": "Runtime Governance",
+    "title": "Enterprise Governance Readiness",
+    "route": "/governance-readiness",
+    "file": "39_Governance_Policy.png",
+    "assetPath": "/stitch_ui/39_Governance_Policy.png"
   }
 ];
 

@@ -160,6 +160,13 @@ import {
   getPendingApprovalExecutions as getStoredPendingApprovalExecutions,
   getRejectedApprovalExecutions as getStoredRejectedApprovalExecutions,
 } from '../runtime/approval-execution-store';
+import {
+  getGovernanceBlockedReasons as getStoredGovernanceBlockedReasons,
+  getGovernanceExitGateStatus as getStoredGovernanceExitGateStatus,
+  getGovernanceReadinessReport as getStoredGovernanceReadinessReport,
+  getGovernanceReadinessWarnings as getStoredGovernanceReadinessWarnings,
+  getGovernanceReadyModules as getStoredGovernanceReadyModules,
+} from '../runtime/governance-readiness-store';
 
 export interface KpiViewModel {
   label: string;
@@ -863,6 +870,48 @@ export function selectApprovalExecutionViewModel() {
       { label: 'Resumed', value: String(summary.resumed), tone: 'green' },
       { label: 'Cancelled', value: String(summary.cancelled), tone: summary.cancelled ? 'red' : 'slate' },
       { label: 'Escalated', value: String(summary.escalated), tone: summary.escalated ? 'red' : 'slate' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
+export function selectGovernanceReadinessReport() {
+  return getStoredGovernanceReadinessReport();
+}
+
+export function selectGovernanceExitGateStatus() {
+  return getStoredGovernanceExitGateStatus();
+}
+
+export function selectGovernanceBlockedReasons() {
+  return getStoredGovernanceBlockedReasons();
+}
+
+export function selectGovernanceReadinessWarnings() {
+  return getStoredGovernanceReadinessWarnings();
+}
+
+export function selectGovernanceReadyModules() {
+  return getStoredGovernanceReadyModules();
+}
+
+export function selectGovernanceReadinessViewModel() {
+  const report = selectGovernanceReadinessReport();
+  const blockedReasons = selectGovernanceBlockedReasons();
+  const warnings = selectGovernanceReadinessWarnings();
+  const readyModules = selectGovernanceReadyModules();
+  return {
+    report,
+    checks: report.checks,
+    blockedReasons,
+    warnings,
+    readyModules,
+    latestRunAt: report.generatedAt,
+    nextAction: report.recommendedNextAction,
+    kpis: [
+      { label: 'Exit status', value: report.status, tone: report.status === 'BLOCKED' ? 'red' : report.status === 'WARNING' ? 'amber' : 'green' },
+      { label: 'Ready modules', value: String(readyModules.length), tone: 'green' },
+      { label: 'Warnings', value: String(warnings.length), tone: warnings.length ? 'amber' : 'green' },
+      { label: 'Blockers', value: String(blockedReasons.length), tone: blockedReasons.length ? 'red' : 'green' },
     ] satisfies KpiViewModel[],
   };
 }

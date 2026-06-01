@@ -102,7 +102,8 @@
     "smoke:policy-inheritance": "node scripts/smoke-policy-inheritance.mjs",
     "smoke:governance-decision": "node scripts/smoke-governance-decision.mjs",
     "smoke:governance-enforcement": "node scripts/smoke-governance-enforcement.mjs",
-    "smoke:approval-execution": "node scripts/smoke-approval-execution.mjs"
+    "smoke:approval-execution": "node scripts/smoke-approval-execution.mjs",
+    "smoke:enterprise-governance-exit": "node scripts/smoke-enterprise-governance-exit.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

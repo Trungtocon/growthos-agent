@@ -68,6 +68,7 @@ import {
   selectGovernancePoliciesViewModel,
   selectGovernanceDecisionViewModel,
   selectGovernanceEnforcementViewModel,
+  selectGovernanceReadinessViewModel,
   selectApprovalExecutionViewModel,
   selectHelpTemplateCenterViewModel,
   selectIntegrationDetailViewModel,
@@ -126,6 +127,7 @@ export const sprint2Routes = new Set([
   '/governance/policies',
   '/governance',
   '/enforcement',
+  '/governance-readiness',
   '/audit-log',
   '/risk-center',
   '/cost',
@@ -3226,6 +3228,7 @@ function OrganizationGovernanceScreen() {
               <ProgressBar value={budgetUsed} tone={budgetUsed > 90 ? 'amber' : 'green'} label="Organization budget used" />
             </div>
           </Panel>
+          <GovernanceReadinessCompactCard />
           <Panel title="Top Cost Tenants">
             <div className="divide-y divide-slate-100 p-4">
               {vm.topCostTenants.map((row) => <div key={row.tenant.id} className="flex items-center justify-between py-3"><div><b>{row.tenant.name}</b><div className="text-sm text-slate-500">{row.tenant.workspaceIds.length} workspaces</div></div><span className="font-bold text-[#0f6bff]">{row.budget ? `$${row.budget.currentSpend.toFixed(2)}` : '$0'}</span></div>)}
@@ -3369,6 +3372,125 @@ function AccessControlScreen() {
   );
 }
 
+function readinessTone(status: string): Tone {
+  if (status === 'READY') return 'green';
+  if (status === 'WARNING') return 'amber';
+  return 'red';
+}
+
+function GovernanceReadinessCompactCard() {
+  const vm = selectGovernanceReadinessViewModel();
+  return (
+    <Panel title="Enterprise Readiness">
+      <div className="space-y-3 p-5 text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-xs font-semibold uppercase text-slate-400">Exit gate</div>
+            <div className="mt-1 font-extrabold text-slate-950">{vm.report.status}</div>
+          </div>
+          <Badge tone={readinessTone(vm.report.status)}>{vm.report.status}</Badge>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <FieldRow label="Ready" value={String(vm.readyModules.length)} />
+          <FieldRow label="Warnings" value={String(vm.warnings.length)} />
+          <FieldRow label="Blocked" value={String(vm.blockedReasons.length)} />
+        </div>
+        <p className="text-sm leading-6 text-slate-500">{vm.nextAction}</p>
+      </div>
+    </Panel>
+  );
+}
+
+function GovernanceReadinessScreen() {
+  const vm = selectGovernanceReadinessViewModel();
+  const stack = [
+    'Policy Inheritance',
+    'Governance Decision',
+    'Governance Enforcement',
+    'Approval Execution',
+    'RBAC',
+    'Authorization Audit',
+    'Budget',
+    'Usage Ledger',
+    'Workspace Governance',
+    'Organization Governance',
+    'Runtime',
+  ];
+  return (
+    <div>
+      <SimpleHeader
+        parityId="governance-readiness.header"
+        title="Enterprise Governance Exit Gate"
+        subtitle="Final readiness gate across governance, authorization, budget, quota, usage, workspace, organization, and runtime modules."
+        actions={<><Button variant="secondary"><FileText className="h-4 w-4" />Export report</Button><Button><ShieldCheck className="h-4 w-4" />Run gate</Button></>}
+      />
+      <MetricBand parityId="governance-readiness.kpi-band" items={vm.kpis} />
+      <div data-parity-id="governance-readiness.main-grid" className="mt-4 grid grid-cols-[1fr_420px] gap-5">
+        <div data-parity-id="governance-readiness.left-panel" className="space-y-5">
+          <Panel title="Module Checklist">
+            <div className="grid grid-cols-[1fr_110px_90px] gap-2 p-5 text-sm">
+              <b>Module</b><b>Status</b><b>Evidence</b>
+              {vm.checks.map((check) => (
+                <div key={check.id} className="contents">
+                  <div className="rounded-lg bg-slate-50 px-3 py-3">
+                    <b>{check.label}</b>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{check.message}</p>
+                  </div>
+                  <Badge tone={readinessTone(check.status)}>{check.status}</Badge>
+                  <b className="rounded-lg bg-slate-50 px-3 py-3 text-center">{check.evidenceCount}</b>
+                </div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Governance Stack Map">
+            <div className="grid grid-cols-3 gap-3 p-5">
+              {stack.map((item, index) => (
+                <div key={item} className="rounded-xl border border-slate-100 bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <IconBubble icon={index < 4 ? ShieldCheck : index < 7 ? Lock : Gauge} tone={index < 4 ? 'blue' : index < 7 ? 'amber' : 'green'} />
+                    <Badge tone="slate">Step {index + 1}</Badge>
+                  </div>
+                  <b className="mt-3 block text-sm">{item}</b>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
+        <div data-parity-id="governance-readiness.right-panel" className="space-y-5">
+          <Panel title="Exit Gate Summary">
+            <div className="space-y-3 p-5">
+              <FieldRow label="Status" value={vm.report.status} />
+              <FieldRow label="Ready modules" value={String(vm.readyModules.length)} />
+              <FieldRow label="Warnings" value={String(vm.warnings.length)} />
+              <FieldRow label="Blocked reasons" value={String(vm.blockedReasons.length)} />
+              <FieldRow label="Last run" value={vm.latestRunAt.slice(0, 19).replace('T', ' ')} />
+            </div>
+          </Panel>
+          <Panel title="Blocked Reasons">
+            <div className="space-y-3 p-5">
+              {(vm.blockedReasons.length ? vm.blockedReasons : ['No blocking governance readiness reasons.']).map((item) => (
+                <div key={item} className={`rounded-xl px-4 py-3 text-sm font-semibold ${vm.blockedReasons.length ? 'border border-red-100 bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>{item}</div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Warnings">
+            <div className="space-y-3 p-5">
+              {(vm.warnings.length ? vm.warnings : ['No governance readiness warnings.']).slice(0, 8).map((item) => (
+                <div key={item} className={`rounded-xl px-4 py-3 text-sm font-semibold ${vm.warnings.length ? 'border border-amber-100 bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'}`}>{item}</div>
+              ))}
+            </div>
+          </Panel>
+          <Panel title="Recommended Next Action">
+            <div className="p-5">
+              <p className="text-sm leading-6 text-slate-600">{vm.nextAction}</p>
+            </div>
+          </Panel>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function governanceTone(decision: string): Tone {
   if (decision === 'ALLOW') return 'green';
   if (decision === 'REQUIRE_APPROVAL') return 'amber';
@@ -3442,6 +3564,7 @@ function GovernanceDecisionScreen() {
               <FieldRow label="RBAC blocked" value={String(vm.summary.blockedByRbac)} />
             </div>
           </Panel>
+          <GovernanceReadinessCompactCard />
           <Panel title="Enforcement Status">
             <div className="space-y-3 p-5 text-sm">
               <FieldRow label="Latest action" value={enforcement.summary.latestAction} />
@@ -3539,6 +3662,7 @@ function GovernanceEnforcementScreen() {
               <FieldRow label="Blocked runs" value={String(vm.summary.blockedRuns)} />
             </div>
           </Panel>
+          <GovernanceReadinessCompactCard />
           <Panel title="Approval Holds">
             <div className="divide-y divide-slate-100 p-4">
               {(vm.approvalHolds.length ? vm.approvalHolds : []).slice(0, 6).map((hold) => (
@@ -3798,6 +3922,7 @@ function WorkspaceGovernanceScreen() {
               ))}
             </div>
           </Panel>
+          <GovernanceReadinessCompactCard />
           <Panel title="Teams & Roles">
             <div className="space-y-4 p-5">
               {vm.teams.map((team) => <FieldRow key={team.id} label={team.name} value={`${team.memberCount} members`} />)}
@@ -4067,6 +4192,7 @@ export function Sprint2Screen({ route }: { route: string }) {
   if (route === '/access') return <AccessControlScreen />;
   if (route === '/governance') return <GovernanceDecisionScreen />;
   if (route === '/enforcement') return <GovernanceEnforcementScreen />;
+  if (route === '/governance-readiness') return <GovernanceReadinessScreen />;
   if (route === '/policies') return <PolicyInheritanceScreen />;
   if (route === '/organization') return <OrganizationGovernanceScreen />;
   if (route === '/workspace') return <WorkspaceGovernanceScreen />;
