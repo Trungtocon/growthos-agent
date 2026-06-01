@@ -123,6 +123,16 @@ import {
 } from '../runtime/run-evaluation-store';
 import type { RunEvaluationDimension } from '../runtime/run-evaluation';
 import {
+  getCriticalFeedbackItems as getStoredCriticalFeedbackItems,
+  getEvaluationFeedbackByRun as getStoredEvaluationFeedbackByRun,
+  getFeedbackActions as getStoredFeedbackActions,
+  getFeedbackByPriority as getStoredFeedbackByPriority,
+  getFeedbackSuggestions as getStoredFeedbackSuggestions,
+  getTopImprovementSuggestions as getStoredTopImprovementSuggestions,
+  generateWorkspaceFeedbackSummary as getStoredWorkspaceFeedbackSummary,
+} from '../runtime/evaluation-feedback-store';
+import type { FeedbackPriority } from '../runtime/evaluation-feedback';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1788,6 +1798,34 @@ export function selectRunsByEvaluationScore(minScore = 0) {
 
 export function selectWorkspaceEvaluationSummary(workspaceId?: string) {
   return getStoredWorkspaceEvaluationSummary(workspaceId);
+}
+
+export function selectEvaluationFeedbackByRun(runId = DEMO_RUN_ID) {
+  return getStoredEvaluationFeedbackByRun(runId);
+}
+
+export function selectWorkspaceFeedbackSummary(workspaceId?: string) {
+  return getStoredWorkspaceFeedbackSummary(workspaceId);
+}
+
+export function selectFeedbackSuggestions(runId = DEMO_RUN_ID) {
+  return getStoredFeedbackSuggestions(runId);
+}
+
+export function selectFeedbackByPriority(priority: FeedbackPriority, runId = DEMO_RUN_ID) {
+  return getStoredFeedbackByPriority(priority, runId);
+}
+
+export function selectFeedbackActions(runId = DEMO_RUN_ID) {
+  return getStoredFeedbackActions(runId);
+}
+
+export function selectTopImprovementSuggestions(limit = 5, runId = DEMO_RUN_ID) {
+  return getStoredTopImprovementSuggestions(limit, runId);
+}
+
+export function selectCriticalFeedbackItems(runId = DEMO_RUN_ID) {
+  return getStoredCriticalFeedbackItems(runId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

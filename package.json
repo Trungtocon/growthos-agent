@@ -109,7 +109,8 @@
     "smoke:agent-execution-graph": "node scripts/smoke-agent-execution-graph.mjs",
     "smoke:execution-timeline": "node scripts/smoke-execution-timeline.mjs",
     "smoke:execution-replay-control": "node scripts/smoke-execution-replay-control.mjs",
-    "smoke:run-evaluation": "node scripts/smoke-run-evaluation.mjs"
+    "smoke:run-evaluation": "node scripts/smoke-run-evaluation.mjs",
+    "smoke:evaluation-feedback": "node scripts/smoke-evaluation-feedback.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

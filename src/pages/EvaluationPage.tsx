@@ -1,4 +1,4 @@
-import { BarChart3, CheckCircle2, FileText, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
+import { BarChart3, CheckCircle2, FileText, RotateCcw, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
@@ -7,16 +7,29 @@ import {
   selectRunEvaluationIssues,
   selectRunEvaluationRecommendations,
   selectRunsByEvaluationScore,
+  selectEvaluationFeedbackByRun,
+  selectFeedbackActions,
+  selectTopImprovementSuggestions,
+  selectWorkspaceFeedbackSummary,
   selectWorkspaceEvaluationSummary,
 } from '../domain/selectors';
+import { registerEvaluationFeedbackExports, regenerateFeedbackForRun } from '../runtime/evaluation-feedback-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
+import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 
 function scoreTone(score: number): Tone {
   if (score >= 90) return 'green';
   if (score >= 75) return 'blue';
   if (score >= 60) return 'amber';
   return 'red';
+}
+
+function priorityTone(priority: FeedbackPriority): Tone {
+  if (priority === 'critical') return 'red';
+  if (priority === 'high') return 'amber';
+  if (priority === 'medium') return 'blue';
+  return 'slate';
 }
 
 function ScoreCard({ score }: { score: RunEvaluationScore }) {
@@ -44,12 +57,25 @@ export function RunEvaluationCompactWidget({ runId = DEMO_RUN_ID, surface }: { r
   );
 }
 
+export function EvaluationFeedbackCompactWidget({ runId = DEMO_RUN_ID, surface }: { runId?: string; surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' }) {
+  const feedback = selectEvaluationFeedbackByRun(runId);
+  return (
+    <span data-evaluation-feedback-widget={surface} data-feedback-suggestions={feedback.suggestions.length} data-feedback-version={feedback.version} className="sr-only">
+      Evaluation feedback {surface} {runId}: {feedback.suggestions.length} suggestions, {feedback.actions.length} actions, version {feedback.version}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
   const evaluations = selectRunsByEvaluationScore(0);
   const issues = selectRunEvaluationIssues(DEMO_RUN_ID);
   const recommendations = selectRunEvaluationRecommendations(DEMO_RUN_ID);
+  const feedback = selectEvaluationFeedbackByRun(DEMO_RUN_ID);
+  const feedbackSummary = selectWorkspaceFeedbackSummary();
+  const topSuggestions = selectTopImprovementSuggestions(5, DEMO_RUN_ID);
+  const feedbackActions = selectFeedbackActions(DEMO_RUN_ID);
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -61,7 +87,7 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => registerRunEvaluationExports(DEMO_RUN_ID)}><FileText className="h-4 w-4" />Export evaluation</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <div className="grid grid-cols-5 gap-4">
         {[
@@ -78,6 +104,63 @@ export function EvaluationPage() {
             </div>
           </Panel>
         ))}
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-evaluation-feedback-panel>
+        <Panel title="Feedback Summary">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Feedback runs</span><b>{feedbackSummary.feedbackCount}</b></div>
+            <div className="flex items-center justify-between"><span>Suggestions</span><b>{feedbackSummary.suggestionCount}</b></div>
+            <div className="flex items-center justify-between"><span>Actions</span><b>{feedbackSummary.actionCount}</b></div>
+            <div className="flex items-center justify-between"><span>Critical / high</span><Badge tone={feedbackSummary.criticalCount ? 'red' : feedbackSummary.highCount ? 'amber' : 'green'}>{feedbackSummary.criticalCount}/{feedbackSummary.highCount}</Badge></div>
+            <div className="rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">
+              Feedback version {feedback.version} generated from evaluation {feedback.evaluationId}.
+            </div>
+          </div>
+        </Panel>
+        <Panel title="Top Improvement Suggestions">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {topSuggestions.map((suggestion) => (
+              <div key={suggestion.id} data-feedback-suggestion={suggestion.category} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{suggestion.title}</b><Badge tone={priorityTone(suggestion.priority)}>{suggestion.priority}</Badge></div>
+                <p className="mt-2 text-slate-500">{suggestion.description}</p>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400">
+                  <span>{suggestion.category.replace(/_/g, ' ')}</span>
+                  <span>Impact +{suggestion.expectedImpact}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Priority Breakdown">
+          <div className="space-y-3 p-4 text-sm">
+            {(['critical', 'high', 'medium', 'low'] as FeedbackPriority[]).map((priority) => {
+              const count = feedback.suggestions.filter((suggestion) => suggestion.priority === priority).length;
+              return <div key={priority} className="flex items-center justify-between rounded-xl border border-slate-100 p-3"><span className="font-semibold capitalize">{priority}</span><Badge tone={priorityTone(priority)}>{count}</Badge></div>;
+            })}
+          </div>
+        </Panel>
+        <Panel title="Recommended Next Actions">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {feedbackActions.slice(0, 6).map((action) => (
+              <div key={action.id} data-feedback-action={action.owner} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{action.title}</b><Badge tone={action.status === 'queued' ? 'blue' : 'slate'}>{action.status}</Badge></div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400"><span>{action.owner}</span><span>{action.dueInDays}d</span></div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Feedback Actions Table">
+          <div className="col-span-full overflow-hidden p-4">
+            <div className="grid grid-cols-[1.6fr_110px_120px_90px] border-b border-slate-100 pb-2 text-xs font-bold uppercase tracking-wide text-slate-400">
+              <span>Action</span><span>Owner</span><span>Status</span><span>Due</span>
+            </div>
+            {feedbackActions.map((action) => (
+              <div key={action.id} className="grid grid-cols-[1.6fr_110px_120px_90px] border-b border-slate-50 py-3 text-sm">
+                <span className="font-semibold text-slate-800">{action.title}</span><span>{action.owner}</span><span>{action.status}</span><span>{action.dueInDays}d</span>
+              </div>
+            ))}
+          </div>
+        </Panel>
       </div>
       <div className="mt-5 grid grid-cols-[370px_1fr] gap-5">
         <Panel title="Run Evaluation List">
