@@ -7,6 +7,7 @@ import {
   selectExecutionGraphByRun,
   selectExecutionGraphSummary,
   selectExecutionTraceByRun,
+  selectExecutionTimelineByRun,
 } from '../domain/selectors';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import { registerExecutionGraphExports } from '../runtime/agent-execution-graph-store';
@@ -40,6 +41,7 @@ export function ExecutionGraphPage() {
   const blocked = selectBlockedGraphNodes(DEMO_RUN_ID);
   const artifactLineage = selectArtifactLineage(DEMO_RUN_ID);
   const approvalLineage = selectApprovalLineage(DEMO_RUN_ID);
+  const timeline = selectExecutionTimelineByRun(DEMO_RUN_ID);
 
   return (
     <div data-route="/execution-graph" data-execution-graph-route>
@@ -68,6 +70,9 @@ export function ExecutionGraphPage() {
           </div>
         </Panel>
       </div>
+      <span data-execution-timeline-widget="execution-graph" data-execution-timeline-events={timeline.events.length} data-execution-replay-frames={timeline.replayFrames.length} className="sr-only">
+        Execution timeline for graph route: {timeline.events.length} events and {timeline.replayFrames.length} frames.
+      </span>
       <div className="mt-5 grid grid-cols-2 gap-5">
         <Panel title="Node List"><div className="max-h-[320px] space-y-2 overflow-hidden p-4 text-sm">{graph.nodes.map((node) => <div key={node.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2"><span className="font-semibold">{node.label}</span><Badge tone={node.type === 'ERROR' ? 'red' : node.type === 'ARTIFACT' ? 'green' : 'blue'}>{node.type}</Badge></div>)}</div></Panel>
         <Panel title="Edge List"><div className="max-h-[320px] space-y-2 overflow-hidden p-4 text-xs">{graph.edges.map((edge) => <div key={edge.id} className="rounded-lg border border-slate-100 px-3 py-2"><b>{edge.type}</b><div className="mt-1 truncate text-slate-500">{edge.source} {'->'} {edge.target}</div></div>)}</div></Panel>

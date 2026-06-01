@@ -1,6 +1,7 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
+import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
 import { ScreenPage } from './pages/ScreenPage';
 
 function getCurrentPath() {
@@ -14,6 +15,13 @@ export function App() {
     return (
       <AppShell currentPath="/execution-graph">
         <ExecutionGraphPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/execution-timeline') {
+    return (
+      <AppShell currentPath="/execution-timeline">
+        <ExecutionTimelinePage />
       </AppShell>
     );
   }

@@ -93,6 +93,17 @@ import {
   getGraphSummary as getStoredGraphSummary,
 } from '../runtime/agent-execution-graph-store';
 import {
+  buildTimelineForAgent,
+  buildTimelineForRun,
+  buildTimelineForTicket,
+  getReplayFrames as getStoredReplayFrames,
+  getReplayState as getStoredReplayState,
+  getTimelineEventsBySeverity as getStoredTimelineEventsBySeverity,
+  getTimelineEventsBySource as getStoredTimelineEventsBySource,
+  getTimelineSummary as getStoredTimelineSummary,
+} from '../runtime/execution-timeline-store';
+import type { ExecutionTimelineSeverity, ExecutionTimelineSource } from '../runtime/execution-timeline';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1670,6 +1681,38 @@ export function selectArtifactLineage(runId = DEMO_RUN_ID) {
 
 export function selectApprovalLineage(runId = DEMO_RUN_ID) {
   return getStoredApprovalLineage(runId);
+}
+
+export function selectExecutionTimelineByRun(runId = DEMO_RUN_ID) {
+  return buildTimelineForRun(runId);
+}
+
+export function selectExecutionTimelineByAgent(agentId = DEMO_AGENT_ID) {
+  return buildTimelineForAgent(agentId);
+}
+
+export function selectExecutionTimelineByTicket(ticketId = DEMO_TICKET_ID) {
+  return buildTimelineForTicket(ticketId);
+}
+
+export function selectReplayFramesByRun(runId = DEMO_RUN_ID) {
+  return getStoredReplayFrames(runId);
+}
+
+export function selectReplayState(runId = DEMO_RUN_ID, frameIndex?: number) {
+  return getStoredReplayState(runId, frameIndex);
+}
+
+export function selectTimelineSummary(workspaceId?: string) {
+  return getStoredTimelineSummary(workspaceId);
+}
+
+export function selectTimelineEventsBySeverity(severity: ExecutionTimelineSeverity, runId = DEMO_RUN_ID) {
+  return getStoredTimelineEventsBySeverity(severity, runId);
+}
+
+export function selectTimelineEventsBySource(source: ExecutionTimelineSource, runId = DEMO_RUN_ID) {
+  return getStoredTimelineEventsBySource(source, runId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

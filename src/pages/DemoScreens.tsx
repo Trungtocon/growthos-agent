@@ -31,7 +31,7 @@ import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/ArtifactViewer';
 import type { Tone } from '../data/demoScreens';
-import { selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectGovernanceReadinessReport, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
+import { selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
 import type { ToolCallViewModel } from '../domain/selectors';
 import { approveApproval, approveApprovalExecution, assignTicket, cancelAgentRun, createRunPlan as createRunPlanAction, escalateApprovalExecution, escalateTicket, pauseRun, refreshRuntimeDiscovery, rejectApproval, requestApprovalExecutionChanges, resolveTicket, resumeRun, retryRun, startAgentRun, startRunFromPlan, startStreamingRun } from '../state/command-actions';
 import type { WorkflowEvent } from '../state/event-log';
@@ -88,6 +88,15 @@ function ExecutionGraphCompactWidget({ type, id }: { type: 'agent' | 'ticket' | 
   return (
     <span data-execution-graph-widget={type} data-execution-graph-nodes={graph.nodes.length} data-execution-graph-edges={graph.edges.length} className="sr-only">
       Execution graph {type} {id}: {graph.nodes.length} nodes and {graph.edges.length} edges.
+    </span>
+  );
+}
+
+function ExecutionTimelineCompactWidget({ type, id }: { type: 'agent' | 'ticket' | 'run'; id: string }) {
+  const timeline = type === 'agent' ? selectExecutionTimelineByAgent(id) : type === 'ticket' ? selectExecutionTimelineByTicket(id) : selectExecutionTimelineByRun(id);
+  return (
+    <span data-execution-timeline-widget={type} data-execution-timeline-events={timeline.events.length} data-execution-replay-frames={timeline.replayFrames.length} className="sr-only">
+      Execution timeline {type} {id}: {timeline.events.length} events and {timeline.replayFrames.length} replay frames.
     </span>
   );
 }
@@ -602,6 +611,7 @@ function AgentDetailRealPage() {
   return (
     <div data-demo-source={data.agent.id}>
       <ExecutionGraphCompactWidget type="agent" id={data.agent.id} />
+      <ExecutionTimelineCompactWidget type="agent" id={data.agent.id} />
       <div data-parity-id="agent.header">
         <PageHeader dense title="Agent Detail" subtitle="Ho so nang luc, cong viec, ky nang, cong cu va hieu suat cua AI Agent" />
         <Panel className="mb-3">
@@ -711,6 +721,7 @@ function TicketDetailRealPage() {
   return (
     <div data-demo-source={data.ticket.id}>
       <ExecutionGraphCompactWidget type="ticket" id={data.ticket.id} />
+      <ExecutionTimelineCompactWidget type="ticket" id={data.ticket.id} />
       <div data-parity-id="ticket.header">
         <PageHeader dense title="Ticket Detail" subtitle="Theo dõi công việc, hội thoại và tiến trình thực thi của AI Agent" actions={<><Button variant="secondary">Chia sẻ</Button><Button variant="secondary">Sửa ticket</Button></>} />
         <div className="mb-5 flex items-center gap-5"><div className="grid h-16 w-16 place-items-center rounded-full bg-blue-50 text-brand-600"><Ticket className="h-8 w-8" /></div><div><h2 className="text-2xl font-bold">{data.ticket.title}</h2><div className="mt-2 flex gap-4 text-sm text-slate-500"><span>Ticket ID: {data.ticket.code}</span><span>Tạo lúc: 09:14</span><span>Bởi: Lê Tuấn Anh</span></div></div></div>
@@ -812,6 +823,7 @@ function RunConsoleRealPage() {
   return (
     <div data-demo-source={data.run.id}>
       <ExecutionGraphCompactWidget type="run" id={data.run.id} />
+      <ExecutionTimelineCompactWidget type="run" id={data.run.id} />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>
