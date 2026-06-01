@@ -68,6 +68,7 @@ import {
   selectGovernancePoliciesViewModel,
   selectGovernanceDecisionViewModel,
   selectGovernanceEnforcementViewModel,
+  selectApprovalExecutionViewModel,
   selectHelpTemplateCenterViewModel,
   selectIntegrationDetailViewModel,
   selectIntegrationsHubViewModel,
@@ -3321,6 +3322,7 @@ function AccessControlScreen() {
               <FieldRow label="Warnings" value={String(vm.governanceDecision.warnings.length)} />
               <FieldRow label="Enforcement" value={vm.governanceEnforcement.summary.latestAction} />
               <FieldRow label="Approval holds" value={String(vm.governanceEnforcement.summary.approvalHolds)} />
+              <FieldRow label="Execution pending" value={String(vm.approvalExecution.summary.pending)} />
             </div>
           </Panel>
           <Panel title="Users">
@@ -3376,6 +3378,7 @@ function governanceTone(decision: string): Tone {
 function GovernanceDecisionScreen() {
   const vm = selectGovernanceDecisionViewModel();
   const enforcement = selectGovernanceEnforcementViewModel();
+  const approvalExecution = selectApprovalExecutionViewModel();
   const latest = vm.latestReport;
   return (
     <div>
@@ -3443,6 +3446,8 @@ function GovernanceDecisionScreen() {
             <div className="space-y-3 p-5 text-sm">
               <FieldRow label="Latest action" value={enforcement.summary.latestAction} />
               <FieldRow label="Approval holds" value={String(enforcement.summary.approvalHolds)} />
+              <FieldRow label="Execution pending" value={String(approvalExecution.summary.pending)} />
+              <FieldRow label="Execution resumed" value={String(approvalExecution.summary.resumed)} />
               <FieldRow label="Rejected" value={String(enforcement.summary.rejected)} />
               <FieldRow label="Terminated" value={String(enforcement.summary.terminated)} />
             </div>
@@ -3476,6 +3481,7 @@ function GovernanceDecisionScreen() {
 
 function GovernanceEnforcementScreen() {
   const vm = selectGovernanceEnforcementViewModel();
+  const approvalExecution = selectApprovalExecutionViewModel();
   return (
     <div>
       <SimpleHeader
@@ -3544,6 +3550,14 @@ function GovernanceEnforcementScreen() {
               {!vm.approvalHolds.length ? <div className="py-3 text-sm font-semibold text-slate-500">No approval holds recorded.</div> : null}
             </div>
           </Panel>
+          <Panel title="Approval Execution">
+            <div className="space-y-3 p-5 text-sm">
+              <FieldRow label="Pending review" value={String(approvalExecution.summary.pending)} />
+              <FieldRow label="Resumed" value={String(approvalExecution.summary.resumed)} />
+              <FieldRow label="Cancelled" value={String(approvalExecution.summary.cancelled)} />
+              <FieldRow label="Latest" value={approvalExecution.summary.latestStatus} />
+            </div>
+          </Panel>
           <Panel title="Rejected Actions">
             <div className="divide-y divide-slate-100 p-4">
               {(vm.rejectedExecutions.length ? vm.rejectedExecutions : []).slice(0, 6).map((event) => (
@@ -3576,6 +3590,7 @@ function PolicyInheritanceScreen() {
   const vm = selectPolicyInheritanceViewModel();
   const governance = selectGovernanceDecisionViewModel();
   const enforcement = selectGovernanceEnforcementViewModel();
+  const approvalExecution = selectApprovalExecutionViewModel();
   return (
     <div>
       <SimpleHeader
@@ -3646,6 +3661,14 @@ function PolicyInheritanceScreen() {
               <FieldRow label="Executed" value={String(enforcement.summary.executed)} />
               <FieldRow label="Holds" value={String(enforcement.summary.approvalHolds)} />
               <FieldRow label="Rejected" value={String(enforcement.summary.rejected)} />
+            </div>
+          </Panel>
+          <Panel title="Approval Execution Summary">
+            <div className="grid grid-cols-4 gap-3 p-5 text-sm">
+              <FieldRow label="Pending" value={String(approvalExecution.summary.pending)} />
+              <FieldRow label="Resumed" value={String(approvalExecution.summary.resumed)} />
+              <FieldRow label="Cancelled" value={String(approvalExecution.summary.cancelled)} />
+              <FieldRow label="Escalated" value={String(approvalExecution.summary.escalated)} />
             </div>
           </Panel>
         </div>

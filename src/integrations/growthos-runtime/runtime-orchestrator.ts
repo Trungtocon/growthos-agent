@@ -54,6 +54,17 @@ import {
 import { generateGovernanceDecisionArtifacts, recordGovernanceDecision } from '../../runtime/governance-decision-store';
 import { enforceGovernanceDecision, type EnforcementResult } from '../../runtime/governance-enforcement';
 import { generateGovernanceEnforcementArtifacts, recordGovernanceEnforcement } from '../../runtime/governance-enforcement-store';
+import {
+  approveExecutionRequest as approveStoredExecutionRequest,
+  assertApprovalExecutionAllowsRuntime,
+  cancelRejectedExecution as cancelStoredRejectedExecution,
+  createApprovalExecutionRequest,
+  escalateExecutionRequest as escalateStoredExecutionRequest,
+  generateApprovalExecutionArtifacts,
+  rejectExecutionRequest as rejectStoredExecutionRequest,
+  requestExecutionChanges as requestStoredExecutionChanges,
+  resumeApprovedExecution as resumeStoredApprovedExecution,
+} from '../../runtime/approval-execution-store';
 import type { AuthorizationDecision } from '../../runtime/rbac';
 import {
   evaluateQuotaAfterRun,
@@ -140,6 +151,9 @@ function recordGovernanceDecisionAndEnforcement(
     runtimeAction,
     forceTerminate: options.forceTerminate,
   }));
+  if (enforcement.approvalHold) {
+    createApprovalExecutionRequest(enforcement.approvalHold, DEMO_AGENT_ID);
+  }
   return { governanceReport, enforcement };
 }
 
@@ -878,6 +892,7 @@ function seedPlanToolCalls(plan: RunPlan, runId: string) {
 export async function startRunFromPlan(planId: string): Promise<RuntimeStreamResult> {
   const plan = getRunPlan(planId);
   if (!plan) throw new Error(`Cannot start missing run plan ${planId}`);
+  assertApprovalExecutionAllowsRuntime(plan.id);
   const auth = canStartRun(planId);
   const policyReport: PlanExecutionPolicyReport = upsertPolicyReport(evaluatePlanPolicy(plan.id));
   const quotaReport = evaluateQuotaBeforeRun(plan.id);
@@ -1096,6 +1111,98 @@ export function exportGovernanceEnforcementArtifacts(runId = DEMO_RUN_ID): Artif
     entityId: runId,
     actorId: DEMO_AGENT_ID,
     title: 'Governance enforcement export generated',
+    status: 'success',
+  });
+  return artifacts;
+}
+
+export function approveApprovalExecutionRequest(requestId: string) {
+  const request = approveStoredExecutionRequest(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'approval.approve',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Approval execution approved: ${request.runtimeAction}`,
+    status: 'success',
+  });
+  return request;
+}
+
+export function rejectApprovalExecutionRequest(requestId: string) {
+  const request = rejectStoredExecutionRequest(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'approval.reject',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Approval execution rejected: ${request.runtimeAction}`,
+    status: 'failed',
+  });
+  return request;
+}
+
+export function requestApprovalExecutionChanges(requestId: string) {
+  const request = requestStoredExecutionChanges(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'approval.request_changes',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Approval execution changes requested: ${request.runtimeAction}`,
+    status: 'pending',
+  });
+  return request;
+}
+
+export function escalateApprovalExecutionRequest(requestId: string) {
+  const request = escalateStoredExecutionRequest(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'approval.escalate',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Approval execution escalated: ${request.runtimeAction}`,
+    status: 'pending',
+  });
+  return request;
+}
+
+export function resumeApprovedApprovalExecution(requestId: string) {
+  const request = resumeStoredApprovedExecution(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'run.resumed',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Runtime resumed from approved execution request: ${request.runtimeAction}`,
+    status: 'success',
+  });
+  return request;
+}
+
+export function cancelRejectedApprovalExecution(requestId: string) {
+  const request = cancelStoredRejectedExecution(requestId, DEMO_AGENT_ID);
+  appendRuntimeEvent({
+    command: 'run.cancelled',
+    entityType: 'run',
+    entityId: request.targetId,
+    actorId: DEMO_AGENT_ID,
+    title: `Runtime cancelled from rejected execution request: ${request.runtimeAction}`,
+    status: 'failed',
+  });
+  return request;
+}
+
+export function exportApprovalExecutionArtifacts(runId = DEMO_RUN_ID): Artifact[] {
+  assertArtifactExportGovernance(runId);
+  const artifacts = generateApprovalExecutionArtifacts(runId).map((artifact) => upsertArtifact(artifact));
+  appendRuntimeEvent({
+    command: 'artifact.created',
+    entityType: 'run',
+    entityId: runId,
+    actorId: DEMO_AGENT_ID,
+    title: 'Approval execution artifacts exported',
     status: 'success',
   });
   return artifacts;

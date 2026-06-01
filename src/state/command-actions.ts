@@ -1,6 +1,25 @@
 import { demoCurrentUser } from '../data/demo-fixtures';
 import type { ApprovalStatus, Ticket } from '../domain/types';
-import { approveRunPlan as approveRuntimeRunPlan, cancelAgentRun as createCancelAgentRunPlan, createPlanForTicket as createRuntimePlanForTicket, pauseAgentRun as createPauseAgentRunPlan, refreshHermesDiscovery as refreshRuntimeHermesDiscovery, resumeAgentRun as createResumeAgentRunPlan, retryAgentRun as createRetryAgentRunPlan, startAgentRun as createStartAgentRunPlan, startRunFromPlan as startRuntimeRunFromPlan, completeStreamingRun as completeRuntimeStreamingRun, nextStreamTick as advanceRuntimeStreamTick, startStreamingRun as startRuntimeStreamingRun } from '../integrations/growthos-runtime/runtime-orchestrator';
+import {
+  approveApprovalExecutionRequest as approveRuntimeApprovalExecutionRequest,
+  approveRunPlan as approveRuntimeRunPlan,
+  cancelAgentRun as createCancelAgentRunPlan,
+  cancelRejectedApprovalExecution as cancelRuntimeRejectedApprovalExecution,
+  createPlanForTicket as createRuntimePlanForTicket,
+  escalateApprovalExecutionRequest as escalateRuntimeApprovalExecutionRequest,
+  pauseAgentRun as createPauseAgentRunPlan,
+  refreshHermesDiscovery as refreshRuntimeHermesDiscovery,
+  rejectApprovalExecutionRequest as rejectRuntimeApprovalExecutionRequest,
+  requestApprovalExecutionChanges as requestRuntimeApprovalExecutionChanges,
+  resumeAgentRun as createResumeAgentRunPlan,
+  resumeApprovedApprovalExecution as resumeRuntimeApprovedApprovalExecution,
+  retryAgentRun as createRetryAgentRunPlan,
+  startAgentRun as createStartAgentRunPlan,
+  startRunFromPlan as startRuntimeRunFromPlan,
+  completeStreamingRun as completeRuntimeStreamingRun,
+  nextStreamTick as advanceRuntimeStreamTick,
+  startStreamingRun as startRuntimeStreamingRun,
+} from '../integrations/growthos-runtime/runtime-orchestrator';
 import { canApprovePlan, canCancelRun, canStartRun } from '../runtime/rbac-store';
 import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
@@ -76,6 +95,64 @@ export async function rejectApproval(approvalId: string) {
     mutate: () => {
       assertAllowed(canApprovePlan(approvalId));
       return sendApprovalDecision(approvalId, 'rejected');
+    },
+  });
+}
+
+export async function approveApprovalExecution(requestId: string) {
+  return runWorkflowCommand({
+    command: 'approval.approve',
+    entityType: 'approval',
+    entityId: requestId,
+    actorId: demoCurrentUser.id,
+    title: 'Approval execution approved',
+    optimistic: (data) => data,
+    mutate: async () => {
+      approveRuntimeApprovalExecutionRequest(requestId);
+      resumeRuntimeApprovedApprovalExecution(requestId);
+    },
+  });
+}
+
+export async function rejectApprovalExecution(requestId: string) {
+  return runWorkflowCommand({
+    command: 'approval.reject',
+    entityType: 'approval',
+    entityId: requestId,
+    actorId: demoCurrentUser.id,
+    title: 'Approval execution rejected',
+    optimistic: (data) => data,
+    mutate: async () => {
+      rejectRuntimeApprovalExecutionRequest(requestId);
+      cancelRuntimeRejectedApprovalExecution(requestId);
+    },
+  });
+}
+
+export async function requestApprovalExecutionChanges(requestId: string) {
+  return runWorkflowCommand({
+    command: 'approval.request_changes',
+    entityType: 'approval',
+    entityId: requestId,
+    actorId: demoCurrentUser.id,
+    title: 'Approval execution changes requested',
+    optimistic: (data) => data,
+    mutate: async () => {
+      requestRuntimeApprovalExecutionChanges(requestId);
+    },
+  });
+}
+
+export async function escalateApprovalExecution(requestId: string) {
+  return runWorkflowCommand({
+    command: 'approval.escalate',
+    entityType: 'approval',
+    entityId: requestId,
+    actorId: demoCurrentUser.id,
+    title: 'Approval execution escalated',
+    optimistic: (data) => data,
+    mutate: async () => {
+      escalateRuntimeApprovalExecutionRequest(requestId);
     },
   });
 }

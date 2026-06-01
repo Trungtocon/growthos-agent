@@ -149,6 +149,17 @@ import {
   getRejectedExecutions as getStoredRejectedExecutions,
   getTerminatedRuns as getStoredTerminatedRuns,
 } from '../runtime/governance-enforcement-store';
+import {
+  getApprovalExecutionByActor as getStoredApprovalExecutionByActor,
+  getApprovalExecutionByRun as getStoredApprovalExecutionByRun,
+  getApprovalExecutionEvents as getStoredApprovalExecutionEvents,
+  getApprovalExecutionRequests as getStoredApprovalExecutionRequests,
+  getApprovalExecutionSummary as getStoredApprovalExecutionSummary,
+  getApprovedExecutions as getStoredApprovedExecutions,
+  getEscalatedApprovals as getStoredEscalatedApprovals,
+  getPendingApprovalExecutions as getStoredPendingApprovalExecutions,
+  getRejectedApprovalExecutions as getStoredRejectedApprovalExecutions,
+} from '../runtime/approval-execution-store';
 
 export interface KpiViewModel {
   label: string;
@@ -792,6 +803,70 @@ export function selectGovernanceEnforcementViewModel() {
   };
 }
 
+export function selectApprovalExecutionRequests() {
+  return getStoredApprovalExecutionRequests();
+}
+
+export function selectPendingApprovalExecutions() {
+  return getStoredPendingApprovalExecutions();
+}
+
+export function selectApprovedExecutions() {
+  return getStoredApprovedExecutions();
+}
+
+export function selectRejectedApprovalExecutions() {
+  return getStoredRejectedApprovalExecutions();
+}
+
+export function selectApprovalExecutionTimeline() {
+  return getStoredApprovalExecutionEvents();
+}
+
+export function selectApprovalExecutionSummary() {
+  return getStoredApprovalExecutionSummary();
+}
+
+export function selectApprovalExecutionByRun(runId: string) {
+  return getStoredApprovalExecutionByRun(runId);
+}
+
+export function selectApprovalExecutionByActor(actorId: string) {
+  return getStoredApprovalExecutionByActor(actorId);
+}
+
+export function selectEscalatedApprovals() {
+  return getStoredEscalatedApprovals();
+}
+
+export function selectApprovalExecutionViewModel() {
+  const summary = selectApprovalExecutionSummary();
+  const requests = selectApprovalExecutionRequests();
+  const pending = selectPendingApprovalExecutions();
+  const approved = selectApprovedExecutions();
+  const rejected = selectRejectedApprovalExecutions();
+  const timeline = selectApprovalExecutionTimeline();
+  const escalated = selectEscalatedApprovals();
+  return {
+    summary,
+    requests,
+    pending,
+    approved,
+    rejected,
+    timeline,
+    escalated,
+    latestRequest: requests[0],
+    latestEvent: timeline[0],
+    kpis: [
+      { label: 'Approval requests', value: String(summary.totalRequests), tone: 'blue' },
+      { label: 'Pending review', value: String(summary.pending), tone: summary.pending ? 'amber' : 'green' },
+      { label: 'Resumed', value: String(summary.resumed), tone: 'green' },
+      { label: 'Cancelled', value: String(summary.cancelled), tone: summary.cancelled ? 'red' : 'slate' },
+      { label: 'Escalated', value: String(summary.escalated), tone: summary.escalated ? 'red' : 'slate' },
+    ] satisfies KpiViewModel[],
+  };
+}
+
 export function selectRoleMatrix() {
   return getStoredRoleMatrix();
 }
@@ -826,6 +901,7 @@ export function selectAccessControlViewModel() {
     policyInheritance: selectPolicyInheritanceViewModel(),
     governanceDecision: selectGovernanceDecisionViewModel(),
     governanceEnforcement: selectGovernanceEnforcementViewModel(),
+    approvalExecution: selectApprovalExecutionViewModel(),
     roleMatrix,
     permissionMatrix,
     users: [
@@ -1459,6 +1535,7 @@ export function selectApprovalCenterViewModel() {
   const selectedRawApproval = approvals.find((approval) => approval.id === selectedApproval?.id);
   const selectedRunId = selectedRawApproval?.runId;
   const selectedArtifactPreview = selectedRunId ? getArtifactPreviewModel(getPrimaryArtifactForRun(selectedRunId)?.id) : undefined;
+  const approvalExecution = selectApprovalExecutionViewModel();
   return {
     approvals: queueRows,
     rawApprovals: approvals,
@@ -1470,6 +1547,7 @@ export function selectApprovalCenterViewModel() {
     approvalCost,
     organizationGovernance: organizationSummary,
     organizationHealth: organizationSummary.organizationHealth,
+    approvalExecution,
     authorization: selectAccessControlViewModel(),
     workspaceHealth,
     workspaceWarnings: selectWorkspaceWarnings(),
