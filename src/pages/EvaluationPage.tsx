@@ -31,10 +31,17 @@ import {
   selectRecommendationConfidence,
   selectRecommendationExecutionSummary,
   selectRecommendationExecutions,
+  selectActiveImprovementLoops,
   selectCompletedRecommendationExecutions,
+  selectImprovementLoops,
+  selectLoopOutcomeSummary,
+  selectLoopReadiness,
+  selectLoopRuns,
+  selectLoopScheduleSummary,
   selectRecommendations,
   selectRecommendationsByRun,
   selectRejectedRecommendations,
+  selectWorkspaceImprovementLoopSummary,
   selectVerifiedRecommendationExecutions,
   selectTopRecommendations,
   selectRegressedOutcomes,
@@ -69,12 +76,23 @@ import {
   startRecommendationExecution,
   verifyRecommendationImpact,
 } from '../runtime/recommendation-execution-store';
+import {
+  cancelImprovementLoop,
+  completeImprovementLoopRun,
+  createImprovementLoop,
+  exportImprovementLoopArtifacts,
+  pauseImprovementLoop,
+  resumeImprovementLoop,
+  scheduleImprovementLoop,
+  startImprovementLoop,
+} from '../runtime/improvement-loop-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
 import type { OutcomeVerificationStatus } from '../runtime/improvement-outcome';
 import type { RecommendationPriority } from '../runtime/learning-memory';
 import type { RecommendationExecutionStatus } from '../runtime/recommendation-execution';
+import type { ImprovementLoopStatus } from '../runtime/improvement-loop';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
@@ -128,6 +146,15 @@ function recommendationExecutionTone(status: RecommendationExecutionStatus): Ton
   if (status === 'verified' || status === 'completed') return 'green';
   if (status === 'in_progress') return 'blue';
   if (status === 'blocked' || status === 'failed') return 'red';
+  if (status === 'cancelled') return 'slate';
+  return 'amber';
+}
+
+function improvementLoopTone(status: ImprovementLoopStatus): Tone {
+  if (status === 'completed') return 'green';
+  if (status === 'running' || status === 'scheduled') return 'blue';
+  if (status === 'waiting_review' || status === 'failed') return 'red';
+  if (status === 'paused') return 'amber';
   if (status === 'cancelled') return 'slate';
   return 'amber';
 }
@@ -212,6 +239,15 @@ export function RecommendationExecutionCompactWidget({ surface }: { surface: 'ru
   );
 }
 
+export function ImprovementLoopCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const summary = selectWorkspaceImprovementLoopSummary();
+  return (
+    <span data-improvement-loop-widget={surface} data-improvement-loops={summary.total} data-improvement-loop-active={summary.active} className="sr-only">
+      Improvement loops {surface}: {summary.total} total, {summary.active} active, {summary.completed} completed.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -253,6 +289,15 @@ export function EvaluationPage() {
   const completedRecommendationExecutions = selectCompletedRecommendationExecutions();
   const verifiedRecommendationExecutions = selectVerifiedRecommendationExecutions();
   const activeRecommendationExecution = recommendationExecutions[0];
+  const improvementLoops = selectImprovementLoops();
+  const activeImprovementLoops = selectActiveImprovementLoops();
+  const loopRuns = selectLoopRuns();
+  const loopSummary = selectWorkspaceImprovementLoopSummary();
+  const loopOutcomeSummary = selectLoopOutcomeSummary();
+  const loopScheduleSummary = selectLoopScheduleSummary();
+  const activeImprovementLoop = improvementLoops[0];
+  const activeLoopReadiness = activeImprovementLoop ? selectLoopReadiness(activeImprovementLoop.id) : undefined;
+  const activeLoopRuns = activeImprovementLoop ? selectLoopRuns(activeImprovementLoop.id) : [];
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -269,6 +314,7 @@ export function EvaluationPage() {
       <ImprovementOutcomeCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <RecommendationExecutionCompactWidget surface="evaluation" />
+      <ImprovementLoopCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -647,6 +693,78 @@ export function EvaluationPage() {
                 <p className="mt-2 text-slate-500">Confidence after verification: {execution.impactResult?.confidenceAfter ?? 'pending'}.</p>
               </div>
             ))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-improvement-loop-panel>
+        <Panel title="Autonomous Improvement Loop">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Total loops</span><b>{loopSummary.total}</b></div>
+            <div className="flex items-center justify-between"><span>Active / paused</span><b>{loopSummary.active}/{loopSummary.paused}</b></div>
+            <div className="flex items-center justify-between"><span>Waiting review</span><Badge tone={loopSummary.waitingReview ? 'red' : 'green'}>{loopSummary.waitingReview}</Badge></div>
+            <div className="flex items-center justify-between"><span>Confidence delta</span><Badge tone={loopOutcomeSummary.averageConfidenceDelta >= 0 ? 'green' : 'red'}>{loopOutcomeSummary.averageConfidenceDelta}</Badge></div>
+            <Button variant="secondary" onClick={() => { const recommendation = acceptedRecommendations[0] ?? (topLearningRecommendations[0] ? markRecommendationAccepted(topLearningRecommendations[0].id) : undefined); if (recommendation) createImprovementLoop(recommendation.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Create loop</Button>
+            <Button variant="secondary" onClick={() => { if (activeImprovementLoop) exportImprovementLoopArtifacts(activeImprovementLoop.id); else exportImprovementLoopArtifacts(); window.location.reload(); }}><FileText className="h-4 w-4" />Export loop</Button>
+          </div>
+        </Panel>
+        <Panel title="Loop Lifecycle Board">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {improvementLoops.length ? improvementLoops.map((loop) => {
+              const readiness = selectLoopReadiness(loop.id);
+              return (
+                <div key={loop.id} data-improvement-loop={loop.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                  <div className="flex items-start justify-between gap-3"><b>{loop.trigger.type.replace(/_/g, ' ')}</b><Badge tone={improvementLoopTone(loop.status)}>{loop.status}</Badge></div>
+                  <p className="mt-2 text-slate-500">Recommendation {loop.recommendationId.replace('recommendation-', '').slice(0, 52)}</p>
+                  <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400">
+                    <span>{readiness.status}</span>
+                    <span>{loop.confidenceAtCreation}%</span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { scheduleImprovementLoop(loop.id); window.location.reload(); }}>Schedule</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { try { startImprovementLoop(loop.id); } catch { /* visible through readiness */ } window.location.reload(); }}>Start</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { pauseImprovementLoop(loop.id); window.location.reload(); }}>Pause</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { resumeImprovementLoop(loop.id); window.location.reload(); }}>Resume</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelImprovementLoop(loop.id); window.location.reload(); }}>Cancel</button>
+                  </div>
+                </div>
+              );
+            }) : <p className="text-sm text-slate-500">Create a loop from an accepted recommendation to schedule autonomous improvement actions.</p>}
+          </div>
+        </Panel>
+        <Panel title="Readiness Checklist">
+          <div className="space-y-3 p-4 text-sm">
+            {activeLoopReadiness ? (
+              <>
+                <div className="flex items-center justify-between"><span>Status</span><Badge tone={activeLoopReadiness.status === 'ready' ? 'green' : activeLoopReadiness.status === 'approval_required' ? 'amber' : 'red'}>{activeLoopReadiness.status}</Badge></div>
+                {activeLoopReadiness.policies.map((policy) => (
+                  <div key={policy.id} data-improvement-loop-policy={policy.id} className="rounded-xl border border-slate-100 p-3">
+                    <div className="flex items-center justify-between gap-3"><b>{policy.name}</b><Badge tone={policy.passed ? 'green' : policy.severity === 'blocking' ? 'red' : 'amber'}>{policy.passed ? 'pass' : policy.severity}</Badge></div>
+                    <p className="mt-2 text-slate-500">{policy.message}</p>
+                  </div>
+                ))}
+              </>
+            ) : <p className="text-slate-500">Readiness appears after the first loop is created.</p>}
+          </div>
+        </Panel>
+        <Panel title="Loop Runs & Outcomes">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {loopRuns.length ? loopRuns.map((run) => (
+              <div key={run.id} data-improvement-loop-run={run.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>Attempt {run.attempt}</b><Badge tone={improvementLoopTone(run.status)}>{run.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{run.failureReason ?? run.evidence.join(' ') ?? 'Loop run awaiting evidence.'}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeImprovementLoopRun(run.id, ['Demo loop evidence captured.']); window.location.reload(); }}>Complete</button>
+                </div>
+              </div>
+            )) : <p className="text-sm text-slate-500">Loop runs are created when a ready loop starts.</p>}
+          </div>
+        </Panel>
+        <Panel title="Schedule & Learning Delta">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Schedules</div><div className="mt-2 text-2xl font-extrabold">{loopScheduleSummary.active}/{loopScheduleSummary.total}</div><p className="mt-2 text-xs text-slate-500">Next {loopScheduleSummary.nextRunAt?.slice(0, 16) ?? 'not scheduled'}</p></div>
+            <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Outcomes</div><div className="mt-2 text-2xl font-extrabold">{loopOutcomeSummary.improved}/{loopOutcomeSummary.regressed}</div><p className="mt-2 text-xs text-slate-500">Improved vs regressed loops.</p></div>
+            <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Active runs</div><div className="mt-2 text-2xl font-extrabold">{activeImprovementLoops.length}</div><p className="mt-2 text-xs text-slate-500">Running, scheduled, or waiting review.</p></div>
+            <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Last run</div><div className="mt-2 text-2xl font-extrabold">{activeLoopRuns[0]?.status ?? 'none'}</div><p className="mt-2 text-xs text-slate-500">Linked recommendation execution {activeImprovementLoop?.recommendationExecutionId?.slice(-8) ?? 'pending'}.</p></div>
           </div>
         </Panel>
       </div>

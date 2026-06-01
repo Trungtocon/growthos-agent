@@ -184,6 +184,17 @@ import {
   getVerifiedRecommendationExecutions as getStoredVerifiedRecommendationExecutions,
 } from '../runtime/recommendation-execution-store';
 import {
+  getActiveImprovementLoops as getStoredActiveImprovementLoops,
+  getLoopByRecommendation as getStoredLoopByRecommendation,
+  getLoopOutcomeSummary as getStoredLoopOutcomeSummary,
+  getLoopReadiness as getStoredLoopReadiness,
+  getLoopRuns as getStoredLoopRuns,
+  getLoopScheduleSummary as getStoredLoopScheduleSummary,
+  getPausedImprovementLoops as getStoredPausedImprovementLoops,
+  getWorkspaceImprovementLoopSummary as getStoredWorkspaceImprovementLoopSummary,
+  getImprovementLoops as getStoredImprovementLoops,
+} from '../runtime/improvement-loop-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2044,6 +2055,42 @@ export function selectRecommendationImpactResult(executionId: string) {
 
 export function selectRecommendationExecutionSummary() {
   return getStoredRecommendationExecutionSummary();
+}
+
+export function selectImprovementLoops() {
+  return getStoredImprovementLoops();
+}
+
+export function selectActiveImprovementLoops() {
+  return getStoredActiveImprovementLoops();
+}
+
+export function selectPausedImprovementLoops() {
+  return getStoredPausedImprovementLoops();
+}
+
+export function selectLoopRuns(loopId?: string) {
+  return getStoredLoopRuns(loopId);
+}
+
+export function selectLoopByRecommendation(recommendationId: string) {
+  return getStoredLoopByRecommendation(recommendationId);
+}
+
+export function selectLoopReadiness(loopId: string) {
+  return getStoredLoopReadiness(loopId);
+}
+
+export function selectLoopOutcomeSummary() {
+  return getStoredLoopOutcomeSummary();
+}
+
+export function selectLoopScheduleSummary() {
+  return getStoredLoopScheduleSummary();
+}
+
+export function selectWorkspaceImprovementLoopSummary() {
+  return getStoredWorkspaceImprovementLoopSummary();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
