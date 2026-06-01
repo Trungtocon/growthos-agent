@@ -1,5 +1,6 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
+import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
 import { ScreenPage } from './pages/ScreenPage';
@@ -22,6 +23,13 @@ export function App() {
     return (
       <AppShell currentPath="/execution-timeline">
         <ExecutionTimelinePage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/evaluation') {
+    return (
+      <AppShell currentPath="/evaluation">
+        <EvaluationPage />
       </AppShell>
     );
   }

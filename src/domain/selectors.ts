@@ -114,6 +114,15 @@ import {
   getSelectedTimelineEvent as getStoredSelectedTimelineEvent,
 } from '../runtime/execution-replay-control-store';
 import {
+  getRunEvaluation as getStoredRunEvaluation,
+  getRunEvaluationIssues as getStoredRunEvaluationIssues,
+  getRunEvaluationRecommendations as getStoredRunEvaluationRecommendations,
+  getRunEvaluationScore as getStoredRunEvaluationScore,
+  getRunsByEvaluationScore as getStoredRunsByEvaluationScore,
+  getWorkspaceEvaluationSummary as getStoredWorkspaceEvaluationSummary,
+} from '../runtime/run-evaluation-store';
+import type { RunEvaluationDimension } from '../runtime/run-evaluation';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1755,6 +1764,30 @@ export function selectTimelineEventsBySeverity(severity: ExecutionTimelineSeveri
 
 export function selectTimelineEventsBySource(source: ExecutionTimelineSource, runId = DEMO_RUN_ID) {
   return getStoredTimelineEventsBySource(source, runId);
+}
+
+export function selectRunEvaluation(runId = DEMO_RUN_ID) {
+  return getStoredRunEvaluation(runId);
+}
+
+export function selectRunEvaluationScore(runId = DEMO_RUN_ID, dimension?: RunEvaluationDimension) {
+  return getStoredRunEvaluationScore(runId, dimension);
+}
+
+export function selectRunEvaluationIssues(runId = DEMO_RUN_ID) {
+  return getStoredRunEvaluationIssues(runId);
+}
+
+export function selectRunEvaluationRecommendations(runId = DEMO_RUN_ID) {
+  return getStoredRunEvaluationRecommendations(runId);
+}
+
+export function selectRunsByEvaluationScore(minScore = 0) {
+  return getStoredRunsByEvaluationScore(minScore);
+}
+
+export function selectWorkspaceEvaluationSummary(workspaceId?: string) {
+  return getStoredWorkspaceEvaluationSummary(workspaceId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
