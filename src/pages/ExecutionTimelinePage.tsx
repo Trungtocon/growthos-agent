@@ -30,7 +30,7 @@ import {
 import type { ReplayPlaybackSpeed } from '../runtime/execution-replay-control';
 import { registerExecutionTimelineExports } from '../runtime/execution-timeline-store';
 import type { ExecutionTimelineEvent } from '../runtime/execution-timeline';
-import { EvaluationFeedbackCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
+import { EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
 
 function eventTone(event: ExecutionTimelineEvent) {
   if (event.severity === 'danger') return 'red';
@@ -163,6 +163,7 @@ export function ExecutionTimelinePage() {
     <div data-route="/execution-timeline" data-execution-timeline-route>
       <RunEvaluationCompactWidget runId={DEMO_RUN_ID} surface="execution-timeline" />
       <EvaluationFeedbackCompactWidget runId={DEMO_RUN_ID} surface="execution-timeline" />
+      <FeedbackActionPlanCompactWidget runId={DEMO_RUN_ID} surface="execution-timeline" />
       <PageHeader
         title="Execution Timeline & Replay"
         subtitle="Replay runtime execution across plan steps, tools, artifacts, approvals, usage, cost and governance decisions."

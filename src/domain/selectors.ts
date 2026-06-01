@@ -133,6 +133,17 @@ import {
 } from '../runtime/evaluation-feedback-store';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import {
+  getActionPlanReadiness as getStoredActionPlanReadiness,
+  getActionPlansByRun as getStoredActionPlansByRun,
+  getActionTasksByStatus as getStoredActionTasksByStatus,
+  getBlockedActionTasks as getStoredBlockedActionTasks,
+  getFeedbackActionPlan as getStoredFeedbackActionPlan,
+  getFeedbackActionPlanByRun as getStoredFeedbackActionPlanByRun,
+  getReadyActionTasks as getStoredReadyActionTasks,
+  getWorkspaceActionPlanSummary as getStoredWorkspaceActionPlanSummary,
+} from '../runtime/feedback-action-planner-store';
+import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1826,6 +1837,34 @@ export function selectTopImprovementSuggestions(limit = 5, runId = DEMO_RUN_ID) 
 
 export function selectCriticalFeedbackItems(runId = DEMO_RUN_ID) {
   return getStoredCriticalFeedbackItems(runId);
+}
+
+export function selectFeedbackActionPlan(planId?: string, runId = DEMO_RUN_ID) {
+  return planId ? getStoredFeedbackActionPlan(planId) : getStoredFeedbackActionPlanByRun(runId);
+}
+
+export function selectActionPlansByRun(runId = DEMO_RUN_ID) {
+  return getStoredActionPlansByRun(runId);
+}
+
+export function selectActionTasksByStatus(status: FeedbackActionStatus, runId = DEMO_RUN_ID) {
+  return getStoredActionTasksByStatus(status, runId);
+}
+
+export function selectReadyActionTasks(runId = DEMO_RUN_ID) {
+  return getStoredReadyActionTasks(runId);
+}
+
+export function selectBlockedActionTasks(runId = DEMO_RUN_ID) {
+  return getStoredBlockedActionTasks(runId);
+}
+
+export function selectActionPlanReadiness(planId: string) {
+  return getStoredActionPlanReadiness(planId);
+}
+
+export function selectWorkspaceActionPlanSummary(workspaceId?: string) {
+  return getStoredWorkspaceActionPlanSummary(workspaceId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

@@ -1,4 +1,4 @@
-import { BarChart3, CheckCircle2, FileText, RotateCcw, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
+import { BarChart3, CheckCircle2, FileText, ListChecks, RotateCcw, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
@@ -9,14 +9,20 @@ import {
   selectRunsByEvaluationScore,
   selectEvaluationFeedbackByRun,
   selectFeedbackActions,
+  selectBlockedActionTasks,
+  selectFeedbackActionPlan,
+  selectReadyActionTasks,
+  selectWorkspaceActionPlanSummary,
   selectTopImprovementSuggestions,
   selectWorkspaceFeedbackSummary,
   selectWorkspaceEvaluationSummary,
 } from '../domain/selectors';
 import { registerEvaluationFeedbackExports, regenerateFeedbackForRun } from '../runtime/evaluation-feedback-store';
+import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
+import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
 
 function scoreTone(score: number): Tone {
   if (score >= 90) return 'green';
@@ -30,6 +36,14 @@ function priorityTone(priority: FeedbackPriority): Tone {
   if (priority === 'high') return 'amber';
   if (priority === 'medium') return 'blue';
   return 'slate';
+}
+
+function actionStatusTone(status: FeedbackActionStatus): Tone {
+  if (status === 'completed') return 'green';
+  if (status === 'ready' || status === 'in_progress') return 'blue';
+  if (status === 'blocked') return 'red';
+  if (status === 'cancelled') return 'slate';
+  return 'amber';
 }
 
 function ScoreCard({ score }: { score: RunEvaluationScore }) {
@@ -66,6 +80,15 @@ export function EvaluationFeedbackCompactWidget({ runId = DEMO_RUN_ID, surface }
   );
 }
 
+export function FeedbackActionPlanCompactWidget({ runId = DEMO_RUN_ID, surface }: { runId?: string; surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' }) {
+  const plan = selectFeedbackActionPlan(undefined, runId)!;
+  return (
+    <span data-feedback-action-plan-widget={surface} data-action-plan-status={plan.status} data-action-plan-tasks={plan.tasks.length} className="sr-only">
+      Feedback action plan {surface} {runId}: {plan.tasks.length} tasks, status {plan.status}, readiness {plan.readiness}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -76,6 +99,10 @@ export function EvaluationPage() {
   const feedbackSummary = selectWorkspaceFeedbackSummary();
   const topSuggestions = selectTopImprovementSuggestions(5, DEMO_RUN_ID);
   const feedbackActions = selectFeedbackActions(DEMO_RUN_ID);
+  const actionPlan = selectFeedbackActionPlan(undefined, DEMO_RUN_ID)!;
+  const actionPlanSummary = selectWorkspaceActionPlanSummary();
+  const readyActionTasks = selectReadyActionTasks(DEMO_RUN_ID);
+  const blockedActionTasks = selectBlockedActionTasks(DEMO_RUN_ID);
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -87,7 +114,7 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <div className="grid grid-cols-5 gap-4">
         {[
@@ -159,6 +186,55 @@ export function EvaluationPage() {
                 <span className="font-semibold text-slate-800">{action.title}</span><span>{action.owner}</span><span>{action.status}</span><span>{action.dueInDays}d</span>
               </div>
             ))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-feedback-action-plan-panel>
+        <Panel title="Action Plan">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Plan</span><b>{actionPlan.id.replace('feedback-action-plan-', '')}</b></div>
+            <div className="flex items-center justify-between"><span>Status</span><Badge tone={actionStatusTone(actionPlan.status)}>{actionPlan.status}</Badge></div>
+            <div className="flex items-center justify-between"><span>Readiness</span><Badge tone={actionPlan.readiness === 'blocked' ? 'red' : actionPlan.readiness === 'ready' ? 'green' : 'amber'}>{actionPlan.readiness}</Badge></div>
+            <div className="flex items-center justify-between"><span>Ready / blocked</span><b>{readyActionTasks.length}/{blockedActionTasks.length}</b></div>
+            <Button variant="secondary" onClick={() => { regenerateActionPlanFromFeedback(feedback.id); window.location.reload(); }}><ListChecks className="h-4 w-4" />Create action plan</Button>
+          </div>
+        </Panel>
+        <Panel title="Task List by Priority">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {actionPlan.tasks.slice(0, 8).map((task) => (
+              <div key={task.id} data-feedback-action-task={task.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{task.title}</b><Badge tone={priorityTone(task.priority)}>{task.priority}</Badge></div>
+                <p className="mt-2 text-slate-500">{task.description}</p>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400">
+                  <span>{task.owner}</span>
+                  <Badge tone={actionStatusTone(task.status)}>{task.status}</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Readiness & Dependencies">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-slate-100 p-3"><div className="text-xs font-bold uppercase text-slate-400">Plans</div><div className="text-2xl font-extrabold">{actionPlanSummary.planCount}</div></div>
+              <div className="rounded-xl border border-slate-100 p-3"><div className="text-xs font-bold uppercase text-slate-400">Impact</div><div className="text-2xl font-extrabold">{actionPlanSummary.totalExpectedImpact}</div></div>
+            </div>
+            {actionPlan.dependencies.length ? actionPlan.dependencies.map((dependency) => (
+              <div key={dependency.id} data-action-dependency className="rounded-xl bg-slate-50 p-3">
+                <b>{dependency.taskId}</b>
+                <p className="mt-1 text-slate-500">Depends on {dependency.dependsOnTaskId}. {dependency.reason}</p>
+              </div>
+            )) : <p className="text-slate-500">No blocking dependencies detected.</p>}
+          </div>
+        </Panel>
+        <Panel title="Acceptance Criteria">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {actionPlan.tasks.slice(0, 6).flatMap((task) => task.acceptanceCriteria.slice(0, 2).map((criteria) => (
+              <div key={criteria.id} data-action-acceptance-criteria className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{task.title}</b><Badge tone={criteria.completed ? 'green' : 'amber'}>{criteria.completed ? 'done' : 'open'}</Badge></div>
+                <p className="mt-2 text-slate-500">{criteria.description}</p>
+              </div>
+            )))}
           </div>
         </Panel>
       </div>
