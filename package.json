@@ -111,7 +111,8 @@
     "smoke:execution-replay-control": "node scripts/smoke-execution-replay-control.mjs",
     "smoke:run-evaluation": "node scripts/smoke-run-evaluation.mjs",
     "smoke:evaluation-feedback": "node scripts/smoke-evaluation-feedback.mjs",
-    "smoke:feedback-action-planner": "node scripts/smoke-feedback-action-planner.mjs"
+    "smoke:feedback-action-planner": "node scripts/smoke-feedback-action-planner.mjs",
+    "smoke:action-plan-execution": "node scripts/smoke-action-plan-execution.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

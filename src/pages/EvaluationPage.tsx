@@ -1,4 +1,4 @@
-import { BarChart3, CheckCircle2, FileText, ListChecks, RotateCcw, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
+import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, ListChecks, Play, RotateCcw, ShieldCheck, Sparkles, Wrench, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
@@ -9,17 +9,34 @@ import {
   selectRunsByEvaluationScore,
   selectEvaluationFeedbackByRun,
   selectFeedbackActions,
+  selectActionCompletionEvidence,
+  selectActionExecutionTimeline,
+  selectActionPlanExecution,
+  selectActionPlanProgress,
+  selectActionTaskExecutions,
+  selectBlockedActionExecutions,
   selectBlockedActionTasks,
+  selectCompletedActionExecutions,
   selectFeedbackActionPlan,
   selectReadyActionTasks,
+  selectWorkspaceImprovementProgress,
   selectWorkspaceActionPlanSummary,
   selectTopImprovementSuggestions,
   selectWorkspaceFeedbackSummary,
   selectWorkspaceEvaluationSummary,
 } from '../domain/selectors';
 import { registerEvaluationFeedbackExports, regenerateFeedbackForRun } from '../runtime/evaluation-feedback-store';
+import {
+  blockActionTask,
+  cancelActionTask,
+  completeActionTask,
+  registerActionPlanExecutionExports,
+  startActionPlanExecution,
+  startActionTask,
+} from '../runtime/action-plan-execution-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
+import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
 import type { RunEvaluationScore } from '../runtime/run-evaluation';
 import type { FeedbackPriority } from '../runtime/evaluation-feedback';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
@@ -44,6 +61,14 @@ function actionStatusTone(status: FeedbackActionStatus): Tone {
   if (status === 'blocked') return 'red';
   if (status === 'cancelled') return 'slate';
   return 'amber';
+}
+
+function actionExecutionStatusTone(status: ActionTaskLifecycleStatus): Tone {
+  if (status === 'completed') return 'green';
+  if (status === 'in_progress' || status === 'review') return 'blue';
+  if (status === 'blocked' || status === 'cancelled') return 'red';
+  if (status === 'ready') return 'amber';
+  return 'slate';
 }
 
 function ScoreCard({ score }: { score: RunEvaluationScore }) {
@@ -89,6 +114,15 @@ export function FeedbackActionPlanCompactWidget({ runId = DEMO_RUN_ID, surface }
   );
 }
 
+export function ActionPlanExecutionCompactWidget({ runId = DEMO_RUN_ID, surface }: { runId?: string; surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' }) {
+  const execution = selectActionPlanExecution(undefined, runId);
+  return (
+    <span data-action-plan-execution-widget={surface} data-action-execution-status={execution.status} data-action-execution-progress={execution.progress.weightedProgress} className="sr-only">
+      Action plan execution {surface} {runId}: status {execution.status}, progress {execution.progress.weightedProgress}, tasks {execution.tasks.length}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -103,6 +137,14 @@ export function EvaluationPage() {
   const actionPlanSummary = selectWorkspaceActionPlanSummary();
   const readyActionTasks = selectReadyActionTasks(DEMO_RUN_ID);
   const blockedActionTasks = selectBlockedActionTasks(DEMO_RUN_ID);
+  const actionExecution = selectActionPlanExecution(undefined, DEMO_RUN_ID);
+  const actionTaskExecutions = selectActionTaskExecutions(actionPlan.id, DEMO_RUN_ID);
+  const actionExecutionProgress = selectActionPlanProgress(actionPlan.id, DEMO_RUN_ID);
+  const actionExecutionTimeline = selectActionExecutionTimeline(actionPlan.id, DEMO_RUN_ID);
+  const blockedActionExecutions = selectBlockedActionExecutions(actionPlan.id, DEMO_RUN_ID);
+  const completedActionExecutions = selectCompletedActionExecutions(actionPlan.id, DEMO_RUN_ID);
+  const actionCompletionEvidence = selectActionCompletionEvidence(actionPlan.id, DEMO_RUN_ID);
+  const workspaceImprovementProgress = selectWorkspaceImprovementProgress();
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
   const governanceScore = evaluation.scores.find((score) => score.dimension === 'governance_compliance');
@@ -114,7 +156,7 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <div className="grid grid-cols-5 gap-4">
         {[
@@ -235,6 +277,74 @@ export function EvaluationPage() {
                 <p className="mt-2 text-slate-500">{criteria.description}</p>
               </div>
             )))}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-action-plan-execution-panel>
+        <Panel title="Action Execution Progress">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Execution</span><b>{actionExecution.id.replace('action-execution-', '')}</b></div>
+            <div className="flex items-center justify-between"><span>Status</span><Badge tone={actionExecution.status === 'blocked' ? 'red' : actionExecution.status === 'completed' ? 'green' : 'blue'}>{actionExecution.status}</Badge></div>
+            <ProgressBar value={actionExecutionProgress.weightedProgress} tone={actionExecution.status === 'blocked' ? 'red' : 'blue'} label="Action plan execution progress" />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-slate-50 p-3"><div className="text-xs font-bold uppercase text-slate-400">Completed</div><div className="text-xl font-extrabold">{actionExecutionProgress.completedTasks}/{actionExecutionProgress.totalTasks}</div></div>
+              <div className="rounded-xl bg-slate-50 p-3"><div className="text-xs font-bold uppercase text-slate-400">Workspace</div><div className="text-xl font-extrabold">{workspaceImprovementProgress.averageProgress}%</div></div>
+            </div>
+            <Button variant="secondary" onClick={() => { startActionPlanExecution(actionPlan.id); window.location.reload(); }}><Play className="h-4 w-4" />Start execution</Button>
+          </div>
+        </Panel>
+        <Panel title="Task Lifecycle Board">
+          <div className="grid grid-cols-3 gap-3 p-4">
+            {actionTaskExecutions.slice(0, 9).map((task) => (
+              <div key={task.id} data-action-task-execution={task.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{task.title}</b><Badge tone={actionExecutionStatusTone(task.status)}>{task.status}</Badge></div>
+                <div className="mt-3"><ProgressBar value={task.progress} tone={actionExecutionStatusTone(task.status)} label={`${task.title} progress`} /></div>
+                <div className="mt-3 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-400"><span>{task.owner}</span><span>{task.priority}</span></div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { startActionTask(task.taskId); window.location.reload(); }}><Play className="inline h-3 w-3" /> Start</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { blockActionTask(task.taskId, 'Needs dependency or owner review.'); window.location.reload(); }}><AlertTriangle className="inline h-3 w-3" /> Block</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeActionTask(task.taskId, { type: 'note', title: 'Evidence captured', description: 'Task completed with demo evidence.', createdBy: 'GrowthOS demo' }); window.location.reload(); }}><ClipboardCheck className="inline h-3 w-3" /> Done</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelActionTask(task.taskId, 'Cancelled during demo planning review.'); window.location.reload(); }}><XCircle className="inline h-3 w-3" /> Cancel</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Blocked Tasks">
+          <div className="space-y-3 p-4 text-sm">
+            {blockedActionExecutions.length ? blockedActionExecutions.map((task) => (
+              <div key={task.id} data-action-blocked-task className="rounded-xl border border-red-100 bg-red-50/50 p-3">
+                <div className="flex items-center justify-between gap-3"><b>{task.title}</b><Badge tone="red">blocked</Badge></div>
+                <p className="mt-2 text-slate-600">{task.blocker ?? 'Blocked by dependency.'}</p>
+              </div>
+            )) : <p className="text-slate-500">No blocked action executions.</p>}
+          </div>
+        </Panel>
+        <Panel title="Completion Evidence">
+          <div className="grid grid-cols-3 gap-3 p-4">
+            {actionCompletionEvidence.length ? actionCompletionEvidence.map((evidence) => (
+              <div key={evidence.id} data-action-completion-evidence className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{evidence.title}</b><Badge tone="green">{evidence.type}</Badge></div>
+                <p className="mt-2 text-slate-500">{evidence.description}</p>
+                <div className="mt-3 text-xs font-bold uppercase text-slate-400">{evidence.createdBy}</div>
+              </div>
+            )) : completedActionExecutions.length ? completedActionExecutions.map((task) => (
+              <div key={task.id} data-action-completion-evidence className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <b>{task.title}</b>
+                <p className="mt-2 text-slate-500">Completed task awaiting attached evidence export.</p>
+              </div>
+            )) : <p className="text-sm text-slate-500">Completion evidence appears after tasks are marked complete.</p>}
+          </div>
+        </Panel>
+        <Panel title="Execution Timeline">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            {actionExecutionTimeline.slice(-8).map((event) => (
+              <div key={event.id} data-action-execution-event={event.type} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{event.type}</b><Badge tone={actionExecutionStatusTone(event.status)}>{event.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{event.message}</p>
+                <div className="mt-3 flex items-center gap-2 text-xs font-bold uppercase text-slate-400"><Activity className="h-3 w-3" />{event.timestamp.slice(11, 19)}</div>
+              </div>
+            ))}
           </div>
         </Panel>
       </div>

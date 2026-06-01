@@ -144,6 +144,17 @@ import {
 } from '../runtime/feedback-action-planner-store';
 import type { FeedbackActionStatus } from '../runtime/feedback-action-planner';
 import {
+  getActionCompletionEvidence as getStoredActionCompletionEvidence,
+  getActionPlanExecution as getStoredActionPlanExecution,
+  getActionPlanExecutionByRun as getStoredActionPlanExecutionByRun,
+  getActionTaskExecutions as getStoredActionTaskExecutions,
+  getBlockedActionExecutions as getStoredBlockedActionExecutions,
+  getCompletedActionExecutions as getStoredCompletedActionExecutions,
+  getWorkspaceImprovementProgress as getStoredWorkspaceImprovementProgress,
+  calculateActionPlanProgress as getStoredActionPlanProgress,
+  generateActionExecutionTimeline as getStoredActionExecutionTimeline,
+} from '../runtime/action-plan-execution-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1865,6 +1876,45 @@ export function selectActionPlanReadiness(planId: string) {
 
 export function selectWorkspaceActionPlanSummary(workspaceId?: string) {
   return getStoredWorkspaceActionPlanSummary(workspaceId);
+}
+
+export function selectActionPlanExecution(planId?: string, runId = DEMO_RUN_ID) {
+  const plan = (planId ? getStoredFeedbackActionPlan(planId) : undefined) ?? getStoredFeedbackActionPlanByRun(runId);
+  return getStoredActionPlanExecution(plan.id) ?? getStoredActionPlanExecutionByRun(plan.runId);
+}
+
+export function selectActionTaskExecutions(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = selectActionPlanExecution(planId, runId);
+  return getStoredActionTaskExecutions(execution.planId);
+}
+
+export function selectActionExecutionTimeline(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = selectActionPlanExecution(planId, runId);
+  return getStoredActionExecutionTimeline(execution.planId);
+}
+
+export function selectActionPlanProgress(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = selectActionPlanExecution(planId, runId);
+  return getStoredActionPlanProgress(execution.planId);
+}
+
+export function selectBlockedActionExecutions(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = planId ? selectActionPlanExecution(planId, runId) : undefined;
+  return getStoredBlockedActionExecutions(execution?.planId);
+}
+
+export function selectCompletedActionExecutions(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = planId ? selectActionPlanExecution(planId, runId) : undefined;
+  return getStoredCompletedActionExecutions(execution?.planId);
+}
+
+export function selectActionCompletionEvidence(planId?: string, runId = DEMO_RUN_ID) {
+  const execution = planId ? selectActionPlanExecution(planId, runId) : undefined;
+  return getStoredActionCompletionEvidence(execution?.planId);
+}
+
+export function selectWorkspaceImprovementProgress(workspaceId?: string) {
+  return getStoredWorkspaceImprovementProgress(workspaceId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
