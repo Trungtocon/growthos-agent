@@ -83,6 +83,16 @@ import {
 } from '../runtime/artifact-registry-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
+  buildExecutionGraphForAgent,
+  buildExecutionGraphForRun,
+  buildExecutionGraphForTicket,
+  getApprovalLineage as getStoredApprovalLineage,
+  getArtifactLineage as getStoredArtifactLineage,
+  getBlockedGraphNodes as getStoredBlockedGraphNodes,
+  getExecutionTrace as getStoredExecutionTrace,
+  getGraphSummary as getStoredGraphSummary,
+} from '../runtime/agent-execution-graph-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -1628,6 +1638,38 @@ export function selectApprovalCenterViewModel() {
       { label: 'Workspace health', value: workspaceHealth.overallStatus, tone: workspaceHealth.overallStatus === 'OK' ? 'green' : workspaceHealth.overallStatus === 'WARNING' ? 'amber' : 'red' },
     ] satisfies KpiViewModel[],
   };
+}
+
+export function selectExecutionGraphByRun(runId = DEMO_RUN_ID) {
+  return buildExecutionGraphForRun(runId);
+}
+
+export function selectExecutionGraphByAgent(agentId = DEMO_AGENT_ID) {
+  return buildExecutionGraphForAgent(agentId);
+}
+
+export function selectExecutionGraphByTicket(ticketId = DEMO_TICKET_ID) {
+  return buildExecutionGraphForTicket(ticketId);
+}
+
+export function selectExecutionTraceByRun(runId = DEMO_RUN_ID) {
+  return getStoredExecutionTrace(runId);
+}
+
+export function selectExecutionGraphSummary(workspaceId?: string) {
+  return getStoredGraphSummary(workspaceId);
+}
+
+export function selectBlockedGraphNodes(runId = DEMO_RUN_ID) {
+  return getStoredBlockedGraphNodes(runId);
+}
+
+export function selectArtifactLineage(runId = DEMO_RUN_ID) {
+  return getStoredArtifactLineage(runId);
+}
+
+export function selectApprovalLineage(runId = DEMO_RUN_ID) {
+  return getStoredApprovalLineage(runId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

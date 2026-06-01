@@ -15,7 +15,12 @@ export type ArtifactLifecycle = 'CREATED' | 'INDEXED' | 'AVAILABLE' | 'ARCHIVED'
 export interface ArtifactMetadata {
   workspaceId: string;
   runId?: string;
+  agentId?: string;
+  ticketId?: string;
+  planId?: string;
+  stepId?: string;
   toolId?: string;
+  approvalId?: string;
   source?: 'paperclip' | 'hermes' | 'mock';
   sourceType?: string;
   contentSummary?: string;

@@ -1,5 +1,6 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
+import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ScreenPage } from './pages/ScreenPage';
 
 function getCurrentPath() {
@@ -9,6 +10,14 @@ function getCurrentPath() {
 
 export function App() {
   const currentPath = getCurrentPath();
+  if (currentPath === '/execution-graph') {
+    return (
+      <AppShell currentPath="/execution-graph">
+        <ExecutionGraphPage />
+      </AppShell>
+    );
+  }
+
   const screen = screens.find((item) => item.route === currentPath) ?? screens.find((item) => item.route === '/command-center')!;
   const useAppShell = screen.id > 7;
 
