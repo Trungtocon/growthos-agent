@@ -234,6 +234,18 @@ export function resumeQueuedLoop(itemId: string): ImprovementLoopQueueItem {
   return persistItem({ ...item, status: 'queued' }, 'Queue item resumed.');
 }
 
+export function requeueLoopItem(itemId: string): ImprovementLoopQueueItem {
+  const item = readState().items[itemId];
+  if (!item) throw new Error(`Cannot requeue missing queue item: ${itemId}`);
+  return persistItem({ ...item, status: 'queued', blocker: undefined, startedAt: undefined, completedAt: undefined }, 'Queue item requeued.');
+}
+
+export function holdQueuedLoopForApproval(itemId: string, reason = 'approval_required'): ImprovementLoopQueueItem {
+  const item = readState().items[itemId];
+  if (!item) throw new Error(`Cannot hold missing queue item: ${itemId}`);
+  return persistItem({ ...item, status: 'waiting_approval', blocker: reason }, 'Queue item escalated to approval.');
+}
+
 export function cancelQueuedLoop(itemId: string): ImprovementLoopQueueItem {
   const item = readState().items[itemId];
   if (!item) throw new Error(`Cannot cancel missing queue item: ${itemId}`);

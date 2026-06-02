@@ -224,6 +224,15 @@ import {
   getWorkerTickHistory as getStoredWorkerTickHistory,
 } from '../runtime/improvement-loop-worker-store';
 import {
+  getWorkerControlEligibility as getStoredWorkerControlEligibility,
+  getWorkerCurrentTrace as getStoredWorkerCurrentTrace,
+  getWorkerDiagnosticsArtifacts as getStoredWorkerDiagnosticsArtifacts,
+  getWorkerHealthSnapshot as getStoredWorkerHealthSnapshot,
+  getWorkerIncidents as getStoredWorkerIncidents,
+  getWorkerObservationDashboard as getStoredWorkerObservationDashboard,
+  getWorkerSLAStatus as getStoredWorkerSLAStatus,
+} from '../runtime/worker-observability-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2212,6 +2221,34 @@ export function selectStaleWorkerWarnings() {
 
 export function selectWorkerBlockedReason() {
   return getStoredWorkerBlockedReason();
+}
+
+export function selectWorkerObservationDashboard() {
+  return getStoredWorkerObservationDashboard();
+}
+
+export function selectWorkerCurrentTrace() {
+  return getStoredWorkerCurrentTrace();
+}
+
+export function selectWorkerHealthSnapshot() {
+  return getStoredWorkerHealthSnapshot();
+}
+
+export function selectWorkerIncidents() {
+  return getStoredWorkerIncidents();
+}
+
+export function selectWorkerControlEligibility() {
+  return getStoredWorkerControlEligibility();
+}
+
+export function selectWorkerSLAStatus() {
+  return getStoredWorkerSLAStatus();
+}
+
+export function selectWorkerDiagnosticsArtifacts() {
+  return getStoredWorkerDiagnosticsArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

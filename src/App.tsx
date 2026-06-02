@@ -4,6 +4,7 @@ import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
 import { ScreenPage } from './pages/ScreenPage';
+import { WorkerControlPage } from './pages/WorkerControlPage';
 
 function getCurrentPath() {
   const path = window.location.pathname;
@@ -30,6 +31,13 @@ export function App() {
     return (
       <AppShell currentPath="/evaluation">
         <EvaluationPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/worker-control') {
+    return (
+      <AppShell currentPath="/worker-control">
+        <WorkerControlPage />
       </AppShell>
     );
   }

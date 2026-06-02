@@ -61,6 +61,8 @@ import {
   selectWorkerBlockedReason,
   selectWorkerExecutionSummary,
   selectWorkerHeartbeat,
+  selectWorkerObservationDashboard,
+  selectWorkerSLAStatus,
   selectWorkerTickHistory,
   selectWaitingApprovalQueueItems,
   selectVerifiedRecommendationExecutions,
@@ -327,6 +329,16 @@ export function ImprovementLoopWorkerCompactWidget({ surface }: { surface: 'run'
   );
 }
 
+export function WorkerObservabilityCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const dashboard = selectWorkerObservationDashboard();
+  const sla = selectWorkerSLAStatus();
+  return (
+    <span data-worker-observability-widget={surface} data-worker-observability-status={dashboard.observation.status} data-worker-observability-sla={sla} data-worker-observability-incidents={dashboard.incidents.length} className="sr-only">
+      Worker observability {surface}: {dashboard.observation.status}, SLA {sla}, incidents {dashboard.incidents.length}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -418,6 +430,7 @@ export function EvaluationPage() {
       <ImprovementLoopGovernanceCompactWidget surface="evaluation" />
       <ImprovementLoopQueueCompactWidget surface="evaluation" />
       <ImprovementLoopWorkerCompactWidget surface="evaluation" />
+      <WorkerObservabilityCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },

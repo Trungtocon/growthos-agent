@@ -119,7 +119,8 @@
     "smoke:improvement-loop": "node scripts/smoke-improvement-loop.mjs",
     "smoke:improvement-loop-governance": "node scripts/smoke-improvement-loop-governance.mjs",
     "smoke:improvement-loop-queue": "node scripts/smoke-improvement-loop-queue.mjs",
-    "smoke:improvement-loop-worker": "node scripts/smoke-improvement-loop-worker.mjs"
+    "smoke:improvement-loop-worker": "node scripts/smoke-improvement-loop-worker.mjs",
+    "smoke:worker-observability": "node scripts/smoke-worker-observability.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
