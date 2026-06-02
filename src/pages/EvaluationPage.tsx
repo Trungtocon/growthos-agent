@@ -55,6 +55,13 @@ import {
   selectQueueConcurrencyStatus,
   selectQueueHealthSummary,
   selectRunningLoopQueueItems,
+  selectActiveWorker,
+  selectImprovementLoopWorkerStatus,
+  selectStaleWorkerWarnings,
+  selectWorkerBlockedReason,
+  selectWorkerExecutionSummary,
+  selectWorkerHeartbeat,
+  selectWorkerTickHistory,
   selectWaitingApprovalQueueItems,
   selectVerifiedRecommendationExecutions,
   selectTopRecommendations,
@@ -118,6 +125,18 @@ import {
   retryFailedLoop,
   startQueuedLoop,
 } from '../runtime/improvement-loop-queue-store';
+import {
+  completeWorkerRun,
+  exportImprovementLoopWorkerArtifacts,
+  failWorkerRun,
+  pauseImprovementLoopWorker,
+  recordWorkerHeartbeat,
+  recoverStaleWorker,
+  resumeImprovementLoopWorker,
+  runWorkerTick,
+  startImprovementLoopWorker,
+  stopImprovementLoopWorker,
+} from '../runtime/improvement-loop-worker-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
@@ -298,6 +317,16 @@ export function ImprovementLoopQueueCompactWidget({ surface }: { surface: 'run' 
   );
 }
 
+export function ImprovementLoopWorkerCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const status = selectImprovementLoopWorkerStatus();
+  const summary = selectWorkerExecutionSummary();
+  return (
+    <span data-improvement-loop-worker-widget={surface} data-loop-worker-status={status} data-loop-worker-results={summary.totalResults} className="sr-only">
+      Improvement loop worker {surface}: {status}, {summary.totalResults} results.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -358,6 +387,13 @@ export function EvaluationPage() {
   const blockedQueueItems = selectBlockedLoopQueueItems();
   const waitingApprovalQueueItems = selectWaitingApprovalQueueItems();
   const queueAuditTrail = selectQueueAuditTrail();
+  const workerStatus = selectImprovementLoopWorkerStatus();
+  const activeWorker = selectActiveWorker();
+  const workerHeartbeat = selectWorkerHeartbeat(activeWorker?.id);
+  const workerTicks = selectWorkerTickHistory(activeWorker?.id);
+  const workerSummary = selectWorkerExecutionSummary();
+  const staleWorkerWarnings = selectStaleWorkerWarnings();
+  const workerBlockedReason = selectWorkerBlockedReason();
   const activeImprovementLoop = improvementLoops[0];
   const activeLoopReadiness = activeImprovementLoop ? selectLoopReadiness(activeImprovementLoop.id) : undefined;
   const activeLoopBlockers = activeImprovementLoop ? selectLoopBlockers(activeImprovementLoop.id) : [];
@@ -381,6 +417,7 @@ export function EvaluationPage() {
       <ImprovementLoopCompactWidget surface="evaluation" />
       <ImprovementLoopGovernanceCompactWidget surface="evaluation" />
       <ImprovementLoopQueueCompactWidget surface="evaluation" />
+      <ImprovementLoopWorkerCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -941,6 +978,66 @@ export function EvaluationPage() {
               </div>
             ))}
             {!queueAuditTrail.length ? <p className="text-sm text-slate-500">Queue audit events are recorded for enqueue, start, retry, cancel, and scheduler ticks.</p> : null}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-improvement-loop-worker-panel>
+        <Panel title="Loop Worker Status">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Status</span><Badge tone={workerStatus === 'failed' ? 'red' : workerStatus === 'executing' ? 'blue' : workerStatus === 'paused' ? 'amber' : 'green'}>{workerStatus}</Badge></div>
+            <div className="flex items-center justify-between"><span>Active item</span><b className="max-w-[170px] truncate">{activeWorker?.activeQueueItemId ?? 'none'}</b></div>
+            <div className="flex items-center justify-between"><span>Heartbeat</span><b>{workerHeartbeat?.recordedAt ? new Date(workerHeartbeat.recordedAt).toLocaleTimeString() : 'none'}</b></div>
+            {workerBlockedReason ? <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-700">Blocked: {workerBlockedReason}</div> : null}
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="secondary" onClick={() => { startImprovementLoopWorker(); window.location.reload(); }}><Play className="h-4 w-4" />Start</Button>
+              <Button variant="secondary" onClick={() => { runWorkerTick(); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Tick</Button>
+              <Button variant="secondary" onClick={() => { pauseImprovementLoopWorker(); window.location.reload(); }}>Pause</Button>
+              <Button variant="secondary" onClick={() => { resumeImprovementLoopWorker(); window.location.reload(); }}>Resume</Button>
+              <Button variant="secondary" onClick={() => { stopImprovementLoopWorker(); window.location.reload(); }}>Stop</Button>
+              <Button variant="secondary" onClick={() => { recordWorkerHeartbeat(); window.location.reload(); }}>Heartbeat</Button>
+            </div>
+          </div>
+        </Panel>
+        <Panel title="Active Worker Run">
+          <div className="space-y-3 p-4 text-sm">
+            <div data-worker-active-item className="rounded-xl border border-slate-100 bg-white p-3">
+              <div className="text-xs font-bold uppercase text-slate-400">Active queue item</div>
+              <p className="mt-2 font-semibold text-slate-700">{activeWorker?.activeQueueItemId ?? 'No active execution'}</p>
+              <p className="mt-1 text-slate-500">Worker executes only through queue, governance, and loop stores.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeWorkerRun(); window.location.reload(); }}>Complete active</button>
+              <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { failWorkerRun(undefined, 'manual_worker_failure'); window.location.reload(); }}>Fail active</button>
+              <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { recoverStaleWorker(); window.location.reload(); }}>Recover stale</button>
+              <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { exportImprovementLoopWorkerArtifacts(); window.location.reload(); }}>Export worker</button>
+            </div>
+          </div>
+        </Panel>
+        <Panel title="Worker Execution Summary">
+          <div className="grid grid-cols-2 gap-3 p-4 text-sm">
+            {[['Ticks', workerSummary.totalTicks, 'blue'], ['Results', workerSummary.totalResults, 'green'], ['Retrying', workerSummary.retrying, 'amber'], ['Failed', workerSummary.failed, 'red']].map(([label, value, tone]) => (
+              <div key={label} className="rounded-xl border border-slate-100 p-3"><div className="text-xs font-bold uppercase text-slate-400">{label}</div><div className="mt-2 flex items-end justify-between"><b className="text-2xl">{value}</b><Badge tone={tone as Tone}>{label}</Badge></div></div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Latest Worker Tick Log">
+          <div className="col-span-2 grid grid-cols-3 gap-3 p-4">
+            {workerTicks.slice(-6).map((tick) => (
+              <div key={tick.id} data-worker-tick={tick.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>#{tick.sequence}</b><Badge tone={tick.status === 'failed' ? 'red' : tick.status === 'executing' ? 'blue' : tick.status === 'paused' ? 'amber' : 'green'}>{tick.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{tick.message}</p>
+              </div>
+            ))}
+            {!workerTicks.length ? <p className="text-sm text-slate-500">Worker ticks appear after the runner starts polling.</p> : null}
+          </div>
+        </Panel>
+        <Panel title="Stale Worker Warnings">
+          <div className="p-4 text-sm">
+            {staleWorkerWarnings.length ? staleWorkerWarnings.map((warning) => (
+              <div key={warning.workerId} data-worker-stale-warning className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-800">
+                {warning.workerId} stale for {warning.staleForMs}ms
+              </div>
+            )) : <p className="text-slate-500">No stale worker warnings.</p>}
           </div>
         </Panel>
       </div>

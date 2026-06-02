@@ -215,6 +215,15 @@ import {
   getWaitingApprovalQueueItems as getStoredWaitingApprovalQueueItems,
 } from '../runtime/improvement-loop-queue-store';
 import {
+  getActiveImprovementLoopWorker as getStoredActiveImprovementLoopWorker,
+  getImprovementLoopWorkerStatus as getStoredImprovementLoopWorkerStatus,
+  getStaleWorkerWarnings as getStoredStaleWorkerWarnings,
+  getWorkerBlockedReason as getStoredWorkerBlockedReason,
+  getWorkerExecutionSummary as getStoredWorkerExecutionSummary,
+  getWorkerHeartbeat as getStoredWorkerHeartbeat,
+  getWorkerTickHistory as getStoredWorkerTickHistory,
+} from '../runtime/improvement-loop-worker-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2175,6 +2184,34 @@ export function selectQueueConcurrencyStatus() {
 
 export function selectQueueAuditTrail(itemId?: string) {
   return getStoredQueueAuditTrail(itemId);
+}
+
+export function selectImprovementLoopWorkerStatus() {
+  return getStoredImprovementLoopWorkerStatus();
+}
+
+export function selectActiveWorker() {
+  return getStoredActiveImprovementLoopWorker();
+}
+
+export function selectWorkerHeartbeat(workerId?: string) {
+  return getStoredWorkerHeartbeat(workerId);
+}
+
+export function selectWorkerTickHistory(workerId?: string) {
+  return getStoredWorkerTickHistory(workerId);
+}
+
+export function selectWorkerExecutionSummary() {
+  return getStoredWorkerExecutionSummary();
+}
+
+export function selectStaleWorkerWarnings() {
+  return getStoredStaleWorkerWarnings();
+}
+
+export function selectWorkerBlockedReason() {
+  return getStoredWorkerBlockedReason();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

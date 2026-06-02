@@ -45,7 +45,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { ArtifactLifecycle, ArtifactRecordType } from '../runtime/artifact-registry';
 import { Badge, Button, KpiTile, MoreButton, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
-import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
+import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
 import {
   selectAgentMemoryViewModel,
   selectAgentPerformanceViewModel,
@@ -2743,6 +2743,7 @@ function ArtifactsLibraryScreen() {
       <ImprovementLoopCompactWidget surface="artifacts" />
       <ImprovementLoopGovernanceCompactWidget surface="artifacts" />
       <ImprovementLoopQueueCompactWidget surface="artifacts" />
+      <ImprovementLoopWorkerCompactWidget surface="artifacts" />
       <SimpleHeader parityId="artifacts.header" title="Artifacts Library" subtitle="Single source of truth cho runtime output, report, export, approval artifact va governance evidence." actions={<><Button variant="secondary"><UploadCloud className="h-4 w-4" />Upload</Button><Button><Folder className="h-4 w-4" />New folder</Button></>} />
       <MetricBand parityId="artifacts.kpi-band" items={vm.kpis} />
       <div data-parity-id="artifacts.main-grid" className="mt-4 grid h-[630px] grid-cols-[1fr_390px] gap-5 overflow-hidden">

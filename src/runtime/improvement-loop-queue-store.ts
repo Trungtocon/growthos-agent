@@ -240,6 +240,12 @@ export function cancelQueuedLoop(itemId: string): ImprovementLoopQueueItem {
   return persistItem({ ...item, status: 'cancelled' }, 'Queue item cancelled.');
 }
 
+export function failQueuedLoop(itemId: string, reason = 'execution_failed'): ImprovementLoopQueueItem {
+  const item = readState().items[itemId];
+  if (!item) throw new Error(`Cannot fail missing queue item: ${itemId}`);
+  return persistItem({ ...item, status: 'failed', blocker: reason }, 'Queue item failed.');
+}
+
 export function retryFailedLoop(itemId: string): ImprovementLoopQueueItem {
   const item = readState().items[itemId];
   if (!item) throw new Error(`Cannot retry missing queue item: ${itemId}`);
