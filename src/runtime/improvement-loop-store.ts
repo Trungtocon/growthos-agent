@@ -28,6 +28,7 @@ import {
   type ImprovementLoopTriggerType,
   type WorkspaceImprovementLoopSummary,
 } from './improvement-loop';
+import { evaluateAndRecordLoopGovernance } from './improvement-loop-governance-store';
 
 const IMPROVEMENT_LOOP_STORAGE_KEY = 'uikigai-improvement-loop-v1';
 const MIN_CONFIDENCE = 50;
@@ -167,6 +168,26 @@ function updateLoopStatus(loopId: string, status: ImprovementLoopStatus, patch: 
   return persistLoop({ ...loop, ...patch, status, updatedAt: nowIso() });
 }
 
+function loopRunsFromState(state: ImprovementLoopStoreState, loopId: string): ImprovementLoopRun[] {
+  return Object.values(state.runs).filter((run) => run.loopId === loopId);
+}
+
+function enforceGovernanceOrThrow(
+  loop: ImprovementLoop,
+  runs: ImprovementLoopRun[],
+  action: 'start' | 'resume' | 'retry',
+): void {
+  const decision = evaluateAndRecordLoopGovernance(loop, runs, action);
+  if (decision.decision === 'ALLOW') return;
+  const nextStatus: ImprovementLoopStatus = decision.decision === 'PAUSE'
+    ? 'paused'
+    : decision.decision === 'KILL'
+      ? 'cancelled'
+      : 'waiting_review';
+  updateLoopStatus(loop.id, nextStatus, { lastReviewedAt: nowIso() });
+  throw new Error(`Improvement loop governance ${decision.decision}: ${decision.reasons.join(', ')}`);
+}
+
 export function createImprovementLoop(recommendationId: string, triggerType: ImprovementLoopTriggerType = 'manual'): ImprovementLoop {
   const id = improvementLoopId(recommendationId);
   const existing = readState().loops[id];
@@ -250,6 +271,7 @@ export function startImprovementLoop(loopId: string): ImprovementLoopRun {
   const state = readState();
   const loop = state.loops[loopId];
   if (!loop) throw new Error(`Cannot start missing improvement loop: ${loopId}`);
+  enforceGovernanceOrThrow(loop, loopRunsFromState(state, loopId), 'start');
   const readiness = evaluateLoopReadiness(loopId);
   if (readiness.status === 'blocked') {
     updateLoopStatus(loopId, 'waiting_review', { policies: readiness.policies, lastReviewedAt: nowIso() });
@@ -278,6 +300,10 @@ export function pauseImprovementLoop(loopId: string): ImprovementLoop {
 }
 
 export function resumeImprovementLoop(loopId: string): ImprovementLoop {
+  const state = readState();
+  const loop = state.loops[loopId];
+  if (!loop) throw new Error(`Cannot resume missing improvement loop: ${loopId}`);
+  enforceGovernanceOrThrow(loop, loopRunsFromState(state, loopId), 'resume');
   const readiness = evaluateLoopReadiness(loopId);
   return updateLoopStatus(loopId, readiness.status === 'approval_required' ? 'waiting_review' : 'running', { policies: readiness.policies });
 }
@@ -312,6 +338,9 @@ export function retryImprovementLoopRun(runId: string): ImprovementLoopRun {
   const run = state.runs[runId];
   if (!run) throw new Error(`Cannot retry missing improvement loop run: ${runId}`);
   if (run.status !== 'failed') throw new Error(`Only failed loop runs can retry: ${runId}`);
+  const loop = state.loops[run.loopId];
+  if (!loop) throw new Error(`Cannot retry run for missing loop: ${run.loopId}`);
+  enforceGovernanceOrThrow(loop, loopRunsFromState(state, run.loopId), 'retry');
   return startImprovementLoop(run.loopId);
 }
 

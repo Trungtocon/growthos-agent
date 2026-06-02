@@ -116,7 +116,8 @@
     "smoke:improvement-outcome": "node scripts/smoke-improvement-outcome.mjs",
     "smoke:learning-memory": "node scripts/smoke-learning-memory.mjs",
     "smoke:recommendation-execution": "node scripts/smoke-recommendation-execution.mjs",
-    "smoke:improvement-loop": "node scripts/smoke-improvement-loop.mjs"
+    "smoke:improvement-loop": "node scripts/smoke-improvement-loop.mjs",
+    "smoke:improvement-loop-governance": "node scripts/smoke-improvement-loop-governance.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

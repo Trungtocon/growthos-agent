@@ -195,6 +195,15 @@ import {
   getImprovementLoops as getStoredImprovementLoops,
 } from '../runtime/improvement-loop-store';
 import {
+  selectGlobalLoopKillSwitch as getStoredGlobalLoopKillSwitch,
+  selectLoopBlockers as getStoredLoopBlockers,
+  selectLoopGovernanceAuditTrail as getStoredLoopGovernanceAuditTrail,
+  selectLoopGovernanceDecision as getStoredLoopGovernanceDecision,
+  selectPausedByGovernanceLoops as getStoredPausedByGovernanceLoops,
+  selectRollbackRequiredLoops as getStoredRollbackRequiredLoops,
+  selectWorkspaceLoopGovernanceSummary as getStoredWorkspaceLoopGovernanceSummary,
+} from '../runtime/improvement-loop-governance-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2091,6 +2100,34 @@ export function selectLoopScheduleSummary() {
 
 export function selectWorkspaceImprovementLoopSummary() {
   return getStoredWorkspaceImprovementLoopSummary();
+}
+
+export function selectLoopGovernanceDecision(loopId: string) {
+  return getStoredLoopGovernanceDecision(loopId);
+}
+
+export function selectLoopBlockers(loopId: string) {
+  return getStoredLoopBlockers(loopId);
+}
+
+export function selectGlobalLoopKillSwitch() {
+  return getStoredGlobalLoopKillSwitch();
+}
+
+export function selectPausedByGovernanceLoops() {
+  return getStoredPausedByGovernanceLoops();
+}
+
+export function selectRollbackRequiredLoops() {
+  return getStoredRollbackRequiredLoops();
+}
+
+export function selectLoopGovernanceAuditTrail(loopId?: string) {
+  return getStoredLoopGovernanceAuditTrail(loopId);
+}
+
+export function selectWorkspaceLoopGovernanceSummary() {
+  return getStoredWorkspaceLoopGovernanceSummary();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

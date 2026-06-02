@@ -38,10 +38,16 @@ import {
   selectLoopReadiness,
   selectLoopRuns,
   selectLoopScheduleSummary,
+  selectGlobalLoopKillSwitch,
+  selectLoopBlockers,
+  selectLoopGovernanceAuditTrail,
+  selectPausedByGovernanceLoops,
   selectRecommendations,
   selectRecommendationsByRun,
   selectRejectedRecommendations,
+  selectRollbackRequiredLoops,
   selectWorkspaceImprovementLoopSummary,
+  selectWorkspaceLoopGovernanceSummary,
   selectVerifiedRecommendationExecutions,
   selectTopRecommendations,
   selectRegressedOutcomes,
@@ -86,6 +92,14 @@ import {
   scheduleImprovementLoop,
   startImprovementLoop,
 } from '../runtime/improvement-loop-store';
+import {
+  disableGlobalLoopKillSwitch,
+  enableGlobalLoopKillSwitch,
+  exportLoopGovernanceArtifacts,
+  pauseAllLoops,
+  resumeAllowedLoops,
+  rollbackLoop,
+} from '../runtime/improvement-loop-governance-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
@@ -248,6 +262,15 @@ export function ImprovementLoopCompactWidget({ surface }: { surface: 'run' | 'ex
   );
 }
 
+export function ImprovementLoopGovernanceCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const summary = selectWorkspaceLoopGovernanceSummary();
+  return (
+    <span data-improvement-loop-governance-widget={surface} data-loop-governance-blocked={summary.blocked} data-loop-kill-switch={summary.killSwitchEnabled ? 'enabled' : 'disabled'} className="sr-only">
+      Improvement loop governance {surface}: {summary.totalDecisions} decisions, {summary.blocked} blocked, kill switch {summary.killSwitchEnabled ? 'enabled' : 'disabled'}.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -295,8 +318,14 @@ export function EvaluationPage() {
   const loopSummary = selectWorkspaceImprovementLoopSummary();
   const loopOutcomeSummary = selectLoopOutcomeSummary();
   const loopScheduleSummary = selectLoopScheduleSummary();
+  const loopGovernanceSummary = selectWorkspaceLoopGovernanceSummary();
+  const globalLoopKillSwitch = selectGlobalLoopKillSwitch();
+  const pausedByGovernanceLoops = selectPausedByGovernanceLoops();
+  const rollbackRequiredLoops = selectRollbackRequiredLoops();
+  const loopGovernanceAuditTrail = selectLoopGovernanceAuditTrail();
   const activeImprovementLoop = improvementLoops[0];
   const activeLoopReadiness = activeImprovementLoop ? selectLoopReadiness(activeImprovementLoop.id) : undefined;
+  const activeLoopBlockers = activeImprovementLoop ? selectLoopBlockers(activeImprovementLoop.id) : [];
   const activeLoopRuns = activeImprovementLoop ? selectLoopRuns(activeImprovementLoop.id) : [];
   const artifactScore = evaluation.scores.find((score) => score.dimension === 'artifact_quality');
   const toolScore = evaluation.scores.find((score) => score.dimension === 'tool_success');
@@ -315,6 +344,7 @@ export function EvaluationPage() {
       <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <RecommendationExecutionCompactWidget surface="evaluation" />
       <ImprovementLoopCompactWidget surface="evaluation" />
+      <ImprovementLoopGovernanceCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -765,6 +795,54 @@ export function EvaluationPage() {
             <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Outcomes</div><div className="mt-2 text-2xl font-extrabold">{loopOutcomeSummary.improved}/{loopOutcomeSummary.regressed}</div><p className="mt-2 text-xs text-slate-500">Improved vs regressed loops.</p></div>
             <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Active runs</div><div className="mt-2 text-2xl font-extrabold">{activeImprovementLoops.length}</div><p className="mt-2 text-xs text-slate-500">Running, scheduled, or waiting review.</p></div>
             <div className="rounded-xl border border-slate-100 bg-white p-4"><div className="text-xs font-bold uppercase tracking-wide text-slate-400">Last run</div><div className="mt-2 text-2xl font-extrabold">{activeLoopRuns[0]?.status ?? 'none'}</div><p className="mt-2 text-xs text-slate-500">Linked recommendation execution {activeImprovementLoop?.recommendationExecutionId?.slice(-8) ?? 'pending'}.</p></div>
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-improvement-loop-governance-panel>
+        <Panel title="Loop Governance Status">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Kill switch</span><Badge tone={globalLoopKillSwitch.enabled ? 'red' : 'green'}>{globalLoopKillSwitch.enabled ? 'enabled' : 'disabled'}</Badge></div>
+            <div className="flex items-center justify-between"><span>Decisions</span><b>{loopGovernanceSummary.totalDecisions}</b></div>
+            <div className="flex items-center justify-between"><span>Blocked / killed</span><b>{loopGovernanceSummary.blocked}/{loopGovernanceSummary.killed}</b></div>
+            <div className="flex items-center justify-between"><span>Rollback required</span><Badge tone={loopGovernanceSummary.rollbackRequired ? 'red' : 'green'}>{loopGovernanceSummary.rollbackRequired}</Badge></div>
+            <Button variant="secondary" onClick={() => { enableGlobalLoopKillSwitch('Enabled from evaluation governance panel.'); window.location.reload(); }}><AlertTriangle className="h-4 w-4" />Enable kill switch</Button>
+            <Button variant="secondary" onClick={() => { disableGlobalLoopKillSwitch(); window.location.reload(); }}><ShieldCheck className="h-4 w-4" />Disable kill switch</Button>
+          </div>
+        </Panel>
+        <Panel title="Blockers & Rollback">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {(activeLoopBlockers.length ? activeLoopBlockers : ['No blockers detected']).map((blocker) => (
+              <div key={blocker} data-loop-governance-blocker={blocker} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{String(blocker).replace(/_/g, ' ')}</b><Badge tone={blocker === 'No blockers detected' ? 'green' : 'red'}>{blocker === 'No blockers detected' ? 'clear' : 'blocked'}</Badge></div>
+                <p className="mt-2 text-slate-500">Current loop governance blocker state for autonomous execution.</p>
+              </div>
+            ))}
+            {rollbackRequiredLoops.map((loop) => (
+              <div key={loop.id} data-loop-rollback-required className="rounded-xl border border-red-100 bg-red-50/50 p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{loop.id.slice(0, 48)}</b><Badge tone="red">rollback</Badge></div>
+                <p className="mt-2 text-slate-600">Rollback required before another autonomous attempt.</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Governance Controls">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="rounded-xl bg-slate-50 p-3"><div className="text-xs font-bold uppercase text-slate-400">Paused by governance</div><div className="text-2xl font-extrabold">{pausedByGovernanceLoops.length}</div></div>
+            <Button variant="secondary" onClick={() => { pauseAllLoops('Paused from evaluation governance panel.'); window.location.reload(); }}><AlertTriangle className="h-4 w-4" />Pause all loops</Button>
+            <Button variant="secondary" onClick={() => { resumeAllowedLoops(); window.location.reload(); }}><Play className="h-4 w-4" />Resume allowed</Button>
+            <Button variant="secondary" onClick={() => { if (activeImprovementLoop) rollbackLoop(activeImprovementLoop.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Create rollback</Button>
+            <Button variant="secondary" onClick={() => { exportLoopGovernanceArtifacts(); window.location.reload(); }}><FileText className="h-4 w-4" />Export governance</Button>
+          </div>
+        </Panel>
+        <Panel title="Governance Audit Timeline">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            {loopGovernanceAuditTrail.length ? loopGovernanceAuditTrail.slice(-8).map((event) => (
+              <div key={event.id} data-loop-governance-audit={event.decision} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{event.action}</b><Badge tone={event.decision === 'ALLOW' ? 'green' : event.decision === 'PAUSE' ? 'amber' : 'red'}>{event.decision}</Badge></div>
+                <p className="mt-2 text-slate-500">{event.message}</p>
+                <div className="mt-3 text-xs font-bold uppercase text-slate-400">{event.createdAt.slice(11, 19)}</div>
+              </div>
+            )) : <p className="text-sm text-slate-500">Governance decisions appear when loops start, pause, retry, or hit kill switch controls.</p>}
           </div>
         </Panel>
       </div>
