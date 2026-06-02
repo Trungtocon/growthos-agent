@@ -131,7 +131,8 @@
     "smoke:backend-adapter": "node scripts/smoke-backend-adapter.mjs",
     "smoke:api-contracts": "node scripts/smoke-api-contracts.mjs",
     "smoke:e2e-action-flow": "node scripts/smoke-e2e-action-flow.mjs",
-    "smoke:pre-golive-validation": "node scripts/smoke-pre-golive-validation.mjs"
+    "smoke:pre-golive-validation": "node scripts/smoke-pre-golive-validation.mjs",
+    "smoke:backend-readiness": "node scripts/smoke-backend-readiness.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

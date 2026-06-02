@@ -9,6 +9,7 @@ import { selectE2EActionFlowSummary } from './e2e-action-flow-store';
 import { getGovernanceReadinessReport } from './governance-readiness-store';
 import { getProductionReadinessDashboard } from './production-readiness-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
+import { getBackendReadinessReport } from './backend-health';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -171,6 +172,23 @@ function gateDefinitions(): GateDefinition[] {
           blockers: state.blockers.map((entry) => entry.reason),
           warnings: state.warnings.map((entry) => entry.reason).concat(mock ? ['Backend adapter remains in mock mode.'] : []),
           evidence: [`mode=${state.mode}`, `health=${state.health.status}`, `blockers=${state.blockers.length}`],
+        };
+      },
+    },
+    {
+      gateId: 'backend-readiness',
+      name: 'Backend Readiness',
+      category: 'backend',
+      relatedRoutes: ['/backend-readiness'],
+      relatedSmokeCommand: 'npm run smoke:backend-readiness',
+      evaluate: () => {
+        const report = getBackendReadinessReport('PRODUCTION');
+        return {
+          status: report.blockers.length ? 'blocked' : report.warnings.length ? 'warning' : 'pass',
+          score: report.readinessScore,
+          blockers: report.blockers.map((entry) => `production backend: ${entry}`),
+          warnings: report.warnings,
+          evidence: [`environment=${report.environment.id}`, `health=${report.status}`, `auth=${report.auth.status}`, `endpoints=${report.endpointReachability.length}`],
         };
       },
     },
