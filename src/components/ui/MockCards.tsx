@@ -15,7 +15,7 @@ export function SectionCard({ title, children }: { title: string; children: Reac
     <section className="rounded-card border border-slate-200 bg-white p-5 shadow-soft">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-base font-bold text-slate-950">{title}</h2>
-        <button className="flex items-center gap-1 text-sm font-semibold text-brand-600">Xem thêm <ArrowUpRight className="h-3.5 w-3.5" /></button>
+        <button title="Coming soon / read-only" data-action-state="read-only" className="flex items-center gap-1 text-sm font-semibold text-brand-600">Xem thêm <ArrowUpRight className="h-3.5 w-3.5" /></button>
       </div>
       {children}
     </section>

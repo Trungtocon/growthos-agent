@@ -48,7 +48,7 @@ export function WorkerRecoveryPage() {
       <PageHeader
         title="Worker Incident Recovery & Auto-Healing"
         subtitle="Plan, approve, execute, and audit recovery for worker incidents without bypassing governance or queue controls."
-        actions={<><Button variant="secondary" onClick={() => { exportRecoveryReport(); reload(); }}><FileText className="h-4 w-4" />Export recovery</Button><Button onClick={() => { if (incidents[0]) createRecoveryPlanForIncident(incidents[0].id); reload(); }}><Wrench className="h-4 w-4" />Plan incident</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { exportRecoveryReport(); reload(); }}><FileText className="h-4 w-4" />Export recovery</Button><Button data-workflow="recovery-plan-incident" disabled={!incidents[0]} data-disabled-reason={!incidents[0] ? 'No unresolved worker incident is available to plan.' : undefined} title={!incidents[0] ? 'No unresolved worker incident is available to plan.' : undefined} onClick={() => { if (incidents[0]) createRecoveryPlanForIncident(incidents[0].id); reload(); }}><Wrench className="h-4 w-4" />Plan incident</Button></>}
       />
       <div className="grid grid-cols-5 gap-4" data-worker-recovery-overview>
         {[

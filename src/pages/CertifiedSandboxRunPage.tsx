@@ -77,7 +77,7 @@ export function CertifiedSandboxRunPage() {
       <PageHeader
         title="Certified Sandbox End-to-End Run"
         subtitle="Run a full Hermes/Paperclip workflow only after runtime certification, sandbox safety, and governance preflight are satisfied."
-        actions={<><Button variant="secondary" onClick={() => { if (activeRun) exportCertifiedSandboxRunArtifacts(activeRun.id); reload(); }}><FileText className="h-4 w-4" />Export final</Button><Button onClick={() => { createCertifiedSandboxRun({ ticketId: DEMO_TICKET_ID }); reload(); }}><TestTube2 className="h-4 w-4" />Create run</Button></>}
+        actions={<><Button data-workflow="certified-sandbox-export" variant="secondary" disabled={!activeRun} data-disabled-reason={!activeRun ? 'Create a certified sandbox run before exporting artifacts.' : undefined} title={!activeRun ? 'Create a certified sandbox run before exporting artifacts.' : undefined} onClick={() => { if (activeRun) exportCertifiedSandboxRunArtifacts(activeRun.id); reload(); }}><FileText className="h-4 w-4" />Export final</Button><Button data-workflow="certified-sandbox-create" onClick={() => { createCertifiedSandboxRun({ ticketId: DEMO_TICKET_ID }); reload(); }}><TestTube2 className="h-4 w-4" />Create run</Button></>}
       />
 
       <div className="grid grid-cols-5 gap-4" data-certified-sandbox-summary>

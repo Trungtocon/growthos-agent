@@ -124,7 +124,8 @@
     "smoke:worker-recovery": "node scripts/smoke-worker-recovery.mjs",
     "smoke:chaos-simulation": "node scripts/smoke-chaos-simulation.mjs",
     "smoke:runtime-certification": "node scripts/smoke-runtime-certification.mjs",
-    "smoke:certified-sandbox-run": "node scripts/smoke-certified-sandbox-run.mjs"
+    "smoke:certified-sandbox-run": "node scripts/smoke-certified-sandbox-run.mjs",
+    "smoke:ui-action-wiring": "node scripts/smoke-ui-action-wiring.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

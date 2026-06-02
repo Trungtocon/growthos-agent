@@ -52,6 +52,9 @@ export function Button({
   variant = 'primary',
   className = '',
   type = 'button',
+  disabled,
+  onClick,
+  title,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
@@ -64,7 +67,10 @@ export function Button({
     warning: 'bg-white text-amber-600 border-amber-200 hover:bg-amber-50',
     success: 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50',
   }[variant];
-  return <button type={type} className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-200 disabled:cursor-wait disabled:opacity-60 ${classes} ${className}`} {...props}>{children}</button>;
+  const actionMetadata = props as { 'data-action-state'?: string; 'data-disabled-reason'?: string };
+  const readOnly = !disabled && !onClick;
+  const disabledReason = disabled ? actionMetadata['data-disabled-reason'] ?? 'Unavailable for the current state.' : undefined;
+  return <button type={type} disabled={disabled} onClick={onClick} title={title ?? disabledReason ?? (readOnly ? 'Coming soon / read-only' : undefined)} data-action-state={actionMetadata['data-action-state'] ?? (readOnly ? 'read-only' : undefined)} data-disabled-reason={disabledReason} className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-200 disabled:cursor-wait disabled:opacity-60 ${classes} ${className}`} {...props}>{children}</button>;
 }
 
 export function IconTile({ icon: Icon, tone = 'blue', size = 'md' }: { icon: LucideIcon; tone?: Tone; size?: 'sm' | 'md' | 'lg' }) {
@@ -283,13 +289,13 @@ export function CostDistributionChart({ total, rows }: { total: string; rows: Ar
 }
 
 export function MoreButton() {
-  return <button type="button" aria-label="More actions" className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100"><MoreVertical className="h-4 w-4" aria-hidden="true" /></button>;
+  return <button type="button" aria-label="More actions" title="Coming soon / read-only" data-action-state="read-only" className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100"><MoreVertical className="h-4 w-4" aria-hidden="true" /></button>;
 }
 
 export function LinkFooter({ children }: { children: ReactNode }) {
   return (
     <div className="border-t border-slate-100 px-4 py-3 text-center">
-      <button className="inline-flex items-center gap-2 text-sm font-semibold text-brand-600">{children}<ArrowRight className="h-4 w-4" /></button>
+      <button title="Coming soon / read-only" data-action-state="read-only" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-600">{children}<ArrowRight className="h-4 w-4" /></button>
     </div>
   );
 }

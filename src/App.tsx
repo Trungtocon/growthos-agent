@@ -1,4 +1,5 @@
 import { AppShell } from './components/layout/AppShell';
+import { ReadOnlyActionGuard } from './components/ui/ReadOnlyActionGuard';
 import { screens } from './data/screens';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
@@ -15,62 +16,70 @@ function getCurrentPath() {
   return path === '/' ? '/command-center' : path;
 }
 
+function GuardedAppShell({ currentPath, children }: { currentPath: string; children: React.ReactNode }) {
+  return (
+    <ReadOnlyActionGuard>
+      <AppShell currentPath={currentPath}>{children}</AppShell>
+    </ReadOnlyActionGuard>
+  );
+}
+
 export function App() {
   const currentPath = getCurrentPath();
   if (currentPath === '/execution-graph') {
     return (
-      <AppShell currentPath="/execution-graph">
+      <GuardedAppShell currentPath="/execution-graph">
         <ExecutionGraphPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/execution-timeline') {
     return (
-      <AppShell currentPath="/execution-timeline">
+      <GuardedAppShell currentPath="/execution-timeline">
         <ExecutionTimelinePage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/evaluation') {
     return (
-      <AppShell currentPath="/evaluation">
+      <GuardedAppShell currentPath="/evaluation">
         <EvaluationPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/worker-control') {
     return (
-      <AppShell currentPath="/worker-control">
+      <GuardedAppShell currentPath="/worker-control">
         <WorkerControlPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/worker-recovery') {
     return (
-      <AppShell currentPath="/worker-recovery">
+      <GuardedAppShell currentPath="/worker-recovery">
         <WorkerRecoveryPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/chaos') {
     return (
-      <AppShell currentPath="/chaos">
+      <GuardedAppShell currentPath="/chaos">
         <ChaosSimulationPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/runtime-certification') {
     return (
-      <AppShell currentPath="/runtime-certification">
+      <GuardedAppShell currentPath="/runtime-certification">
         <RuntimeCertificationPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
   if (currentPath === '/certified-sandbox-run') {
     return (
-      <AppShell currentPath="/certified-sandbox-run">
+      <GuardedAppShell currentPath="/certified-sandbox-run">
         <CertifiedSandboxRunPage />
-      </AppShell>
+      </GuardedAppShell>
     );
   }
 
@@ -82,8 +91,8 @@ export function App() {
   }
 
   return (
-    <AppShell currentPath={screen.route}>
+    <GuardedAppShell currentPath={screen.route}>
       <ScreenPage screen={screen} />
-    </AppShell>
+    </GuardedAppShell>
   );
 }

@@ -73,7 +73,7 @@ export function ChaosSimulationPage() {
       <PageHeader
         title="Recovery Simulation & Chaos Testing"
         subtitle="Inject controlled mock failures to validate worker recovery, auto-healing, governance, queue safety, and audit evidence."
-        actions={<><Button variant="secondary" onClick={() => { exportChaosReport(); reload(); }}><FileText className="h-4 w-4" />Export report</Button><Button onClick={() => { const scenario = createChaosScenario(scenarioLibrary[0]); startChaosRun(scenario.id); reload(); }}><FlaskConical className="h-4 w-4" />Start stale worker</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { exportChaosReport(); reload(); }}><FileText className="h-4 w-4" />Export report</Button><Button data-workflow="chaos-start-run" onClick={() => { const scenario = createChaosScenario(scenarioLibrary[0]); startChaosRun(scenario.id); reload(); }}><FlaskConical className="h-4 w-4" />Start stale worker</Button></>}
       />
       <div className="grid grid-cols-5 gap-4" data-chaos-readiness>
         {[

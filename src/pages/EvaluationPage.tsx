@@ -437,7 +437,7 @@ export function EvaluationPage() {
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."
-        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); registerLearningMemoryExports(DEMO_RUN_ID); generateRecommendationExecutionArtifacts(); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); const outcome = createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button><Sparkles className="h-4 w-4" />Refresh score</Button></>}
+        actions={<><Button variant="secondary" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); registerEvaluationFeedbackExports(DEMO_RUN_ID); registerFeedbackActionPlanExports(DEMO_RUN_ID); registerActionPlanExecutionExports(DEMO_RUN_ID); registerImprovementOutcomeExports(DEMO_RUN_ID); registerLearningMemoryExports(DEMO_RUN_ID); generateRecommendationExecutionArtifacts(); }}><FileText className="h-4 w-4" />Export evaluation</Button><Button variant="secondary" onClick={() => { regenerateFeedbackForRun(DEMO_RUN_ID); regenerateActionPlanFromFeedback(feedback.id); startActionPlanExecution(actionPlan.id); const outcome = createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Regenerate feedback</Button><Button data-workflow="run-evaluation" onClick={() => { registerRunEvaluationExports(DEMO_RUN_ID); window.location.reload(); }}><Sparkles className="h-4 w-4" />Refresh score</Button></>}
       />
       <ImprovementOutcomeCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
       <LearningRecommendationCompactWidget runId={DEMO_RUN_ID} surface="evaluation" />
@@ -700,7 +700,7 @@ export function EvaluationPage() {
             <div className="flex items-center justify-between"><span>Recommendations</span><b>{learningSummary.recommendationCount}</b></div>
             <div className="flex items-center justify-between"><span>Accepted / rejected</span><b>{learningSummary.accepted}/{learningSummary.rejected}</b></div>
             <div className="flex items-center justify-between"><span>Confidence</span><Badge tone={learningSummary.averageConfidence >= 75 ? 'green' : learningSummary.averageConfidence >= 55 ? 'blue' : 'amber'}>{learningSummary.averageConfidence}%</Badge></div>
-            <Button variant="secondary" onClick={() => { const outcome = primaryOutcome ?? createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><Lightbulb className="h-4 w-4" />Generate recommendation</Button>
+            <Button data-workflow="generate-recommendation" variant="secondary" onClick={() => { const outcome = primaryOutcome ?? createOutcomeVerification(actionExecution.id); const signal = createLearningSignalFromOutcome(outcome.id); generateRecommendationFromSignal(signal.id); window.location.reload(); }}><Lightbulb className="h-4 w-4" />Generate recommendation</Button>
           </div>
         </Panel>
         <Panel title="Top Recommendations">
@@ -908,7 +908,7 @@ export function EvaluationPage() {
             <div className="flex items-center justify-between"><span>Decisions</span><b>{loopGovernanceSummary.totalDecisions}</b></div>
             <div className="flex items-center justify-between"><span>Blocked / killed</span><b>{loopGovernanceSummary.blocked}/{loopGovernanceSummary.killed}</b></div>
             <div className="flex items-center justify-between"><span>Rollback required</span><Badge tone={loopGovernanceSummary.rollbackRequired ? 'red' : 'green'}>{loopGovernanceSummary.rollbackRequired}</Badge></div>
-            <Button variant="secondary" onClick={() => { enableGlobalLoopKillSwitch('Enabled from evaluation governance panel.'); window.location.reload(); }}><AlertTriangle className="h-4 w-4" />Enable kill switch</Button>
+            <Button data-workflow="loop-kill-switch" variant="secondary" onClick={() => { enableGlobalLoopKillSwitch('Enabled from evaluation governance panel.'); window.location.reload(); }}><AlertTriangle className="h-4 w-4" />Enable kill switch</Button>
             <Button variant="secondary" onClick={() => { disableGlobalLoopKillSwitch(); window.location.reload(); }}><ShieldCheck className="h-4 w-4" />Disable kill switch</Button>
           </div>
         </Panel>
@@ -956,7 +956,7 @@ export function EvaluationPage() {
             <div className="flex items-center justify-between"><span>Queued / running</span><b>{queueSummary.queued}/{queueSummary.running}</b></div>
             <div className="flex items-center justify-between"><span>Blocked / approval</span><b>{queueSummary.blocked}/{queueSummary.waitingApproval}</b></div>
             <div className="flex items-center justify-between"><span>Concurrency</span><Badge tone={queueConcurrency.saturated ? 'red' : 'green'}>{queueConcurrency.activeCount}/{queueConcurrency.maxConcurrency}</Badge></div>
-            <Button variant="secondary" onClick={() => { const loop = activeImprovementLoop ?? (acceptedRecommendations[0] ? createImprovementLoop(acceptedRecommendations[0].id) : undefined); if (loop) enqueueImprovementLoop(loop.id); window.location.reload(); }}><ListChecks className="h-4 w-4" />Enqueue loop</Button>
+            <Button data-workflow="queue-enqueue" variant="secondary" onClick={() => { const loop = activeImprovementLoop ?? (acceptedRecommendations[0] ? createImprovementLoop(acceptedRecommendations[0].id) : undefined); if (loop) enqueueImprovementLoop(loop.id); window.location.reload(); }}><ListChecks className="h-4 w-4" />Enqueue loop</Button>
             <Button variant="secondary" onClick={() => { processQueueTick(); window.location.reload(); }}><Play className="h-4 w-4" />Process tick</Button>
             <Button variant="secondary" onClick={() => { exportImprovementLoopQueueArtifacts(); window.location.reload(); }}><FileText className="h-4 w-4" />Export queue</Button>
           </div>
@@ -968,7 +968,7 @@ export function EvaluationPage() {
                 <div className="flex items-start justify-between gap-3"><b>{nextEligibleQueueItem.priority}</b><Badge tone={nextEligibleQueueItem.priority === 'critical' ? 'red' : nextEligibleQueueItem.priority === 'urgent' ? 'amber' : 'blue'}>{nextEligibleQueueItem.status}</Badge></div>
                 <p className="mt-2 text-slate-500">{nextEligibleQueueItem.loopId.slice(0, 72)}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { startQueuedLoop(nextEligibleQueueItem.id); window.location.reload(); }}>Start</button>
+                  <button data-workflow="queue-start" className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { startQueuedLoop(nextEligibleQueueItem.id); window.location.reload(); }}>Start</button>
                   <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelQueuedLoop(nextEligibleQueueItem.id); window.location.reload(); }}>Cancel</button>
                 </div>
               </div>
@@ -990,7 +990,7 @@ export function EvaluationPage() {
                 <p className="mt-2 text-slate-500">{item.blocker ?? item.loopId.slice(0, 80)}</p>
                 <div className="mt-3 text-xs font-bold uppercase tracking-wide text-slate-400">Retry {item.retryPolicy.retryCount}/{item.retryPolicy.maxRetries}</div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { pauseQueuedLoop(item.id); window.location.reload(); }}>Pause</button>
+                  <button data-workflow="queue-pause" className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { pauseQueuedLoop(item.id); window.location.reload(); }}>Pause</button>
                   <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { retryFailedLoop(item.id); window.location.reload(); }}>Retry</button>
                   <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeQueuedLoop(item.id); window.location.reload(); }}>Complete</button>
                   <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelQueuedLoop(item.id); window.location.reload(); }}>Cancel</button>
@@ -1019,11 +1019,11 @@ export function EvaluationPage() {
             <div className="flex items-center justify-between"><span>Heartbeat</span><b>{workerHeartbeat?.recordedAt ? new Date(workerHeartbeat.recordedAt).toLocaleTimeString() : 'none'}</b></div>
             {workerBlockedReason ? <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-700">Blocked: {workerBlockedReason}</div> : null}
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="secondary" onClick={() => { startImprovementLoopWorker(); window.location.reload(); }}><Play className="h-4 w-4" />Start</Button>
+              <Button data-workflow="worker-start" variant="secondary" onClick={() => { startImprovementLoopWorker(); window.location.reload(); }}><Play className="h-4 w-4" />Start</Button>
               <Button variant="secondary" onClick={() => { runWorkerTick(); window.location.reload(); }}><RotateCcw className="h-4 w-4" />Tick</Button>
               <Button variant="secondary" onClick={() => { pauseImprovementLoopWorker(); window.location.reload(); }}>Pause</Button>
               <Button variant="secondary" onClick={() => { resumeImprovementLoopWorker(); window.location.reload(); }}>Resume</Button>
-              <Button variant="secondary" onClick={() => { stopImprovementLoopWorker(); window.location.reload(); }}>Stop</Button>
+              <Button data-workflow="worker-stop" variant="secondary" onClick={() => { stopImprovementLoopWorker(); window.location.reload(); }}>Stop</Button>
               <Button variant="secondary" onClick={() => { recordWorkerHeartbeat(); window.location.reload(); }}>Heartbeat</Button>
             </div>
           </div>
