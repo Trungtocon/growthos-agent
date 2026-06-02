@@ -48,6 +48,8 @@ export interface BackendRequestLog {
 
 export interface BackendGatewayOptions {
   mode?: BackendAdapterMode;
+  contractId?: string;
+  method?: string;
   path?: string;
   payload?: unknown;
   authToken?: string;

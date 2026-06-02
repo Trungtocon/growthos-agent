@@ -6,6 +6,8 @@ import type {
   BackendNormalizedError,
   BackendStatus,
 } from './backend-adapter';
+import { getApiContractById } from './api-contract-store';
+import type { ApiContractId } from './api-contract';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -35,7 +37,8 @@ function statusForMode(mode: BackendAdapterMode): BackendStatus {
 async function simulatedRequest(endpoint: BackendEndpointKind, options: BackendGatewayOptions): Promise<BackendGatewayResult> {
   const started = Date.now();
   const mode = options.mode ?? 'mock';
-  const path = options.path ?? `/${endpoint}/health`;
+  const contract = options.contractId ? getApiContractById(options.contractId as ApiContractId, mode) : undefined;
+  const path = options.path ?? contract?.path ?? `/${endpoint}/health`;
   const timeoutMs = options.timeoutMs ?? 15000;
   const retries = options.retries ?? 1;
   await new Promise((resolve) => setTimeout(resolve, 5));
@@ -90,6 +93,8 @@ async function simulatedRequest(endpoint: BackendEndpointKind, options: BackendG
     data: {
       ok: true,
       endpoint,
+      contractId: contract?.contractId,
+      method: options.method ?? contract?.method,
       mode,
       path,
       attempts: retries,

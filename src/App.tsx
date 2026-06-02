@@ -1,6 +1,7 @@
 import { AppShell } from './components/layout/AppShell';
 import { ReadOnlyActionGuard } from './components/ui/ReadOnlyActionGuard';
 import { screens } from './data/screens';
+import { ApiContractsPage } from './pages/ApiContractsPage';
 import { BackendAdapterPage } from './pages/BackendAdapterPage';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
@@ -103,6 +104,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/backend-adapter">
         <BackendAdapterPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/api-contracts') {
+    return (
+      <GuardedAppShell currentPath="/api-contracts">
+        <ApiContractsPage />
       </GuardedAppShell>
     );
   }

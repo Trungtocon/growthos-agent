@@ -21,6 +21,7 @@ import {
   startStreamingRun as startRuntimeStreamingRun,
 } from '../integrations/growthos-runtime/runtime-orchestrator';
 import { canApprovePlan, canCancelRun, canStartRun } from '../runtime/rbac-store';
+import { executeApiContract } from '../runtime/production-api-client';
 import { sendApprovalDecision, sendRunCommand, sendStartAgentRun, sendTicketAssignment, sendTicketCommand } from './async-actions';
 import { runWorkflowCommand } from './workflow-engine';
 import type { WorkflowData } from './workflow-engine';
@@ -77,8 +78,9 @@ export async function approveApproval(approvalId: string) {
     actorId: demoCurrentUser.id,
     title: 'Approval approved',
     optimistic: (data) => withApprovalDecision(data, approvalId, 'approved'),
-    mutate: () => {
+    mutate: async () => {
       assertAllowed(canApprovePlan(approvalId));
+      await executeApiContract('approval.submit', { mode: 'mock', body: { approvalId, decision: 'approved' } });
       return sendApprovalDecision(approvalId, 'approved');
     },
   });
@@ -92,8 +94,9 @@ export async function rejectApproval(approvalId: string) {
     actorId: demoCurrentUser.id,
     title: 'Approval rejected',
     optimistic: (data) => withApprovalDecision(data, approvalId, 'rejected'),
-    mutate: () => {
+    mutate: async () => {
       assertAllowed(canApprovePlan(approvalId));
+      await executeApiContract('approval.submit', { mode: 'mock', body: { approvalId, decision: 'rejected' } });
       return sendApprovalDecision(approvalId, 'rejected');
     },
   });
@@ -108,6 +111,7 @@ export async function approveApprovalExecution(requestId: string) {
     title: 'Approval execution approved',
     optimistic: (data) => data,
     mutate: async () => {
+      await executeApiContract('runtime.run.approve', { mode: 'mock', body: { approvalId: requestId } });
       approveRuntimeApprovalExecutionRequest(requestId);
       resumeRuntimeApprovedApprovalExecution(requestId);
     },
@@ -123,6 +127,7 @@ export async function rejectApprovalExecution(requestId: string) {
     title: 'Approval execution rejected',
     optimistic: (data) => data,
     mutate: async () => {
+      await executeApiContract('runtime.run.reject', { mode: 'mock', body: { approvalId: requestId, reason: 'Rejected through approval execution.' } });
       rejectRuntimeApprovalExecutionRequest(requestId);
       cancelRuntimeRejectedApprovalExecution(requestId);
     },
@@ -205,8 +210,9 @@ export async function startAgentRun(ticketId: string) {
     actorId: demoCurrentUser.id,
     title: 'Hermes run started',
     optimistic: plan.applyOptimistic,
-    mutate: () => {
+    mutate: async () => {
       assertAllowed(canStartRun(ticketId));
+      await executeApiContract('runtime.run.start', { mode: 'mock', body: { ticketId } });
       return sendStartAgentRun(ticketId);
     },
   });
@@ -264,6 +270,7 @@ export async function startRunFromPlan(planId: string) {
     title: 'Run started from plan',
     optimistic: (data) => data,
     mutate: async () => {
+      await executeApiContract('runtime.run.start', { mode: 'mock', body: { ticketId: 'ticket-audit-module-3', planId } });
       await startRuntimeRunFromPlan(planId);
     },
   });
@@ -320,8 +327,9 @@ export async function cancelAgentRun(runId: string) {
     actorId: demoCurrentUser.id,
     title: 'Run cancelled',
     optimistic: plan.applyOptimistic,
-    mutate: () => {
+    mutate: async () => {
       assertAllowed(canCancelRun(runId));
+      await executeApiContract('runtime.run.cancel', { mode: 'mock', body: { runId } });
       return sendRunCommand(runId, 'cancelAgentRun');
     },
   });

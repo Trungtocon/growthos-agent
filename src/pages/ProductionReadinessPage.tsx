@@ -10,6 +10,7 @@ import {
   rejectProductionGoLive,
 } from '../runtime/production-readiness-store';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
+import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 
 type ProductionReadinessWidgetSurface =
@@ -64,6 +65,7 @@ export function ProductionReadinessPage() {
     <div data-route="/production-readiness" data-production-readiness-route>
       <DeploymentConfigCompactWidget surface="production-readiness" />
       <BackendAdapterCompactWidget surface="production-readiness" />
+      <ApiContractsCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."

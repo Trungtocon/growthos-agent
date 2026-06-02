@@ -284,6 +284,14 @@ import {
   selectBackendWarnings as getStoredBackendWarnings,
 } from '../runtime/backend-adapter-store';
 import {
+  getApiContractState as getStoredApiContractState,
+  selectApiContractArtifacts as getStoredApiContractArtifacts,
+  selectApiContractMatrix as getStoredApiContractMatrix,
+  selectApiContractMissingEnv as getStoredApiContractMissingEnv,
+  selectApiContractStatus as getStoredApiContractStatus,
+  selectApiContractTestResults as getStoredApiContractTestResults,
+} from '../runtime/api-contract-store';
+import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
   getDeploymentArtifacts as getStoredDeploymentArtifacts,
   getDeploymentBlockers as getStoredDeploymentBlockers,
@@ -2548,6 +2556,30 @@ export function selectBackendLastRequest() {
 
 export function selectBackendArtifacts() {
   return getStoredBackendArtifacts();
+}
+
+export function selectApiContractState() {
+  return getStoredApiContractState();
+}
+
+export function selectApiContractMatrix() {
+  return getStoredApiContractMatrix();
+}
+
+export function selectApiContractStatus() {
+  return getStoredApiContractStatus();
+}
+
+export function selectApiContractMissingEnv() {
+  return getStoredApiContractMissingEnv();
+}
+
+export function selectApiContractTestResults() {
+  return getStoredApiContractTestResults();
+}
+
+export function selectApiContractArtifacts() {
+  return getStoredApiContractArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
