@@ -1,7 +1,7 @@
 import { CheckCircle2, FileText, Rocket, ShieldAlert, ShieldCheck, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import type { Tone } from '../data/demoScreens';
-import { selectProductionReadinessDashboard } from '../domain/selectors';
+import { selectDeploymentReadiness, selectProductionReadinessDashboard } from '../domain/selectors';
 import {
   approveProductionGoLive,
   createProductionReadinessCheck,
@@ -9,6 +9,7 @@ import {
   exportProductionReadinessArtifacts,
   rejectProductionGoLive,
 } from '../runtime/production-readiness-store';
+import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -53,12 +54,14 @@ export function ProductionReadinessCompactWidget({ surface }: { surface: Product
 
 export function ProductionReadinessPage() {
   const dashboard = selectProductionReadinessDashboard();
+  const deploymentReadiness = selectDeploymentReadiness();
   const activeCheck = dashboard.activeCheck;
   const score = readinessScore();
-  const canApprove = Boolean(activeCheck && dashboard.blockers.length === 0 && activeCheck.approvalStatus !== 'approved');
+  const canApprove = Boolean(activeCheck && dashboard.blockers.length === 0 && deploymentReadiness.productionReady && activeCheck.approvalStatus !== 'approved');
 
   return (
     <div data-route="/production-readiness" data-production-readiness-route>
+      <DeploymentConfigCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."
@@ -67,7 +70,7 @@ export function ProductionReadinessPage() {
             <Button variant="secondary" onClick={() => { createProductionReadinessCheck(); reload(); }}><Rocket className="h-4 w-4" />Create check</Button>
             <Button variant="secondary" disabled={!activeCheck} data-disabled-reason={!activeCheck ? 'Create a production readiness check before evaluation.' : undefined} title={!activeCheck ? 'Create a production readiness check before evaluation.' : undefined} onClick={() => { if (activeCheck) evaluateProductionReadiness(activeCheck.id); reload(); }}><ShieldCheck className="h-4 w-4" />Evaluate</Button>
             <Button variant="secondary" disabled={!activeCheck} data-disabled-reason={!activeCheck ? 'Create a production readiness check before exporting.' : undefined} title={!activeCheck ? 'Create a production readiness check before exporting.' : undefined} onClick={() => { if (activeCheck) exportProductionReadinessArtifacts(activeCheck.id); reload(); }}><FileText className="h-4 w-4" />Export</Button>
-            <Button disabled={!canApprove} data-disabled-reason={!canApprove ? 'Go-live approval requires an evaluated check with zero blockers.' : undefined} title={!canApprove ? 'Go-live approval requires an evaluated check with zero blockers.' : undefined} onClick={() => { if (activeCheck) approveProductionGoLive(activeCheck.id); reload(); }}><CheckCircle2 className="h-4 w-4" />Approve Go-Live</Button>
+            <Button disabled={!canApprove} data-disabled-reason={!canApprove ? 'Go-live approval requires zero readiness blockers and deployment config READY.' : undefined} title={!canApprove ? 'Go-live approval requires zero readiness blockers and deployment config READY.' : undefined} onClick={() => { if (activeCheck) approveProductionGoLive(activeCheck.id); reload(); }}><CheckCircle2 className="h-4 w-4" />Approve Go-Live</Button>
             <Button variant="danger" disabled={!activeCheck} data-disabled-reason={!activeCheck ? 'Create a production readiness check before rejecting.' : undefined} title={!activeCheck ? 'Create a production readiness check before rejecting.' : undefined} onClick={() => { if (activeCheck) rejectProductionGoLive(activeCheck.id, 'Rejected from production readiness page.'); reload(); }}><XCircle className="h-4 w-4" />Reject Go-Live</Button>
           </>
         )}

@@ -3,6 +3,7 @@ import { ReadOnlyActionGuard } from './components/ui/ReadOnlyActionGuard';
 import { screens } from './data/screens';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
+import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -87,6 +88,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/production-readiness">
         <ProductionReadinessPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/deployment-config') {
+    return (
+      <GuardedAppShell currentPath="/deployment-config">
+        <DeploymentConfigPage />
       </GuardedAppShell>
     );
   }

@@ -1,6 +1,7 @@
 import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, Lightbulb, ListChecks, Play, RotateCcw, Scale, ShieldCheck, Sparkles, TrendingUp, Wrench, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
+import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
@@ -436,6 +437,7 @@ export function EvaluationPage() {
       <RuntimeCertificationCompactWidget surface="evaluation" />
       <CertifiedSandboxRunCompactWidget surface="evaluation" />
       <ProductionReadinessCompactWidget surface="evaluation" />
+      <DeploymentConfigCompactWidget surface="evaluation" />
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."

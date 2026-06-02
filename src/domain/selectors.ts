@@ -273,6 +273,17 @@ import {
   getCertifiedSandboxRuns as getStoredCertifiedSandboxRuns,
 } from '../runtime/certified-sandbox-run-store';
 import {
+  getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
+  getDeploymentArtifacts as getStoredDeploymentArtifacts,
+  getDeploymentBlockers as getStoredDeploymentBlockers,
+  getDeploymentConfigDashboard as getStoredDeploymentConfigDashboard,
+  getDeploymentConfigStatus as getStoredDeploymentConfigStatus,
+  getDeploymentEnvGroups as getStoredDeploymentEnvGroups,
+  getDeploymentMissingEnv as getStoredDeploymentMissingEnv,
+  getDeploymentReadiness as getStoredDeploymentReadiness,
+  getDeploymentWarnings as getStoredDeploymentWarnings,
+} from '../runtime/deployment-config-store';
+import {
   getActiveProductionReadinessCheck as getStoredActiveProductionReadinessCheck,
   getProductionReadinessBlockers as getStoredProductionReadinessBlockers,
   getProductionReadinessChecklist as getStoredProductionReadinessChecklist,
@@ -2454,6 +2465,42 @@ export function selectProductionReadinessWarnings(checkId?: string) {
 
 export function selectProductionReadinessStatus(checkId?: string) {
   return getStoredProductionReadinessStatus(checkId);
+}
+
+export function selectDeploymentConfig() {
+  return getStoredActiveDeploymentConfig();
+}
+
+export function selectDeploymentConfigDashboard() {
+  return getStoredDeploymentConfigDashboard();
+}
+
+export function selectDeploymentConfigStatus() {
+  return getStoredDeploymentConfigStatus();
+}
+
+export function selectDeploymentEnvGroups() {
+  return getStoredDeploymentEnvGroups();
+}
+
+export function selectDeploymentMissingEnv() {
+  return getStoredDeploymentMissingEnv();
+}
+
+export function selectDeploymentWarnings() {
+  return getStoredDeploymentWarnings();
+}
+
+export function selectDeploymentBlockers() {
+  return getStoredDeploymentBlockers();
+}
+
+export function selectDeploymentReadiness() {
+  return getStoredDeploymentReadiness();
+}
+
+export function selectDeploymentArtifacts() {
+  return getStoredDeploymentArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

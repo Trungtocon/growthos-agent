@@ -23,6 +23,7 @@ import {
   requestWorkerStop,
 } from '../runtime/worker-observability-store';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
+import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 
@@ -52,6 +53,7 @@ export function WorkerControlPage() {
       <ChaosSimulationCompactWidget surface="worker-control" />
       <RuntimeCertificationCompactWidget surface="worker-control" />
       <CertifiedSandboxRunCompactWidget surface="worker-control" />
+      <DeploymentConfigCompactWidget surface="worker-control" />
       <PageHeader
         title="Worker Observability & Control Center"
         subtitle="Monitor autonomous improvement loop worker health, queue execution, incidents, SLA warnings, and safe control actions."

@@ -168,6 +168,22 @@ function environmentWarningReason() {
   return productionConfigured ? undefined : 'Production endpoint is not configured in frontend env. Keep go-live in review mode until backend deployment config exists.';
 }
 
+function deploymentConfigReadyForGoLive(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const raw = window.sessionStorage.getItem('uikigai-deployment-config-v1');
+    if (!raw) return false;
+    const parsed = JSON.parse(raw) as {
+      activeConfigId?: string;
+      configs?: Record<string, { status?: string; readyMarkedAt?: string; readiness?: { productionReady?: boolean } }>;
+    };
+    const active = parsed.activeConfigId ? parsed.configs?.[parsed.activeConfigId] : undefined;
+    return Boolean(active?.readyMarkedAt && active.status === 'valid' && active.readiness?.productionReady);
+  } catch {
+    return false;
+  }
+}
+
 function buildReadinessEvidence(checkId: string): {
   items: ProductionReadinessChecklistItem[];
   blockers: ProductionReadinessBlocker[];
@@ -340,6 +356,16 @@ export function evaluateProductionReadiness(checkId?: string): ProductionReadine
 export function approveProductionGoLive(checkId: string, approvedBy = 'GrowthOS Operator'): ProductionReadinessCheck {
   const evaluated = evaluateProductionReadiness(checkId);
   if (evaluated.blockers.length) return persistCheck({ ...evaluated, approvalStatus: 'not_requested' });
+  if (!deploymentConfigReadyForGoLive()) {
+    const deploymentBlocker = blocker(
+      evaluated.id,
+      'environment_config',
+      'production_endpoint_not_configured',
+      'Deployment configuration is not marked READY.',
+      'Complete `/deployment-config`, resolve blockers, and mark config ready before approving production go-live.',
+    );
+    return persistCheck({ ...evaluated, status: 'BLOCKED', approvalStatus: 'not_requested', blockers: [...evaluated.blockers, deploymentBlocker] });
+  }
   return persistCheck({ ...evaluated, approvalStatus: 'approved', approvedBy, approvedAt: nowIso(), rejectedReason: undefined, rejectedAt: undefined });
 }
 

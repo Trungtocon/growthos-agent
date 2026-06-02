@@ -22,6 +22,7 @@ import {
 import type { ChaosScenarioType } from '../runtime/chaos-simulation';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
+import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 
 const scenarioLibrary: Array<{ type: ChaosScenarioType; name: string; description: string }> = [
@@ -72,6 +73,7 @@ export function ChaosSimulationPage() {
       <RuntimeCertificationCompactWidget surface="chaos" />
       <CertifiedSandboxRunCompactWidget surface="chaos" />
       <ProductionReadinessCompactWidget surface="chaos" />
+      <DeploymentConfigCompactWidget surface="chaos" />
       <PageHeader
         title="Recovery Simulation & Chaos Testing"
         subtitle="Inject controlled mock failures to validate worker recovery, auto-healing, governance, queue safety, and audit evidence."

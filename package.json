@@ -126,7 +126,8 @@
     "smoke:runtime-certification": "node scripts/smoke-runtime-certification.mjs",
     "smoke:certified-sandbox-run": "node scripts/smoke-certified-sandbox-run.mjs",
     "smoke:ui-action-wiring": "node scripts/smoke-ui-action-wiring.mjs",
-    "smoke:production-readiness": "node scripts/smoke-production-readiness.mjs"
+    "smoke:production-readiness": "node scripts/smoke-production-readiness.mjs",
+    "smoke:deployment-config": "node scripts/smoke-deployment-config.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

@@ -190,7 +190,27 @@ async function main() {
 
     await expectStep(rows, 'approve and reject go-live decisions persist', async () => {
       const decisions = await page.evaluate(async (checkId) => {
+        const { createDeploymentConfigCheck, markDeploymentConfigReady, validateDeploymentConfig } = await import('/src/runtime/deployment-config-store.ts');
         const { approveProductionGoLive, createProductionReadinessCheck, evaluateProductionReadiness, rejectProductionGoLive } = await import('/src/runtime/production-readiness-store.ts');
+        const deployment = validateDeploymentConfig(createDeploymentConfigCheck({
+          runtimeMode: 'production',
+          env: {
+            APP_ENV: 'production',
+            APP_BASE_URL: 'https://growthos.example.com',
+            HERMES_RUNTIME_MODE: 'production',
+            HERMES_PRODUCTION_BASE_URL: 'https://hermes.example.com',
+            HERMES_PRODUCTION_API_KEY: 'present',
+            PAPERCLIP_BASE_URL: 'https://paperclip.example.com',
+            PAPERCLIP_API_KEY: 'present',
+            GROWTHOS_WORKSPACE_ID: 'workspace-demo',
+            AUTH_SECRET: 'present',
+            STORAGE_DRIVER: 's3',
+            LOG_LEVEL: 'info',
+            BILLING_PROVIDER: 'stripe',
+            DEPLOYMENT_TARGET: 'vercel-production',
+          },
+        }).id);
+        markDeploymentConfigReady(deployment.id);
         const approved = approveProductionGoLive(checkId, 'Smoke approver');
         const rejectedCheck = evaluateProductionReadiness(createProductionReadinessCheck().id);
         const rejected = rejectProductionGoLive(rejectedCheck.id, 'Smoke rejection');
