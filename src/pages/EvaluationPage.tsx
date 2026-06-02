@@ -1,6 +1,7 @@
 import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileText, Lightbulb, ListChecks, Play, RotateCcw, Scale, ShieldCheck, Sparkles, TrendingUp, Wrench, XCircle } from 'lucide-react';
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
+import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import {
@@ -430,6 +431,7 @@ export function EvaluationPage() {
   return (
     <div data-route="/evaluation" data-run-evaluation-route>
       <ChaosSimulationCompactWidget surface="evaluation" />
+      <RuntimeCertificationCompactWidget surface="evaluation" />
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."

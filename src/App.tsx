@@ -1,6 +1,7 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
+import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
@@ -54,6 +55,13 @@ export function App() {
     return (
       <AppShell currentPath="/chaos">
         <ChaosSimulationPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/runtime-certification') {
+    return (
+      <AppShell currentPath="/runtime-certification">
+        <RuntimeCertificationPage />
       </AppShell>
     );
   }

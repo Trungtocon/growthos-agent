@@ -18,6 +18,7 @@ import {
   rejectRecoveryPlan,
 } from '../runtime/worker-recovery-store';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
+import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('critical') || value.includes('failed') || value.includes('blocked') || value.includes('rejected')) return 'red';
@@ -43,6 +44,7 @@ export function WorkerRecoveryPage() {
   return (
     <div data-route="/worker-recovery" data-worker-recovery-route>
       <ChaosSimulationCompactWidget surface="worker-recovery" />
+      <RuntimeCertificationCompactWidget surface="worker-recovery" />
       <PageHeader
         title="Worker Incident Recovery & Auto-Healing"
         subtitle="Plan, approve, execute, and audit recovery for worker incidents without bypassing governance or queue controls."

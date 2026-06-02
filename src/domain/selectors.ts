@@ -253,6 +253,16 @@ import {
   getChaosScorecard as getStoredChaosScorecard,
 } from '../runtime/chaos-simulation-store';
 import {
+  getActiveCertificationRun as getStoredActiveCertificationRun,
+  getCertificationArtifacts as getStoredCertificationArtifacts,
+  getCertificationProfiles as getStoredCertificationProfiles,
+  getCertificationStatus as getStoredCertificationStatus,
+  getContractTestResults as getStoredContractTestResults,
+  getRuntimeCertificationDashboard as getStoredRuntimeCertificationDashboard,
+  getRuntimeReadinessFindings as getStoredRuntimeReadinessFindings,
+  getSandboxSafetyStatus as getStoredSandboxSafetyStatus,
+} from '../runtime/runtime-certification-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2333,6 +2343,38 @@ export function selectChaosReadiness() {
 
 export function selectChaosArtifacts() {
   return getStoredChaosArtifacts();
+}
+
+export function selectRuntimeCertificationDashboard() {
+  return getStoredRuntimeCertificationDashboard();
+}
+
+export function selectCertificationProfiles() {
+  return getStoredCertificationProfiles();
+}
+
+export function selectActiveCertificationRun() {
+  return getStoredActiveCertificationRun();
+}
+
+export function selectContractTestResults(runId?: string) {
+  return getStoredContractTestResults(runId);
+}
+
+export function selectRuntimeReadinessFindings(runId?: string) {
+  return getStoredRuntimeReadinessFindings(runId);
+}
+
+export function selectCertificationStatus(runId?: string) {
+  return getStoredCertificationStatus(runId);
+}
+
+export function selectCertificationArtifacts() {
+  return getStoredCertificationArtifacts();
+}
+
+export function selectSandboxSafetyStatus(runId?: string) {
+  return getStoredSandboxSafetyStatus(runId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
