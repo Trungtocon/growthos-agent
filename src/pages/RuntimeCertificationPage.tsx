@@ -18,6 +18,7 @@ import {
   runContractTest,
   startCertificationRun,
 } from '../runtime/runtime-certification-store';
+import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('blocked') || value.includes('failed') || value.includes('production')) return 'red';
@@ -50,6 +51,7 @@ export function RuntimeCertificationPage() {
 
   return (
     <div data-route="/runtime-certification" data-runtime-certification-route>
+      <CertifiedSandboxRunCompactWidget surface="runtime-certification" />
       <PageHeader
         title="Sandbox Contract Test & Runtime Certification"
         subtitle="Verify Hermes/Paperclip sandbox contracts before production enablement while preserving mock fallback and governance gates."

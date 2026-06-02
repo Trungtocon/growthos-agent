@@ -33,6 +33,7 @@ import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/Ar
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
+import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import { selectCurrentReplayFrame, selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectReplayControlState, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
@@ -863,6 +864,7 @@ function RunConsoleRealPage() {
       <WorkerObservabilityCompactWidget surface="run" />
       <WorkerRecoveryCompactWidget surface="run" />
       <RuntimeCertificationCompactWidget surface="run" />
+      <CertifiedSandboxRunCompactWidget surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>

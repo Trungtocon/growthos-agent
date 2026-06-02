@@ -32,6 +32,7 @@ import { registerExecutionTimelineExports } from '../runtime/execution-timeline-
 import type { ExecutionTimelineEvent } from '../runtime/execution-timeline';
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
+import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 
 function eventTone(event: ExecutionTimelineEvent) {
   if (event.severity === 'danger') return 'red';
@@ -176,6 +177,7 @@ export function ExecutionTimelinePage() {
       <WorkerObservabilityCompactWidget surface="execution-timeline" />
       <WorkerRecoveryCompactWidget surface="execution-timeline" />
       <ChaosSimulationCompactWidget surface="execution-timeline" />
+      <CertifiedSandboxRunCompactWidget surface="execution-timeline" />
       <PageHeader
         title="Execution Timeline & Replay"
         subtitle="Replay runtime execution across plan steps, tools, artifacts, approvals, usage, cost and governance decisions."

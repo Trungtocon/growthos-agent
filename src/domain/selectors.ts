@@ -263,6 +263,16 @@ import {
   getSandboxSafetyStatus as getStoredSandboxSafetyStatus,
 } from '../runtime/runtime-certification-store';
 import {
+  getActiveCertifiedSandboxRun as getStoredActiveCertifiedSandboxRun,
+  getCertifiedSandboxArtifacts as getStoredCertifiedSandboxArtifacts,
+  getCertifiedSandboxAuditTrail as getStoredCertifiedSandboxAuditTrail,
+  getCertifiedSandboxBlockers as getStoredCertifiedSandboxBlockers,
+  getCertifiedSandboxPreflight as getStoredCertifiedSandboxPreflight,
+  getCertifiedSandboxReadinessStatus as getStoredCertifiedSandboxReadinessStatus,
+  getCertifiedSandboxRunDashboard as getStoredCertifiedSandboxRunDashboard,
+  getCertifiedSandboxRuns as getStoredCertifiedSandboxRuns,
+} from '../runtime/certified-sandbox-run-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2375,6 +2385,38 @@ export function selectCertificationArtifacts() {
 
 export function selectSandboxSafetyStatus(runId?: string) {
   return getStoredSandboxSafetyStatus(runId);
+}
+
+export function selectCertifiedSandboxRunDashboard() {
+  return getStoredCertifiedSandboxRunDashboard();
+}
+
+export function selectCertifiedSandboxRuns() {
+  return getStoredCertifiedSandboxRuns();
+}
+
+export function selectActiveCertifiedSandboxRun() {
+  return getStoredActiveCertifiedSandboxRun();
+}
+
+export function selectCertifiedSandboxPreflight(runId?: string) {
+  return getStoredCertifiedSandboxPreflight(runId);
+}
+
+export function selectCertifiedSandboxBlockers(runId?: string) {
+  return getStoredCertifiedSandboxBlockers(runId);
+}
+
+export function selectCertifiedSandboxArtifacts(runId?: string) {
+  return getStoredCertifiedSandboxArtifacts(runId);
+}
+
+export function selectCertifiedSandboxAuditTrail(runId?: string) {
+  return getStoredCertifiedSandboxAuditTrail(runId);
+}
+
+export function selectCertifiedSandboxReadinessStatus(runId?: string) {
+  return getStoredCertifiedSandboxReadinessStatus(runId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

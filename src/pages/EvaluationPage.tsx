@@ -2,6 +2,7 @@ import { Activity, AlertTriangle, BarChart3, CheckCircle2, ClipboardCheck, FileT
 import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/DemoPrimitives';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
+import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import {
@@ -432,6 +433,7 @@ export function EvaluationPage() {
     <div data-route="/evaluation" data-run-evaluation-route>
       <ChaosSimulationCompactWidget surface="evaluation" />
       <RuntimeCertificationCompactWidget surface="evaluation" />
+      <CertifiedSandboxRunCompactWidget surface="evaluation" />
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."

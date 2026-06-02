@@ -1,5 +1,6 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
+import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -62,6 +63,13 @@ export function App() {
     return (
       <AppShell currentPath="/runtime-certification">
         <RuntimeCertificationPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/certified-sandbox-run') {
+    return (
+      <AppShell currentPath="/certified-sandbox-run">
+        <CertifiedSandboxRunPage />
       </AppShell>
     );
   }

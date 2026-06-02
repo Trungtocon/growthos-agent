@@ -24,6 +24,7 @@ import {
 } from '../runtime/worker-observability-store';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
+import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 
 function statusTone(status: string): Tone {
   if (status.includes('failed') || status.includes('breached') || status.includes('critical')) return 'red';
@@ -50,6 +51,7 @@ export function WorkerControlPage() {
     <div data-route="/worker-control" data-worker-control-route>
       <ChaosSimulationCompactWidget surface="worker-control" />
       <RuntimeCertificationCompactWidget surface="worker-control" />
+      <CertifiedSandboxRunCompactWidget surface="worker-control" />
       <PageHeader
         title="Worker Observability & Control Center"
         subtitle="Monitor autonomous improvement loop worker health, queue execution, incidents, SLA warnings, and safe control actions."
