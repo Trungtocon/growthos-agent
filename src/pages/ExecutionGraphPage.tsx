@@ -14,7 +14,7 @@ import {
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import { registerExecutionGraphExports } from '../runtime/agent-execution-graph-store';
 import type { ExecutionGraphNode } from '../runtime/agent-execution-graph';
-import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
+import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget } from './EvaluationPage';
 
 function GraphNodePill({ node, index }: { node: ExecutionGraphNode; index: number }) {
   const x = 36 + (index % 4) * 210;
@@ -59,6 +59,7 @@ export function ExecutionGraphPage() {
       <RecommendationExecutionCompactWidget surface="execution-graph" />
       <ImprovementLoopCompactWidget surface="execution-graph" />
       <ImprovementLoopGovernanceCompactWidget surface="execution-graph" />
+      <ImprovementLoopQueueCompactWidget surface="execution-graph" />
       <PageHeader
         title="Agent Execution Graph"
         subtitle="Trace agent runs across plans, steps, tools, artifacts, approvals, usage, cost, and governance decisions."

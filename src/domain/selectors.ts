@@ -204,6 +204,17 @@ import {
   selectWorkspaceLoopGovernanceSummary as getStoredWorkspaceLoopGovernanceSummary,
 } from '../runtime/improvement-loop-governance-store';
 import {
+  getBlockedLoopQueueItems as getStoredBlockedLoopQueueItems,
+  getImprovementLoopQueue as getStoredImprovementLoopQueue,
+  getNextEligibleLoop as getStoredNextEligibleLoop,
+  getQueueAuditTrail as getStoredQueueAuditTrail,
+  getQueueConcurrencyStatus as getStoredQueueConcurrencyStatus,
+  getQueueHealthSummary as getStoredQueueHealthSummary,
+  getQueuedLoops as getStoredQueuedLoops,
+  getRunningLoopQueueItems as getStoredRunningLoopQueueItems,
+  getWaitingApprovalQueueItems as getStoredWaitingApprovalQueueItems,
+} from '../runtime/improvement-loop-queue-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2128,6 +2139,42 @@ export function selectLoopGovernanceAuditTrail(loopId?: string) {
 
 export function selectWorkspaceLoopGovernanceSummary() {
   return getStoredWorkspaceLoopGovernanceSummary();
+}
+
+export function selectImprovementLoopQueue() {
+  return getStoredImprovementLoopQueue();
+}
+
+export function selectQueuedLoops() {
+  return getStoredQueuedLoops();
+}
+
+export function selectRunningLoopQueueItems() {
+  return getStoredRunningLoopQueueItems();
+}
+
+export function selectBlockedLoopQueueItems() {
+  return getStoredBlockedLoopQueueItems();
+}
+
+export function selectWaitingApprovalQueueItems() {
+  return getStoredWaitingApprovalQueueItems();
+}
+
+export function selectNextEligibleLoop() {
+  return getStoredNextEligibleLoop();
+}
+
+export function selectQueueHealthSummary() {
+  return getStoredQueueHealthSummary();
+}
+
+export function selectQueueConcurrencyStatus() {
+  return getStoredQueueConcurrencyStatus();
+}
+
+export function selectQueueAuditTrail(itemId?: string) {
+  return getStoredQueueAuditTrail(itemId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

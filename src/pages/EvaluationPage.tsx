@@ -48,6 +48,14 @@ import {
   selectRollbackRequiredLoops,
   selectWorkspaceImprovementLoopSummary,
   selectWorkspaceLoopGovernanceSummary,
+  selectBlockedLoopQueueItems,
+  selectImprovementLoopQueue,
+  selectNextEligibleLoop,
+  selectQueueAuditTrail,
+  selectQueueConcurrencyStatus,
+  selectQueueHealthSummary,
+  selectRunningLoopQueueItems,
+  selectWaitingApprovalQueueItems,
   selectVerifiedRecommendationExecutions,
   selectTopRecommendations,
   selectRegressedOutcomes,
@@ -100,6 +108,16 @@ import {
   resumeAllowedLoops,
   rollbackLoop,
 } from '../runtime/improvement-loop-governance-store';
+import {
+  cancelQueuedLoop,
+  completeQueuedLoop,
+  enqueueImprovementLoop,
+  exportImprovementLoopQueueArtifacts,
+  pauseQueuedLoop,
+  processQueueTick,
+  retryFailedLoop,
+  startQueuedLoop,
+} from '../runtime/improvement-loop-queue-store';
 import { registerFeedbackActionPlanExports, regenerateActionPlanFromFeedback } from '../runtime/feedback-action-planner-store';
 import { registerRunEvaluationExports } from '../runtime/run-evaluation-store';
 import type { ActionTaskLifecycleStatus } from '../runtime/action-plan-execution';
@@ -271,6 +289,15 @@ export function ImprovementLoopGovernanceCompactWidget({ surface }: { surface: '
   );
 }
 
+export function ImprovementLoopQueueCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' }) {
+  const summary = selectQueueHealthSummary();
+  return (
+    <span data-improvement-loop-queue-widget={surface} data-loop-queue-total={summary.total} data-loop-queue-running={summary.running} data-loop-queue-blocked={summary.blocked} className="sr-only">
+      Improvement loop queue {surface}: {summary.total} total, {summary.running} running, {summary.blocked} blocked.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -323,6 +350,14 @@ export function EvaluationPage() {
   const pausedByGovernanceLoops = selectPausedByGovernanceLoops();
   const rollbackRequiredLoops = selectRollbackRequiredLoops();
   const loopGovernanceAuditTrail = selectLoopGovernanceAuditTrail();
+  const loopQueueItems = selectImprovementLoopQueue();
+  const queueSummary = selectQueueHealthSummary();
+  const queueConcurrency = selectQueueConcurrencyStatus();
+  const nextEligibleQueueItem = selectNextEligibleLoop();
+  const runningQueueItems = selectRunningLoopQueueItems();
+  const blockedQueueItems = selectBlockedLoopQueueItems();
+  const waitingApprovalQueueItems = selectWaitingApprovalQueueItems();
+  const queueAuditTrail = selectQueueAuditTrail();
   const activeImprovementLoop = improvementLoops[0];
   const activeLoopReadiness = activeImprovementLoop ? selectLoopReadiness(activeImprovementLoop.id) : undefined;
   const activeLoopBlockers = activeImprovementLoop ? selectLoopBlockers(activeImprovementLoop.id) : [];
@@ -345,6 +380,7 @@ export function EvaluationPage() {
       <RecommendationExecutionCompactWidget surface="evaluation" />
       <ImprovementLoopCompactWidget surface="evaluation" />
       <ImprovementLoopGovernanceCompactWidget surface="evaluation" />
+      <ImprovementLoopQueueCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },
@@ -843,6 +879,68 @@ export function EvaluationPage() {
                 <div className="mt-3 text-xs font-bold uppercase text-slate-400">{event.createdAt.slice(11, 19)}</div>
               </div>
             )) : <p className="text-sm text-slate-500">Governance decisions appear when loops start, pause, retry, or hit kill switch controls.</p>}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-5 grid grid-cols-[360px_1fr_420px] gap-5" data-improvement-loop-queue-panel>
+        <Panel title="Loop Queue Dashboard">
+          <div className="space-y-3 p-4 text-sm">
+            <div className="flex items-center justify-between"><span>Total queue</span><b>{queueSummary.total}</b></div>
+            <div className="flex items-center justify-between"><span>Queued / running</span><b>{queueSummary.queued}/{queueSummary.running}</b></div>
+            <div className="flex items-center justify-between"><span>Blocked / approval</span><b>{queueSummary.blocked}/{queueSummary.waitingApproval}</b></div>
+            <div className="flex items-center justify-between"><span>Concurrency</span><Badge tone={queueConcurrency.saturated ? 'red' : 'green'}>{queueConcurrency.activeCount}/{queueConcurrency.maxConcurrency}</Badge></div>
+            <Button variant="secondary" onClick={() => { const loop = activeImprovementLoop ?? (acceptedRecommendations[0] ? createImprovementLoop(acceptedRecommendations[0].id) : undefined); if (loop) enqueueImprovementLoop(loop.id); window.location.reload(); }}><ListChecks className="h-4 w-4" />Enqueue loop</Button>
+            <Button variant="secondary" onClick={() => { processQueueTick(); window.location.reload(); }}><Play className="h-4 w-4" />Process tick</Button>
+            <Button variant="secondary" onClick={() => { exportImprovementLoopQueueArtifacts(); window.location.reload(); }}><FileText className="h-4 w-4" />Export queue</Button>
+          </div>
+        </Panel>
+        <Panel title="Next Eligible Loop">
+          <div className="space-y-3 p-4 text-sm">
+            {nextEligibleQueueItem ? (
+              <div data-next-eligible-loop className="rounded-xl border border-slate-100 bg-white p-3">
+                <div className="flex items-start justify-between gap-3"><b>{nextEligibleQueueItem.priority}</b><Badge tone={nextEligibleQueueItem.priority === 'critical' ? 'red' : nextEligibleQueueItem.priority === 'urgent' ? 'amber' : 'blue'}>{nextEligibleQueueItem.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{nextEligibleQueueItem.loopId.slice(0, 72)}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { startQueuedLoop(nextEligibleQueueItem.id); window.location.reload(); }}>Start</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelQueuedLoop(nextEligibleQueueItem.id); window.location.reload(); }}>Cancel</button>
+                </div>
+              </div>
+            ) : <p className="text-slate-500">No eligible queue item. Kill switch, concurrency, governance, or schedule windows may be holding execution.</p>}
+          </div>
+        </Panel>
+        <Panel title="Queue Health">
+          <div className="grid grid-cols-2 gap-3 p-4 text-sm">
+            {[['Running', runningQueueItems.length, 'blue'], ['Blocked', blockedQueueItems.length, 'red'], ['Approval', waitingApprovalQueueItems.length, 'amber'], ['Completed', queueSummary.completed, 'green']].map(([label, value, tone]) => (
+              <div key={label} className="rounded-xl border border-slate-100 p-3"><div className="text-xs font-bold uppercase text-slate-400">{label}</div><div className="mt-2 flex items-end justify-between"><b className="text-2xl">{value}</b><Badge tone={tone as Tone}>{label}</Badge></div></div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Queue Items">
+          <div className="col-span-full grid grid-cols-3 gap-3 p-4">
+            {loopQueueItems.length ? loopQueueItems.map((item) => (
+              <div key={item.id} data-improvement-loop-queue-item={item.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{item.priority}</b><Badge tone={item.status === 'blocked' || item.status === 'killed' ? 'red' : item.status === 'running' ? 'blue' : item.status === 'completed' ? 'green' : 'amber'}>{item.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{item.blocker ?? item.loopId.slice(0, 80)}</p>
+                <div className="mt-3 text-xs font-bold uppercase tracking-wide text-slate-400">Retry {item.retryPolicy.retryCount}/{item.retryPolicy.maxRetries}</div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { pauseQueuedLoop(item.id); window.location.reload(); }}>Pause</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { retryFailedLoop(item.id); window.location.reload(); }}>Retry</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { completeQueuedLoop(item.id); window.location.reload(); }}>Complete</button>
+                  <button className="rounded-lg border border-slate-200 px-2 py-1 text-xs font-bold text-slate-600" onClick={() => { cancelQueuedLoop(item.id); window.location.reload(); }}>Cancel</button>
+                </div>
+              </div>
+            )) : <p className="text-sm text-slate-500">Queue items appear after an improvement loop is enqueued.</p>}
+          </div>
+        </Panel>
+        <Panel title="Queue Audit Trail">
+          <div className="col-span-full grid grid-cols-4 gap-3 p-4">
+            {queueAuditTrail.slice(-8).map((event) => (
+              <div key={event.id} data-loop-queue-audit={event.status} className="rounded-xl border border-slate-100 bg-white p-3 text-sm">
+                <div className="flex items-start justify-between gap-3"><b>{event.action}</b><Badge tone={event.status === 'blocked' || event.status === 'killed' ? 'red' : event.status === 'running' ? 'blue' : event.status === 'completed' ? 'green' : 'amber'}>{event.status}</Badge></div>
+                <p className="mt-2 text-slate-500">{event.message}</p>
+              </div>
+            ))}
+            {!queueAuditTrail.length ? <p className="text-sm text-slate-500">Queue audit events are recorded for enqueue, start, retry, cancel, and scheduler ticks.</p> : null}
           </div>
         </Panel>
       </div>
