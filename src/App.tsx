@@ -1,5 +1,6 @@
 import { AppShell } from './components/layout/AppShell';
 import { screens } from './data/screens';
+import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
@@ -46,6 +47,13 @@ export function App() {
     return (
       <AppShell currentPath="/worker-recovery">
         <WorkerRecoveryPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/chaos') {
+    return (
+      <AppShell currentPath="/chaos">
+        <ChaosSimulationPage />
       </AppShell>
     );
   }

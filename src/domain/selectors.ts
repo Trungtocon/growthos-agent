@@ -243,6 +243,16 @@ import {
   getWorkerRecoveryDashboard as getStoredWorkerRecoveryDashboard,
 } from '../runtime/worker-recovery-store';
 import {
+  getActiveChaosRun as getStoredActiveChaosRun,
+  getChaosArtifacts as getStoredChaosArtifacts,
+  getChaosDashboard as getStoredChaosDashboard,
+  getChaosEvents as getStoredChaosEvents,
+  getChaosReadiness as getStoredChaosReadiness,
+  getChaosRecoveryResults as getStoredChaosRecoveryResults,
+  getChaosScenarios as getStoredChaosScenarios,
+  getChaosScorecard as getStoredChaosScorecard,
+} from '../runtime/chaos-simulation-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2291,6 +2301,38 @@ export function selectUnresolvedRecoveryIncidents() {
 
 export function selectRecoveryReadiness() {
   return getStoredRecoveryReadiness();
+}
+
+export function selectChaosDashboard() {
+  return getStoredChaosDashboard();
+}
+
+export function selectChaosScenarios() {
+  return getStoredChaosScenarios();
+}
+
+export function selectActiveChaosRun() {
+  return getStoredActiveChaosRun();
+}
+
+export function selectChaosEvents(runId?: string) {
+  return getStoredChaosEvents(runId);
+}
+
+export function selectChaosRecoveryResults(runId?: string) {
+  return getStoredChaosRecoveryResults(runId);
+}
+
+export function selectChaosScorecard(runId?: string) {
+  return getStoredChaosScorecard(runId);
+}
+
+export function selectChaosReadiness() {
+  return getStoredChaosReadiness();
+}
+
+export function selectChaosArtifacts() {
+  return getStoredChaosArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

@@ -31,6 +31,7 @@ import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/ArtifactViewer';
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
+import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import { selectCurrentReplayFrame, selectExecutionGraphByAgent, selectExecutionGraphByRun, selectExecutionGraphByTicket, selectExecutionTimelineByAgent, selectExecutionTimelineByRun, selectExecutionTimelineByTicket, selectGovernanceReadinessReport, selectReplayControlState, selectRunConsoleViewModel, selectTicketsBoardViewModel, selectWorkforceViewModel } from '../domain/selectors';
@@ -632,6 +633,7 @@ function AgentDetailRealPage() {
       <ImprovementLoopWorkerCompactWidget surface="agent" />
       <WorkerObservabilityCompactWidget surface="agent" />
       <WorkerRecoveryCompactWidget surface="agent" />
+      <ChaosSimulationCompactWidget surface="agent" />
       <div data-parity-id="agent.header">
         <PageHeader dense title="Agent Detail" subtitle="Ho so nang luc, cong viec, ky nang, cong cu va hieu suat cua AI Agent" />
         <Panel className="mb-3">

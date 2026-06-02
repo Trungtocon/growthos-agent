@@ -15,6 +15,7 @@ import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import { registerExecutionGraphExports } from '../runtime/agent-execution-graph-store';
 import type { ExecutionGraphNode } from '../runtime/agent-execution-graph';
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
+import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 
 function GraphNodePill({ node, index }: { node: ExecutionGraphNode; index: number }) {
   const x = 36 + (index % 4) * 210;
@@ -63,6 +64,7 @@ export function ExecutionGraphPage() {
       <ImprovementLoopWorkerCompactWidget surface="execution-graph" />
       <WorkerObservabilityCompactWidget surface="execution-graph" />
       <WorkerRecoveryCompactWidget surface="execution-graph" />
+      <ChaosSimulationCompactWidget surface="execution-graph" />
       <PageHeader
         title="Agent Execution Graph"
         subtitle="Trace agent runs across plans, steps, tools, artifacts, approvals, usage, cost, and governance decisions."
