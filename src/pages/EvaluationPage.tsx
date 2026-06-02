@@ -62,6 +62,7 @@ import {
   selectWorkerExecutionSummary,
   selectWorkerHeartbeat,
   selectWorkerObservationDashboard,
+  selectWorkerRecoveryDashboard,
   selectWorkerSLAStatus,
   selectWorkerTickHistory,
   selectWaitingApprovalQueueItems,
@@ -339,6 +340,15 @@ export function WorkerObservabilityCompactWidget({ surface }: { surface: 'run' |
   );
 }
 
+export function WorkerRecoveryCompactWidget({ surface }: { surface: 'run' | 'execution-timeline' | 'execution-graph' | 'artifacts' | 'evaluation' | 'agent' | 'worker-control' }) {
+  const dashboard = selectWorkerRecoveryDashboard();
+  return (
+    <span data-worker-recovery-widget={surface} data-worker-recovery-plans={dashboard.plans.length} data-worker-recovery-unresolved={dashboard.unresolvedIncidents.length} data-worker-recovery-approval={dashboard.readiness.approvalRequired} className="sr-only">
+      Worker recovery {surface}: {dashboard.plans.length} plans, {dashboard.unresolvedIncidents.length} unresolved incidents, {dashboard.readiness.approvalRequired} approvals required.
+    </span>
+  );
+}
+
 export function EvaluationPage() {
   const evaluation = selectRunEvaluation(DEMO_RUN_ID);
   const summary = selectWorkspaceEvaluationSummary();
@@ -431,6 +441,7 @@ export function EvaluationPage() {
       <ImprovementLoopQueueCompactWidget surface="evaluation" />
       <ImprovementLoopWorkerCompactWidget surface="evaluation" />
       <WorkerObservabilityCompactWidget surface="evaluation" />
+      <WorkerRecoveryCompactWidget surface="evaluation" />
       <div className="grid grid-cols-5 gap-4">
         {[
           { label: 'Average score', value: summary.averageScore, Icon: BarChart3, tone: scoreTone(summary.averageScore) },

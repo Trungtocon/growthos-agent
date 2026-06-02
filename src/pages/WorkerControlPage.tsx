@@ -8,6 +8,7 @@ import {
   selectWorkerHealthSnapshot,
   selectWorkerIncidents,
   selectWorkerObservationDashboard,
+  selectWorkerRecoveryDashboard,
   selectWorkerSLAStatus,
 } from '../domain/selectors';
 import {
@@ -37,6 +38,7 @@ export function WorkerControlPage() {
   const eligibility = selectWorkerControlEligibility();
   const sla = selectWorkerSLAStatus();
   const diagnostics = selectWorkerDiagnosticsArtifacts();
+  const recovery = selectWorkerRecoveryDashboard();
   const observation = dashboard.observation;
   const activeItem = dashboard.activeQueueItem;
 
@@ -49,6 +51,12 @@ export function WorkerControlPage() {
         subtitle="Monitor autonomous improvement loop worker health, queue execution, incidents, SLA warnings, and safe control actions."
         actions={<><Button variant="secondary" onClick={() => { requestWorkerExportDiagnostics(); reload(); }}><FileText className="h-4 w-4" />Export diagnostics</Button><Button variant="danger" onClick={() => { requestWorkerKill('Kill switch from worker control center.'); reload(); }}><AlertTriangle className="h-4 w-4" />Kill worker</Button></>}
       />
+      <span data-worker-recovery-widget="worker-control" data-worker-recovery-plans={recovery.plans.length} data-worker-recovery-unresolved={recovery.unresolvedIncidents.length} data-worker-recovery-approval={recovery.readiness.approvalRequired} className="sr-only">
+        Worker recovery worker-control: {recovery.plans.length} plans, {recovery.unresolvedIncidents.length} unresolved incidents.
+      </span>
+      <span data-worker-observability-widget="worker-control" data-worker-observability-status={observation.status} data-worker-observability-sla={sla} data-worker-observability-incidents={incidents.length} className="sr-only">
+        Worker observability worker-control: {observation.status}, SLA {sla}, incidents {incidents.length}.
+      </span>
       <div className="grid grid-cols-4 gap-4" data-worker-control-summary>
         {[
           { label: 'Worker status', value: observation.status, tone: statusTone(observation.status) },

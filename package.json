@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --emptyOutDir=false",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint .",
     "test:demo": "node scripts/check-demo-routes.mjs",
@@ -120,7 +120,8 @@
     "smoke:improvement-loop-governance": "node scripts/smoke-improvement-loop-governance.mjs",
     "smoke:improvement-loop-queue": "node scripts/smoke-improvement-loop-queue.mjs",
     "smoke:improvement-loop-worker": "node scripts/smoke-improvement-loop-worker.mjs",
-    "smoke:worker-observability": "node scripts/smoke-worker-observability.mjs"
+    "smoke:worker-observability": "node scripts/smoke-worker-observability.mjs",
+    "smoke:worker-recovery": "node scripts/smoke-worker-recovery.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

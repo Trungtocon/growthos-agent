@@ -5,6 +5,7 @@ import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
 import { ScreenPage } from './pages/ScreenPage';
 import { WorkerControlPage } from './pages/WorkerControlPage';
+import { WorkerRecoveryPage } from './pages/WorkerRecoveryPage';
 
 function getCurrentPath() {
   const path = window.location.pathname;
@@ -38,6 +39,13 @@ export function App() {
     return (
       <AppShell currentPath="/worker-control">
         <WorkerControlPage />
+      </AppShell>
+    );
+  }
+  if (currentPath === '/worker-recovery') {
+    return (
+      <AppShell currentPath="/worker-recovery">
+        <WorkerRecoveryPage />
       </AppShell>
     );
   }

@@ -233,6 +233,16 @@ import {
   getWorkerSLAStatus as getStoredWorkerSLAStatus,
 } from '../runtime/worker-observability-store';
 import {
+  getActiveRecoveryPlan as getStoredActiveRecoveryPlan,
+  getAutoHealingDecisions as getStoredAutoHealingDecisions,
+  getRecoveryAuditTrail as getStoredRecoveryAuditTrail,
+  getRecoveryPlanByIncident as getStoredRecoveryPlanByIncident,
+  getRecoveryPlans as getStoredRecoveryPlans,
+  getRecoveryReadiness as getStoredRecoveryReadiness,
+  getUnresolvedRecoveryIncidents as getStoredUnresolvedRecoveryIncidents,
+  getWorkerRecoveryDashboard as getStoredWorkerRecoveryDashboard,
+} from '../runtime/worker-recovery-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2249,6 +2259,38 @@ export function selectWorkerSLAStatus() {
 
 export function selectWorkerDiagnosticsArtifacts() {
   return getStoredWorkerDiagnosticsArtifacts();
+}
+
+export function selectWorkerRecoveryDashboard() {
+  return getStoredWorkerRecoveryDashboard();
+}
+
+export function selectRecoveryPlans() {
+  return getStoredRecoveryPlans();
+}
+
+export function selectRecoveryPlanByIncident(incidentId: string) {
+  return getStoredRecoveryPlanByIncident(incidentId);
+}
+
+export function selectActiveRecoveryPlan() {
+  return getStoredActiveRecoveryPlan();
+}
+
+export function selectAutoHealingDecisions() {
+  return getStoredAutoHealingDecisions();
+}
+
+export function selectRecoveryAuditTrail() {
+  return getStoredRecoveryAuditTrail();
+}
+
+export function selectUnresolvedRecoveryIncidents() {
+  return getStoredUnresolvedRecoveryIncidents();
+}
+
+export function selectRecoveryReadiness() {
+  return getStoredRecoveryReadiness();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {
