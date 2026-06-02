@@ -34,6 +34,7 @@ import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, Feed
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
+import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
@@ -875,6 +876,7 @@ function RunConsoleRealPage() {
       <BackendAdapterCompactWidget surface="run" />
       <ApiContractsCompactWidget surface="run" />
       <E2EActionFlowCompactWidget surface="run" />
+      <PreGoLiveValidationCompactWidget surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>

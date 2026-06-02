@@ -297,6 +297,11 @@ import {
   selectE2EActionFlowSummary as getStoredE2EActionFlowSummary,
 } from '../runtime/e2e-action-flow-store';
 import {
+  getPreGoLiveValidationGates as getStoredPreGoLiveValidationGates,
+  selectPreGoLiveValidationArtifacts as getStoredPreGoLiveValidationArtifacts,
+  selectPreGoLiveValidationSummary as getStoredPreGoLiveValidationSummary,
+} from '../runtime/pre-golive-validation-store';
+import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
   getDeploymentArtifacts as getStoredDeploymentArtifacts,
   getDeploymentBlockers as getStoredDeploymentBlockers,
@@ -2597,6 +2602,18 @@ export function selectE2EActionFlowSummary() {
 
 export function selectE2EActionFlowArtifacts() {
   return getStoredE2EActionFlowArtifacts();
+}
+
+export function selectPreGoLiveValidationGates() {
+  return getStoredPreGoLiveValidationGates();
+}
+
+export function selectPreGoLiveValidationSummary() {
+  return getStoredPreGoLiveValidationSummary();
+}
+
+export function selectPreGoLiveValidationArtifacts() {
+  return getStoredPreGoLiveValidationArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

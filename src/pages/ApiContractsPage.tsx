@@ -12,6 +12,7 @@ import type { ApiContractId } from '../runtime/api-contract';
 import { exportApiContractArtifacts, validateApiContracts } from '../runtime/api-contract-store';
 import { executeApiContract } from '../runtime/production-api-client';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
+import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 type ApiContractWidgetSurface =
   | 'backend-adapter'
@@ -70,6 +71,7 @@ export function ApiContractsPage() {
   return (
     <div data-route="/api-contracts" data-api-contracts-route>
       <E2EActionFlowCompactWidget surface="api-contracts" />
+      <PreGoLiveValidationCompactWidget surface="api-contracts" />
       <PageHeader
         title="Production API Contract & Endpoint Binding"
         subtitle="Contract registry for runtime, artifact, approval, governance, worker, certification, and production readiness endpoints."

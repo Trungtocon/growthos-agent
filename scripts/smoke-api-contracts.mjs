@@ -267,7 +267,11 @@ async function main() {
 
     await expectStep(rows, 'test call buttons are wired', async () => {
       await page.goto(`${baseUrl}/api-contracts`, { waitUntil: 'networkidle' });
+      const navigation = page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => null);
       await page.locator('[data-api-contract-test-call]').first().click();
+      await navigation;
+      await page.waitForLoadState('networkidle').catch(() => null);
+      await page.waitForTimeout(300);
       const lastResult = await page.locator('[data-api-contract-last-result]').first().textContent();
       assert(lastResult && lastResult.trim().length > 0, 'test call produced no visible result');
       const silent = await page.evaluate(() => {

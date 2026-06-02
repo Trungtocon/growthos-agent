@@ -7,6 +7,7 @@ import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
+import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -119,6 +120,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/e2e-action-flow">
         <E2EActionFlowPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/pre-golive-validation') {
+    return (
+      <GuardedAppShell currentPath="/pre-golive-validation">
+        <PreGoLiveValidationPage />
       </GuardedAppShell>
     );
   }

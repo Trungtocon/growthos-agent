@@ -13,6 +13,7 @@ import {
   runE2EActionFlow,
   validateE2EFlowContracts,
 } from '../runtime/e2e-action-flow-store';
+import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 type E2EWidgetSurface =
   | 'api-contracts'
@@ -59,6 +60,7 @@ export function E2EActionFlowPage() {
 
   return (
     <div data-route="/e2e-action-flow" data-e2e-action-flow-route>
+      <PreGoLiveValidationCompactWidget surface="e2e-action-flow" />
       <PageHeader
         title="End-to-End Production Action Flow"
         subtitle="Prove UI actions travel through API contracts, backend adapter, runtime state, artifacts, audit, and readiness verdicts."

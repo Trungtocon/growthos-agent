@@ -21,6 +21,7 @@ import {
 } from '../runtime/backend-adapter-store';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
+import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 type BackendAdapterWidgetSurface =
   | 'deployment-config'
@@ -74,6 +75,7 @@ export function BackendAdapterPage() {
     <div data-route="/backend-adapter" data-backend-adapter-route>
       <ApiContractsCompactWidget surface="backend-adapter" />
       <E2EActionFlowCompactWidget surface="backend-adapter" />
+      <PreGoLiveValidationCompactWidget surface="backend-adapter" />
       <PageHeader
         title="Production Backend Adapter & API Gateway"
         subtitle="Safely test backend health, auth, endpoint capabilities, retry/fallback behavior, and production gate blockers without UI-to-Hermes/Paperclip imports."

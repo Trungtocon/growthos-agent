@@ -22,6 +22,7 @@ import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
+import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('blocked') || value.includes('failed') || value.includes('production')) return 'red';
@@ -58,6 +59,7 @@ export function RuntimeCertificationPage() {
       <ProductionReadinessCompactWidget surface="runtime-certification" />
       <DeploymentConfigCompactWidget surface="runtime-certification" />
       <BackendAdapterCompactWidget surface="runtime-certification" />
+      <PreGoLiveValidationCompactWidget surface="runtime-certification" />
       <PageHeader
         title="Sandbox Contract Test & Runtime Certification"
         subtitle="Verify Hermes/Paperclip sandbox contracts before production enablement while preserving mock fallback and governance gates."
