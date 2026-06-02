@@ -25,6 +25,7 @@ import {
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
+import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 
@@ -56,6 +57,7 @@ export function WorkerControlPage() {
       <CertifiedSandboxRunCompactWidget surface="worker-control" />
       <DeploymentConfigCompactWidget surface="worker-control" />
       <BackendAdapterCompactWidget surface="worker-control" />
+      <E2EActionFlowCompactWidget surface="worker-control" />
       <PageHeader
         title="Worker Observability & Control Center"
         subtitle="Monitor autonomous improvement loop worker health, queue execution, incidents, SLA warnings, and safe control actions."

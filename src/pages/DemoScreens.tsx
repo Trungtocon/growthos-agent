@@ -33,6 +33,7 @@ import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/Ar
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
+import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
@@ -873,6 +874,7 @@ function RunConsoleRealPage() {
       <DeploymentConfigCompactWidget surface="run" />
       <BackendAdapterCompactWidget surface="run" />
       <ApiContractsCompactWidget surface="run" />
+      <E2EActionFlowCompactWidget surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>

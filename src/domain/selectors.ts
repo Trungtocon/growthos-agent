@@ -292,6 +292,11 @@ import {
   selectApiContractTestResults as getStoredApiContractTestResults,
 } from '../runtime/api-contract-store';
 import {
+  getE2EActionFlows as getStoredE2EActionFlows,
+  selectE2EActionFlowArtifacts as getStoredE2EActionFlowArtifacts,
+  selectE2EActionFlowSummary as getStoredE2EActionFlowSummary,
+} from '../runtime/e2e-action-flow-store';
+import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
   getDeploymentArtifacts as getStoredDeploymentArtifacts,
   getDeploymentBlockers as getStoredDeploymentBlockers,
@@ -2580,6 +2585,18 @@ export function selectApiContractTestResults() {
 
 export function selectApiContractArtifacts() {
   return getStoredApiContractArtifacts();
+}
+
+export function selectE2EActionFlows() {
+  return getStoredE2EActionFlows();
+}
+
+export function selectE2EActionFlowSummary() {
+  return getStoredE2EActionFlowSummary();
+}
+
+export function selectE2EActionFlowArtifacts() {
+  return getStoredE2EActionFlowArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

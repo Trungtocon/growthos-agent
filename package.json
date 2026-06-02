@@ -129,7 +129,8 @@
     "smoke:production-readiness": "node scripts/smoke-production-readiness.mjs",
     "smoke:deployment-config": "node scripts/smoke-deployment-config.mjs",
     "smoke:backend-adapter": "node scripts/smoke-backend-adapter.mjs",
-    "smoke:api-contracts": "node scripts/smoke-api-contracts.mjs"
+    "smoke:api-contracts": "node scripts/smoke-api-contracts.mjs",
+    "smoke:e2e-action-flow": "node scripts/smoke-e2e-action-flow.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

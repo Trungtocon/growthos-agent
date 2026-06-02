@@ -6,6 +6,7 @@ import { BackendAdapterPage } from './pages/BackendAdapterPage';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
+import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -111,6 +112,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/api-contracts">
         <ApiContractsPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/e2e-action-flow') {
+    return (
+      <GuardedAppShell currentPath="/e2e-action-flow">
+        <E2EActionFlowPage />
       </GuardedAppShell>
     );
   }

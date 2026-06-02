@@ -23,6 +23,7 @@ import {
 } from '../runtime/deployment-config-store';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
+import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -128,6 +129,7 @@ export function DeploymentConfigPage() {
     <div data-route="/deployment-config" data-deployment-config-route>
       <BackendAdapterCompactWidget surface="deployment-config" />
       <ApiContractsCompactWidget surface="deployment-config" />
+      <E2EActionFlowCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."

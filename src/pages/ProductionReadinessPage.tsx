@@ -12,6 +12,7 @@ import {
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
+import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -66,6 +67,7 @@ export function ProductionReadinessPage() {
       <DeploymentConfigCompactWidget surface="production-readiness" />
       <BackendAdapterCompactWidget surface="production-readiness" />
       <ApiContractsCompactWidget surface="production-readiness" />
+      <E2EActionFlowCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."
