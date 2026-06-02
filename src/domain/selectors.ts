@@ -273,6 +273,15 @@ import {
   getCertifiedSandboxRuns as getStoredCertifiedSandboxRuns,
 } from '../runtime/certified-sandbox-run-store';
 import {
+  getActiveProductionReadinessCheck as getStoredActiveProductionReadinessCheck,
+  getProductionReadinessBlockers as getStoredProductionReadinessBlockers,
+  getProductionReadinessChecklist as getStoredProductionReadinessChecklist,
+  getProductionReadinessChecks as getStoredProductionReadinessChecks,
+  getProductionReadinessDashboard as getStoredProductionReadinessDashboard,
+  getProductionReadinessStatus as getStoredProductionReadinessStatus,
+  getProductionReadinessWarnings as getStoredProductionReadinessWarnings,
+} from '../runtime/production-readiness-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2417,6 +2426,34 @@ export function selectCertifiedSandboxAuditTrail(runId?: string) {
 
 export function selectCertifiedSandboxReadinessStatus(runId?: string) {
   return getStoredCertifiedSandboxReadinessStatus(runId);
+}
+
+export function selectProductionReadinessDashboard() {
+  return getStoredProductionReadinessDashboard();
+}
+
+export function selectProductionReadinessChecks() {
+  return getStoredProductionReadinessChecks();
+}
+
+export function selectActiveProductionReadinessCheck() {
+  return getStoredActiveProductionReadinessCheck();
+}
+
+export function selectProductionReadinessChecklist(checkId?: string) {
+  return getStoredProductionReadinessChecklist(checkId);
+}
+
+export function selectProductionReadinessBlockers(checkId?: string) {
+  return getStoredProductionReadinessBlockers(checkId);
+}
+
+export function selectProductionReadinessWarnings(checkId?: string) {
+  return getStoredProductionReadinessWarnings(checkId);
+}
+
+export function selectProductionReadinessStatus(checkId?: string) {
+  return getStoredProductionReadinessStatus(checkId);
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

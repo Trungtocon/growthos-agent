@@ -18,7 +18,7 @@ const visibleRoutes = [
   '/approvals', '/approvals/demo-approval', '/governance/policies', '/audit-log', '/risk-center', '/cost',
   '/budget/settings', '/reports', '/reports/new', '/integrations', '/integrations/demo-integration', '/mcp',
   '/workspaces', '/secrets', '/team', '/roles-permissions', '/settings', '/billing', '/help',
-  '/evaluation', '/worker-control', '/worker-recovery', '/chaos', '/runtime-certification', '/certified-sandbox-run',
+  '/evaluation', '/worker-control', '/worker-recovery', '/chaos', '/runtime-certification', '/certified-sandbox-run', '/production-readiness',
 ];
 
 function writeJson(filePath, data) {

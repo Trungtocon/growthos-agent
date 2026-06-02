@@ -3,6 +3,7 @@ import { Badge, Button, PageHeader, Panel, ProgressBar } from '../components/ui/
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
+import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 import { DEMO_RUN_ID } from '../data/demo-fixtures';
 import type { Tone } from '../data/demoScreens';
 import {
@@ -434,6 +435,7 @@ export function EvaluationPage() {
       <ChaosSimulationCompactWidget surface="evaluation" />
       <RuntimeCertificationCompactWidget surface="evaluation" />
       <CertifiedSandboxRunCompactWidget surface="evaluation" />
+      <ProductionReadinessCompactWidget surface="evaluation" />
       <PageHeader
         title="Run Evaluation & Quality Scoring"
         subtitle="Score completed runs across timeline integrity, artifacts, tools, approvals, governance, cost, and replay evidence."

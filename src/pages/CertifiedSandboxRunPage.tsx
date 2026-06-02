@@ -21,6 +21,7 @@ import {
   failCertifiedSandboxRun,
   startCertifiedSandboxRun,
 } from '../runtime/certified-sandbox-run-store';
+import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 
 type CertifiedSandboxWidgetSurface =
   | 'runtime-certification'
@@ -74,6 +75,7 @@ export function CertifiedSandboxRunPage() {
 
   return (
     <div data-route="/certified-sandbox-run" data-certified-sandbox-route>
+      <ProductionReadinessCompactWidget surface="certified-sandbox-run" />
       <PageHeader
         title="Certified Sandbox End-to-End Run"
         subtitle="Run a full Hermes/Paperclip workflow only after runtime certification, sandbox safety, and governance preflight are satisfied."

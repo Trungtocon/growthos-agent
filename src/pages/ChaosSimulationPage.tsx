@@ -22,6 +22,7 @@ import {
 import type { ChaosScenarioType } from '../runtime/chaos-simulation';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
+import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 
 const scenarioLibrary: Array<{ type: ChaosScenarioType; name: string; description: string }> = [
   { type: 'worker_stale', name: 'Worker stale', description: 'Inject stale heartbeat and recover the worker.' },
@@ -70,6 +71,7 @@ export function ChaosSimulationPage() {
     <div data-route="/chaos" data-chaos-simulation-route>
       <RuntimeCertificationCompactWidget surface="chaos" />
       <CertifiedSandboxRunCompactWidget surface="chaos" />
+      <ProductionReadinessCompactWidget surface="chaos" />
       <PageHeader
         title="Recovery Simulation & Chaos Testing"
         subtitle="Inject controlled mock failures to validate worker recovery, auto-healing, governance, queue safety, and audit evidence."
