@@ -273,6 +273,17 @@ import {
   getCertifiedSandboxRuns as getStoredCertifiedSandboxRuns,
 } from '../runtime/certified-sandbox-run-store';
 import {
+  getBackendAdapterState as getStoredBackendAdapterState,
+  selectBackendArtifacts as getStoredBackendArtifacts,
+  selectBackendAuthStatus as getStoredBackendAuthStatus,
+  selectBackendBlockers as getStoredBackendBlockers,
+  selectBackendEndpointMatrix as getStoredBackendEndpointMatrix,
+  selectBackendHealth as getStoredBackendHealth,
+  selectBackendLastRequest as getStoredBackendLastRequest,
+  selectBackendMode as getStoredBackendMode,
+  selectBackendWarnings as getStoredBackendWarnings,
+} from '../runtime/backend-adapter-store';
+import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
   getDeploymentArtifacts as getStoredDeploymentArtifacts,
   getDeploymentBlockers as getStoredDeploymentBlockers,
@@ -2501,6 +2512,42 @@ export function selectDeploymentReadiness() {
 
 export function selectDeploymentArtifacts() {
   return getStoredDeploymentArtifacts();
+}
+
+export function selectBackendAdapterState() {
+  return getStoredBackendAdapterState();
+}
+
+export function selectBackendHealth() {
+  return getStoredBackendHealth();
+}
+
+export function selectBackendAuthStatus() {
+  return getStoredBackendAuthStatus();
+}
+
+export function selectBackendMode() {
+  return getStoredBackendMode();
+}
+
+export function selectBackendEndpointMatrix() {
+  return getStoredBackendEndpointMatrix();
+}
+
+export function selectBackendBlockers() {
+  return getStoredBackendBlockers();
+}
+
+export function selectBackendWarnings() {
+  return getStoredBackendWarnings();
+}
+
+export function selectBackendLastRequest() {
+  return getStoredBackendLastRequest();
+}
+
+export function selectBackendArtifacts() {
+  return getStoredBackendArtifacts();
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

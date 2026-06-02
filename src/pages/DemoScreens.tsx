@@ -31,6 +31,7 @@ import type { LucideIcon } from 'lucide-react';
 import { ActivityRow, AvatarBot, Badge, Button, CostDistributionChart, DashboardCard, DonutScore, KpiTile, LinkFooter, MetricCard, MoreButton, PageHeader, Panel, ProgressBar, RowAction } from '../components/ui/DemoPrimitives';
 import { ArtifactPreviewPanel, ArtifactViewer } from '../components/artifacts/ArtifactViewer';
 import { ActionPlanExecutionCompactWidget, EvaluationFeedbackCompactWidget, FeedbackActionPlanCompactWidget, ImprovementLoopCompactWidget, ImprovementLoopGovernanceCompactWidget, ImprovementLoopQueueCompactWidget, ImprovementLoopWorkerCompactWidget, ImprovementOutcomeCompactWidget, LearningRecommendationCompactWidget, RecommendationExecutionCompactWidget, RunEvaluationCompactWidget, WorkerObservabilityCompactWidget, WorkerRecoveryCompactWidget } from './EvaluationPage';
+import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
@@ -869,6 +870,7 @@ function RunConsoleRealPage() {
       <CertifiedSandboxRunCompactWidget surface="run" />
       <ProductionReadinessCompactWidget surface="run" />
       <DeploymentConfigCompactWidget surface="run" />
+      <BackendAdapterCompactWidget surface="run" />
       <div data-parity-id="run.header">
         <PageHeader dense title="Run Console" subtitle="Track real-time agent execution, tool calls, logs, and generated artifacts" actions={<><Button variant="secondary">Open Ticket</Button><Button variant="secondary">Open Agent</Button><Button variant="secondary">Request Update</Button><Button variant="warning"><Pause className="h-4 w-4" />Pause</Button><Button variant="danger"><Square className="h-4 w-4" />Stop</Button></>} />
       </div>

@@ -18,6 +18,7 @@ import {
   runContractTest,
   startCertificationRun,
 } from '../runtime/runtime-certification-store';
+import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
@@ -56,6 +57,7 @@ export function RuntimeCertificationPage() {
       <CertifiedSandboxRunCompactWidget surface="runtime-certification" />
       <ProductionReadinessCompactWidget surface="runtime-certification" />
       <DeploymentConfigCompactWidget surface="runtime-certification" />
+      <BackendAdapterCompactWidget surface="runtime-certification" />
       <PageHeader
         title="Sandbox Contract Test & Runtime Certification"
         subtitle="Verify Hermes/Paperclip sandbox contracts before production enablement while preserving mock fallback and governance gates."

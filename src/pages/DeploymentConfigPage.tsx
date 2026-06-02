@@ -21,6 +21,7 @@ import {
   resetDeploymentConfigCheck,
   validateDeploymentConfig,
 } from '../runtime/deployment-config-store';
+import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -124,6 +125,7 @@ export function DeploymentConfigPage() {
 
   return (
     <div data-route="/deployment-config" data-deployment-config-route>
+      <BackendAdapterCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."

@@ -1,6 +1,7 @@
 import { AppShell } from './components/layout/AppShell';
 import { ReadOnlyActionGuard } from './components/ui/ReadOnlyActionGuard';
 import { screens } from './data/screens';
+import { BackendAdapterPage } from './pages/BackendAdapterPage';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
@@ -95,6 +96,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/deployment-config">
         <DeploymentConfigPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/backend-adapter') {
+    return (
+      <GuardedAppShell currentPath="/backend-adapter">
+        <BackendAdapterPage />
       </GuardedAppShell>
     );
   }

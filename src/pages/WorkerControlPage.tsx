@@ -22,6 +22,7 @@ import {
   requestWorkerSkipItem,
   requestWorkerStop,
 } from '../runtime/worker-observability-store';
+import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { ChaosSimulationCompactWidget } from './ChaosSimulationPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { RuntimeCertificationCompactWidget } from './RuntimeCertificationPage';
@@ -54,6 +55,7 @@ export function WorkerControlPage() {
       <RuntimeCertificationCompactWidget surface="worker-control" />
       <CertifiedSandboxRunCompactWidget surface="worker-control" />
       <DeploymentConfigCompactWidget surface="worker-control" />
+      <BackendAdapterCompactWidget surface="worker-control" />
       <PageHeader
         title="Worker Observability & Control Center"
         subtitle="Monitor autonomous improvement loop worker health, queue execution, incidents, SLA warnings, and safe control actions."
