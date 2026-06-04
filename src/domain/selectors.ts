@@ -399,6 +399,21 @@ import {
   selectGoLiveWarnings as getStoredGoLiveWarnings,
 } from '../runtime/go-live-control-store';
 import {
+  selectCanAcceptHandoff as getStoredCanAcceptHandoff,
+  selectCanApproveRunbook as getStoredCanApproveRunbook,
+  selectEscalationMatrix as getStoredEscalationMatrix,
+  selectIncidentResponsePlan as getStoredIncidentResponsePlan,
+  selectOperatorHandoffStatus as getStoredOperatorHandoffStatus,
+  selectProductionRunbook as getStoredProductionRunbook,
+  selectProductionRunbookStatus as getStoredProductionRunbookStatus,
+  selectRollbackProcedure as getStoredRollbackProcedure,
+  selectRunbookArtifacts as getStoredRunbookArtifacts,
+  selectRunbookBlockers as getStoredRunbookBlockers,
+  selectRunbookChecklist as getStoredRunbookChecklist,
+  selectRunbookWarnings as getStoredRunbookWarnings,
+  selectSupportWindow as getStoredSupportWindow,
+} from '../runtime/production-runbook-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2869,6 +2884,58 @@ export function selectCanMarkReleased() {
 
 export function selectCanTriggerRollback() {
   return getStoredCanTriggerRollback();
+}
+
+export function selectProductionRunbook() {
+  return getStoredProductionRunbook();
+}
+
+export function selectProductionRunbookStatus() {
+  return getStoredProductionRunbookStatus();
+}
+
+export function selectOperatorHandoffStatus() {
+  return getStoredOperatorHandoffStatus();
+}
+
+export function selectRunbookChecklist() {
+  return getStoredRunbookChecklist();
+}
+
+export function selectRunbookBlockers() {
+  return getStoredRunbookBlockers();
+}
+
+export function selectRunbookWarnings() {
+  return getStoredRunbookWarnings();
+}
+
+export function selectRollbackProcedure() {
+  return getStoredRollbackProcedure();
+}
+
+export function selectIncidentResponsePlan() {
+  return getStoredIncidentResponsePlan();
+}
+
+export function selectEscalationMatrix() {
+  return getStoredEscalationMatrix();
+}
+
+export function selectSupportWindow() {
+  return getStoredSupportWindow();
+}
+
+export function selectCanApproveRunbook() {
+  return getStoredCanApproveRunbook();
+}
+
+export function selectCanAcceptHandoff() {
+  return getStoredCanAcceptHandoff();
+}
+
+export function selectRunbookArtifacts() {
+  return getStoredRunbookArtifacts();
 }
 
 export function selectDatabaseConfig() {

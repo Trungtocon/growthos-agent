@@ -138,7 +138,8 @@
     "smoke:environment-readiness": "node scripts/smoke-environment-readiness.mjs",
     "smoke:production-config-evidence": "node scripts/smoke-production-config-evidence.mjs",
     "smoke:production-observability": "node scripts/smoke-production-observability.mjs",
-    "smoke:go-live-control": "node scripts/smoke-go-live-control.mjs"
+    "smoke:go-live-control": "node scripts/smoke-go-live-control.mjs",
+    "smoke:production-runbook": "node scripts/smoke-production-runbook.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

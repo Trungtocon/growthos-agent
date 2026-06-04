@@ -15,6 +15,7 @@ import {
   triggerRollback,
   verifyRollbackPlan,
 } from '../runtime/go-live-control-store';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type GoLiveWidgetSurface =
   | 'pre-golive-validation'
@@ -66,6 +67,7 @@ export function GoLiveControlPage() {
 
   return (
     <div data-route="/go-live-control" data-go-live-control-route>
+      <ProductionRunbookCompactWidget surface="go-live-control" />
       <PageHeader
         title="Production Release Approval & Go-Live Control Center"
         subtitle="Final release gate for production readiness, evidence, approval, release window, rollback readiness, and go/no-go decision history."

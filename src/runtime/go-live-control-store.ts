@@ -11,6 +11,7 @@ import { selectPreGoLiveValidationSummary } from './pre-golive-validation-store'
 import { selectProductionConfigEvidenceDashboard } from './production-config-evidence-store';
 import { selectObservabilityDashboard } from './production-observability-store';
 import { getProductionReadinessDashboard } from './production-readiness-store';
+import { selectProductionRunbook } from './production-runbook-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import {
   calculateGoLiveReadinessScore,
@@ -108,6 +109,7 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
   const environment = getEvidenceAdjustedEnvironmentReadinessReport('PRODUCTION');
   const evidence = selectProductionConfigEvidenceDashboard();
   const observability = selectObservabilityDashboard();
+  const runbook = selectProductionRunbook();
   const preGoLive = selectPreGoLiveValidationSummary();
 
   const latestSandbox = sandbox.runs.find((run) => run.status === 'completed');
@@ -232,6 +234,32 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
       warnings: observability.warnings,
       evidence: observability.checks.map((entry) => `${entry.type}:${entry.status}`),
       route: '/production-observability',
+    }),
+    createGate({
+      gateId: 'production-runbook',
+      name: 'Production Runbook & Operator Handoff',
+      status: (runbook.runbookStatus === 'ready' || runbook.runbookStatus === 'approved')
+        && runbook.handoffStatus === 'accepted'
+        && runbook.rollbackStatus !== 'missing'
+        && runbook.monitoringStatus !== 'missing'
+        && Boolean(runbook.escalationOwner)
+        && Boolean(runbook.incidentOwner)
+        && Boolean(runbook.supportWindow)
+        ? 'verified'
+        : 'blocked',
+      score: runbook.blockers.length ? 0 : runbook.handoffStatus === 'accepted' ? 100 : Math.max(runbook.checklistCompletion, 50),
+      blockers: [
+        ...(runbook.runbookStatus === 'ready' || runbook.runbookStatus === 'approved' ? [] : ['Production runbook is not ready or approved.']),
+        ...(runbook.handoffStatus === 'accepted' ? [] : ['Operator handoff is not accepted.']),
+        ...(runbook.rollbackStatus !== 'missing' ? [] : ['Rollback procedure is missing from production runbook.']),
+        ...(runbook.monitoringStatus !== 'missing' ? [] : ['Post-release monitoring checklist is missing from production runbook.']),
+        ...(runbook.escalationOwner ? [] : ['Escalation owner is missing from production runbook.']),
+        ...(runbook.incidentOwner ? [] : ['Incident owner is missing from production runbook.']),
+        ...(runbook.supportWindow ? [] : ['Support window is missing from production runbook.']),
+      ],
+      warnings: runbook.warnings.map((entry) => entry.reason),
+      evidence: [`runbook:${runbook.runbookStatus}`, `handoff:${runbook.handoffStatus}`, `completion:${runbook.checklistCompletion}`],
+      route: '/production-runbook',
     }),
     createGate({
       gateId: 'pre-golive-validation',

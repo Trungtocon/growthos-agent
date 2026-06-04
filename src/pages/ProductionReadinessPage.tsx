@@ -20,6 +20,7 @@ import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -81,6 +82,7 @@ export function ProductionReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="production-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="production-readiness" />
       <ProductionObservabilityCompactWidget surface="production-readiness" />
+      <ProductionRunbookCompactWidget surface="production-readiness" />
       <GoLiveControlCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"

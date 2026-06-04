@@ -11,6 +11,7 @@ import {
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type EnvironmentReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -60,6 +61,7 @@ export function EnvironmentReadinessPage() {
     <div data-route="/environment-readiness" data-environment-readiness-route>
       <ProductionConfigEvidenceCompactWidget surface="environment-readiness" />
       <ProductionObservabilityCompactWidget surface="environment-readiness" />
+      <ProductionRunbookCompactWidget surface="environment-readiness" />
       <GoLiveControlCompactWidget surface="environment-readiness" />
       <PageHeader
         title="Environment & Secrets Readiness"

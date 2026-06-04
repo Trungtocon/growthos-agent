@@ -31,6 +31,7 @@ import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -143,6 +144,7 @@ export function DeploymentConfigPage() {
       <EnvironmentReadinessCompactWidget surface="deployment-config" />
       <ProductionConfigEvidenceCompactWidget surface="deployment-config" />
       <ProductionObservabilityCompactWidget surface="deployment-config" />
+      <ProductionRunbookCompactWidget surface="deployment-config" />
       <GoLiveControlCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"

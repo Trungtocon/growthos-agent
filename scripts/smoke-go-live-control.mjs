@@ -90,6 +90,7 @@ async function seedVerifiedProductionEvidence(page) {
     const { createDeploymentConfigCheck, validateDeploymentConfig, markDeploymentConfigReady } = await import('/src/runtime/deployment-config-store.ts');
     const { PRODUCTION_EVIDENCE_CATEGORIES } = await import('/src/runtime/production-config-evidence.ts');
     const { addEvidence, createDemoEvidenceInput, verifyEvidence } = await import('/src/runtime/production-config-evidence-store.ts');
+    const { createRunbook, completeRunbookChecklist, markRunbookReady, approveRunbook, acceptOperatorHandoff } = await import('/src/runtime/production-runbook-store.ts');
 
     const profile = createCertificationProfile({
       name: 'Go-live control certified profile',
@@ -140,7 +141,18 @@ async function seedVerifiedProductionEvidence(page) {
     }).id);
     markDeploymentConfigReady(deployment.id);
     approveProductionGoLive(readiness.id, 'Go-live Control Smoke');
-    return { certificationId: certification.id, sandboxId: sandbox.id, readinessId: readiness.id, deploymentId: deployment.id };
+    const runbook = createRunbook({
+      releaseId: 'go-live-control-smoke',
+      operatorOwner: 'Release Operator',
+      escalationOwner: 'SRE Lead',
+      incidentOwner: 'Incident Commander',
+      supportWindow: { start: '2026-06-06T02:00:00.000Z', end: '2026-06-06T08:00:00.000Z', timezone: 'Asia/Saigon' },
+    });
+    completeRunbookChecklist(runbook.runbookId);
+    markRunbookReady(runbook.runbookId);
+    const approvedRunbook = approveRunbook(runbook.runbookId, 'VP Operations');
+    acceptOperatorHandoff(approvedRunbook.runbookId, 'Release Operator');
+    return { certificationId: certification.id, sandboxId: sandbox.id, readinessId: readiness.id, deploymentId: deployment.id, runbookId: runbook.runbookId };
   });
 }
 

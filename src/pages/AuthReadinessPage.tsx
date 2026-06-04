@@ -13,6 +13,7 @@ import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type AuthReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -65,6 +66,7 @@ export function AuthReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="auth-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="auth-readiness" />
       <ProductionObservabilityCompactWidget surface="auth-readiness" />
+      <ProductionRunbookCompactWidget surface="auth-readiness" />
       <GoLiveControlCompactWidget surface="auth-readiness" />
       <PageHeader
         title="Auth & Session Readiness"

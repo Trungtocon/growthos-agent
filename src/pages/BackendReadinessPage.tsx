@@ -16,6 +16,7 @@ import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('missing') || value.includes('offline') || value.includes('blocked')) return 'red';
@@ -42,6 +43,7 @@ export function BackendReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="backend-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="backend-readiness" />
       <ProductionObservabilityCompactWidget surface="backend-readiness" />
+      <ProductionRunbookCompactWidget surface="backend-readiness" />
       <GoLiveControlCompactWidget surface="backend-readiness" />
       <PageHeader
         title="Backend Readiness"
