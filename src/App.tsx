@@ -10,6 +10,7 @@ import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
 import { DatabaseReadinessPage } from './pages/DatabaseReadinessPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
+import { EnvironmentReadinessPage } from './pages/EnvironmentReadinessPage';
 import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
@@ -130,6 +131,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/auth-readiness">
         <AuthReadinessPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/environment-readiness') {
+    return (
+      <GuardedAppShell currentPath="/environment-readiness">
+        <EnvironmentReadinessPage />
       </GuardedAppShell>
     );
   }

@@ -322,6 +322,18 @@ import {
   selectTenantWorkspaceBindingStatus as getStoredTenantWorkspaceBindingStatus,
   selectTokenValidationStatus as getStoredTokenValidationStatus,
 } from '../runtime/auth-readiness-store';
+import {
+  getEnvironmentReadinessReport as getStoredEnvironmentReadinessReport,
+  selectEnvironmentReadiness as getStoredEnvironmentReadiness,
+  selectEnvironmentReadinessBlockers as getStoredEnvironmentReadinessBlockers,
+  selectEnvironmentReadinessScore as getStoredEnvironmentReadinessScore,
+  selectEnvironmentReadinessStatus as getStoredEnvironmentReadinessStatus,
+  selectEnvironmentReadinessWarnings as getStoredEnvironmentReadinessWarnings,
+  selectMaskedEnvironmentVariables as getStoredMaskedEnvironmentVariables,
+  selectRequiredProductionEnvMatrix as getStoredRequiredProductionEnvMatrix,
+  selectSecretReadiness as getStoredSecretReadiness,
+  selectSecretReadinessStatus as getStoredSecretReadinessStatus,
+} from '../runtime/environment-readiness-store';
 import { getPersistenceDomains as getStoredPersistenceDomains } from '../runtime/persistence-registry';
 import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
@@ -2733,6 +2745,59 @@ export function selectPreGoLiveAuthGate() {
       relatedRoutes: ['/auth-readiness'],
       relatedSmokeCommand: 'npm run smoke:auth-readiness',
       finalVerdict: 'Auth readiness not checked by pre go-live suite.',
+    };
+}
+
+export function selectEnvironmentReadiness() {
+  return getStoredEnvironmentReadiness();
+}
+
+export function selectEnvironmentReadinessStatus() {
+  return getStoredEnvironmentReadinessStatus();
+}
+
+export function selectEnvironmentReadinessScore() {
+  return getStoredEnvironmentReadinessScore();
+}
+
+export function selectEnvironmentReadinessBlockers() {
+  return getStoredEnvironmentReadinessBlockers();
+}
+
+export function selectEnvironmentReadinessWarnings() {
+  return getStoredEnvironmentReadinessWarnings();
+}
+
+export function selectSecretReadiness() {
+  return getStoredSecretReadiness();
+}
+
+export function selectSecretReadinessStatus() {
+  return getStoredSecretReadinessStatus();
+}
+
+export function selectRequiredProductionEnvMatrix() {
+  return getStoredRequiredProductionEnvMatrix();
+}
+
+export function selectMaskedEnvironmentVariables() {
+  return getStoredMaskedEnvironmentVariables();
+}
+
+export function selectPreGoLiveEnvironmentGate() {
+  return getStoredPreGoLiveValidationGates().find((gate) => gate.gateId === 'environment-readiness')
+    ?? {
+      gateId: 'environment-readiness',
+      name: 'Environment & Secrets Readiness',
+      category: 'backend',
+      status: getStoredEnvironmentReadinessReport('PRODUCTION').status === 'BLOCKED' ? 'blocked' : 'warning',
+      score: getStoredEnvironmentReadinessReport('PRODUCTION').readinessScore,
+      blockers: getStoredEnvironmentReadinessBlockers(),
+      warnings: getStoredEnvironmentReadinessWarnings(),
+      evidence: ['Environment & Secrets Readiness gate has not been run in pre go-live validation yet.'],
+      relatedRoutes: ['/environment-readiness'],
+      relatedSmokeCommand: 'npm run smoke:environment-readiness',
+      finalVerdict: 'Environment readiness not checked by pre go-live suite.',
     };
 }
 

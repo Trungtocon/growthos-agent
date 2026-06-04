@@ -12,6 +12,7 @@ import {
 } from '../runtime/pre-golive-validation-store';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
+import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 
 type PreGoLiveWidgetSurface =
   | 'production-readiness'
@@ -59,6 +60,7 @@ export function PreGoLiveValidationPage() {
     <div data-route="/pre-golive-validation" data-pre-golive-validation-route>
       <AuthReadinessCompactWidget surface="pre-golive-validation" />
       <DatabaseReadinessCompactWidget surface="pre-golive-validation" />
+      <EnvironmentReadinessCompactWidget surface="pre-golive-validation" />
       <PageHeader
         title="Pre-Go-Live Validation Suite"
         subtitle="Run the final cross-system gate matrix before any production deployment decision."

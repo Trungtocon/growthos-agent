@@ -27,6 +27,7 @@ import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
+import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
@@ -90,6 +91,7 @@ export function CertifiedSandboxRunPage() {
       <PreGoLiveValidationCompactWidget surface="certified-sandbox-run" />
       <AuthReadinessCompactWidget surface="certified-sandbox-run" />
       <DatabaseReadinessCompactWidget surface="certified-sandbox-run" />
+      <EnvironmentReadinessCompactWidget surface="certified-sandbox-run" />
       <PageHeader
         title="Certified Sandbox End-to-End Run"
         subtitle="Run a full Hermes/Paperclip workflow only after runtime certification, sandbox safety, and governance preflight are satisfied."

@@ -12,6 +12,7 @@ import { getRuntimeCertificationDashboard } from './runtime-certification-store'
 import { getBackendReadinessReport } from './backend-health';
 import { getDatabaseReadinessReport } from './database-readiness';
 import { getAuthReadinessReport } from './auth-readiness-store';
+import { getEnvironmentReadinessReport } from './environment-readiness-store';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -230,6 +231,28 @@ function gateDefinitions(): GateDefinition[] {
             `token=${report.tokenValidation.status}`,
             `rbac=${report.rbacBinding.status}`,
             `tenantWorkspace=${report.tenantWorkspaceBinding.status}`,
+          ],
+        };
+      },
+    },
+    {
+      gateId: 'environment-readiness',
+      name: 'Environment & Secrets Readiness',
+      category: 'backend',
+      relatedRoutes: ['/environment-readiness'],
+      relatedSmokeCommand: 'npm run smoke:environment-readiness',
+      evaluate: () => {
+        const report = getEnvironmentReadinessReport('PRODUCTION');
+        return {
+          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
+          score: report.readinessScore,
+          blockers: report.blockers.map((entry) => `production environment: ${entry}`),
+          warnings: report.warnings,
+          evidence: [
+            `required=${report.variables.filter((entry) => entry.required).length}`,
+            `missing=${report.missingRequired.length}`,
+            `secrets=${report.secretStatus}`,
+            `rotation=${report.rotationStatus.status}`,
           ],
         };
       },

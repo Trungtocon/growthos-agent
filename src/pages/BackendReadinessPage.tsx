@@ -12,6 +12,7 @@ import { getEnvironmentRegistry, setActiveEnvironment, type RuntimeEnvironmentId
 import { getEndpointRegistry } from '../runtime/endpoint-registry';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
+import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('missing') || value.includes('offline') || value.includes('blocked')) return 'red';
@@ -35,6 +36,7 @@ export function BackendReadinessPage() {
     <div data-route="/backend-readiness" data-backend-readiness-route>
       <AuthReadinessCompactWidget surface="backend-readiness" />
       <DatabaseReadinessCompactWidget surface="backend-readiness" />
+      <EnvironmentReadinessCompactWidget surface="backend-readiness" />
       <PageHeader
         title="Backend Readiness"
         subtitle="Environment registry, auth provider, endpoint matrix, and health evidence for real backend capable execution."

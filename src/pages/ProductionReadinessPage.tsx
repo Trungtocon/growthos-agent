@@ -16,6 +16,7 @@ import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
+import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -74,6 +75,7 @@ export function ProductionReadinessPage() {
       <PreGoLiveValidationCompactWidget surface="production-readiness" />
       <AuthReadinessCompactWidget surface="production-readiness" />
       <DatabaseReadinessCompactWidget surface="production-readiness" />
+      <EnvironmentReadinessCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."

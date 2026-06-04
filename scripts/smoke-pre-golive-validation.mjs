@@ -23,6 +23,7 @@ const requiredGates = [
   'backend-readiness',
   'database-readiness',
   'auth-readiness',
+  'environment-readiness',
   'api-contracts',
   'e2e-action-flow',
   'ui-action-wiring',
