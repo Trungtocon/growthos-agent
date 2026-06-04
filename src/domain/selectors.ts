@@ -301,6 +301,16 @@ import {
   selectPreGoLiveValidationArtifacts as getStoredPreGoLiveValidationArtifacts,
   selectPreGoLiveValidationSummary as getStoredPreGoLiveValidationSummary,
 } from '../runtime/pre-golive-validation-store';
+import { selectAuditLogSummary as getStoredAuditLogSummary } from '../runtime/audit-log-store';
+import {
+  getDatabaseReadinessReport as getStoredDatabaseReadinessReport,
+  selectDatabaseBlockers as getStoredDatabaseBlockers,
+  selectDatabaseConfig as getStoredDatabaseConfig,
+  selectDatabaseHealth as getStoredDatabaseHealth,
+  selectDatabaseReadiness as getStoredDatabaseReadiness,
+  selectDatabaseWarnings as getStoredDatabaseWarnings,
+} from '../runtime/database-readiness';
+import { getPersistenceDomains as getStoredPersistenceDomains } from '../runtime/persistence-registry';
 import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
   getDeploymentArtifacts as getStoredDeploymentArtifacts,
@@ -2614,6 +2624,51 @@ export function selectPreGoLiveValidationSummary() {
 
 export function selectPreGoLiveValidationArtifacts() {
   return getStoredPreGoLiveValidationArtifacts();
+}
+
+export function selectDatabaseConfig() {
+  return getStoredDatabaseConfig();
+}
+
+export function selectDatabaseHealth() {
+  return getStoredDatabaseHealth();
+}
+
+export function selectPersistenceDomains() {
+  return getStoredPersistenceDomains();
+}
+
+export function selectAuditLogSummary() {
+  return getStoredAuditLogSummary();
+}
+
+export function selectDatabaseReadiness() {
+  return getStoredDatabaseReadiness();
+}
+
+export function selectDatabaseBlockers() {
+  return getStoredDatabaseBlockers();
+}
+
+export function selectDatabaseWarnings() {
+  return getStoredDatabaseWarnings();
+}
+
+export function selectPreGoLiveDatabaseGate() {
+  return getStoredPreGoLiveValidationGates().find((gate) => gate.gateId === 'database-readiness')
+    ?? {
+      gateId: 'database-readiness',
+      name: 'Database Readiness',
+      category: 'backend',
+      status: getStoredDatabaseReadinessReport('PRODUCTION').status === 'BLOCKED' ? 'blocked' : 'warning',
+      score: getStoredDatabaseReadinessReport('PRODUCTION').readinessScore,
+      blockers: getStoredDatabaseBlockers(),
+      warnings: getStoredDatabaseWarnings(),
+      evidence: ['Database Readiness gate has not been run in pre go-live validation yet.'],
+      relatedRoutes: ['/database-readiness'],
+      relatedSmokeCommand: 'npm run smoke:database-readiness',
+      finalVerdict: 'Database readiness not checked by pre go-live suite.',
+    };
 }
 
 export function selectApprovalDetailViewModel(approvalId = DEMO_APPROVAL_ID) {

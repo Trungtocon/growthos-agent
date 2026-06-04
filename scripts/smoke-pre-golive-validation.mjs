@@ -20,6 +20,8 @@ const requiredGates = [
   'runtime-certification',
   'certified-sandbox-run',
   'backend-adapter',
+  'backend-readiness',
+  'database-readiness',
   'api-contracts',
   'e2e-action-flow',
   'ui-action-wiring',

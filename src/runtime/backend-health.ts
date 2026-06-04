@@ -9,6 +9,7 @@ import {
   type RuntimeEnvironment,
   type RuntimeEnvironmentId,
 } from './environment-registry';
+import { getDatabaseReadinessReport, type DatabaseReadinessReport } from './database-readiness';
 
 export interface BackendHealthReport {
   environment: RuntimeEnvironment;
@@ -17,6 +18,7 @@ export interface BackendHealthReport {
   availability: number;
   auth: AuthProviderStatus;
   endpointReachability: Array<BackendEndpointDefinition & { reachable: boolean; reason: string }>;
+  databaseReadiness?: Pick<DatabaseReadinessReport, 'status' | 'readinessScore' | 'schemaVersion' | 'migrationStatus'>;
   readinessScore: number;
   blockers: string[];
   warnings: string[];
@@ -74,6 +76,9 @@ export function checkBackendReadiness(environmentId: RuntimeEnvironmentId = 'PRO
     reachable: Boolean(environment.baseUrl),
     reason: environment.baseUrl ? `${endpoint.owner} endpoint is configured for gateway binding.` : 'Backend base URL missing.',
   }));
+  const databaseReadiness = getDatabaseReadinessReport(environmentId);
+  if (databaseReadiness.status === 'BLOCKED') blockers.push(`Database readiness is blocked: ${databaseReadiness.blockers[0] ?? 'production database is not configured.'}`);
+  if (databaseReadiness.status === 'WARNING') warnings.push(`Database readiness warning: ${databaseReadiness.warnings[0] ?? 'database is not production ready.'}`);
   const missingEndpoints = endpointReachability.filter((endpoint) => !endpoint.reachable).length;
   const status = blockers.length ? 'missing_config' : warnings.length ? 'degraded' : 'online';
   const readinessScore = blockers.length ? 25 : warnings.length ? 78 : 100;
@@ -84,6 +89,12 @@ export function checkBackendReadiness(environmentId: RuntimeEnvironmentId = 'PRO
     availability: environment.baseUrl ? 99.5 : 0,
     auth,
     endpointReachability,
+    databaseReadiness: {
+      status: databaseReadiness.status,
+      readinessScore: databaseReadiness.readinessScore,
+      schemaVersion: databaseReadiness.schemaVersion,
+      migrationStatus: databaseReadiness.migrationStatus,
+    },
     readinessScore,
     blockers: blockers.concat(missingEndpoints ? [`${missingEndpoints} backend endpoints are not reachable without a base URL.`] : []),
     warnings,
@@ -139,4 +150,3 @@ export function exportBackendReadinessArtifacts(environmentId: RuntimeEnvironmen
 export function getBackendReadinessArtifacts(): ArtifactRecord[] {
   return clone(readState().artifacts);
 }
-

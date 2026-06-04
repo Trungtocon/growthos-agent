@@ -10,6 +10,7 @@ import { getGovernanceReadinessReport } from './governance-readiness-store';
 import { getProductionReadinessDashboard } from './production-readiness-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import { getBackendReadinessReport } from './backend-health';
+import { getDatabaseReadinessReport } from './database-readiness';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -189,6 +190,23 @@ function gateDefinitions(): GateDefinition[] {
           blockers: report.blockers.map((entry) => `production backend: ${entry}`),
           warnings: report.warnings,
           evidence: [`environment=${report.environment.id}`, `health=${report.status}`, `auth=${report.auth.status}`, `endpoints=${report.endpointReachability.length}`],
+        };
+      },
+    },
+    {
+      gateId: 'database-readiness',
+      name: 'Database Readiness',
+      category: 'backend',
+      relatedRoutes: ['/database-readiness'],
+      relatedSmokeCommand: 'npm run smoke:database-readiness',
+      evaluate: () => {
+        const report = getDatabaseReadinessReport('PRODUCTION');
+        return {
+          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
+          score: report.readinessScore,
+          blockers: report.blockers.map((entry) => `production database: ${entry}`),
+          warnings: report.warnings,
+          evidence: [`mode=${report.config.mode}`, `health=${report.connectionHealth}`, `schema=${report.schemaVersion}`, `domains=${report.persistenceDomains.length}`],
         };
       },
     },

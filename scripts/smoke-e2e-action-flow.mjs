@@ -255,8 +255,11 @@ async function main() {
 
     await expectStep(rows, 'no silent button actions', async () => {
       await page.goto(`${baseUrl}/e2e-action-flow`, { waitUntil: 'networkidle' });
+      const navigation = page.waitForNavigation({ waitUntil: 'networkidle', timeout: 8000 }).catch(() => null);
       await page.locator('[data-e2e-run-flow]').first().click();
+      await navigation;
       await page.waitForLoadState('networkidle');
+      await page.locator('[data-e2e-action-flow-route]').waitFor({ state: 'attached' });
       const verdict = await page.locator('[data-e2e-final-verdict]').first().textContent();
       assert(verdict && verdict.trim().length > 0, 'run flow did not update visible verdict');
       const silent = await page.evaluate(() => {

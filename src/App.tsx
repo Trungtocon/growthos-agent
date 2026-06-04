@@ -6,6 +6,7 @@ import { BackendAdapterPage } from './pages/BackendAdapterPage';
 import { BackendReadinessPage } from './pages/BackendReadinessPage';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
 import { ChaosSimulationPage } from './pages/ChaosSimulationPage';
+import { DatabaseReadinessPage } from './pages/DatabaseReadinessPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
 import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
@@ -114,6 +115,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/backend-readiness">
         <BackendReadinessPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/database-readiness') {
+    return (
+      <GuardedAppShell currentPath="/database-readiness">
+        <DatabaseReadinessPage />
       </GuardedAppShell>
     );
   }

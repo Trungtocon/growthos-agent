@@ -23,6 +23,7 @@ import {
 } from '../runtime/deployment-config-store';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
+import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
@@ -132,6 +133,7 @@ export function DeploymentConfigPage() {
       <ApiContractsCompactWidget surface="deployment-config" />
       <E2EActionFlowCompactWidget surface="deployment-config" />
       <PreGoLiveValidationCompactWidget surface="deployment-config" />
+      <DatabaseReadinessCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."
