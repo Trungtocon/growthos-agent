@@ -24,6 +24,15 @@ function keysFor(mode: EnvironmentAuthMode, environmentId: RuntimeEnvironmentId)
   return [];
 }
 
+export function getAuthProviderRequiredEnvKeys(environmentId: RuntimeEnvironmentId): string[] {
+  const environment = getEnvironmentById(environmentId);
+  return keysFor(environment.authMode, environmentId);
+}
+
+export function hasAuthProviderConfig(environmentId: RuntimeEnvironmentId): boolean {
+  return hasAnyEnv(getAuthProviderRequiredEnvKeys(environmentId));
+}
+
 export function validateAuthProvider(environmentId: RuntimeEnvironmentId): AuthProviderStatus {
   const environment = getEnvironmentById(environmentId);
   if (environment.authMode === 'none') {
@@ -44,4 +53,3 @@ export function validateAuthProvider(environmentId: RuntimeEnvironmentId): AuthP
     reason: configured ? `${environment.authMode} configuration is present.` : `${environment.name} requires ${environment.authMode} config; no secret is stored in source code.`,
   };
 }
-

@@ -10,6 +10,7 @@ import {
 } from '../runtime/backend-health';
 import { getEnvironmentRegistry, setActiveEnvironment, type RuntimeEnvironmentId } from '../runtime/environment-registry';
 import { getEndpointRegistry } from '../runtime/endpoint-registry';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 
 function toneFor(value: string): Tone {
@@ -32,6 +33,7 @@ export function BackendReadinessPage() {
 
   return (
     <div data-route="/backend-readiness" data-backend-readiness-route>
+      <AuthReadinessCompactWidget surface="backend-readiness" />
       <DatabaseReadinessCompactWidget surface="backend-readiness" />
       <PageHeader
         title="Backend Readiness"

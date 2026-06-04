@@ -10,6 +10,7 @@ import {
   exportPreGoLiveValidationArtifacts,
   runFullPreGoLiveValidation,
 } from '../runtime/pre-golive-validation-store';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 
 type PreGoLiveWidgetSurface =
@@ -56,6 +57,7 @@ export function PreGoLiveValidationPage() {
 
   return (
     <div data-route="/pre-golive-validation" data-pre-golive-validation-route>
+      <AuthReadinessCompactWidget surface="pre-golive-validation" />
       <DatabaseReadinessCompactWidget surface="pre-golive-validation" />
       <PageHeader
         title="Pre-Go-Live Validation Suite"

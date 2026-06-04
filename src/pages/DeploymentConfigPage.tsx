@@ -22,6 +22,7 @@ import {
   validateDeploymentConfig,
 } from '../runtime/deployment-config-store';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
@@ -133,6 +134,7 @@ export function DeploymentConfigPage() {
       <ApiContractsCompactWidget surface="deployment-config" />
       <E2EActionFlowCompactWidget surface="deployment-config" />
       <PreGoLiveValidationCompactWidget surface="deployment-config" />
+      <AuthReadinessCompactWidget surface="deployment-config" />
       <DatabaseReadinessCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"

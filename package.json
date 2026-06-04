@@ -133,7 +133,8 @@
     "smoke:e2e-action-flow": "node scripts/smoke-e2e-action-flow.mjs",
     "smoke:pre-golive-validation": "node scripts/smoke-pre-golive-validation.mjs",
     "smoke:backend-readiness": "node scripts/smoke-backend-readiness.mjs",
-    "smoke:database-readiness": "node scripts/smoke-database-readiness.mjs"
+    "smoke:database-readiness": "node scripts/smoke-database-readiness.mjs",
+    "smoke:auth-readiness": "node scripts/smoke-auth-readiness.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

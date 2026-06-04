@@ -1,6 +1,7 @@
 import { KpiCard, SectionCard } from '../components/ui/MockCards';
 import type { ScreenSpec } from '../data/screens';
 import { commercialRoutes } from '../data/demoScreens';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { DemoScreen } from './DemoScreens';
 import { Sprint2Screen, sprint2Routes } from './Sprint2Screens';
@@ -25,7 +26,12 @@ export function ScreenPage({ screen }: { screen: ScreenSpec }) {
   if (commercialRoutes.has(screen.route)) {
     return (
       <>
-        {screen.route === '/runs/demo-run' ? <DatabaseReadinessCompactWidget surface="run" /> : null}
+        {screen.route === '/runs/demo-run' ? (
+          <>
+            <AuthReadinessCompactWidget surface="run" />
+            <DatabaseReadinessCompactWidget surface="run" />
+          </>
+        ) : null}
         <DemoScreen route={screen.route} />
       </>
     );

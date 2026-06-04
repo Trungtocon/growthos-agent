@@ -11,6 +11,7 @@ import { getProductionReadinessDashboard } from './production-readiness-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import { getBackendReadinessReport } from './backend-health';
 import { getDatabaseReadinessReport } from './database-readiness';
+import { getAuthReadinessReport } from './auth-readiness-store';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -207,6 +208,29 @@ function gateDefinitions(): GateDefinition[] {
           blockers: report.blockers.map((entry) => `production database: ${entry}`),
           warnings: report.warnings,
           evidence: [`mode=${report.config.mode}`, `health=${report.connectionHealth}`, `schema=${report.schemaVersion}`, `domains=${report.persistenceDomains.length}`],
+        };
+      },
+    },
+    {
+      gateId: 'auth-readiness',
+      name: 'Auth & Session Readiness',
+      category: 'backend',
+      relatedRoutes: ['/auth-readiness'],
+      relatedSmokeCommand: 'npm run smoke:auth-readiness',
+      evaluate: () => {
+        const report = getAuthReadinessReport('PRODUCTION');
+        return {
+          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
+          score: report.readinessScore,
+          blockers: report.blockers.map((entry) => `production auth: ${entry}`),
+          warnings: report.warnings,
+          evidence: [
+            `provider=${report.provider.status}`,
+            `session=${report.sessionLifecycle.status}`,
+            `token=${report.tokenValidation.status}`,
+            `rbac=${report.rbacBinding.status}`,
+            `tenantWorkspace=${report.tenantWorkspaceBinding.status}`,
+          ],
         };
       },
     },

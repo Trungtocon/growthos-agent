@@ -15,6 +15,7 @@ import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -71,6 +72,7 @@ export function ProductionReadinessPage() {
       <ApiContractsCompactWidget surface="production-readiness" />
       <E2EActionFlowCompactWidget surface="production-readiness" />
       <PreGoLiveValidationCompactWidget surface="production-readiness" />
+      <AuthReadinessCompactWidget surface="production-readiness" />
       <DatabaseReadinessCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"

@@ -22,6 +22,7 @@ import {
   startCertifiedSandboxRun,
 } from '../runtime/certified-sandbox-run-store';
 import { ApiContractsCompactWidget } from './ApiContractsPage';
+import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
@@ -87,6 +88,7 @@ export function CertifiedSandboxRunPage() {
       <ApiContractsCompactWidget surface="certified-sandbox-run" />
       <E2EActionFlowCompactWidget surface="certified-sandbox-run" />
       <PreGoLiveValidationCompactWidget surface="certified-sandbox-run" />
+      <AuthReadinessCompactWidget surface="certified-sandbox-run" />
       <DatabaseReadinessCompactWidget surface="certified-sandbox-run" />
       <PageHeader
         title="Certified Sandbox End-to-End Run"

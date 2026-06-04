@@ -2,6 +2,7 @@ import { AppShell } from './components/layout/AppShell';
 import { ReadOnlyActionGuard } from './components/ui/ReadOnlyActionGuard';
 import { screens } from './data/screens';
 import { ApiContractsPage } from './pages/ApiContractsPage';
+import { AuthReadinessPage } from './pages/AuthReadinessPage';
 import { BackendAdapterPage } from './pages/BackendAdapterPage';
 import { BackendReadinessPage } from './pages/BackendReadinessPage';
 import { CertifiedSandboxRunPage } from './pages/CertifiedSandboxRunPage';
@@ -122,6 +123,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/database-readiness">
         <DatabaseReadinessPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/auth-readiness') {
+    return (
+      <GuardedAppShell currentPath="/auth-readiness">
+        <AuthReadinessPage />
       </GuardedAppShell>
     );
   }

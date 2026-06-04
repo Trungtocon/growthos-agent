@@ -310,6 +310,18 @@ import {
   selectDatabaseReadiness as getStoredDatabaseReadiness,
   selectDatabaseWarnings as getStoredDatabaseWarnings,
 } from '../runtime/database-readiness';
+import {
+  getAuthReadinessReport as getStoredAuthReadinessReport,
+  selectAuthBlockers as getStoredAuthBlockers,
+  selectAuthReadiness as getStoredAuthReadiness,
+  selectAuthReadinessScore as getStoredAuthReadinessScore,
+  selectAuthReadinessStatus as getStoredAuthReadinessStatus,
+  selectAuthWarnings as getStoredAuthWarnings,
+  selectRbacBindingStatus as getStoredRbacBindingStatus,
+  selectSessionLifecycleStatus as getStoredSessionLifecycleStatus,
+  selectTenantWorkspaceBindingStatus as getStoredTenantWorkspaceBindingStatus,
+  selectTokenValidationStatus as getStoredTokenValidationStatus,
+} from '../runtime/auth-readiness-store';
 import { getPersistenceDomains as getStoredPersistenceDomains } from '../runtime/persistence-registry';
 import {
   getActiveDeploymentConfig as getStoredActiveDeploymentConfig,
@@ -2668,6 +2680,59 @@ export function selectPreGoLiveDatabaseGate() {
       relatedRoutes: ['/database-readiness'],
       relatedSmokeCommand: 'npm run smoke:database-readiness',
       finalVerdict: 'Database readiness not checked by pre go-live suite.',
+    };
+}
+
+export function selectAuthReadiness() {
+  return getStoredAuthReadiness();
+}
+
+export function selectAuthReadinessStatus() {
+  return getStoredAuthReadinessStatus();
+}
+
+export function selectAuthReadinessScore() {
+  return getStoredAuthReadinessScore();
+}
+
+export function selectAuthBlockers() {
+  return getStoredAuthBlockers();
+}
+
+export function selectAuthWarnings() {
+  return getStoredAuthWarnings();
+}
+
+export function selectSessionLifecycleStatus() {
+  return getStoredSessionLifecycleStatus();
+}
+
+export function selectTokenValidationStatus() {
+  return getStoredTokenValidationStatus();
+}
+
+export function selectRbacBindingStatus() {
+  return getStoredRbacBindingStatus();
+}
+
+export function selectTenantWorkspaceBindingStatus() {
+  return getStoredTenantWorkspaceBindingStatus();
+}
+
+export function selectPreGoLiveAuthGate() {
+  return getStoredPreGoLiveValidationGates().find((gate) => gate.gateId === 'auth-readiness')
+    ?? {
+      gateId: 'auth-readiness',
+      name: 'Auth & Session Readiness',
+      category: 'backend',
+      status: getStoredAuthReadinessReport('PRODUCTION').status === 'BLOCKED' ? 'blocked' : 'warning',
+      score: getStoredAuthReadinessReport('PRODUCTION').readinessScore,
+      blockers: getStoredAuthBlockers(),
+      warnings: getStoredAuthWarnings(),
+      evidence: ['Auth & Session Readiness gate has not been run in pre go-live validation yet.'],
+      relatedRoutes: ['/auth-readiness'],
+      relatedSmokeCommand: 'npm run smoke:auth-readiness',
+      finalVerdict: 'Auth readiness not checked by pre go-live suite.',
     };
 }
 
