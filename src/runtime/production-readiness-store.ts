@@ -18,6 +18,7 @@ import { getLearningMemorySummary } from './learning-memory-store';
 import { getRbacSummary } from './rbac-store';
 import { getRunEvaluation } from './run-evaluation-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
+import { selectObservabilityDashboard } from './production-observability-store';
 import { getWorkerObservationDashboard } from './worker-observability-store';
 import { getWorkerRecoveryDashboard } from './worker-recovery-store';
 import type {
@@ -210,6 +211,7 @@ function buildReadinessEvidence(checkId: string): {
   const feedbackSummary = generateWorkspaceFeedbackSummary(demoWorkspace.id);
   const learning = getLearningMemorySummary(demoWorkspace.id);
   const loopSummary = getWorkspaceImprovementLoopSummary();
+  const productionObservability = selectObservabilityDashboard();
   const worker = getWorkerObservationDashboard();
   const recovery = getWorkerRecoveryDashboard();
   const chaos = getChaosDashboard();
@@ -266,6 +268,17 @@ function buildReadinessEvidence(checkId: string): {
   items.push(item(checkId, 'learning_memory', learning.signalCount || learning.recommendationCount ? 'READY' : 'WARNING', `${learning.signalCount} signal(s), ${learning.recommendationCount} recommendation(s).`, 'Generate learning memory from outcome evidence.', [`signals:${learning.signalCount}`, `recommendations:${learning.recommendationCount}`]));
   items.push(item(checkId, 'improvement_loop', loopSummary.total ? 'READY' : 'WARNING', `${loopSummary.total} loop(s), ${loopSummary.active} active.`, 'Queue improvement loop evidence when autonomous loop is in scope.', [`loops:${loopSummary.total}`, `failed:${loopSummary.failed}`]));
   items.push(item(checkId, 'worker_observability', worker.observation.status !== 'idle' || worker.health.tickCount || worker.incidents.length ? 'READY' : 'WARNING', `Worker status ${worker.observation.status}, ${worker.health.tickCount} tick(s).`, 'Start worker observability before go-live.', [`incidents:${worker.incidents.length}`, `sla:${worker.health.slaStatus}`]));
+  if (productionObservability.verdict === 'BLOCKED') {
+    blockers.push(blocker(
+      checkId,
+      'worker_observability',
+      'unresolved_governance_blocker',
+      `Production observability is blocked: ${productionObservability.blockers[0] ?? 'operational evidence is missing.'}`,
+      'Complete `/production-observability` evidence before production go-live.',
+    ));
+  } else if (productionObservability.verdict === 'WARNING') {
+    warnings.push(warning(checkId, 'worker_observability', 'Production observability has warning evidence.', 'Review observability warnings before final go-live approval.'));
+  }
 
   if (recovery.results.some((result) => result.status === 'failed')) {
     blockers.push(blocker(checkId, 'worker_recovery', 'failed_worker_recovery', 'Worker recovery has failed result(s).', 'Resolve failed recovery plan before production go-live.'));

@@ -14,6 +14,7 @@ import { getPersistenceDomains } from '../runtime/persistence-registry';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
 type DatabaseWidgetSurface =
   | 'pre-golive-validation'
@@ -63,6 +64,7 @@ export function DatabaseReadinessPage() {
       <AuthReadinessCompactWidget surface="database-readiness" />
       <EnvironmentReadinessCompactWidget surface="database-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="database-readiness" />
+      <ProductionObservabilityCompactWidget surface="database-readiness" />
       <PageHeader
         title="Database Readiness"
         subtitle="Production persistence registry, database client factory, audit writability, and schema readiness before real go-live."

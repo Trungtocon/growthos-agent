@@ -11,6 +11,7 @@ import {
 } from './environment-registry';
 import { getDatabaseReadinessReport, type DatabaseReadinessReport } from './database-readiness';
 import { filterReadinessBlockersForEvidence } from './production-config-evidence-store';
+import { selectObservabilityDashboard } from './production-observability-store';
 
 export interface BackendHealthReport {
   environment: RuntimeEnvironment;
@@ -20,6 +21,7 @@ export interface BackendHealthReport {
   auth: AuthProviderStatus;
   endpointReachability: Array<BackendEndpointDefinition & { reachable: boolean; reason: string }>;
   databaseReadiness?: Pick<DatabaseReadinessReport, 'status' | 'readinessScore' | 'schemaVersion' | 'migrationStatus'>;
+  observabilityReadiness?: { verdict: string; readinessScore: number; blockers: number };
   readinessScore: number;
   blockers: string[];
   warnings: string[];
@@ -78,6 +80,7 @@ export function checkBackendReadiness(environmentId: RuntimeEnvironmentId = 'PRO
     reason: environment.baseUrl ? `${endpoint.owner} endpoint is configured for gateway binding.` : 'Backend base URL missing.',
   }));
   const databaseReadiness = getDatabaseReadinessReport(environmentId);
+  const observability = selectObservabilityDashboard();
   if (databaseReadiness.status === 'BLOCKED') blockers.push(`Database readiness is blocked: ${databaseReadiness.blockers[0] ?? 'production database is not configured.'}`);
   if (databaseReadiness.status === 'WARNING') warnings.push(`Database readiness warning: ${databaseReadiness.warnings[0] ?? 'database is not production ready.'}`);
   const missingEndpoints = endpointReachability.filter((endpoint) => !endpoint.reachable).length;
@@ -95,6 +98,11 @@ export function checkBackendReadiness(environmentId: RuntimeEnvironmentId = 'PRO
       readinessScore: databaseReadiness.readinessScore,
       schemaVersion: databaseReadiness.schemaVersion,
       migrationStatus: databaseReadiness.migrationStatus,
+    },
+    observabilityReadiness: {
+      verdict: observability.verdict,
+      readinessScore: observability.readinessScore,
+      blockers: observability.blockers.length,
     },
     readinessScore,
     blockers: blockers.concat(missingEndpoints ? [`${missingEndpoints} backend endpoints are not reachable without a base URL.`] : []),

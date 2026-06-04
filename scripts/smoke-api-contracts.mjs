@@ -99,6 +99,7 @@ async function createProductionEvidence(page) {
     const { createCertifiedSandboxRun, startCertifiedSandboxRun, completeCertifiedSandboxRun } = await import('/src/runtime/certified-sandbox-run-store.ts');
     const { createProductionReadinessCheck, evaluateProductionReadiness } = await import('/src/runtime/production-readiness-store.ts');
     const { createDeploymentConfigCheck, validateDeploymentConfig, markDeploymentConfigReady } = await import('/src/runtime/deployment-config-store.ts');
+    const { addMonitorEvidence, verifyMonitorEvidence, addAlertChannel, testAlertChannel, addIncidentOwner, verifyRunbook } = await import('/src/runtime/production-observability-store.ts');
     const profile = createCertificationProfile({
       name: 'API contract production profile',
       runtimeMode: 'sandbox',
@@ -117,6 +118,12 @@ async function createProductionEvidence(page) {
     });
     startCertifiedSandboxRun(sandbox.id);
     completeCertifiedSandboxRun(sandbox.id);
+    const monitor = addMonitorEvidence({ name: 'Production API monitor', endpoint: 'https://api.uikigai.example.com/health', uptimePercent: 99.95, latencyMs: 180, errorRatePercent: 0.05 });
+    verifyMonitorEvidence(monitor.id, 'api_contract_smoke');
+    const alertChannel = addAlertChannel({ name: 'PagerDuty primary', channelType: 'pagerduty', target: 'pd-prod-escalation' });
+    testAlertChannel(alertChannel.id);
+    addIncidentOwner({ name: 'Platform on-call', team: 'SRE', escalationPolicy: 'sev1-primary-secondary' });
+    verifyRunbook();
     evaluateProductionReadiness(createProductionReadinessCheck().id);
     const deployment = validateDeploymentConfig(createDeploymentConfigCheck({
       runtimeMode: 'production',

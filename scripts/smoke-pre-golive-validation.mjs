@@ -25,6 +25,7 @@ const requiredGates = [
   'auth-readiness',
   'environment-readiness',
   'production-config-evidence',
+  'production-observability',
   'api-contracts',
   'e2e-action-flow',
   'ui-action-wiring',

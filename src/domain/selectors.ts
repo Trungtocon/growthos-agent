@@ -314,6 +314,20 @@ import {
   selectVerifiedProductionEvidence as getStoredVerifiedProductionEvidence,
 } from '../runtime/production-config-evidence-store';
 import type { ProductionEvidenceCategory } from '../runtime/production-config-evidence';
+import {
+  selectAlertChannelReadiness as getStoredAlertChannelReadiness,
+  selectIncidentOwnerReadiness as getStoredIncidentOwnerReadiness,
+  selectObservabilityBlockers as getStoredObservabilityBlockers,
+  selectObservabilityDashboard as getStoredObservabilityDashboard,
+  selectObservabilityHealthMatrix as getStoredObservabilityHealthMatrix,
+  selectObservabilityWarnings as getStoredObservabilityWarnings,
+  selectProductionObservability as getStoredProductionObservability,
+  selectProductionObservabilityScore as getStoredProductionObservabilityScore,
+  selectProductionObservabilityVerdict as getStoredProductionObservabilityVerdict,
+  selectRtoRpoReadiness as getStoredRtoRpoReadiness,
+  selectRunbookReadiness as getStoredRunbookReadiness,
+  selectSloSlaReadiness as getStoredSloSlaReadiness,
+} from '../runtime/production-observability-store';
 import { selectAuditLogSummary as getStoredAuditLogSummary } from '../runtime/audit-log-store';
 import {
   getDatabaseReadinessReport as getStoredDatabaseReadinessReport,
@@ -2717,6 +2731,71 @@ export function selectPreGoLiveEvidenceGate() {
       relatedRoutes: ['/production-config-evidence'],
       relatedSmokeCommand: 'npm run smoke:production-config-evidence',
       finalVerdict: getStoredProductionEvidenceVerdict(),
+    };
+}
+
+export function selectProductionObservability() {
+  return getStoredProductionObservability();
+}
+
+export function selectObservabilityDashboard() {
+  return getStoredObservabilityDashboard();
+}
+
+export function selectObservabilityHealthMatrix() {
+  return getStoredObservabilityHealthMatrix();
+}
+
+export function selectObservabilityBlockers() {
+  return getStoredObservabilityBlockers();
+}
+
+export function selectObservabilityWarnings() {
+  return getStoredObservabilityWarnings();
+}
+
+export function selectAlertChannelReadiness() {
+  return getStoredAlertChannelReadiness();
+}
+
+export function selectIncidentOwnerReadiness() {
+  return getStoredIncidentOwnerReadiness();
+}
+
+export function selectRunbookReadiness() {
+  return getStoredRunbookReadiness();
+}
+
+export function selectSloSlaReadiness() {
+  return getStoredSloSlaReadiness();
+}
+
+export function selectRtoRpoReadiness() {
+  return getStoredRtoRpoReadiness();
+}
+
+export function selectProductionObservabilityScore() {
+  return getStoredProductionObservabilityScore();
+}
+
+export function selectProductionObservabilityVerdict() {
+  return getStoredProductionObservabilityVerdict();
+}
+
+export function selectPreGoLiveObservabilityGate() {
+  return getStoredPreGoLiveValidationGates().find((gate) => gate.gateId === 'production-observability')
+    ?? {
+      gateId: 'production-observability',
+      name: 'Production Observability',
+      category: 'production',
+      status: getStoredObservabilityBlockers().length ? 'blocked' : 'pass',
+      score: getStoredProductionObservabilityScore(),
+      blockers: getStoredObservabilityBlockers(),
+      warnings: getStoredObservabilityWarnings(),
+      evidence: ['Production Observability gate has not been run in pre go-live validation yet.'],
+      relatedRoutes: ['/production-observability'],
+      relatedSmokeCommand: 'npm run smoke:production-observability',
+      finalVerdict: getStoredProductionObservabilityVerdict(),
     };
 }
 

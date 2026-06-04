@@ -17,6 +17,7 @@ import {
   type ProductionEvidenceDashboard,
   type ProductionEvidenceStatus,
 } from './production-config-evidence';
+import { selectObservabilityDashboard } from './production-observability-store';
 
 const PRODUCTION_CONFIG_EVIDENCE_KEY = 'uikigai-production-config-evidence-v1';
 
@@ -236,6 +237,7 @@ export function getProductionEvidenceStatusForCategory(category: ProductionEvide
 
 export function exportProductionConfigEvidencePack(): ArtifactRecord[] {
   const dashboard = selectProductionConfigEvidenceDashboard();
+  const observability = selectObservabilityDashboard();
   const redactedEvidence = dashboard.evidence.map((entry) => ({
     ...entry,
     metadata: entry.metadata ? Object.fromEntries(Object.entries(entry.metadata).map(([key, value]) => [key, typeof value === 'string' && /secret|token|password|key/i.test(key) ? '***redacted***' : value])) : undefined,
@@ -253,6 +255,8 @@ export function exportProductionConfigEvidencePack(): ArtifactRecord[] {
       readinessScore: dashboard.readinessScore,
       resolvedBlockers: dashboard.resolvedBlockers,
       remainingBlockers: dashboard.remainingBlockers,
+      observabilityVerdict: observability.verdict,
+      observabilityScore: observability.readinessScore,
     }),
     exportedArtifact('production-config-final-verdict.md', 'REPORT', dashboard.verdict),
   ];

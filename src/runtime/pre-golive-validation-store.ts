@@ -17,6 +17,7 @@ import {
   filterReadinessBlockersForEvidence,
   selectProductionConfigEvidenceDashboard,
 } from './production-config-evidence-store';
+import { selectObservabilityDashboard } from './production-observability-store';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -110,6 +111,31 @@ function gateDefinitions(): GateDefinition[] {
             `verified=${dashboard.verified.length}`,
             `missing=${dashboard.missing.length}`,
             `expired=${dashboard.expired.length}`,
+            `verdict=${dashboard.verdict}`,
+          ],
+        };
+      },
+    },
+    {
+      gateId: 'production-observability',
+      name: 'Production Observability',
+      category: 'production',
+      relatedRoutes: ['/production-observability'],
+      relatedSmokeCommand: 'npm run smoke:production-observability',
+      evaluate: () => {
+        const dashboard = selectObservabilityDashboard();
+        return {
+          status: dashboard.verdict === 'READY' ? 'pass' : 'blocked',
+          score: dashboard.readinessScore,
+          blockers: dashboard.blockers,
+          warnings: dashboard.warnings,
+          evidence: [
+            `healthMonitors=${dashboard.healthMatrix.length}`,
+            `alert=${dashboard.alertChannelStatus}`,
+            `incidentOwner=${dashboard.incidentOwnerStatus}`,
+            `runbook=${dashboard.runbookStatus}`,
+            `sloSla=${dashboard.sloSlaStatus}`,
+            `rtoRpo=${dashboard.rtoRpoStatus}`,
             `verdict=${dashboard.verdict}`,
           ],
         };
