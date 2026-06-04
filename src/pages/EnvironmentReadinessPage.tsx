@@ -10,6 +10,7 @@ import {
 } from '../runtime/environment-readiness-store';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
@@ -59,6 +60,7 @@ export function EnvironmentReadinessPage() {
 
   return (
     <div data-route="/environment-readiness" data-environment-readiness-route>
+      <ProductionIncidentCompactWidget surface="environment-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="environment-readiness" />
       <ProductionObservabilityCompactWidget surface="environment-readiness" />
       <ProductionRunbookCompactWidget surface="environment-readiness" />

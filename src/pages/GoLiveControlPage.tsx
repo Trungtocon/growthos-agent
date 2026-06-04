@@ -15,6 +15,7 @@ import {
   triggerRollback,
   verifyRollbackPlan,
 } from '../runtime/go-live-control-store';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type GoLiveWidgetSurface =
@@ -67,6 +68,7 @@ export function GoLiveControlPage() {
 
   return (
     <div data-route="/go-live-control" data-go-live-control-route>
+      <ProductionIncidentCompactWidget surface="go-live-control" />
       <ProductionRunbookCompactWidget surface="go-live-control" />
       <PageHeader
         title="Production Release Approval & Go-Live Control Center"

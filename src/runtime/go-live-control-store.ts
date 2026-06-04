@@ -11,6 +11,7 @@ import { selectPreGoLiveValidationSummary } from './pre-golive-validation-store'
 import { selectProductionConfigEvidenceDashboard } from './production-config-evidence-store';
 import { selectObservabilityDashboard } from './production-observability-store';
 import { getProductionReadinessDashboard } from './production-readiness-store';
+import { selectIncidentCommandReadiness } from './production-incident-store';
 import { selectProductionRunbook } from './production-runbook-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import {
@@ -110,6 +111,7 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
   const evidence = selectProductionConfigEvidenceDashboard();
   const observability = selectObservabilityDashboard();
   const runbook = selectProductionRunbook();
+  const incidentCommand = selectIncidentCommandReadiness();
   const preGoLive = selectPreGoLiveValidationSummary();
 
   const latestSandbox = sandbox.runs.find((run) => run.status === 'completed');
@@ -260,6 +262,21 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
       warnings: runbook.warnings.map((entry) => entry.reason),
       evidence: [`runbook:${runbook.runbookStatus}`, `handoff:${runbook.handoffStatus}`, `completion:${runbook.checklistCompletion}`],
       route: '/production-runbook',
+    }),
+    createGate({
+      gateId: 'production-incidents',
+      name: 'Production Incident Command',
+      status: incidentCommand.blockers.length ? 'blocked' : incidentCommand.warnings.length ? 'warning' : 'verified',
+      score: incidentCommand.blockers.length ? 0 : incidentCommand.warnings.length ? 85 : 100,
+      blockers: incidentCommand.blockers.map((entry) => entry.reason),
+      warnings: incidentCommand.warnings.map((entry) => entry.reason),
+      evidence: [
+        `status:${incidentCommand.status}`,
+        `active:${incidentCommand.activeCount}`,
+        `critical:${incidentCommand.criticalCount}`,
+        `rollback:${incidentCommand.rollbackRequestCount}`,
+      ],
+      route: '/production-incidents',
     }),
     createGate({
       gateId: 'pre-golive-validation',

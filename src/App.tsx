@@ -16,6 +16,7 @@ import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
 import { ProductionConfigEvidencePage } from './pages/ProductionConfigEvidencePage';
 import { ProductionObservabilityPage } from './pages/ProductionObservabilityPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
+import { ProductionIncidentPage } from './pages/ProductionIncidentPage';
 import { ProductionRunbookPage } from './pages/ProductionRunbookPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -170,6 +171,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/production-runbook">
         <ProductionRunbookPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/production-incidents') {
+    return (
+      <GuardedAppShell currentPath="/production-incidents">
+        <ProductionIncidentPage />
       </GuardedAppShell>
     );
   }

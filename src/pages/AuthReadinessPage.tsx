@@ -12,6 +12,7 @@ import { getAuthProviderRequiredEnvKeys } from '../runtime/auth-provider';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
@@ -63,6 +64,7 @@ export function AuthReadinessPage() {
 
   return (
     <div data-route="/auth-readiness" data-auth-readiness-route>
+      <ProductionIncidentCompactWidget surface="auth-readiness" />
       <EnvironmentReadinessCompactWidget surface="auth-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="auth-readiness" />
       <ProductionObservabilityCompactWidget surface="auth-readiness" />

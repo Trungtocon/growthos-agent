@@ -14,6 +14,7 @@ import {
   verifyRunbook,
 } from '../runtime/production-observability-store';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type ProductionObservabilityWidgetSurface =
@@ -76,6 +77,7 @@ export function ProductionObservabilityPage() {
 
   return (
     <div data-route="/production-observability" data-production-observability-route>
+      <ProductionIncidentCompactWidget surface="production-observability" />
       <ProductionRunbookCompactWidget surface="production-observability" />
       <GoLiveControlCompactWidget surface="production-observability" />
       <PageHeader

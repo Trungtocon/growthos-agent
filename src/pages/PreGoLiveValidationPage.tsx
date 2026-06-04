@@ -15,6 +15,7 @@ import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
@@ -66,6 +67,7 @@ export function PreGoLiveValidationPage() {
       <DatabaseReadinessCompactWidget surface="pre-golive-validation" />
       <EnvironmentReadinessCompactWidget surface="pre-golive-validation" />
       <ProductionConfigEvidenceCompactWidget surface="pre-golive-validation" />
+      <ProductionIncidentCompactWidget surface="pre-golive-validation" />
       <ProductionObservabilityCompactWidget surface="pre-golive-validation" />
       <ProductionRunbookCompactWidget surface="pre-golive-validation" />
       <GoLiveControlCompactWidget surface="pre-golive-validation" />

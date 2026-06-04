@@ -15,6 +15,7 @@ import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
@@ -38,6 +39,7 @@ export function BackendReadinessPage() {
 
   return (
     <div data-route="/backend-readiness" data-backend-readiness-route>
+      <ProductionIncidentCompactWidget surface="backend-readiness" />
       <AuthReadinessCompactWidget surface="backend-readiness" />
       <DatabaseReadinessCompactWidget surface="backend-readiness" />
       <EnvironmentReadinessCompactWidget surface="backend-readiness" />

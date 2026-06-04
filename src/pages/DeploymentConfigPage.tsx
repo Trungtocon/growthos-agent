@@ -30,6 +30,7 @@ import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
@@ -135,6 +136,7 @@ export function DeploymentConfigPage() {
 
   return (
     <div data-route="/deployment-config" data-deployment-config-route>
+      <ProductionIncidentCompactWidget surface="deployment-config" />
       <BackendAdapterCompactWidget surface="deployment-config" />
       <ApiContractsCompactWidget surface="deployment-config" />
       <E2EActionFlowCompactWidget surface="deployment-config" />

@@ -23,6 +23,7 @@ import { CertifiedSandboxRunCompactWidget } from './CertifiedSandboxRunPage';
 import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
@@ -58,6 +59,7 @@ export function RuntimeCertificationPage() {
 
   return (
     <div data-route="/runtime-certification" data-runtime-certification-route>
+      <ProductionIncidentCompactWidget surface="runtime-certification" />
       <CertifiedSandboxRunCompactWidget surface="runtime-certification" />
       <ProductionReadinessCompactWidget surface="runtime-certification" />
       <DeploymentConfigCompactWidget surface="runtime-certification" />

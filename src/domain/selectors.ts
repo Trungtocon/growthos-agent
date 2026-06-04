@@ -414,6 +414,19 @@ import {
   selectSupportWindow as getStoredSupportWindow,
 } from '../runtime/production-runbook-store';
 import {
+  selectActiveProductionIncidents as getStoredActiveProductionIncidents,
+  selectCriticalProductionIncidents as getStoredCriticalProductionIncidents,
+  selectIncidentArtifacts as getStoredIncidentArtifacts,
+  selectIncidentBlockers as getStoredIncidentBlockers,
+  selectIncidentCommandReadiness as getStoredIncidentCommandReadiness,
+  selectIncidentEscalationMatrix as getStoredIncidentEscalationMatrix,
+  selectIncidentPostmortemQueue as getStoredIncidentPostmortemQueue,
+  selectIncidentRollbackRequests as getStoredIncidentRollbackRequests,
+  selectIncidentTimeline as getStoredIncidentTimeline,
+  selectIncidentWarnings as getStoredIncidentWarnings,
+  selectProductionIncidents as getStoredProductionIncidents,
+} from '../runtime/production-incident-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2936,6 +2949,50 @@ export function selectCanAcceptHandoff() {
 
 export function selectRunbookArtifacts() {
   return getStoredRunbookArtifacts();
+}
+
+export function selectProductionIncidents() {
+  return getStoredProductionIncidents();
+}
+
+export function selectActiveProductionIncidents() {
+  return getStoredActiveProductionIncidents();
+}
+
+export function selectCriticalProductionIncidents() {
+  return getStoredCriticalProductionIncidents();
+}
+
+export function selectIncidentCommandReadiness() {
+  return getStoredIncidentCommandReadiness();
+}
+
+export function selectIncidentBlockers() {
+  return getStoredIncidentBlockers();
+}
+
+export function selectIncidentWarnings() {
+  return getStoredIncidentWarnings();
+}
+
+export function selectIncidentTimeline(incidentId?: string) {
+  return getStoredIncidentTimeline(incidentId);
+}
+
+export function selectIncidentEscalationMatrix() {
+  return getStoredIncidentEscalationMatrix();
+}
+
+export function selectIncidentRollbackRequests() {
+  return getStoredIncidentRollbackRequests();
+}
+
+export function selectIncidentPostmortemQueue() {
+  return getStoredIncidentPostmortemQueue();
+}
+
+export function selectIncidentArtifacts() {
+  return getStoredIncidentArtifacts();
 }
 
 export function selectDatabaseConfig() {

@@ -19,6 +19,7 @@ import { getRbacSummary } from './rbac-store';
 import { getRunEvaluation } from './run-evaluation-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import { selectObservabilityDashboard } from './production-observability-store';
+import { selectIncidentCommandReadiness } from './production-incident-store';
 import { getWorkerObservationDashboard } from './worker-observability-store';
 import { getWorkerRecoveryDashboard } from './worker-recovery-store';
 import type {
@@ -212,6 +213,7 @@ function buildReadinessEvidence(checkId: string): {
   const learning = getLearningMemorySummary(demoWorkspace.id);
   const loopSummary = getWorkspaceImprovementLoopSummary();
   const productionObservability = selectObservabilityDashboard();
+  const incidentCommand = selectIncidentCommandReadiness();
   const worker = getWorkerObservationDashboard();
   const recovery = getWorkerRecoveryDashboard();
   const chaos = getChaosDashboard();
@@ -243,6 +245,12 @@ function buildReadinessEvidence(checkId: string): {
   } else {
     if (governance.warnings.length) warnings.push(...governance.warnings.map((reason) => warning(checkId, 'governance_exit_gate', reason, 'Review governance warning before final approval.')));
     items.push(item(checkId, 'governance_exit_gate', governance.warnings.length ? 'WARNING' : 'READY', governance.warnings.length ? `${governance.warnings.length} governance warning(s).` : 'Governance exit gate has no blockers.', 'Review warnings or proceed.', governance.readyModules));
+  }
+  if (incidentCommand.blockers.length) {
+    blockers.push(...incidentCommand.blockers.map((entry) => blocker(checkId, 'governance_exit_gate', 'unresolved_governance_blocker', entry.reason, entry.recommendedFix)));
+  }
+  if (incidentCommand.warnings.length) {
+    warnings.push(...incidentCommand.warnings.map((entry) => warning(checkId, 'governance_exit_gate', entry.reason, entry.recommendedFix)));
   }
 
   if (certified.activeRun?.approvalRequired && !certified.activeRun.approvalApproved) {

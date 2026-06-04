@@ -29,6 +29,7 @@ import { DeploymentConfigCompactWidget } from './DeploymentConfigPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
@@ -84,6 +85,7 @@ export function CertifiedSandboxRunPage() {
 
   return (
     <div data-route="/certified-sandbox-run" data-certified-sandbox-route>
+      <ProductionIncidentCompactWidget surface="certified-sandbox-run" />
       <ProductionReadinessCompactWidget surface="certified-sandbox-run" />
       <DeploymentConfigCompactWidget surface="certified-sandbox-run" />
       <BackendAdapterCompactWidget surface="certified-sandbox-run" />

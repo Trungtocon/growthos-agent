@@ -14,6 +14,7 @@ import {
   selectProductionRunbook,
   triggerRollbackDrill,
 } from '../runtime/production-runbook-store';
+import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 
 type ProductionRunbookWidgetSurface =
   | 'go-live-control'
@@ -65,6 +66,7 @@ export function ProductionRunbookPage() {
 
   return (
     <div data-route="/production-runbook" data-production-runbook-route>
+      <ProductionIncidentCompactWidget surface="production-runbook" />
       <PageHeader
         title="Production Runbook & Operator Handoff"
         subtitle="Operational handoff pack for release operators: runbook, support window, incident response, rollback, escalation, and final acceptance."
