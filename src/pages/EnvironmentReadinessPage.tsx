@@ -8,6 +8,7 @@ import {
   getEnvironmentReadinessArtifacts,
   getEnvironmentReadinessReport,
 } from '../runtime/environment-readiness-store';
+import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 
 type EnvironmentReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -55,6 +56,7 @@ export function EnvironmentReadinessPage() {
 
   return (
     <div data-route="/environment-readiness" data-environment-readiness-route>
+      <ProductionConfigEvidenceCompactWidget surface="environment-readiness" />
       <PageHeader
         title="Environment & Secrets Readiness"
         subtitle="Production environment configuration and secret safety evidence before deployment approval."

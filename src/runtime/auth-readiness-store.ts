@@ -7,6 +7,7 @@ import {
   type AuthReadinessStatus,
 } from './auth-readiness';
 import type { RuntimeEnvironmentId } from './environment-registry';
+import { filterReadinessBlockersForEvidence } from './production-config-evidence-store';
 
 const AUTH_READINESS_KEY = 'uikigai-auth-readiness-v1';
 
@@ -71,6 +72,18 @@ export function getAuthReadinessReport(environmentId: RuntimeEnvironmentId = 'PR
   const state = readState();
   const snapshot = state.snapshots.find((entry) => entry.environmentId === environmentId);
   return snapshot ? clone(snapshot) : evaluateAuthReadiness(environmentId);
+}
+
+export function getEvidenceAdjustedAuthReadinessReport(environmentId: RuntimeEnvironmentId = 'PRODUCTION'): AuthReadinessSnapshot {
+  const report = getAuthReadinessReport(environmentId);
+  if (environmentId !== 'PRODUCTION') return report;
+  const blockers = filterReadinessBlockersForEvidence('auth-readiness', report.blockers);
+  return {
+    ...report,
+    blockers,
+    status: blockers.length ? report.status : report.warnings.length ? 'WARNING' : 'READY',
+    readinessScore: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+  };
 }
 
 function exportedArtifact(name: string, type: ArtifactRecord['type'], content: unknown): ArtifactRecord {

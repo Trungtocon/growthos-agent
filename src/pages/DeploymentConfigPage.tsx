@@ -28,6 +28,7 @@ import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
+import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -138,6 +139,7 @@ export function DeploymentConfigPage() {
       <AuthReadinessCompactWidget surface="deployment-config" />
       <DatabaseReadinessCompactWidget surface="deployment-config" />
       <EnvironmentReadinessCompactWidget surface="deployment-config" />
+      <ProductionConfigEvidenceCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."

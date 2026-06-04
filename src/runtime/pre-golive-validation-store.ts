@@ -13,6 +13,10 @@ import { getBackendReadinessReport } from './backend-health';
 import { getDatabaseReadinessReport } from './database-readiness';
 import { getAuthReadinessReport } from './auth-readiness-store';
 import { getEnvironmentReadinessReport } from './environment-readiness-store';
+import {
+  filterReadinessBlockersForEvidence,
+  selectProductionConfigEvidenceDashboard,
+} from './production-config-evidence-store';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -89,6 +93,28 @@ function cliGate(gateId: string, name: string, category: string, relatedSmokeCom
 
 function gateDefinitions(): GateDefinition[] {
   return [
+    {
+      gateId: 'production-config-evidence',
+      name: 'Production Config Evidence',
+      category: 'production',
+      relatedRoutes: ['/production-config-evidence'],
+      relatedSmokeCommand: 'npm run smoke:production-config-evidence',
+      evaluate: () => {
+        const dashboard = selectProductionConfigEvidenceDashboard();
+        return {
+          status: dashboard.verdict === 'READY' ? 'pass' : 'blocked',
+          score: dashboard.readinessScore,
+          blockers: dashboard.remainingBlockers,
+          warnings: dashboard.expiryWarnings.concat(dashboard.rejected.map((entry) => `${entry.category} evidence was rejected.`)),
+          evidence: [
+            `verified=${dashboard.verified.length}`,
+            `missing=${dashboard.missing.length}`,
+            `expired=${dashboard.expired.length}`,
+            `verdict=${dashboard.verdict}`,
+          ],
+        };
+      },
+    },
     {
       gateId: 'deployment-config',
       name: 'Deployment Config',
@@ -186,10 +212,11 @@ function gateDefinitions(): GateDefinition[] {
       relatedSmokeCommand: 'npm run smoke:backend-readiness',
       evaluate: () => {
         const report = getBackendReadinessReport('PRODUCTION');
+        const blockers = filterReadinessBlockersForEvidence('backend-readiness', report.blockers.map((entry) => `production backend: ${entry}`));
         return {
-          status: report.blockers.length ? 'blocked' : report.warnings.length ? 'warning' : 'pass',
-          score: report.readinessScore,
-          blockers: report.blockers.map((entry) => `production backend: ${entry}`),
+          status: blockers.length ? 'blocked' : report.warnings.length ? 'warning' : 'pass',
+          score: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+          blockers,
           warnings: report.warnings,
           evidence: [`environment=${report.environment.id}`, `health=${report.status}`, `auth=${report.auth.status}`, `endpoints=${report.endpointReachability.length}`],
         };
@@ -203,10 +230,11 @@ function gateDefinitions(): GateDefinition[] {
       relatedSmokeCommand: 'npm run smoke:database-readiness',
       evaluate: () => {
         const report = getDatabaseReadinessReport('PRODUCTION');
+        const blockers = filterReadinessBlockersForEvidence('database-readiness', report.blockers.map((entry) => `production database: ${entry}`));
         return {
-          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
-          score: report.readinessScore,
-          blockers: report.blockers.map((entry) => `production database: ${entry}`),
+          status: blockers.length ? 'blocked' : report.warnings.length || report.status === 'WARNING' ? 'warning' : 'pass',
+          score: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+          blockers,
           warnings: report.warnings,
           evidence: [`mode=${report.config.mode}`, `health=${report.connectionHealth}`, `schema=${report.schemaVersion}`, `domains=${report.persistenceDomains.length}`],
         };
@@ -220,10 +248,11 @@ function gateDefinitions(): GateDefinition[] {
       relatedSmokeCommand: 'npm run smoke:auth-readiness',
       evaluate: () => {
         const report = getAuthReadinessReport('PRODUCTION');
+        const blockers = filterReadinessBlockersForEvidence('auth-readiness', report.blockers.map((entry) => `production auth: ${entry}`));
         return {
-          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
-          score: report.readinessScore,
-          blockers: report.blockers.map((entry) => `production auth: ${entry}`),
+          status: blockers.length ? 'blocked' : report.warnings.length || report.status === 'WARNING' ? 'warning' : 'pass',
+          score: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+          blockers,
           warnings: report.warnings,
           evidence: [
             `provider=${report.provider.status}`,
@@ -243,10 +272,11 @@ function gateDefinitions(): GateDefinition[] {
       relatedSmokeCommand: 'npm run smoke:environment-readiness',
       evaluate: () => {
         const report = getEnvironmentReadinessReport('PRODUCTION');
+        const blockers = filterReadinessBlockersForEvidence('environment-readiness', report.blockers.map((entry) => `production environment: ${entry}`));
         return {
-          status: report.status === 'BLOCKED' ? 'blocked' : report.status === 'WARNING' ? 'warning' : 'pass',
-          score: report.readinessScore,
-          blockers: report.blockers.map((entry) => `production environment: ${entry}`),
+          status: blockers.length ? 'blocked' : report.warnings.length || report.status === 'WARNING' ? 'warning' : 'pass',
+          score: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+          blockers,
           warnings: report.warnings,
           evidence: [
             `required=${report.variables.filter((entry) => entry.required).length}`,

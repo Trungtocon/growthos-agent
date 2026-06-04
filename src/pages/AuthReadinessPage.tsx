@@ -10,6 +10,7 @@ import {
 } from '../runtime/auth-readiness-store';
 import { getAuthProviderRequiredEnvKeys } from '../runtime/auth-provider';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 
 type AuthReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -60,6 +61,7 @@ export function AuthReadinessPage() {
   return (
     <div data-route="/auth-readiness" data-auth-readiness-route>
       <EnvironmentReadinessCompactWidget surface="auth-readiness" />
+      <ProductionConfigEvidenceCompactWidget surface="auth-readiness" />
       <PageHeader
         title="Auth & Session Readiness"
         subtitle="Production auth, token validation, RBAC, and tenant/workspace binding checks before go-live."

@@ -12,6 +12,7 @@ import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
 import { EnvironmentReadinessPage } from './pages/EnvironmentReadinessPage';
 import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
+import { ProductionConfigEvidencePage } from './pages/ProductionConfigEvidencePage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
@@ -138,6 +139,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/environment-readiness">
         <EnvironmentReadinessPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/production-config-evidence') {
+    return (
+      <GuardedAppShell currentPath="/production-config-evidence">
+        <ProductionConfigEvidencePage />
       </GuardedAppShell>
     );
   }

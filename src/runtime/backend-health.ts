@@ -10,6 +10,7 @@ import {
   type RuntimeEnvironmentId,
 } from './environment-registry';
 import { getDatabaseReadinessReport, type DatabaseReadinessReport } from './database-readiness';
+import { filterReadinessBlockersForEvidence } from './production-config-evidence-store';
 
 export interface BackendHealthReport {
   environment: RuntimeEnvironment;
@@ -109,6 +110,18 @@ export function getBackendReadinessReport(environmentId: RuntimeEnvironmentId = 
   const state = readState();
   const report = state.reports.find((entry) => entry.environment.id === environmentId);
   return report ? clone(report) : checkBackendReadiness(environmentId);
+}
+
+export function getEvidenceAdjustedBackendReadinessReport(environmentId: RuntimeEnvironmentId = 'PRODUCTION'): BackendHealthReport {
+  const report = getBackendReadinessReport(environmentId);
+  if (environmentId !== 'PRODUCTION') return report;
+  const blockers = filterReadinessBlockersForEvidence('backend-readiness', report.blockers);
+  return {
+    ...report,
+    blockers,
+    status: blockers.length ? report.status : report.warnings.length ? 'degraded' : 'online',
+    readinessScore: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+  };
 }
 
 function exportedArtifact(name: string, type: ArtifactRecord['type'], content: unknown): ArtifactRecord {

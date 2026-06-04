@@ -301,6 +301,19 @@ import {
   selectPreGoLiveValidationArtifacts as getStoredPreGoLiveValidationArtifacts,
   selectPreGoLiveValidationSummary as getStoredPreGoLiveValidationSummary,
 } from '../runtime/pre-golive-validation-store';
+import {
+  selectEvidenceByCategory as getStoredEvidenceByCategory,
+  selectEvidenceRemainingBlockers as getStoredEvidenceRemainingBlockers,
+  selectEvidenceResolvedBlockers as getStoredEvidenceResolvedBlockers,
+  selectExpiredProductionEvidence as getStoredExpiredProductionEvidence,
+  selectMissingProductionEvidence as getStoredMissingProductionEvidence,
+  selectProductionConfigEvidence as getStoredProductionConfigEvidence,
+  selectProductionEvidenceReadinessScore as getStoredProductionEvidenceReadinessScore,
+  selectProductionEvidenceVerdict as getStoredProductionEvidenceVerdict,
+  selectRejectedProductionEvidence as getStoredRejectedProductionEvidence,
+  selectVerifiedProductionEvidence as getStoredVerifiedProductionEvidence,
+} from '../runtime/production-config-evidence-store';
+import type { ProductionEvidenceCategory } from '../runtime/production-config-evidence';
 import { selectAuditLogSummary as getStoredAuditLogSummary } from '../runtime/audit-log-store';
 import {
   getDatabaseReadinessReport as getStoredDatabaseReadinessReport,
@@ -2648,6 +2661,63 @@ export function selectPreGoLiveValidationSummary() {
 
 export function selectPreGoLiveValidationArtifacts() {
   return getStoredPreGoLiveValidationArtifacts();
+}
+
+export function selectProductionConfigEvidence() {
+  return getStoredProductionConfigEvidence();
+}
+
+export function selectEvidenceByCategory(category: ProductionEvidenceCategory) {
+  return getStoredEvidenceByCategory(category);
+}
+
+export function selectMissingProductionEvidence() {
+  return getStoredMissingProductionEvidence();
+}
+
+export function selectVerifiedProductionEvidence() {
+  return getStoredVerifiedProductionEvidence();
+}
+
+export function selectRejectedProductionEvidence() {
+  return getStoredRejectedProductionEvidence();
+}
+
+export function selectExpiredProductionEvidence() {
+  return getStoredExpiredProductionEvidence();
+}
+
+export function selectEvidenceResolvedBlockers() {
+  return getStoredEvidenceResolvedBlockers();
+}
+
+export function selectEvidenceRemainingBlockers() {
+  return getStoredEvidenceRemainingBlockers();
+}
+
+export function selectProductionEvidenceReadinessScore() {
+  return getStoredProductionEvidenceReadinessScore();
+}
+
+export function selectProductionEvidenceVerdict() {
+  return getStoredProductionEvidenceVerdict();
+}
+
+export function selectPreGoLiveEvidenceGate() {
+  return getStoredPreGoLiveValidationGates().find((gate) => gate.gateId === 'production-config-evidence')
+    ?? {
+      gateId: 'production-config-evidence',
+      name: 'Production Config Evidence',
+      category: 'production',
+      status: getStoredEvidenceRemainingBlockers().length ? 'blocked' : 'pass',
+      score: getStoredProductionEvidenceReadinessScore(),
+      blockers: getStoredEvidenceRemainingBlockers(),
+      warnings: getStoredExpiredProductionEvidence().map((entry) => `${entry.category} evidence expired.`),
+      evidence: ['Production Config Evidence gate has not been run in pre go-live validation yet.'],
+      relatedRoutes: ['/production-config-evidence'],
+      relatedSmokeCommand: 'npm run smoke:production-config-evidence',
+      finalVerdict: getStoredProductionEvidenceVerdict(),
+    };
 }
 
 export function selectDatabaseConfig() {

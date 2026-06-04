@@ -135,7 +135,8 @@
     "smoke:backend-readiness": "node scripts/smoke-backend-readiness.mjs",
     "smoke:database-readiness": "node scripts/smoke-database-readiness.mjs",
     "smoke:auth-readiness": "node scripts/smoke-auth-readiness.mjs",
-    "smoke:environment-readiness": "node scripts/smoke-environment-readiness.mjs"
+    "smoke:environment-readiness": "node scripts/smoke-environment-readiness.mjs",
+    "smoke:production-config-evidence": "node scripts/smoke-production-config-evidence.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

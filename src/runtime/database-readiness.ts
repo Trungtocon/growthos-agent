@@ -11,6 +11,7 @@ import {
 } from './database-config';
 import type { RuntimeEnvironmentId } from './environment-registry';
 import { getPersistenceDomains, summarizePersistenceDomains, type PersistenceDomain } from './persistence-registry';
+import { filterReadinessBlockersForEvidence } from './production-config-evidence-store';
 
 export interface DatabaseReadinessReport {
   environmentId: RuntimeEnvironmentId;
@@ -133,6 +134,19 @@ export function getDatabaseReadinessReport(environmentId: RuntimeEnvironmentId =
   const state = readState();
   const report = state.reports.find((entry) => entry.environmentId === environmentId);
   return report ? clone(report) : evaluateDatabaseReadiness(environmentId);
+}
+
+export function getEvidenceAdjustedDatabaseReadinessReport(environmentId: RuntimeEnvironmentId = 'PRODUCTION'): DatabaseReadinessReport {
+  const report = getDatabaseReadinessReport(environmentId);
+  if (environmentId !== 'PRODUCTION') return report;
+  const blockers = filterReadinessBlockersForEvidence('database-readiness', report.blockers);
+  const status = calculateStatus(environmentId, blockers, report.warnings);
+  return {
+    ...report,
+    blockers,
+    status,
+    readinessScore: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+  };
 }
 
 function exportedArtifact(name: string, type: ArtifactRecord['type'], content: unknown): ArtifactRecord {

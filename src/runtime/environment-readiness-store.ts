@@ -8,6 +8,7 @@ import {
   type EnvironmentReadinessStatus,
 } from './environment-readiness';
 import type { RuntimeEnvironmentId } from './environment-registry';
+import { filterReadinessBlockersForEvidence } from './production-config-evidence-store';
 
 const ENVIRONMENT_READINESS_KEY = 'uikigai-environment-readiness-v1';
 
@@ -75,6 +76,18 @@ export function getEnvironmentReadinessReport(environmentId: RuntimeEnvironmentI
   const state = readState();
   const report = state.reports.find((entry) => entry.environmentId === environmentId);
   return report ? clone(report) : evaluateEnvironmentReadiness(environmentId);
+}
+
+export function getEvidenceAdjustedEnvironmentReadinessReport(environmentId: RuntimeEnvironmentId = 'PRODUCTION'): EnvironmentReadinessReport {
+  const report = getEnvironmentReadinessReport(environmentId);
+  if (environmentId !== 'PRODUCTION') return report;
+  const blockers = filterReadinessBlockersForEvidence('environment-readiness', report.blockers);
+  return {
+    ...report,
+    blockers,
+    status: blockers.length ? report.status : report.warnings.length ? 'WARNING' : 'READY',
+    readinessScore: blockers.length ? report.readinessScore : Math.max(report.readinessScore, 78),
+  };
 }
 
 function exportedArtifact(name: string, type: ArtifactRecord['type'], content: unknown): ArtifactRecord {
