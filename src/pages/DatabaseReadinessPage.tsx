@@ -13,6 +13,7 @@ import { getDatabaseConfigs } from '../runtime/database-config';
 import { getPersistenceDomains } from '../runtime/persistence-registry';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
@@ -65,6 +66,7 @@ export function DatabaseReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="database-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="database-readiness" />
       <ProductionObservabilityCompactWidget surface="database-readiness" />
+      <GoLiveControlCompactWidget surface="database-readiness" />
       <PageHeader
         title="Database Readiness"
         subtitle="Production persistence registry, database client factory, audit writability, and schema readiness before real go-live."

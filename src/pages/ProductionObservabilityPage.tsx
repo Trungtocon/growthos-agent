@@ -13,6 +13,7 @@ import {
   verifyFirstConfiguredMonitor,
   verifyRunbook,
 } from '../runtime/production-observability-store';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 
 type ProductionObservabilityWidgetSurface =
   | 'pre-golive-validation'
@@ -74,6 +75,7 @@ export function ProductionObservabilityPage() {
 
   return (
     <div data-route="/production-observability" data-production-observability-route>
+      <GoLiveControlCompactWidget surface="production-observability" />
       <PageHeader
         title="Production Observability & Incident Readiness"
         subtitle="Operational readiness evidence for health monitors, alerting, incident response, runbooks, SLO/SLA, and recovery objectives."

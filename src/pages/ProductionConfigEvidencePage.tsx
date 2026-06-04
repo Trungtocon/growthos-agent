@@ -13,6 +13,7 @@ import {
   verifyFirstProvidedEvidence,
 } from '../runtime/production-config-evidence-store';
 import type { ProductionEvidenceCategory } from '../runtime/production-config-evidence';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
 type ProductionEvidenceWidgetSurface =
@@ -72,6 +73,7 @@ export function ProductionConfigEvidencePage() {
   return (
     <div data-route="/production-config-evidence" data-production-config-evidence-route>
       <ProductionObservabilityCompactWidget surface="production-config-evidence" />
+      <GoLiveControlCompactWidget surface="production-config-evidence" />
       <PageHeader
         title="Production Config Evidence Binder"
         subtitle="Collect, mask, verify, and export production readiness evidence without storing raw secrets."

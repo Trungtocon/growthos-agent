@@ -13,6 +13,7 @@ import { getEndpointRegistry } from '../runtime/endpoint-registry';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
@@ -41,6 +42,7 @@ export function BackendReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="backend-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="backend-readiness" />
       <ProductionObservabilityCompactWidget surface="backend-readiness" />
+      <GoLiveControlCompactWidget surface="backend-readiness" />
       <PageHeader
         title="Backend Readiness"
         subtitle="Environment registry, auth provider, endpoint matrix, and health evidence for real backend capable execution."

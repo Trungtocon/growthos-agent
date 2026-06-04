@@ -17,6 +17,7 @@ import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { AuthReadinessCompactWidget } from './AuthReadinessPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
@@ -80,6 +81,7 @@ export function ProductionReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="production-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="production-readiness" />
       <ProductionObservabilityCompactWidget surface="production-readiness" />
+      <GoLiveControlCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."

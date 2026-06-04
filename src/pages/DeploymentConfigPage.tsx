@@ -27,6 +27,7 @@ import { BackendAdapterCompactWidget } from './BackendAdapterPage';
 import { DatabaseReadinessCompactWidget } from './DatabaseReadinessPage';
 import { E2EActionFlowCompactWidget } from './E2EActionFlowPage';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
@@ -142,6 +143,7 @@ export function DeploymentConfigPage() {
       <EnvironmentReadinessCompactWidget surface="deployment-config" />
       <ProductionConfigEvidenceCompactWidget surface="deployment-config" />
       <ProductionObservabilityCompactWidget surface="deployment-config" />
+      <GoLiveControlCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."

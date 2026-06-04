@@ -596,7 +596,7 @@ export function AppShell({ currentPath, children }: { currentPath: string; child
                 )}
               </div>
             ) : null}
-            {profile.createLabel ? <button className="h-[44px] rounded-lg bg-[#0f6bff] px-6 text-[15px] font-bold text-white shadow-[0_10px_20px_rgba(15,98,255,0.18)] hover:bg-brand-700">{profile.createLabel}</button> : null}
+            {profile.createLabel ? <button data-action="app-shell-create-readonly" aria-readonly="true" title="Create is route-specific and intentionally read-only in this shell state." className="h-[44px] rounded-lg bg-[#0f6bff] px-6 text-[15px] font-bold text-white shadow-[0_10px_20px_rgba(15,98,255,0.18)] hover:bg-brand-700">{profile.createLabel}</button> : null}
             <div className="h-10 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <UserAvatar />

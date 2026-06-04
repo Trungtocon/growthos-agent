@@ -10,6 +10,7 @@ import {
 } from '../runtime/auth-readiness-store';
 import { getAuthProviderRequiredEnvKeys } from '../runtime/auth-provider';
 import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
+import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 
@@ -64,6 +65,7 @@ export function AuthReadinessPage() {
       <EnvironmentReadinessCompactWidget surface="auth-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="auth-readiness" />
       <ProductionObservabilityCompactWidget surface="auth-readiness" />
+      <GoLiveControlCompactWidget surface="auth-readiness" />
       <PageHeader
         title="Auth & Session Readiness"
         subtitle="Production auth, token validation, RBAC, and tenant/workspace binding checks before go-live."

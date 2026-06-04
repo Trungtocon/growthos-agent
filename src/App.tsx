@@ -11,6 +11,7 @@ import { DatabaseReadinessPage } from './pages/DatabaseReadinessPage';
 import { DeploymentConfigPage } from './pages/DeploymentConfigPage';
 import { E2EActionFlowPage } from './pages/E2EActionFlowPage';
 import { EnvironmentReadinessPage } from './pages/EnvironmentReadinessPage';
+import { GoLiveControlPage } from './pages/GoLiveControlPage';
 import { PreGoLiveValidationPage } from './pages/PreGoLiveValidationPage';
 import { ProductionConfigEvidencePage } from './pages/ProductionConfigEvidencePage';
 import { ProductionObservabilityPage } from './pages/ProductionObservabilityPage';
@@ -154,6 +155,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/production-observability">
         <ProductionObservabilityPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/go-live-control') {
+    return (
+      <GuardedAppShell currentPath="/go-live-control">
+        <GoLiveControlPage />
       </GuardedAppShell>
     );
   }

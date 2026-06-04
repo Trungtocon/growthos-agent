@@ -383,6 +383,22 @@ import {
   getProductionReadinessWarnings as getStoredProductionReadinessWarnings,
 } from '../runtime/production-readiness-store';
 import {
+  selectCanApproveGoLive as getStoredCanApproveGoLive,
+  selectCanMarkReleased as getStoredCanMarkReleased,
+  selectCanTriggerRollback as getStoredCanTriggerRollback,
+  selectGoLiveApprovalStatus as getStoredGoLiveApprovalStatus,
+  selectGoLiveBlockers as getStoredGoLiveBlockers,
+  selectGoLiveControl as getStoredGoLiveControl,
+  selectGoLiveEvidenceChecklist as getStoredGoLiveEvidenceChecklist,
+  selectGoLivePackArtifacts as getStoredGoLivePackArtifacts,
+  selectGoLiveReadinessMatrix as getStoredGoLiveReadinessMatrix,
+  selectGoLiveReleaseWindow as getStoredGoLiveReleaseWindow,
+  selectGoLiveRollbackStatus as getStoredGoLiveRollbackStatus,
+  selectGoLiveTimeline as getStoredGoLiveTimeline,
+  selectGoLiveVerdict as getStoredGoLiveVerdict,
+  selectGoLiveWarnings as getStoredGoLiveWarnings,
+} from '../runtime/go-live-control-store';
+import {
   getCurrentWorkspace as getStoredCurrentWorkspace,
   getWorkspaceBudget as getStoredWorkspaceBudget,
   getWorkspaceGovernanceSummary as getStoredWorkspaceGovernanceSummary,
@@ -2797,6 +2813,62 @@ export function selectPreGoLiveObservabilityGate() {
       relatedSmokeCommand: 'npm run smoke:production-observability',
       finalVerdict: getStoredProductionObservabilityVerdict(),
     };
+}
+
+export function selectGoLiveControl() {
+  return getStoredGoLiveControl();
+}
+
+export function selectGoLiveVerdict() {
+  return getStoredGoLiveVerdict();
+}
+
+export function selectGoLiveReadinessMatrix() {
+  return getStoredGoLiveReadinessMatrix();
+}
+
+export function selectGoLiveBlockers() {
+  return getStoredGoLiveBlockers();
+}
+
+export function selectGoLiveWarnings() {
+  return getStoredGoLiveWarnings();
+}
+
+export function selectGoLiveEvidenceChecklist() {
+  return getStoredGoLiveEvidenceChecklist();
+}
+
+export function selectGoLiveApprovalStatus() {
+  return getStoredGoLiveApprovalStatus();
+}
+
+export function selectGoLiveRollbackStatus() {
+  return getStoredGoLiveRollbackStatus();
+}
+
+export function selectGoLiveReleaseWindow() {
+  return getStoredGoLiveReleaseWindow();
+}
+
+export function selectGoLiveTimeline() {
+  return getStoredGoLiveTimeline();
+}
+
+export function selectGoLivePackArtifacts() {
+  return getStoredGoLivePackArtifacts();
+}
+
+export function selectCanApproveGoLive() {
+  return getStoredCanApproveGoLive();
+}
+
+export function selectCanMarkReleased() {
+  return getStoredCanMarkReleased();
+}
+
+export function selectCanTriggerRollback() {
+  return getStoredCanTriggerRollback();
 }
 
 export function selectDatabaseConfig() {
