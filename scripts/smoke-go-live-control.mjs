@@ -101,6 +101,7 @@ async function seedVerifiedProductionEvidence(page) {
       submitTenantBindingForReview,
       updateTenantBinding,
     } = await import('/src/runtime/tenant-production-binding-store.ts');
+    const { createTenantSubscription, activateSubscription } = await import('/src/runtime/production-billing-store.ts');
 
     const profile = createCertificationProfile({
       name: 'Go-live control certified profile',
@@ -163,6 +164,7 @@ async function seedVerifiedProductionEvidence(page) {
     const approvedRunbook = approveRunbook(runbook.runbookId, 'VP Operations');
     acceptOperatorHandoff(approvedRunbook.runbookId, 'Release Operator');
     const binding = createTenantBinding({ environment: 'production', tenantId: 'tenant-uikigai', workspaceId: 'workspace-production' });
+    activateSubscription(createTenantSubscription({ tenantId: binding.tenantId, workspaceId: binding.workspaceId, planId: 'enterprise', status: 'trial' }).subscriptionId);
     updateTenantBinding(binding.bindingId, {
       backendProfileId: 'backend-prod',
       databaseProfileId: 'database-prod',

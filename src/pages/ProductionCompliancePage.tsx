@@ -14,6 +14,7 @@ import {
   submitComplianceChange,
   verifyComplianceChange,
 } from '../runtime/production-compliance-store';
+import { ProductionBillingCompactWidget } from './ProductionBillingPage';
 
 type ComplianceWidgetSurface =
   | 'production-readiness'
@@ -61,6 +62,7 @@ export function ProductionCompliancePage() {
 
   return (
     <div data-route="/production-compliance" data-production-compliance-route>
+      <ProductionBillingCompactWidget surface="production-compliance" />
       <PageHeader
         title="Production Compliance & Audit Center"
         subtitle="Audit trail, change approvals, compliance controls, and evidence vault for production go-live operations."

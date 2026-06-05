@@ -114,6 +114,7 @@ async function seedGoLivePrerequisites(page) {
       approveTenantBinding,
       activateTenantBinding,
     } = await import('/src/runtime/tenant-production-binding-store.ts');
+    const { createTenantSubscription, activateSubscription } = await import('/src/runtime/production-billing-store.ts');
 
     const profile = createCertificationProfile({ runtimeMode: 'sandbox', sandboxBaseUrl: 'https://sandbox.hermes.local', apiKeyPresent: true, workspaceIdPresent: true });
     const certification = startCertificationRun(profile.id);
@@ -151,6 +152,7 @@ async function seedGoLivePrerequisites(page) {
     markDeploymentConfigReady(deployment.id);
     approveProductionGoLive(readiness.id, 'Compliance Smoke');
     const binding = createTenantBinding({ environment: 'production', tenantId: 'tenant-uikigai', workspaceId: 'workspace-production' });
+    activateSubscription(createTenantSubscription({ tenantId: binding.tenantId, workspaceId: binding.workspaceId, planId: 'enterprise', status: 'trial' }).subscriptionId);
     updateTenantBinding(binding.bindingId, {
       backendProfileId: 'backend-prod',
       databaseProfileId: 'database-prod',

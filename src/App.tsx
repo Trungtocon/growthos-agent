@@ -17,6 +17,7 @@ import { ProductionConfigEvidencePage } from './pages/ProductionConfigEvidencePa
 import { ProductionObservabilityPage } from './pages/ProductionObservabilityPage';
 import { ProductionOperationsPage } from './pages/ProductionOperationsPage';
 import { ProductionCompliancePage } from './pages/ProductionCompliancePage';
+import { ProductionBillingPage } from './pages/ProductionBillingPage';
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { ProductionIncidentPage } from './pages/ProductionIncidentPage';
 import { ProductionRunbookPage } from './pages/ProductionRunbookPage';
@@ -175,6 +176,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/production-compliance">
         <ProductionCompliancePage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/production-billing') {
+    return (
+      <GuardedAppShell currentPath="/production-billing">
+        <ProductionBillingPage />
       </GuardedAppShell>
     );
   }

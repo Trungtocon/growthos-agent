@@ -18,7 +18,9 @@ import {
   resolveSupportTicket,
   selectProductionSupportDashboard,
 } from '../runtime/production-support-store';
+import { selectProductionBillingDashboard } from '../runtime/production-billing-store';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
+import { ProductionBillingCompactWidget } from './ProductionBillingPage';
 
 type SupportWidgetSurface =
   | 'production-incidents'
@@ -62,6 +64,7 @@ export function ProductionSupportCompactWidget({ surface }: { surface: SupportWi
 
 export function ProductionSupportPage() {
   const dashboard = selectProductionSupportDashboard();
+  const billing = selectProductionBillingDashboard();
   const active = dashboard.openTickets[0] ?? dashboard.tickets[0];
   const canUseTicket = Boolean(active);
   const canResolve = Boolean(active && active.status !== 'resolved' && active.status !== 'closed');
@@ -70,6 +73,7 @@ export function ProductionSupportPage() {
   return (
     <div data-route="/production-support" data-production-support-route>
       <ProductionOperationsCompactWidget surface="production-support" />
+      <ProductionBillingCompactWidget surface="production-support" />
       <PageHeader
         title="Production Support Desk & Customer Impact Center"
         subtitle="Customer-impact support desk tied to production incidents, SLA state, escalation, communication drafts, and go-live readiness blockers."
@@ -121,12 +125,13 @@ export function ProductionSupportPage() {
         )}
       />
 
-      <div className="grid grid-cols-5 gap-4" data-support-desk-dashboard>
+      <div className="grid grid-cols-6 gap-4" data-support-desk-dashboard>
         {[
           { label: 'Readiness', value: dashboard.status, tone: toneFor(dashboard.status) },
           { label: 'Open tickets', value: dashboard.openCount, tone: dashboard.openCount ? 'amber' : 'green' },
           { label: 'Critical impact', value: dashboard.criticalCount, tone: dashboard.criticalCount ? 'red' : 'green' },
           { label: 'SLA breached', value: dashboard.breachedSlaCount, tone: dashboard.breachedSlaCount ? 'red' : 'green' },
+          { label: 'Plan SLA', value: billing.summary.supportSlaLevel, tone: toneFor(billing.summary.supportSlaLevel) },
           { label: 'Affected customers', value: dashboard.customerImpact.affectedCustomers, tone: dashboard.customerImpact.affectedCustomers ? 'blue' : 'green' },
         ].map((item) => (
           <div key={item.label} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">

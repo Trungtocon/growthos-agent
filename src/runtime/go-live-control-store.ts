@@ -20,6 +20,7 @@ import {
   selectTenantBindingReadiness,
 } from './tenant-production-binding-store';
 import { recordComplianceAuditEvent } from './production-compliance-store';
+import { selectProductionBillingDashboard } from './production-billing-store';
 import {
   calculateGoLiveReadinessScore,
   deriveGoLiveVerdict,
@@ -122,6 +123,7 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
   const preGoLive = selectPreGoLiveValidationSummary();
   const tenantBinding = selectActiveTenantProductionBinding();
   const tenantBindingReadiness = selectTenantBindingReadiness(tenantBinding?.bindingId);
+  const billing = selectProductionBillingDashboard(tenantBinding?.tenantId);
 
   const latestSandbox = sandbox.runs.find((run) => run.status === 'completed');
   const runtimePassed = runtime.status === 'certified' || runtime.runs.some((run) => run.status === 'certified' || run.status === 'passed');
@@ -180,6 +182,20 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
       warnings: tenantBindingReadiness.warnings,
       evidence: tenantBinding ? [tenantBinding.bindingId, tenantBinding.status, tenantBinding.environment] : [],
       route: '/tenant-production-binding',
+    }),
+    createGate({
+      gateId: 'production-billing',
+      name: 'Production Billing & License',
+      status: billing.licenseGate.valid && billing.usageGate.status !== 'blocked' ? 'verified' : 'blocked',
+      score: billing.summary.blockers ? 0 : billing.summary.warnings ? 85 : 100,
+      blockers: [...billing.licenseGate.blockers, ...billing.usageGate.blockers],
+      warnings: [...billing.licenseGate.warnings, ...billing.usageGate.warnings],
+      evidence: [
+        billing.subscription ? billing.subscription.subscriptionId : 'missing-subscription',
+        billing.summary.planId ?? 'missing-plan',
+        billing.summary.supportSlaLevel,
+      ],
+      route: '/production-billing',
     }),
     createGate({
       gateId: 'runtime-certification',

@@ -2,6 +2,7 @@ import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
 import { recordComplianceAuditEvent } from './production-compliance-store';
+import { evaluateLicenseGate, evaluateUsageGate } from './production-billing-store';
 import type {
   TenantBindingApprovalStatus,
   TenantBindingCompactSummary,
@@ -131,11 +132,22 @@ export function evaluateTenantBindingReadiness(binding?: TenantProductionBinding
     createCheck('rollback-owner', 'Rollback owner exists', Boolean(binding.rollbackOwner), 'Rollback owner is missing.', 'Assign rollback owner before activation.'),
     createCheck('go-live-approval', 'Go-Live approval not bypassed', binding.approvalStatus === 'approved', 'Reviewer approval is missing or rejected.', 'Submit for review and record reviewer approval.'),
   ];
+  const licenseGate = evaluateLicenseGate(binding.tenantId);
+  const usageGate = evaluateUsageGate(binding.tenantId);
+  checks.push(createCheck(
+    'billing-license',
+    'Active billing license exists',
+    licenseGate.valid && usageGate.status !== 'blocked',
+    [...licenseGate.blockers, ...usageGate.blockers].join(' ') || 'Billing license is not active or usage exceeds licensed quota.',
+    'Activate the tenant subscription, resolve billing status, or upgrade the plan before production activation.',
+  ));
   const blockers = checks.filter((check) => check.status === 'blocked').map((check) => check.reason);
   const warnings = [
     ...(binding.environment !== 'production' ? [`Binding targets ${binding.environment}; production go-live requires production.`] : []),
     ...(binding.status === 'draft' ? ['Binding is still draft and has not been submitted for review.'] : []),
     ...(binding.maskedSecretMetadata.length ? [] : ['Only masked secret metadata is stored; raw secrets must remain outside frontend state.']),
+    ...licenseGate.warnings,
+    ...usageGate.warnings,
   ];
   const score = Math.round((checks.filter((check) => check.status === 'pass').length / checks.length) * 100);
   return {

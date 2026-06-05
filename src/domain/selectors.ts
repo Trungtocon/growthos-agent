@@ -122,6 +122,15 @@ import {
   selectComplianceControls as getComplianceControls,
   selectProductionComplianceDashboard as getProductionComplianceDashboard,
 } from '../runtime/production-compliance-store';
+import {
+  evaluateLicenseGate as getBillingLicenseGate,
+  evaluateUsageGate as getBillingUsageGate,
+  getBillingLicenseBlockers as getBillingLicenseBlockers,
+  getBillingWarnings as getBillingWarnings,
+  getSupportSlaForTenant as getBillingSupportSla,
+  selectProductionBillingArtifacts as getProductionBillingArtifacts,
+  selectProductionBillingDashboard as getProductionBillingDashboard,
+} from '../runtime/production-billing-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4499,6 +4508,34 @@ export function selectComplianceControls() {
 
 export function selectComplianceArtifacts() {
   return getComplianceArtifacts();
+}
+
+export function selectProductionBillingDashboard(tenantId?: string) {
+  return getProductionBillingDashboard(tenantId);
+}
+
+export function selectProductionBillingLicenseGate(tenantId?: string) {
+  return getBillingLicenseGate(tenantId);
+}
+
+export function selectProductionBillingUsageGate(tenantId?: string) {
+  return getBillingUsageGate(tenantId);
+}
+
+export function selectProductionBillingBlockers(tenantId?: string) {
+  return getBillingLicenseBlockers(tenantId);
+}
+
+export function selectProductionBillingWarnings(tenantId?: string) {
+  return getBillingWarnings(tenantId);
+}
+
+export function selectProductionBillingSupportSla(tenantId?: string) {
+  return getBillingSupportSla(tenantId);
+}
+
+export function selectProductionBillingArtifacts() {
+  return getProductionBillingArtifacts();
 }
 
 export function getRecentActivities(): Activity[] {

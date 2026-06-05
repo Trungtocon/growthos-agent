@@ -15,6 +15,7 @@ import {
 } from '../runtime/production-operations-store';
 import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
+import { ProductionBillingCompactWidget } from './ProductionBillingPage';
 
 type ProductionOperationsWidgetSurface =
   | 'go-live-control'
@@ -66,6 +67,7 @@ export function ProductionOperationsPage() {
     <div data-route="/production-operations" data-production-operations-route>
       <TenantProductionBindingCompactWidget surface="production-operations" />
       <ProductionComplianceCompactWidget surface="production-operations" />
+      <ProductionBillingCompactWidget surface="production-operations" />
       <PageHeader
         title="Production Operations Console & Live Ops Dashboard"
         subtitle="Live operator surface for production health, readiness, incidents, support SLA, rollback readiness, and action queue ownership."
