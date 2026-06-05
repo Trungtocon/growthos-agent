@@ -2,6 +2,7 @@ import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
 import { selectUnresolvedCriticalSupportTicketsByIncident } from './production-support-store';
+import { recordComplianceAuditEvent } from './production-compliance-store';
 import {
   isCriticalIncident,
   isIncidentActive,
@@ -240,13 +241,24 @@ export function closeIncident(incidentId?: string, input: { postmortemRequired: 
     });
   }
   if (incident.status !== 'resolved' || typeof input.postmortemRequired !== 'boolean') return persistIncident(incident);
-  return persistIncident({
+  const closed = persistIncident({
     ...incident,
     status: 'closed',
     postmortemRequired: input.postmortemRequired,
     closedAt: nowIso(),
     timelineEvents: [event(incident.incidentId, 'incident.closed', `Incident closed by ${input.closedBy ?? 'Incident Commander'}.`, input.closedBy), ...incident.timelineEvents],
   });
+  recordComplianceAuditEvent({
+    actor: input.closedBy ?? 'Incident Commander',
+    action: 'incident.closed',
+    object: closed.incidentId,
+    beforeState: incident,
+    afterState: closed,
+    justification: 'Every production incident closure requires compliance audit evidence.',
+    evidence: closed.evidenceLinks,
+    controls: ['SOC2', 'ISO27001', 'InternalPolicy'],
+  });
+  return closed;
 }
 
 function exportedArtifact(name: string, type: ArtifactRecord['type'], content: unknown): ArtifactRecord {

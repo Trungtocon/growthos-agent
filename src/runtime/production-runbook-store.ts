@@ -1,6 +1,7 @@
 import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
+import { recordComplianceAuditEvent } from './production-compliance-store';
 import {
   calculateRunbookCompletion,
   deriveRunbookStatuses,
@@ -238,7 +239,7 @@ export function markRunbookReady(runbookId?: string): ProductionRunbook {
 export function approveRunbook(runbookId?: string, approvedBy = 'Operations Approver'): ProductionRunbook {
   const runbook = applyReadiness(resolveRunbook(runbookId));
   if (runbook.blockers.length) return persistRunbook({ ...runbook, runbookStatus: 'incomplete' });
-  return persistRunbook({
+  const approved = persistRunbook({
     ...runbook,
     runbookStatus: 'approved',
     handoffStatus: 'ready',
@@ -246,6 +247,17 @@ export function approveRunbook(runbookId?: string, approvedBy = 'Operations Appr
     approvedAt: nowIso(),
     timeline: [event(runbook.runbookId, 'runbook.approved', `Runbook approved by ${approvedBy}.`), ...runbook.timeline],
   });
+  recordComplianceAuditEvent({
+    actor: approvedBy,
+    action: 'runbook.approved',
+    object: approved.runbookId,
+    beforeState: runbook,
+    afterState: approved,
+    justification: 'Every production runbook approval requires compliance audit evidence.',
+    evidence: approved.sections.flatMap((section) => section.evidence),
+    controls: ['ISO27001', 'SOC2', 'InternalPolicy'],
+  });
+  return approved;
 }
 
 export function rejectRunbook(runbookId?: string, reason = 'Runbook rejected by operator review.'): ProductionRunbook {

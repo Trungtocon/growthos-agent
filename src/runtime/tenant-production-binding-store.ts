@@ -1,6 +1,7 @@
 import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
+import { recordComplianceAuditEvent } from './production-compliance-store';
 import type {
   TenantBindingApprovalStatus,
   TenantBindingCompactSummary,
@@ -270,12 +271,23 @@ export function activateTenantBinding(bindingId?: string): TenantProductionBindi
       timeline: [timeline('activation.blocked', `Activation blocked by ${readiness.blockers.length} readiness issue(s).`), ...binding.timeline],
     });
   }
-  return persistBinding({
+  const active = persistBinding({
     ...binding,
     status: 'active',
     activatedAt: nowIso(),
     timeline: [timeline('activation.active', 'Tenant production binding activated for production readiness gates.'), ...binding.timeline],
   }, true);
+  recordComplianceAuditEvent({
+    actor: active.reviewer ?? active.owner ?? 'Tenant Binding Reviewer',
+    action: 'tenant-binding.activated',
+    object: active.bindingId,
+    beforeState: binding,
+    afterState: active,
+    justification: 'Every tenant production activation requires compliance audit evidence.',
+    evidence: [`tenant:${active.tenantId}`, `workspace:${active.workspaceId}`, `environment:${active.environment}`],
+    controls: ['ISO27001', 'SOC2', 'GDPR', 'InternalPolicy'],
+  });
+  return active;
 }
 
 function createArtifact(name: string, binding: TenantProductionBinding | undefined, contentSummary: string, type: ArtifactRecord['type'] = 'AUDIT'): ArtifactRecord {

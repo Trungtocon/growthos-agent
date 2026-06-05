@@ -16,6 +16,7 @@ import {
   selectProductionIncidentDashboard,
   triggerRollbackProcedure,
 } from '../runtime/production-incident-store';
+import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
@@ -73,6 +74,7 @@ export function ProductionIncidentPage() {
     <div data-route="/production-incidents" data-production-incidents-route>
       <ProductionOperationsCompactWidget surface="production-incidents" />
       <ProductionSupportCompactWidget surface="production-incidents" />
+      <ProductionComplianceCompactWidget surface="production-incidents" />
       <PageHeader
         title="Production Incident Command Center"
         subtitle="Post-go-live command surface for severity triage, escalation, mitigation, rollback decisions, resolution evidence, and incident export packs."

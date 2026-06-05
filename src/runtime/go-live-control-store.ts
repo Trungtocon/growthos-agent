@@ -19,6 +19,7 @@ import {
   selectActiveTenantProductionBinding,
   selectTenantBindingReadiness,
 } from './tenant-production-binding-store';
+import { recordComplianceAuditEvent } from './production-compliance-store';
 import {
   calculateGoLiveReadinessScore,
   deriveGoLiveVerdict,
@@ -520,13 +521,24 @@ export function approveGoLive(releaseId?: string, approvedBy = 'GrowthOS Release
   const release = resolveRelease(releaseId);
   const evaluated = applyReadiness({ ...release, approvedBy });
   if (evaluated.blockers.length) return persistRelease({ ...evaluated, state: 'blocked' });
-  return persistRelease({
+  const approved = persistRelease({
     ...evaluated,
     state: 'approved',
     approvedBy,
     approvalTimestamp: nowIso(),
     timeline: [timeline(release.releaseId, 'approval.approved', `Go-live approved by ${approvedBy}.`), ...release.timeline],
   });
+  recordComplianceAuditEvent({
+    actor: approvedBy,
+    action: 'go-live.approved',
+    object: approved.releaseId,
+    beforeState: release,
+    afterState: approved,
+    justification: 'Every Go-Live approval requires compliance audit evidence.',
+    evidence: [`release:${approved.releaseId}`, `verdict:${approved.finalVerdict}`],
+    controls: ['ISO27001', 'SOC2', 'InternalPolicy'],
+  });
+  return approved;
 }
 
 export function rejectGoLive(releaseId?: string, reason = 'Go-live rejected by release approver.'): GoLiveReleaseDecision {

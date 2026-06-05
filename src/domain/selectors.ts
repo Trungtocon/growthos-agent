@@ -115,6 +115,13 @@ import {
   selectTenantBindingWarnings as getTenantBindingWarnings,
   selectTenantProductionBindings as getTenantProductionBindings,
 } from '../runtime/tenant-production-binding-store';
+import {
+  selectComplianceApprovalHistory as getComplianceApprovalHistory,
+  selectComplianceArtifacts as getComplianceArtifacts,
+  selectComplianceAuditTrail as getComplianceAuditTrail,
+  selectComplianceControls as getComplianceControls,
+  selectProductionComplianceDashboard as getProductionComplianceDashboard,
+} from '../runtime/production-compliance-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4472,6 +4479,26 @@ export function selectTenantBindingArtifacts() {
 
 export function selectTenantBindingCompactSummary() {
   return getTenantBindingCompactSummary();
+}
+
+export function selectProductionComplianceDashboard() {
+  return getProductionComplianceDashboard();
+}
+
+export function selectComplianceAuditTrail() {
+  return getComplianceAuditTrail();
+}
+
+export function selectComplianceApprovalHistory() {
+  return getComplianceApprovalHistory();
+}
+
+export function selectComplianceControls() {
+  return getComplianceControls();
+}
+
+export function selectComplianceArtifacts() {
+  return getComplianceArtifacts();
 }
 
 export function getRecentActivities(): Activity[] {

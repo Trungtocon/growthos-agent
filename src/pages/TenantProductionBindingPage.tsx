@@ -15,6 +15,7 @@ import {
   updateTenantBinding,
 } from '../runtime/tenant-production-binding-store';
 import type { TenantBindingEnvironment } from '../runtime/tenant-production-binding';
+import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 
 type TenantBindingWidgetSurface =
   | 'production-operations'
@@ -90,6 +91,7 @@ export function TenantProductionBindingPage() {
 
   return (
     <div data-route="/tenant-production-binding" data-tenant-production-binding-route>
+      <ProductionComplianceCompactWidget surface="tenant-production-binding" />
       <PageHeader
         title="Tenant / Workspace Production Binding"
         subtitle="Admin settings for binding one tenant and workspace to verified production profiles without storing raw secrets or bypassing Go-Live approval."
