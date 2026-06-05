@@ -26,6 +26,7 @@ import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 function toneFor(value: string): Tone {
@@ -60,6 +61,7 @@ export function RuntimeCertificationPage() {
   return (
     <div data-route="/runtime-certification" data-runtime-certification-route>
       <ProductionIncidentCompactWidget surface="runtime-certification" />
+      <ProductionSupportCompactWidget surface="runtime-certification" />
       <CertifiedSandboxRunCompactWidget surface="runtime-certification" />
       <ProductionReadinessCompactWidget surface="runtime-certification" />
       <DeploymentConfigCompactWidget surface="runtime-certification" />

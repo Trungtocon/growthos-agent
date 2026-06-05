@@ -20,6 +20,7 @@ import { getRunEvaluation } from './run-evaluation-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import { selectObservabilityDashboard } from './production-observability-store';
 import { selectIncidentCommandReadiness } from './production-incident-store';
+import { selectSupportReadiness } from './production-support-store';
 import { getWorkerObservationDashboard } from './worker-observability-store';
 import { getWorkerRecoveryDashboard } from './worker-recovery-store';
 import type {
@@ -214,6 +215,7 @@ function buildReadinessEvidence(checkId: string): {
   const loopSummary = getWorkspaceImprovementLoopSummary();
   const productionObservability = selectObservabilityDashboard();
   const incidentCommand = selectIncidentCommandReadiness();
+  const productionSupport = selectSupportReadiness();
   const worker = getWorkerObservationDashboard();
   const recovery = getWorkerRecoveryDashboard();
   const chaos = getChaosDashboard();
@@ -251,6 +253,12 @@ function buildReadinessEvidence(checkId: string): {
   }
   if (incidentCommand.warnings.length) {
     warnings.push(...incidentCommand.warnings.map((entry) => warning(checkId, 'governance_exit_gate', entry.reason, entry.recommendedFix)));
+  }
+  if (productionSupport.blockers.length) {
+    blockers.push(...productionSupport.blockers.map((entry) => blocker(checkId, 'governance_exit_gate', 'unresolved_governance_blocker', entry.reason, entry.recommendedFix)));
+  }
+  if (productionSupport.warnings.length) {
+    warnings.push(...productionSupport.warnings.map((entry) => warning(checkId, 'governance_exit_gate', entry.reason, entry.recommendedFix)));
   }
 
   if (certified.activeRun?.approvalRequired && !certified.activeRun.approvalApproved) {

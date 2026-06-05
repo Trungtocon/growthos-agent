@@ -16,6 +16,7 @@ import {
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type ProductionObservabilityWidgetSurface =
   | 'pre-golive-validation'
@@ -80,6 +81,7 @@ export function ProductionObservabilityPage() {
       <ProductionIncidentCompactWidget surface="production-observability" />
       <ProductionRunbookCompactWidget surface="production-observability" />
       <GoLiveControlCompactWidget surface="production-observability" />
+      <ProductionSupportCompactWidget surface="production-observability" />
       <PageHeader
         title="Production Observability & Incident Readiness"
         subtitle="Operational readiness evidence for health monitors, alerting, incident response, runbooks, SLO/SLA, and recovery objectives."

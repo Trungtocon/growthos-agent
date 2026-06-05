@@ -1,6 +1,7 @@
 import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
+import { selectUnresolvedCriticalSupportTicketsByIncident } from './production-support-store';
 import {
   isCriticalIncident,
   isIncidentActive,
@@ -231,6 +232,13 @@ export function resolveIncident(incidentId?: string, input: { rootCause?: string
 
 export function closeIncident(incidentId?: string, input: { postmortemRequired: boolean; closedBy?: string } = { postmortemRequired: true }): ProductionIncident {
   const incident = resolveIncidentRecord(incidentId);
+  const unresolvedCriticalSupport = selectUnresolvedCriticalSupportTicketsByIncident(incident.incidentId);
+  if (unresolvedCriticalSupport.length) {
+    return persistIncident({
+      ...incident,
+      timelineEvents: [event(incident.incidentId, 'incident.close_blocked', `Incident close blocked by ${unresolvedCriticalSupport.length} unresolved critical support ticket(s).`, input.closedBy), ...incident.timelineEvents],
+    });
+  }
   if (incident.status !== 'resolved' || typeof input.postmortemRequired !== 'boolean') return persistIncident(incident);
   return persistIncident({
     ...incident,

@@ -17,6 +17,7 @@ import {
 } from '../runtime/go-live-control-store';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type GoLiveWidgetSurface =
   | 'pre-golive-validation'
@@ -70,6 +71,7 @@ export function GoLiveControlPage() {
     <div data-route="/go-live-control" data-go-live-control-route>
       <ProductionIncidentCompactWidget surface="go-live-control" />
       <ProductionRunbookCompactWidget surface="go-live-control" />
+      <ProductionSupportCompactWidget surface="go-live-control" />
       <PageHeader
         title="Production Release Approval & Go-Live Control Center"
         subtitle="Final release gate for production readiness, evidence, approval, release window, rollback readiness, and go/no-go decision history."

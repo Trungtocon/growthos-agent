@@ -31,6 +31,7 @@ import { EnvironmentReadinessCompactWidget } from './EnvironmentReadinessPage';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionReadinessCompactWidget } from './ProductionReadinessPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 import { PreGoLiveValidationCompactWidget } from './PreGoLiveValidationPage';
 
 type CertifiedSandboxWidgetSurface =
@@ -86,6 +87,7 @@ export function CertifiedSandboxRunPage() {
   return (
     <div data-route="/certified-sandbox-run" data-certified-sandbox-route>
       <ProductionIncidentCompactWidget surface="certified-sandbox-run" />
+      <ProductionSupportCompactWidget surface="certified-sandbox-run" />
       <ProductionReadinessCompactWidget surface="certified-sandbox-run" />
       <DeploymentConfigCompactWidget surface="certified-sandbox-run" />
       <BackendAdapterCompactWidget surface="certified-sandbox-run" />

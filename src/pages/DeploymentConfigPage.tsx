@@ -33,6 +33,7 @@ import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidenc
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -137,6 +138,7 @@ export function DeploymentConfigPage() {
   return (
     <div data-route="/deployment-config" data-deployment-config-route>
       <ProductionIncidentCompactWidget surface="deployment-config" />
+      <ProductionSupportCompactWidget surface="deployment-config" />
       <BackendAdapterCompactWidget surface="deployment-config" />
       <ApiContractsCompactWidget surface="deployment-config" />
       <E2EActionFlowCompactWidget surface="deployment-config" />

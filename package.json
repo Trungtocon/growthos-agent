@@ -140,7 +140,8 @@
     "smoke:production-observability": "node scripts/smoke-production-observability.mjs",
     "smoke:go-live-control": "node scripts/smoke-go-live-control.mjs",
     "smoke:production-runbook": "node scripts/smoke-production-runbook.mjs",
-    "smoke:production-incidents": "node scripts/smoke-production-incidents.mjs"
+    "smoke:production-incidents": "node scripts/smoke-production-incidents.mjs",
+    "smoke:production-support": "node scripts/smoke-production-support.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

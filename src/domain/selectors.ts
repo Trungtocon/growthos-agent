@@ -81,6 +81,20 @@ import {
   searchArtifacts as searchArtifactRegistry,
   selectArtifactVersions,
 } from '../runtime/artifact-registry-store';
+import {
+  selectBreachedSlaTickets as getProductionSupportBreachedSlaTickets,
+  selectCriticalSupportTickets as getProductionSupportCriticalTickets,
+  selectCustomerImpactSummary as getProductionSupportCustomerImpactSummary,
+  selectEscalatedSupportTickets as getProductionSupportEscalatedTickets,
+  selectOpenSupportTickets as getProductionSupportOpenTickets,
+  selectProductionSupportDashboard as getProductionSupportDashboard,
+  selectSupportArtifacts as getProductionSupportArtifacts,
+  selectSupportBlockers as getProductionSupportBlockers,
+  selectSupportReadiness as getProductionSupportReadiness,
+  selectSupportSlaStatus as getProductionSupportSlaStatus,
+  selectSupportTicketsByIncident as getProductionSupportTicketsByIncident,
+  selectSupportWarnings as getProductionSupportWarnings,
+} from '../runtime/production-support-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4326,6 +4340,54 @@ export function selectHelpTemplateCenterViewModel() {
       { label: 'Support status', value: 'Online', tone: 'cyan' },
     ] satisfies KpiViewModel[],
   };
+}
+
+export function selectProductionSupportDashboard() {
+  return getProductionSupportDashboard();
+}
+
+export function selectOpenSupportTickets() {
+  return getProductionSupportOpenTickets();
+}
+
+export function selectCriticalSupportTickets() {
+  return getProductionSupportCriticalTickets();
+}
+
+export function selectSupportSlaStatus() {
+  return getProductionSupportSlaStatus();
+}
+
+export function selectBreachedSlaTickets() {
+  return getProductionSupportBreachedSlaTickets();
+}
+
+export function selectCustomerImpactSummary() {
+  return getProductionSupportCustomerImpactSummary();
+}
+
+export function selectSupportTicketsByIncident(incidentId: string) {
+  return getProductionSupportTicketsByIncident(incidentId);
+}
+
+export function selectEscalatedSupportTickets() {
+  return getProductionSupportEscalatedTickets();
+}
+
+export function selectSupportReadiness() {
+  return getProductionSupportReadiness();
+}
+
+export function selectSupportBlockers() {
+  return getProductionSupportBlockers();
+}
+
+export function selectSupportWarnings() {
+  return getProductionSupportWarnings();
+}
+
+export function selectSupportArtifacts() {
+  return getProductionSupportArtifacts();
 }
 
 export function getRecentActivities(): Activity[] {

@@ -22,6 +22,7 @@ import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidenc
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -73,6 +74,7 @@ export function ProductionReadinessPage() {
 
   return (
     <div data-route="/production-readiness" data-production-readiness-route>
+      <ProductionSupportCompactWidget surface="production-readiness" />
       <ProductionIncidentCompactWidget surface="production-readiness" />
       <DeploymentConfigCompactWidget surface="production-readiness" />
       <BackendAdapterCompactWidget surface="production-readiness" />

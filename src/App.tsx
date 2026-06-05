@@ -18,6 +18,7 @@ import { ProductionObservabilityPage } from './pages/ProductionObservabilityPage
 import { ProductionReadinessPage } from './pages/ProductionReadinessPage';
 import { ProductionIncidentPage } from './pages/ProductionIncidentPage';
 import { ProductionRunbookPage } from './pages/ProductionRunbookPage';
+import { ProductionSupportPage } from './pages/ProductionSupportPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
@@ -178,6 +179,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/production-incidents">
         <ProductionIncidentPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/production-support') {
+    return (
+      <GuardedAppShell currentPath="/production-support">
+        <ProductionSupportPage />
       </GuardedAppShell>
     );
   }

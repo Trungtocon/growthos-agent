@@ -12,6 +12,7 @@ import { selectProductionConfigEvidenceDashboard } from './production-config-evi
 import { selectObservabilityDashboard } from './production-observability-store';
 import { getProductionReadinessDashboard } from './production-readiness-store';
 import { selectIncidentCommandReadiness } from './production-incident-store';
+import { selectSupportReadiness } from './production-support-store';
 import { selectProductionRunbook } from './production-runbook-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import {
@@ -112,6 +113,7 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
   const observability = selectObservabilityDashboard();
   const runbook = selectProductionRunbook();
   const incidentCommand = selectIncidentCommandReadiness();
+  const productionSupport = selectSupportReadiness();
   const preGoLive = selectPreGoLiveValidationSummary();
 
   const latestSandbox = sandbox.runs.find((run) => run.status === 'completed');
@@ -277,6 +279,21 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
         `rollback:${incidentCommand.rollbackRequestCount}`,
       ],
       route: '/production-incidents',
+    }),
+    createGate({
+      gateId: 'production-support',
+      name: 'Production Support Desk',
+      status: productionSupport.blockers.length ? 'blocked' : productionSupport.warnings.length ? 'warning' : 'verified',
+      score: productionSupport.blockers.length ? 0 : productionSupport.warnings.length ? 85 : 100,
+      blockers: productionSupport.blockers.map((entry) => entry.reason),
+      warnings: productionSupport.warnings.map((entry) => entry.reason),
+      evidence: [
+        `status:${productionSupport.status}`,
+        `open:${productionSupport.openCount}`,
+        `critical:${productionSupport.criticalCount}`,
+        `breached_sla:${productionSupport.breachedSlaCount}`,
+      ],
+      route: '/production-support',
     }),
     createGate({
       gateId: 'pre-golive-validation',

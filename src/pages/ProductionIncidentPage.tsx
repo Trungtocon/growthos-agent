@@ -16,6 +16,7 @@ import {
   selectProductionIncidentDashboard,
   triggerRollbackProcedure,
 } from '../runtime/production-incident-store';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type IncidentWidgetSurface =
   | 'go-live-control'
@@ -69,6 +70,7 @@ export function ProductionIncidentPage() {
 
   return (
     <div data-route="/production-incidents" data-production-incidents-route>
+      <ProductionSupportCompactWidget surface="production-incidents" />
       <PageHeader
         title="Production Incident Command Center"
         subtitle="Post-go-live command surface for severity triage, escalation, mitigation, rollback decisions, resolution evidence, and incident export packs."

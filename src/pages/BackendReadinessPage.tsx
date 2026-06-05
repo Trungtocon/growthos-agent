@@ -18,6 +18,7 @@ import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidenc
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('missing') || value.includes('offline') || value.includes('blocked')) return 'red';
@@ -40,6 +41,7 @@ export function BackendReadinessPage() {
   return (
     <div data-route="/backend-readiness" data-backend-readiness-route>
       <ProductionIncidentCompactWidget surface="backend-readiness" />
+      <ProductionSupportCompactWidget surface="backend-readiness" />
       <AuthReadinessCompactWidget surface="backend-readiness" />
       <DatabaseReadinessCompactWidget surface="backend-readiness" />
       <EnvironmentReadinessCompactWidget surface="backend-readiness" />
