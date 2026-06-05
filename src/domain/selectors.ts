@@ -105,6 +105,16 @@ import {
   selectProductionOpsSnapshot as getProductionOpsSnapshot,
   selectProductionOpsWarnings as getProductionOpsWarnings,
 } from '../runtime/production-operations-store';
+import {
+  selectActiveTenantProductionBinding as getActiveTenantProductionBinding,
+  selectTenantBindingArtifacts as getTenantBindingArtifacts,
+  selectTenantBindingBlockers as getTenantBindingBlockers,
+  selectTenantBindingCompactSummary as getTenantBindingCompactSummary,
+  selectTenantBindingReadiness as getTenantBindingReadiness,
+  selectTenantBindingReviewState as getTenantBindingReviewState,
+  selectTenantBindingWarnings as getTenantBindingWarnings,
+  selectTenantProductionBindings as getTenantProductionBindings,
+} from '../runtime/tenant-production-binding-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4430,6 +4440,38 @@ export function selectProductionOpsSnapshot() {
 
 export function selectProductionOpsArtifacts() {
   return getProductionOpsArtifacts();
+}
+
+export function selectTenantProductionBindings() {
+  return getTenantProductionBindings();
+}
+
+export function selectActiveTenantProductionBinding() {
+  return getActiveTenantProductionBinding();
+}
+
+export function selectTenantBindingReadiness(bindingId?: string) {
+  return getTenantBindingReadiness(bindingId);
+}
+
+export function selectTenantBindingBlockers(bindingId?: string) {
+  return getTenantBindingBlockers(bindingId);
+}
+
+export function selectTenantBindingWarnings(bindingId?: string) {
+  return getTenantBindingWarnings(bindingId);
+}
+
+export function selectTenantBindingReviewState(bindingId?: string) {
+  return getTenantBindingReviewState(bindingId);
+}
+
+export function selectTenantBindingArtifacts() {
+  return getTenantBindingArtifacts();
+}
+
+export function selectTenantBindingCompactSummary() {
+  return getTenantBindingCompactSummary();
 }
 
 export function getRecentActivities(): Activity[] {

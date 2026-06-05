@@ -142,7 +142,8 @@
     "smoke:production-runbook": "node scripts/smoke-production-runbook.mjs",
     "smoke:production-incidents": "node scripts/smoke-production-incidents.mjs",
     "smoke:production-support": "node scripts/smoke-production-support.mjs",
-    "smoke:production-operations": "node scripts/smoke-production-operations.mjs"
+    "smoke:production-operations": "node scripts/smoke-production-operations.mjs",
+    "smoke:tenant-production-binding": "node scripts/smoke-tenant-production-binding.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

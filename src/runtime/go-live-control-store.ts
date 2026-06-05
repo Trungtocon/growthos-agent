@@ -16,6 +16,10 @@ import { selectSupportReadiness } from './production-support-store';
 import { selectProductionRunbook } from './production-runbook-store';
 import { getRuntimeCertificationDashboard } from './runtime-certification-store';
 import {
+  selectActiveTenantProductionBinding,
+  selectTenantBindingReadiness,
+} from './tenant-production-binding-store';
+import {
   calculateGoLiveReadinessScore,
   deriveGoLiveVerdict,
   type GoLiveBlocker,
@@ -115,6 +119,8 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
   const incidentCommand = selectIncidentCommandReadiness();
   const productionSupport = selectSupportReadiness();
   const preGoLive = selectPreGoLiveValidationSummary();
+  const tenantBinding = selectActiveTenantProductionBinding();
+  const tenantBindingReadiness = selectTenantBindingReadiness(tenantBinding?.bindingId);
 
   const latestSandbox = sandbox.runs.find((run) => run.status === 'completed');
   const runtimePassed = runtime.status === 'certified' || runtime.runs.some((run) => run.status === 'certified' || run.status === 'passed');
@@ -158,6 +164,21 @@ function buildMatrix(releaseId: string): { gates: GoLiveReadinessGate[]; blocker
       warnings: deployment.warnings.map((entry) => entry.reason),
       evidence: deployment.activeConfig ? [deployment.activeConfig.id, deployment.activeConfig.status] : [],
       route: '/deployment-config',
+    }),
+    createGate({
+      gateId: 'tenant-production-binding',
+      name: 'Tenant Production Binding',
+      status: tenantBinding && tenantBindingReadiness.blockers.length === 0 && tenantBinding.approvalStatus === 'approved' ? 'verified' : 'blocked',
+      score: tenantBindingReadiness.blockers.length ? Math.min(tenantBindingReadiness.score, 60) : tenantBindingReadiness.score,
+      blockers: [
+        ...(tenantBinding ? [] : ['No active production tenant binding exists.']),
+        ...(tenantBinding?.environment === 'production' ? [] : ['Tenant binding is not scoped to production.']),
+        ...(tenantBinding?.approvalStatus === 'approved' ? [] : ['Tenant binding has not been reviewer approved.']),
+        ...tenantBindingReadiness.blockers,
+      ],
+      warnings: tenantBindingReadiness.warnings,
+      evidence: tenantBinding ? [tenantBinding.bindingId, tenantBinding.status, tenantBinding.environment] : [],
+      route: '/tenant-production-binding',
     }),
     createGate({
       gateId: 'runtime-certification',

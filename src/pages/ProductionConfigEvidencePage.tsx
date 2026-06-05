@@ -15,6 +15,7 @@ import {
 import type { ProductionEvidenceCategory } from '../runtime/production-config-evidence';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type ProductionEvidenceWidgetSurface =
   | 'pre-golive-validation'
@@ -74,6 +75,7 @@ export function ProductionConfigEvidencePage() {
     <div data-route="/production-config-evidence" data-production-config-evidence-route>
       <ProductionObservabilityCompactWidget surface="production-config-evidence" />
       <GoLiveControlCompactWidget surface="production-config-evidence" />
+      <TenantProductionBindingCompactWidget surface="production-config-evidence" />
       <PageHeader
         title="Production Config Evidence Binder"
         subtitle="Collect, mask, verify, and export production readiness evidence without storing raw secrets."

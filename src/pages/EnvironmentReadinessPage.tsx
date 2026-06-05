@@ -14,6 +14,7 @@ import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type EnvironmentReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -67,6 +68,7 @@ export function EnvironmentReadinessPage() {
       <ProductionObservabilityCompactWidget surface="environment-readiness" />
       <ProductionRunbookCompactWidget surface="environment-readiness" />
       <GoLiveControlCompactWidget surface="environment-readiness" />
+      <TenantProductionBindingCompactWidget surface="environment-readiness" />
       <PageHeader
         title="Environment & Secrets Readiness"
         subtitle="Production environment configuration and secret safety evidence before deployment approval."

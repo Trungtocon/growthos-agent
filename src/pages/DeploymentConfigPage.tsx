@@ -34,6 +34,7 @@ import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type DeploymentWidgetSurface =
   | 'production-readiness'
@@ -150,6 +151,7 @@ export function DeploymentConfigPage() {
       <ProductionObservabilityCompactWidget surface="deployment-config" />
       <ProductionRunbookCompactWidget surface="deployment-config" />
       <GoLiveControlCompactWidget surface="deployment-config" />
+      <TenantProductionBindingCompactWidget surface="deployment-config" />
       <PageHeader
         title="Environment & Deployment Configuration"
         subtitle="Prepare runtime mode, environment variables, endpoint health, security checks, and production readiness dependencies before real go-live."

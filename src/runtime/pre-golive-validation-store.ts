@@ -18,6 +18,10 @@ import {
   selectProductionConfigEvidenceDashboard,
 } from './production-config-evidence-store';
 import { selectObservabilityDashboard } from './production-observability-store';
+import {
+  selectActiveTenantProductionBinding,
+  selectTenantBindingReadiness,
+} from './tenant-production-binding-store';
 import type {
   PreGoLiveGateStatus,
   PreGoLiveValidationGate,
@@ -156,6 +160,36 @@ function gateDefinitions(): GateDefinition[] {
           blockers: ready ? [] : dashboard.blockers.map((entry) => entry.reason).concat('Production deployment config is not READY.'),
           warnings: dashboard.warnings.map((entry) => entry.reason),
           evidence: [`mode=${dashboard.activeConfig?.runtimeMode ?? 'not_checked'}`, `status=${dashboard.status}`, `missingEnv=${dashboard.missingEnv.length}`],
+        };
+      },
+    },
+    {
+      gateId: 'tenant-production-binding',
+      name: 'Tenant Production Binding',
+      category: 'production',
+      relatedRoutes: ['/tenant-production-binding'],
+      relatedSmokeCommand: 'npm run smoke:tenant-production-binding',
+      evaluate: () => {
+        const active = selectActiveTenantProductionBinding();
+        const readiness = selectTenantBindingReadiness(active?.bindingId);
+        const blockers = [
+          ...(active ? [] : ['No active production tenant binding exists.']),
+          ...(active?.environment === 'production' ? [] : ['Active tenant binding is not scoped to production.']),
+          ...(active?.workspaceId === demoWorkspace.id || active?.workspaceId === 'workspace-production' ? [] : ['Tenant binding workspace does not match the production workspace.']),
+          ...(active?.approvalStatus === 'approved' ? [] : ['Tenant binding is not reviewer approved.']),
+          ...readiness.blockers,
+        ];
+        return {
+          status: blockers.length ? 'blocked' : readiness.warnings.length ? 'warning' : 'pass',
+          score: blockers.length ? Math.min(readiness.score, 60) : readiness.score,
+          blockers,
+          warnings: readiness.warnings,
+          evidence: [
+            `binding=${active?.bindingId ?? 'missing'}`,
+            `status=${active?.status ?? 'missing'}`,
+            `environment=${active?.environment ?? 'missing'}`,
+            `approval=${active?.approvalStatus ?? 'missing'}`,
+          ],
         };
       },
     },

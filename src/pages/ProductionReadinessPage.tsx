@@ -24,6 +24,7 @@ import { ProductionObservabilityCompactWidget } from './ProductionObservabilityP
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -90,6 +91,7 @@ export function ProductionReadinessPage() {
       <ProductionObservabilityCompactWidget surface="production-readiness" />
       <ProductionRunbookCompactWidget surface="production-readiness" />
       <GoLiveControlCompactWidget surface="production-readiness" />
+      <TenantProductionBindingCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."

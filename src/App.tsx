@@ -21,6 +21,7 @@ import { ProductionIncidentPage } from './pages/ProductionIncidentPage';
 import { ProductionRunbookPage } from './pages/ProductionRunbookPage';
 import { ProductionSupportPage } from './pages/ProductionSupportPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
+import { TenantProductionBindingPage } from './pages/TenantProductionBindingPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
@@ -215,6 +216,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/pre-golive-validation">
         <PreGoLiveValidationPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/tenant-production-binding') {
+    return (
+      <GuardedAppShell currentPath="/tenant-production-binding">
+        <TenantProductionBindingPage />
       </GuardedAppShell>
     );
   }

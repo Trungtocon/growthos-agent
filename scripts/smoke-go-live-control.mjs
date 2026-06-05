@@ -91,6 +91,16 @@ async function seedVerifiedProductionEvidence(page) {
     const { PRODUCTION_EVIDENCE_CATEGORIES } = await import('/src/runtime/production-config-evidence.ts');
     const { addEvidence, createDemoEvidenceInput, verifyEvidence } = await import('/src/runtime/production-config-evidence-store.ts');
     const { createRunbook, completeRunbookChecklist, markRunbookReady, approveRunbook, acceptOperatorHandoff } = await import('/src/runtime/production-runbook-store.ts');
+    const {
+      activateTenantBinding,
+      approveTenantBinding,
+      assignBindingOwner,
+      assignBindingReviewer,
+      createTenantBinding,
+      markTenantBindingEvidenceReady,
+      submitTenantBindingForReview,
+      updateTenantBinding,
+    } = await import('/src/runtime/tenant-production-binding-store.ts');
 
     const profile = createCertificationProfile({
       name: 'Go-live control certified profile',
@@ -152,7 +162,23 @@ async function seedVerifiedProductionEvidence(page) {
     markRunbookReady(runbook.runbookId);
     const approvedRunbook = approveRunbook(runbook.runbookId, 'VP Operations');
     acceptOperatorHandoff(approvedRunbook.runbookId, 'Release Operator');
-    return { certificationId: certification.id, sandboxId: sandbox.id, readinessId: readiness.id, deploymentId: deployment.id, runbookId: runbook.runbookId };
+    const binding = createTenantBinding({ environment: 'production', tenantId: 'tenant-uikigai', workspaceId: 'workspace-production' });
+    updateTenantBinding(binding.bindingId, {
+      backendProfileId: 'backend-prod',
+      databaseProfileId: 'database-prod',
+      authProfileId: 'auth-prod',
+      observabilityProfileId: 'obs-prod',
+      supportProfileId: 'support-prod',
+      deploymentProfileId: 'deploy-prod',
+      rollbackOwner: 'Rollback Commander',
+    });
+    assignBindingOwner(binding.bindingId, 'Platform Owner');
+    assignBindingReviewer(binding.bindingId, 'Security Reviewer');
+    markTenantBindingEvidenceReady(binding.bindingId);
+    submitTenantBindingForReview(binding.bindingId);
+    approveTenantBinding(binding.bindingId, 'Security Reviewer');
+    const activeBinding = activateTenantBinding(binding.bindingId);
+    return { certificationId: certification.id, sandboxId: sandbox.id, readinessId: readiness.id, deploymentId: deployment.id, runbookId: runbook.runbookId, bindingId: activeBinding.bindingId };
   });
 }
 

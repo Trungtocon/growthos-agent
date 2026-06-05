@@ -20,6 +20,7 @@ import { ProductionObservabilityCompactWidget } from './ProductionObservabilityP
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type PreGoLiveWidgetSurface =
   | 'production-readiness'
@@ -75,6 +76,7 @@ export function PreGoLiveValidationPage() {
       <ProductionObservabilityCompactWidget surface="pre-golive-validation" />
       <ProductionRunbookCompactWidget surface="pre-golive-validation" />
       <GoLiveControlCompactWidget surface="pre-golive-validation" />
+      <TenantProductionBindingCompactWidget surface="pre-golive-validation" />
       <PageHeader
         title="Pre-Go-Live Validation Suite"
         subtitle="Run the final cross-system gate matrix before any production deployment decision."

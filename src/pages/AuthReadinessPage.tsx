@@ -16,6 +16,7 @@ import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type AuthReadinessWidgetSurface =
   | 'pre-golive-validation'
@@ -72,6 +73,7 @@ export function AuthReadinessPage() {
       <ProductionObservabilityCompactWidget surface="auth-readiness" />
       <ProductionRunbookCompactWidget surface="auth-readiness" />
       <GoLiveControlCompactWidget surface="auth-readiness" />
+      <TenantProductionBindingCompactWidget surface="auth-readiness" />
       <PageHeader
         title="Auth & Session Readiness"
         subtitle="Production auth, token validation, RBAC, and tenant/workspace binding checks before go-live."

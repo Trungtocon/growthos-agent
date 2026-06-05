@@ -20,6 +20,7 @@ import { ProductionObservabilityCompactWidget } from './ProductionObservabilityP
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 function toneFor(value: string): Tone {
   if (value.includes('missing') || value.includes('offline') || value.includes('blocked')) return 'red';
@@ -51,6 +52,7 @@ export function BackendReadinessPage() {
       <ProductionObservabilityCompactWidget surface="backend-readiness" />
       <ProductionRunbookCompactWidget surface="backend-readiness" />
       <GoLiveControlCompactWidget surface="backend-readiness" />
+      <TenantProductionBindingCompactWidget surface="backend-readiness" />
       <PageHeader
         title="Backend Readiness"
         subtitle="Environment registry, auth provider, endpoint matrix, and health evidence for real backend capable execution."

@@ -19,6 +19,7 @@ import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
+import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 
 type DatabaseWidgetSurface =
   | 'pre-golive-validation'
@@ -73,6 +74,7 @@ export function DatabaseReadinessPage() {
       <ProductionObservabilityCompactWidget surface="database-readiness" />
       <ProductionRunbookCompactWidget surface="database-readiness" />
       <GoLiveControlCompactWidget surface="database-readiness" />
+      <TenantProductionBindingCompactWidget surface="database-readiness" />
       <PageHeader
         title="Database Readiness"
         subtitle="Production persistence registry, database client factory, audit writability, and schema readiness before real go-live."
