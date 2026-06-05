@@ -18,6 +18,7 @@ import {
   resolveSupportTicket,
   selectProductionSupportDashboard,
 } from '../runtime/production-support-store';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 
 type SupportWidgetSurface =
   | 'production-incidents'
@@ -68,6 +69,7 @@ export function ProductionSupportPage() {
 
   return (
     <div data-route="/production-support" data-production-support-route>
+      <ProductionOperationsCompactWidget surface="production-support" />
       <PageHeader
         title="Production Support Desk & Customer Impact Center"
         subtitle="Customer-impact support desk tied to production incidents, SLA state, escalation, communication drafts, and go-live readiness blockers."

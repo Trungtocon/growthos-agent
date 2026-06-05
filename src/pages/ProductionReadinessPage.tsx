@@ -21,6 +21,7 @@ import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
@@ -74,6 +75,7 @@ export function ProductionReadinessPage() {
 
   return (
     <div data-route="/production-readiness" data-production-readiness-route>
+      <ProductionOperationsCompactWidget surface="production-readiness" />
       <ProductionSupportCompactWidget surface="production-readiness" />
       <ProductionIncidentCompactWidget surface="production-readiness" />
       <DeploymentConfigCompactWidget surface="production-readiness" />

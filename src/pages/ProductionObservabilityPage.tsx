@@ -15,6 +15,7 @@ import {
 } from '../runtime/production-observability-store';
 import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
@@ -79,6 +80,7 @@ export function ProductionObservabilityPage() {
   return (
     <div data-route="/production-observability" data-production-observability-route>
       <ProductionIncidentCompactWidget surface="production-observability" />
+      <ProductionOperationsCompactWidget surface="production-observability" />
       <ProductionRunbookCompactWidget surface="production-observability" />
       <GoLiveControlCompactWidget surface="production-observability" />
       <ProductionSupportCompactWidget surface="production-observability" />

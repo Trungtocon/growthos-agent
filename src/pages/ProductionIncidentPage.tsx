@@ -16,6 +16,7 @@ import {
   selectProductionIncidentDashboard,
   triggerRollbackProcedure,
 } from '../runtime/production-incident-store';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
 type IncidentWidgetSurface =
@@ -70,6 +71,7 @@ export function ProductionIncidentPage() {
 
   return (
     <div data-route="/production-incidents" data-production-incidents-route>
+      <ProductionOperationsCompactWidget surface="production-incidents" />
       <ProductionSupportCompactWidget surface="production-incidents" />
       <PageHeader
         title="Production Incident Command Center"

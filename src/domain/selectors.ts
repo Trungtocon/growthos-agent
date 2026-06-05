@@ -95,6 +95,16 @@ import {
   selectSupportTicketsByIncident as getProductionSupportTicketsByIncident,
   selectSupportWarnings as getProductionSupportWarnings,
 } from '../runtime/production-support-store';
+import {
+  selectProductionOperationsDashboard as getProductionOperationsDashboard,
+  selectProductionOpsActionQueue as getProductionOpsActionQueue,
+  selectProductionOpsArtifacts as getProductionOpsArtifacts,
+  selectProductionOpsBlockers as getProductionOpsBlockers,
+  selectProductionOpsEscalations as getProductionOpsEscalations,
+  selectProductionOpsHealth as getProductionOpsHealth,
+  selectProductionOpsSnapshot as getProductionOpsSnapshot,
+  selectProductionOpsWarnings as getProductionOpsWarnings,
+} from '../runtime/production-operations-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4388,6 +4398,38 @@ export function selectSupportWarnings() {
 
 export function selectSupportArtifacts() {
   return getProductionSupportArtifacts();
+}
+
+export function selectProductionOperationsDashboard() {
+  return getProductionOperationsDashboard();
+}
+
+export function selectProductionOpsHealth() {
+  return getProductionOpsHealth();
+}
+
+export function selectProductionOpsActionQueue() {
+  return getProductionOpsActionQueue();
+}
+
+export function selectProductionOpsBlockers() {
+  return getProductionOpsBlockers();
+}
+
+export function selectProductionOpsWarnings() {
+  return getProductionOpsWarnings();
+}
+
+export function selectProductionOpsEscalations() {
+  return getProductionOpsEscalations();
+}
+
+export function selectProductionOpsSnapshot() {
+  return getProductionOpsSnapshot();
+}
+
+export function selectProductionOpsArtifacts() {
+  return getProductionOpsArtifacts();
 }
 
 export function getRecentActivities(): Activity[] {

@@ -16,6 +16,7 @@ import {
   verifyRollbackPlan,
 } from '../runtime/go-live-control-store';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 
@@ -70,6 +71,7 @@ export function GoLiveControlPage() {
   return (
     <div data-route="/go-live-control" data-go-live-control-route>
       <ProductionIncidentCompactWidget surface="go-live-control" />
+      <ProductionOperationsCompactWidget surface="go-live-control" />
       <ProductionRunbookCompactWidget surface="go-live-control" />
       <ProductionSupportCompactWidget surface="go-live-control" />
       <PageHeader

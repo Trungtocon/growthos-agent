@@ -14,6 +14,7 @@ import { GoLiveControlCompactWidget } from './GoLiveControlPage';
 import { ProductionConfigEvidenceCompactWidget } from './ProductionConfigEvidencePage';
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionObservabilityCompactWidget } from './ProductionObservabilityPage';
+import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionRunbookCompactWidget } from './ProductionRunbookPage';
 
 type AuthReadinessWidgetSurface =
@@ -65,6 +66,7 @@ export function AuthReadinessPage() {
   return (
     <div data-route="/auth-readiness" data-auth-readiness-route>
       <ProductionIncidentCompactWidget surface="auth-readiness" />
+      <ProductionOperationsCompactWidget surface="auth-readiness" />
       <EnvironmentReadinessCompactWidget surface="auth-readiness" />
       <ProductionConfigEvidenceCompactWidget surface="auth-readiness" />
       <ProductionObservabilityCompactWidget surface="auth-readiness" />
