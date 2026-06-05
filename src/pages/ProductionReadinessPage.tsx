@@ -166,8 +166,8 @@ export function ProductionReadinessPage() {
 
         <Panel title="Warnings">
           <div className="space-y-3 p-4 text-sm" data-production-warnings>
-            {dashboard.warnings.slice(0, 8).map((warning) => (
-              <div key={warning.id} className="rounded-xl border border-amber-100 bg-amber-50 p-3 text-amber-700">
+            {dashboard.warnings.slice(0, 8).map((warning, index) => (
+              <div key={`${warning.id}-${index}`} className="rounded-xl border border-amber-100 bg-amber-50 p-3 text-amber-700">
                 <b>{warning.category}</b>
                 <p className="mt-1">{warning.reason}</p>
                 <p className="mt-2 text-xs font-semibold">{warning.recommendedFix}</p>

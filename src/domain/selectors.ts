@@ -138,6 +138,12 @@ import {
   selectProductionAccessControlArtifacts as getProductionAccessArtifacts,
   selectProductionAccessControlDashboard as getProductionAccessControlDashboard,
 } from '../runtime/production-access-control-store';
+import {
+  selectUiInteractionActionMap as getUiInteractionActionMap,
+  selectUiInteractionAuditArtifacts as getUiInteractionAuditArtifacts,
+  selectUiInteractionAuditDashboard as getUiInteractionAuditDashboard,
+  selectUiInteractionAuditReport as getUiInteractionAuditReport,
+} from '../runtime/ui-interaction-audit-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4563,6 +4569,22 @@ export function selectProductionAccessArtifacts() {
 
 export function selectProductionActionAccess(input: Parameters<typeof getProductionActionAccess>[0]) {
   return getProductionActionAccess(input);
+}
+
+export function selectUiInteractionAuditDashboard() {
+  return getUiInteractionAuditDashboard();
+}
+
+export function selectUiInteractionAuditReport() {
+  return getUiInteractionAuditReport();
+}
+
+export function selectUiInteractionActionMap() {
+  return getUiInteractionActionMap();
+}
+
+export function selectUiInteractionAuditArtifacts() {
+  return getUiInteractionAuditArtifacts();
 }
 
 export function getRecentActivities(): Activity[] {

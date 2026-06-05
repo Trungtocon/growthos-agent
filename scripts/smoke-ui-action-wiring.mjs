@@ -19,6 +19,7 @@ const visibleRoutes = [
   '/budget/settings', '/reports', '/reports/new', '/integrations', '/integrations/demo-integration', '/mcp',
   '/workspaces', '/secrets', '/team', '/roles-permissions', '/settings', '/billing', '/help',
   '/evaluation', '/worker-control', '/worker-recovery', '/chaos', '/runtime-certification', '/certified-sandbox-run', '/production-readiness', '/deployment-config', '/backend-adapter', '/backend-readiness', '/database-readiness', '/auth-readiness', '/environment-readiness', '/production-config-evidence', '/production-observability', '/api-contracts', '/e2e-action-flow', '/pre-golive-validation',
+  '/ui-interaction-audit',
 ];
 
 function writeJson(filePath, data) {

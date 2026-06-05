@@ -25,6 +25,7 @@ import { ProductionRunbookPage } from './pages/ProductionRunbookPage';
 import { ProductionSupportPage } from './pages/ProductionSupportPage';
 import { RuntimeCertificationPage } from './pages/RuntimeCertificationPage';
 import { TenantProductionBindingPage } from './pages/TenantProductionBindingPage';
+import { UiInteractionAuditPage } from './pages/UiInteractionAuditPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { ExecutionGraphPage } from './pages/ExecutionGraphPage';
 import { ExecutionTimelinePage } from './pages/ExecutionTimelinePage';
@@ -247,6 +248,13 @@ export function App() {
     return (
       <GuardedAppShell currentPath="/tenant-production-binding">
         <TenantProductionBindingPage />
+      </GuardedAppShell>
+    );
+  }
+  if (currentPath === '/ui-interaction-audit') {
+    return (
+      <GuardedAppShell currentPath="/ui-interaction-audit">
+        <UiInteractionAuditPage />
       </GuardedAppShell>
     );
   }
