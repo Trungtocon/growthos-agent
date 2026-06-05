@@ -17,6 +17,7 @@ import {
 import { ProductionIncidentCompactWidget } from './ProductionIncidentPage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type ProductionRunbookWidgetSurface =
   | 'go-live-control'
@@ -71,6 +72,7 @@ export function ProductionRunbookPage() {
       <ProductionIncidentCompactWidget surface="production-runbook" />
       <ProductionOperationsCompactWidget surface="production-runbook" />
       <ProductionSupportCompactWidget surface="production-runbook" />
+      <ProductionAccessControlCompactWidget surface="production-runbook" />
       <PageHeader
         title="Production Runbook & Operator Handoff"
         subtitle="Operational handoff pack for release operators: runbook, support window, incident response, rollback, escalation, and final acceptance."

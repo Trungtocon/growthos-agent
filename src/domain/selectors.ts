@@ -131,6 +131,13 @@ import {
   selectProductionBillingArtifacts as getProductionBillingArtifacts,
   selectProductionBillingDashboard as getProductionBillingDashboard,
 } from '../runtime/production-billing-store';
+import {
+  evaluateActionAccess as getProductionActionAccess,
+  evaluateUserQuota as getProductionAccessUserQuota,
+  selectAccessAuditLog as getProductionAccessAuditLog,
+  selectProductionAccessControlArtifacts as getProductionAccessArtifacts,
+  selectProductionAccessControlDashboard as getProductionAccessControlDashboard,
+} from '../runtime/production-access-control-store';
 import type { ArtifactRecordType, ArtifactSearchFilters } from '../runtime/artifact-registry';
 import {
   buildExecutionGraphForAgent,
@@ -4536,6 +4543,26 @@ export function selectProductionBillingSupportSla(tenantId?: string) {
 
 export function selectProductionBillingArtifacts() {
   return getProductionBillingArtifacts();
+}
+
+export function selectProductionAccessControlDashboard(tenantId?: string) {
+  return getProductionAccessControlDashboard(tenantId);
+}
+
+export function selectProductionAccessUserQuota(tenantId?: string) {
+  return getProductionAccessUserQuota(tenantId);
+}
+
+export function selectProductionAccessAuditLog() {
+  return getProductionAccessAuditLog();
+}
+
+export function selectProductionAccessArtifacts() {
+  return getProductionAccessArtifacts();
+}
+
+export function selectProductionActionAccess(input: Parameters<typeof getProductionActionAccess>[0]) {
+  return getProductionActionAccess(input);
 }
 
 export function getRecentActivities(): Activity[] {

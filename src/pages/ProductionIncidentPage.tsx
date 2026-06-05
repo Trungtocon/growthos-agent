@@ -19,6 +19,7 @@ import {
 import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionSupportCompactWidget } from './ProductionSupportPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type IncidentWidgetSurface =
   | 'go-live-control'
@@ -75,6 +76,7 @@ export function ProductionIncidentPage() {
       <ProductionOperationsCompactWidget surface="production-incidents" />
       <ProductionSupportCompactWidget surface="production-incidents" />
       <ProductionComplianceCompactWidget surface="production-incidents" />
+      <ProductionAccessControlCompactWidget surface="production-incidents" />
       <PageHeader
         title="Production Incident Command Center"
         subtitle="Post-go-live command surface for severity triage, escalation, mitigation, rollback decisions, resolution evidence, and incident export packs."

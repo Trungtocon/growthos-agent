@@ -1,6 +1,7 @@
 import { demoWorkspace } from '../data/demo-fixtures';
 import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
+import { evaluateActionAccess } from './production-access-control-store';
 import type {
   ComplianceApprovalStatus,
   ComplianceAuditRecord,
@@ -171,6 +172,18 @@ export function reviewComplianceChange(approvalId?: string, reviewer = 'Complian
 }
 
 export function approveComplianceChange(approvalId?: string, reviewer = 'Compliance Reviewer') {
+  const access = evaluateActionAccess({ actor: reviewer, action: 'approve', moduleId: 'production-compliance', objectId: approvalId });
+  if (!access.allowed) {
+    recordComplianceAuditEvent({
+      actor: reviewer,
+      action: 'compliance-change.approval-blocked',
+      object: approvalId ?? 'production-change',
+      justification: access.reasons.join(' ') || 'Compliance approval actor is not authorized.',
+      evidence: ['access-control:blocked'],
+      controls: ['SOC2', 'ISO27001', 'InternalPolicy'],
+    });
+    return transitionComplianceChange(approvalId, 'reviewed', reviewer, 'compliance-change.reviewed');
+  }
   return transitionComplianceChange(approvalId, 'approved', reviewer, 'compliance-change.approved');
 }
 

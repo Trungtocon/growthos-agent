@@ -145,7 +145,8 @@
     "smoke:production-operations": "node scripts/smoke-production-operations.mjs",
     "smoke:tenant-production-binding": "node scripts/smoke-tenant-production-binding.mjs",
     "smoke:production-compliance": "node scripts/smoke-production-compliance.mjs",
-    "smoke:production-billing": "node scripts/smoke-production-billing.mjs"
+    "smoke:production-billing": "node scripts/smoke-production-billing.mjs",
+    "smoke:production-access-control": "node scripts/smoke-production-access-control.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

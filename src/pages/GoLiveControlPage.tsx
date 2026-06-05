@@ -22,6 +22,7 @@ import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 import { ProductionBillingCompactWidget } from './ProductionBillingPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type GoLiveWidgetSurface =
   | 'pre-golive-validation'
@@ -80,6 +81,7 @@ export function GoLiveControlPage() {
       <TenantProductionBindingCompactWidget surface="go-live-control" />
       <ProductionComplianceCompactWidget surface="go-live-control" />
       <ProductionBillingCompactWidget surface="go-live-control" />
+      <ProductionAccessControlCompactWidget surface="go-live-control" />
       <PageHeader
         title="Production Release Approval & Go-Live Control Center"
         subtitle="Final release gate for production readiness, evidence, approval, release window, rollback readiness, and go/no-go decision history."

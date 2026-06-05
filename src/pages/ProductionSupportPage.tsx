@@ -21,6 +21,7 @@ import {
 import { selectProductionBillingDashboard } from '../runtime/production-billing-store';
 import { ProductionOperationsCompactWidget } from './ProductionOperationsPage';
 import { ProductionBillingCompactWidget } from './ProductionBillingPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type SupportWidgetSurface =
   | 'production-incidents'
@@ -74,6 +75,7 @@ export function ProductionSupportPage() {
     <div data-route="/production-support" data-production-support-route>
       <ProductionOperationsCompactWidget surface="production-support" />
       <ProductionBillingCompactWidget surface="production-support" />
+      <ProductionAccessControlCompactWidget surface="production-support" />
       <PageHeader
         title="Production Support Desk & Customer Impact Center"
         subtitle="Customer-impact support desk tied to production incidents, SLA state, escalation, communication drafts, and go-live readiness blockers."

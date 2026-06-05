@@ -13,6 +13,7 @@ import {
   selectProductionBillingDashboard,
   suspendSubscription,
 } from '../runtime/production-billing-store';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type BillingWidgetSurface =
   | 'tenant-production-binding'
@@ -58,6 +59,7 @@ export function ProductionBillingPage() {
 
   return (
     <div data-route="/production-billing" data-production-billing-route>
+      <ProductionAccessControlCompactWidget surface="production-billing" />
       <PageHeader
         title="Production Billing, Subscription & License Gate"
         subtitle="Commercial readiness gate for tenant subscription state, plan entitlements, feature access, usage quota, SLA, and billing evidence exports."

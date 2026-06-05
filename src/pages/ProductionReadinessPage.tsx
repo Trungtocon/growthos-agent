@@ -27,6 +27,7 @@ import { ProductionSupportCompactWidget } from './ProductionSupportPage';
 import { TenantProductionBindingCompactWidget } from './TenantProductionBindingPage';
 import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 import { ProductionBillingCompactWidget } from './ProductionBillingPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type ProductionReadinessWidgetSurface =
   | 'certified-sandbox-run'
@@ -96,6 +97,7 @@ export function ProductionReadinessPage() {
       <TenantProductionBindingCompactWidget surface="production-readiness" />
       <ProductionComplianceCompactWidget surface="production-readiness" />
       <ProductionBillingCompactWidget surface="production-readiness" />
+      <ProductionAccessControlCompactWidget surface="production-readiness" />
       <PageHeader
         title="Production Go-Live Readiness"
         subtitle="Final gate for certified sandbox evidence, governance, recovery, chaos, cost, quota, and UI action wiring before production enablement."

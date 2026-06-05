@@ -21,6 +21,7 @@ import {
 } from './tenant-production-binding-store';
 import { recordComplianceAuditEvent } from './production-compliance-store';
 import { selectProductionBillingDashboard } from './production-billing-store';
+import { evaluateActionAccess } from './production-access-control-store';
 import {
   calculateGoLiveReadinessScore,
   deriveGoLiveVerdict,
@@ -535,6 +536,25 @@ export function requestGoLiveApproval(releaseId?: string, approver = 'Release Ca
 
 export function approveGoLive(releaseId?: string, approvedBy = 'GrowthOS Release Approver'): GoLiveReleaseDecision {
   const release = resolveRelease(releaseId);
+  const activeTenant = selectActiveTenantProductionBinding();
+  const access = evaluateActionAccess({
+    actor: approvedBy,
+    action: 'approve',
+    moduleId: 'go-live-control',
+    objectId: release.releaseId,
+    tenantId: activeTenant?.tenantId,
+  });
+  if (!access.allowed) {
+    return persistRelease({
+      ...release,
+      state: 'blocked',
+      blockers: [
+        ...release.blockers,
+        blocker(release.releaseId, 'production-access-control', access.reasons.join(' ') || 'Go-Live approval actor is not authorized.', 'Assign owner/admin/reviewer access before approving Go-Live.'),
+      ],
+      timeline: [timeline(release.releaseId, 'approval.rejected', `Go-live approval blocked for ${approvedBy}: ${access.reasons.join(' ')}`), ...release.timeline],
+    });
+  }
   const evaluated = applyReadiness({ ...release, approvedBy });
   if (evaluated.blockers.length) return persistRelease({ ...evaluated, state: 'blocked' });
   const approved = persistRelease({

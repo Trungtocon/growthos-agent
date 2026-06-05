@@ -3,6 +3,7 @@ import { registerArtifact } from './artifact-registry-store';
 import type { ArtifactRecord } from './artifact-registry';
 import { selectUnresolvedCriticalSupportTicketsByIncident } from './production-support-store';
 import { recordComplianceAuditEvent } from './production-compliance-store';
+import { evaluateActionAccess } from './production-access-control-store';
 import {
   isCriticalIncident,
   isIncidentActive,
@@ -203,6 +204,13 @@ export function requestRollback(incidentId?: string, reason = 'Rollback requeste
 
 export function triggerRollbackProcedure(incidentId?: string, triggeredBy = 'Release Operator'): ProductionIncident {
   const incident = resolveIncidentRecord(incidentId);
+  const access = evaluateActionAccess({ actor: triggeredBy, action: 'rollback', moduleId: 'production-incidents', objectId: incident.incidentId });
+  if (!access.allowed) {
+    return persistIncident({
+      ...incident,
+      timelineEvents: [event(incident.incidentId, 'rollback.blocked', `Rollback blocked for ${triggeredBy}: ${access.reasons.join(' ')}`, triggeredBy), ...incident.timelineEvents],
+    });
+  }
   const decision = incident.rollbackDecision ?? { required: true, reason: 'Rollback triggered by incident command.', requestedAt: nowIso() };
   return persistIncident({
     ...incident,

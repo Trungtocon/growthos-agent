@@ -17,6 +17,7 @@ import {
 import type { TenantBindingEnvironment } from '../runtime/tenant-production-binding';
 import { ProductionComplianceCompactWidget } from './ProductionCompliancePage';
 import { ProductionBillingCompactWidget } from './ProductionBillingPage';
+import { ProductionAccessControlCompactWidget } from './ProductionAccessControlPage';
 
 type TenantBindingWidgetSurface =
   | 'production-operations'
@@ -93,6 +94,7 @@ export function TenantProductionBindingPage() {
   return (
     <div data-route="/tenant-production-binding" data-tenant-production-binding-route>
       <ProductionBillingCompactWidget surface="tenant-production-binding" />
+      <ProductionAccessControlCompactWidget surface="tenant-production-binding" />
       <ProductionComplianceCompactWidget surface="tenant-production-binding" />
       <PageHeader
         title="Tenant / Workspace Production Binding"
